@@ -21,7 +21,7 @@ loadStatus().then(data=>{
   document.querySelector("#current-stage").textContent=data.currentStage;
   document.querySelector("#goal").textContent=data.goal;
   document.querySelector("#blocker").textContent=data.currentBlocker;
-  document.querySelector("#updated").textContent="마지막 동기화: "+data.updated;
+  document.querySelector("#updated").textContent="사본 상태 기준일: "+data.updated;
 
   const phases=document.querySelector("#phases");
   data.phases.forEach(p=>{
@@ -51,7 +51,7 @@ loadStatus().then(data=>{
     card.appendChild(el("p","",m.role));
 
     const a=el("a","","작업 공간 →");
-    a.href="https://github.com/TaekGyu0801/GGYU/tree/main/"+m.folder;
+    a.href="https://github.com/soybeanmilk0514-jpg/TCAD-MicroLED-Sidewall-Carrier-Confinement/tree/main/"+m.folder;
     card.appendChild(a);
     members.appendChild(card);
   });

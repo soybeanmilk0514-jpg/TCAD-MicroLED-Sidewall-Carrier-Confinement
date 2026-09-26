@@ -1,9 +1,9 @@
 {
   "project": "CMP MicroLED Sidewall TCAD",
-  "updated": "2026-09-21",
+  "updated": "2026-09-26",
   "goal": "동일한 현실적 공통 기준 모델에서 프로젝트 A와 프로젝트 B의 캐리어 구속 메커니즘을 공정하게 비교",
   "currentStage": "단계 0 — 공통 기준 모델 검증",
-  "currentBlocker": "SVisual2가 n9_des.tdr을 찾지 못함. SDevice2의 전처리된 File/Plot 출력 파일명을 확인해야 함.",
+  "currentBlocker": "주수빈 NtSide=1e18 baseline run 실패 — 원인 미확인. 실패 node의 err/out 로그 확인이 우선이며 기존 SVisual2 TDR 파일 연결도 확인 필요.",
   "members": [
     {
       "name": "이택규",
@@ -66,9 +66,11 @@
     "4개 QW + 5개 barrier",
     "p/n 도핑 농도 범위 시각 확인",
     "Tcl 수정 후 SVisual1 순방향 I-V 스크립트 실행 확인",
-    "SDevice2 solver 정상 종료 확인"
+    "SDevice2 solver 정상 종료 확인",
+    "2026-09-26 사용자 보고(OBSERVED): 주수빈 NtSide=0 run 완료 / NtSide=1e18 run 실패"
   ],
   "unresolved": [
+    "NtSide=1e18 실패의 실제 로그 기반 원인 진단",
     "SDevice2의 실제 TDR 출력 파일명과 연결 방식",
     "Defect OFF 상태의 정상 LED 동작 검증",
     "Defect ON 상태의 sidewall recombination 증가 검증",
