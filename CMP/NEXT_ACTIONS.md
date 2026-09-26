@@ -1,5 +1,188 @@
 # Next Actions
 
+## Ju Subin — CES2027 selection presentation priority
+
+1. Build the presentation around the weakness identified in week 1: make the TCAD implementation path for Project A/B concrete and testable.
+2. Show only verified Common Baseline evidence as completed; label full same-revision NtSide=0 vs 1e18 electrical comparison as ongoing unless it actually finishes.
+3. For Project A, specify the exact structural modification, TCAD region/material/doping/trap implementation, sweep variables, and expected observables.
+4. For Project B, specify the exact localized AlGaN region, composition/width sweep, heterointerface physics, and expected band/carrier/recombination observables.
+5. Define shared evaluation metrics before claiming improvement: same-current comparison, sidewall SRH, MQW radiative/Auger, IQE, Vf, current crowding, carrier/current maps.
+6. Use the 1주차 발표 as context only; spend presentation time on progress, implementation specificity, evidence, and next-stage experiment design.
+
+## Ju Subin — deadline-driven plan for today
+
+1. Apply the final SDevice fix and preprocess both NtSide=0 and 1e18.
+2. Verify generated PAR files are identical and CMD differs only in NtSide-controlled trap Conc.
+3. Run NtSide=1e18 only long enough to verify initialization/initial Poisson-Coupled solve proceeds without the prior immediate exit.
+4. Preserve historical completed NtSide=0 as reference evidence, but do not use it as final quantitative control against the new revision.
+5. Build PPT today around:
+   - baseline structure/parameter provenance
+   - verified geometry/doping
+   - finalized common SDevice model
+   - historical successful 5 V control as implementation reference
+   - current-revision NtSide=1e18 startup validation
+   - full same-revision NtSide=0 vs 1e18 transient comparison marked ongoing.
+6. Schedule full same-revision 0/1e18 runs after the presentation deadline.
+
+
+## Ju Subin — exact code edit for Mg incomplete ionization
+
+- Delete global:
+```
+IncompleteIonization(
+  Dopants = "pMagnesiumActiveConcentration"
+)
+```
+- Add region-scoped activation to `Clean_pGaN`, `DmgL_pGaN`, `DmgR_pGaN` only.
+- Change nothing else before rerun.
+
+
+## Ju Subin — freeze one baseline revision, then rerun both branches
+
+1. Keep historical Node6 as a reference result only; do not treat it as the final control for current Node12.
+2. Decide/freeze the intended final Mg incomplete-ionization formulation and parameter file.
+3. Ensure the same SDevice source and same source parameter file generate both branches.
+4. Preprocess NtSide=0 and NtSide=1e18 and diff CMD/PAR:
+   - CMD should differ only in NtSide-controlled trap Conc.
+   - PAR should be identical.
+5. Then run both full simulations for the final baseline comparison.
+6. A short Node12-only diagnostic run may still be used to test a crash fix, but it is not the final comparison dataset.
+
+
+## Ju Subin — apply region-scoped Mg incomplete ionization
+
+In the original SDevice source:
+
+1. Remove from global `Physics`:
+```
+IncompleteIonization(
+  Dopants = "pMagnesiumActiveConcentration"
+)
+```
+
+2. Add to `Clean_pGaN`:
+```
+Physics (Region="Clean_pGaN") {
+  IncompleteIonization(
+    Dopants = "pMagnesiumActiveConcentration"
+  )
+}
+```
+
+3. In existing `DmgL_pGaN` and `DmgR_pGaN` Physics blocks, add the same `IncompleteIonization(...)` alongside the existing Traps block.
+
+4. Do not change:
+- NtSide
+- Et=Ev+0.75 eV
+- sigma_n=sigma_p=1e-15
+- 5 nm damage geometry
+- Thermionic
+- Plot list
+
+5. Re-preprocess Node12 and verify:
+- no InGaN Mg incomplete-ionization missing-parameter messages
+- SDevice enters initial Poisson solve.
+
+6. If initialization succeeds, continue the 1e18 run. Final fair comparison still requires NtSide=0 and 1e18 from the same frozen source revision.
+
+
+## Ju Subin — inspect Mg ionization parameter file before rerun
+
+1. Do not rerun Node 12 again yet.
+2. Open `pp12_des.par`.
+3. Search for:
+   - `Ionization`
+   - `Magnesium`
+   - `InGaN`
+   - `GaN`
+   - `AlGaN`
+4. Capture every `Ionization { Species(...) { ... } }` block involving Mg and the material header above it.
+5. Verify whether the species name is `MagnesiumActiveConcentration`, `pMagnesiumActiveConcentration`, or another internal species.
+6. Verify whether InGaN has an Mg ionization parameter block.
+7. Only after this, choose between:
+   - correcting the selected Mg species name,
+   - restricting incomplete ionization to materials with calibrated Mg parameters,
+   - or adding a justified InGaN Mg ionization parameter if literature/source supports it.
+8. For fair baseline comparison, once the physics deck is frozen, regenerate/rerun both NtSide=0 and 1e18 from that same source revision (or explicitly use the historical Node6 deck and reproduce its source exactly).
+
+
+## Ju Subin — immediate action after reproducible Node 12 failure
+
+1. Do not rerun Node 12 again yet.
+2. Open original SDevice source `sd_fdiv_des.cmd` (not `pp12_des.cmd`).
+3. Search for `NtSide`.
+4. Around every match, capture any `#if/#else/#endif`, Tcl/preprocessor expression, or conditional insertion of:
+   - `Thermionic`
+   - `IncompleteIonization(Dopants=...)`
+   - Mg Plot fields
+5. Compare Node 6/12 Job Log preprocessing timestamps/source path to determine whether Node 6 is stale from an older source revision.
+6. Once provenance is known, make the two branches truly identical except for trap `Conc`.
+
+
+## Ju Subin — verify parameter-dependent preprocessing before any edit
+
+1. Do **not** edit the physics yet.
+2. Open the original SDevice source `sd_fdiv_des.cmd`.
+3. Search for:
+   - `NtSide`
+   - `Thermionic`
+   - `IncompleteIonization`
+   - `Dopants`
+   - `eQuasiFermiEnergy`
+   - `pMagnesiumActiveConcentration`
+   - `#if`, `#else`, `#endif` or other Workbench preprocessing expressions
+4. Capture the relevant source block(s).
+5. Confirm Node 6 and Node 12 Job Logs both preprocess the same source path and compare timestamps.
+6. Only after identifying why NtSide changes unrelated preprocessed lines should a minimal fix be considered.
+
+
+## Ju Subin — clean NtSide-only rerun (2026-09-26)
+
+1. Edit the original SDevice source (not generated `pp12_des.cmd`).
+2. Make global Physics identical to successful Node 6:
+   - remove Node12-only `Thermionic` for this diagnostic rerun
+   - replace `IncompleteIonization(Dopants="pMagnesiumActiveConcentration")` with plain `IncompleteIonization`
+3. Make Plot identical to Node 6 by removing Node12-only:
+   - `eQuasiFermiEnergy`
+   - `hQuasiFermiEnergy`
+   - `pMagnesiumActiveConcentration`
+   - `pMagnesiumMinusConcentration`
+4. Preserve trap model and keep the Workbench NtSide-controlled concentration at 1e18.
+5. Re-preprocess and confirm the new 1e18 preprocessed deck differs from Node 6 only in trap `Conc`.
+6. Rerun only the 1e18 branch.
+7. If it still fails, then diagnose the nonzero trap interaction itself.
+
+
+## Ju Subin — exact Node 6 vs Node 12 deck diff next
+
+After capturing failed Node 12:
+1. Obtain successful Node 6 corresponding sections from `pp6_des.cmd`.
+2. Compare line-by-line:
+   - global Physics (`Thermionic`, `IncompleteIonization` syntax)
+   - every trap block and Conc
+   - Plot block
+3. Expected fair split: only NtSide-controlled trap concentration should differ.
+4. If additional differences exist, restore a true NtSide-only split before rerunning.
+5. Do not change Nt/Et/sigma based solely on the incomplete-ionization warning.
+
+
+## Ju Subin — highest-priority deck diff (2026-09-26)
+
+Before changing `IncompleteIonization`, trap parameters, or solver settings:
+
+1. Compare `pp6_des.cmd` and `pp12_des.cmd`.
+2. Compare `pp6_des.par` and `pp12_des.par`.
+3. Expected fair-split difference: only `NtSide`-controlled trap `Conc` values (0 vs 1e18).
+4. Pay special attention to:
+   - global `IncompleteIonization`
+   - QW/InGaN region-specific Physics blocks
+   - Mg doping species references
+   - parameter-file includes/overrides
+   - trap blocks for DmgL/R_QW1~QW4
+5. If CMD/PAR are otherwise identical, investigate why nonzero traps activate the InGaN incomplete-ionization failure path.
+6. If additional differences exist, fix deck drift first.
+
+
 ## Ju Subin — compare failed Node 12 against successful NtSide=0 log (2026-09-26)
 
 1. Open the successful `NtSide=0` SDevice node.

@@ -4,7 +4,7 @@
   "phase": "Phase 0 — Common Baseline validation",
   "task": "SDevice2 to SVisual2 TDR output/linkage debugging",
   "status": "UNRESOLVED",
-  "blocker": "JuSubin NtSide=1e18 baseline run failed; exact log cause not yet identified",
+  "blocker": "Node12 Mg incomplete-ionization applied globally but pp12_des.par provides Mg ionization parameters only for GaN, not InGaN",
   "parallelWork": {
     "worker": "주수빈",
     "status": "OBSERVED",
@@ -77,10 +77,44 @@
     },
     "splitRunResult": {
       "date": "2026-09-26",
-      "NtSide0": "completed",
-      "NtSide1e18": "failed",
-      "cause": "UNRESOLVED",
-      "nextAction": "Inspect failed SDevice node *.err and last 50-100 lines of *.out before changing baseline parameters."
+      "NtSide0": "CONFIRMED completed to 5 V; n6_des.tdr written; wallclock ~235312 s (~65.4 h)",
+      "NtSide1e18": "failed with SDevice exit(1) during initialization",
+      "keyDifference": "mMagnesiumActiveConcentration incomplete-ionization messages appear in failed Node 12 but not in successful Node 6",
+      "nextAction": "Diff pp6_des.cmd/par vs pp12_des.cmd/par; verify only intended trap Conc differs before modifying physics"
+    },
+    "node6Node12Diff": {
+      "status": "USER_CONFIRMED_SAME_SOURCE",
+      "sourceRelationship": "same SDevice source; only NtSide split 0 vs 1e18",
+      "correction": "prior source-deck-drift conclusion retracted",
+      "possibleMechanisms": [
+        "NtSide-dependent preprocessor conditionals",
+        "parameter-dependent macro expansion",
+        "node/input version or cache behavior"
+      ],
+      "nextAction": "inspect original sd_fdiv_des.cmd for NtSide-dependent preprocessing before any physics edits"
+    },
+    "node12Rerun": {
+      "status": "REPRODUCIBLE_FAILURE",
+      "interpretation": "not likely a one-off runtime glitch",
+      "nextAction": "inspect original source NtSide conditionals and node preprocess provenance"
+    },
+    "fullSourceInspection": {
+      "status": "OBSERVED",
+      "ntSideUsage": "trap Conc only; no NtSide conditional preprocessing",
+      "currentSourceFeatures": [
+        "Thermionic",
+        "IncompleteIonization(Dopants=pMagnesiumActiveConcentration)",
+        "expanded Mg/quasi-Fermi Plot fields"
+      ],
+      "node6Provenance": "historical/stale generated deck relative to current source",
+      "nextAction": "inspect pp12_des.par Ionization/Magnesium/InGaN definitions"
+    },
+    "mgIonizationDiagnosis": {
+      "status": "STRONGLY_IDENTIFIED_PROPOSED_FIX",
+      "parameterFile": "GaN only: pMagnesiumActiveConcentration E0=0.2 alpha=8e-9 g=4 Xsec=1e-14; no InGaN block",
+      "failureCorrelation": "missing Mg incomplete-ionization parameters in InGaN QWs immediately before exit",
+      "proposedFix": "scope IncompleteIonization to Clean_pGaN, DmgL_pGaN, DmgR_pGaN only",
+      "confirmation": "rerun Node12 initialization"
     }
   },
   "nodes": {

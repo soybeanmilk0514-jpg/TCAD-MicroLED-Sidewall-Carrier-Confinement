@@ -769,3 +769,427 @@ n12_des.log 마지막 구간 확인:
 성공 NtSide=0 node의 *_des.log에서 mMagnesiumActiveConcentration 검색. 동일 메시지 후에도 solve가 진행되면 해당 메시지는 root cause가 아님. 없으면 failed branch의 material/parameter setup 차이를 조사.
 
 ---
+
+## 2026-09-26T05:39:49Z — soybeanmilk0514-jpg
+
+[2026-09-26 14:39]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / COLLAB INFRA
+상태: CONFIRMED
+
+요약:
+주수빈 GitHub 계정의 기존 fork/mirror 저장소 `soybeanmilk0514-jpg/TCAD-MicroLED-Sidewall-Carrier-Confinement`에 CMP 자동 미러 동기화를 구축함.
+
+변경:
+- `.github/workflows/sync-cmp.yml`
+- 원본: `TaekGyu0801/GGYU/CMP/`
+- 대상: 수빈 저장소의 `CMP/`
+- 5분 주기 GitHub Actions sync
+- Issue #7 comments를 `CMP/.ai-sync/LIVE_LOG_ISSUE_7_MIRROR.md`로 함께 미러
+
+검증:
+- 첫 Sync CMP workflow run #1 success 확인.
+
+경계:
+- GitHub cron 기반이라 완전한 실시간 push mirror는 아니며 수분 단위 동기화.
+- CMP 외 GGYU 영역은 미러링하지 않음.
+
+---
+
+## 2026-09-26T05:44:15Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / BLOCKER
+상태: CONFIRMED / UNRESOLVED
+
+NtSide=0 Node 6 성공 최종 확인:
+- anode 5.0 V 도달
+- Curve trace finished
+- n6_des.tdr 저장 완료
+- Sentaurus Device simulation finished / Good Bye !
+- wallclock ≈235312 s ≈65.4 h ≈2.7 days
+
+중요 branch 차이:
+- 성공 Node 6 log에서 mMagnesiumActiveConcentration 메시지 없음 (사용자 검색 확인)
+- 실패 Node 12는 InGaN incomplete-ionization 메시지 반복 직후 SDevice exit(1)
+
+판단:
+강한 failure-correlated difference지만 아직 root cause 확정은 아님. Node6/12 preprocessed deck drift를 먼저 배제해야 함.
+
+다음:
+pp6_des.cmd vs pp12_des.cmd 및 pp6_des.par vs pp12_des.par 비교. 의도된 차이가 trap Conc 0↔1e18뿐인지 확인 후 최소 수정.
+
+---
+
+## 2026-09-26T05:48:53Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER / DECK CAPTURE
+상태: OBSERVED / UNRESOLVED
+
+실패 Node 12 preprocessed Physics/Plot block 확보.
+
+주요 내용:
+- Thermionic 활성
+- IncompleteIonization(Dopants="pMagnesiumActiveConcentration")
+- DmgL/R pGaN, EBL, Barrier0~4, QW1~4, nGaN에 Acceptor trap Conc=1e18
+- expanded Plot: SRH subcomponents, trap fields, Mg species 등
+
+중요:
+GitHub의 synchronized baseline/old successful-deck 기록은 plain IncompleteIonization, no Thermionic, simpler Plot이므로 Node 12가 NtSide만 다른 true split인지 아직 보장되지 않음.
+
+다음:
+성공 Node 6 pp6_des.cmd의 동일 구간을 받아 exact diff. 추가 차이가 있으면 deck drift를 먼저 교정하고, Nt/Et/sigma는 아직 변경하지 않음.
+
+---
+
+## 2026-09-26T05:51:10Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: DIAGNOSIS / PROPOSED FIX
+상태: OBSERVED / PROPOSED
+
+성공 Node 6 vs 실패 Node 12 preprocessed Physics/Plot exact comparison:
+
+의도된 차이:
+- trap Conc: 0 vs 1e18
+
+추가 차이:
+- Node12 only: Thermionic
+- Node12: IncompleteIonization(Dopants="pMagnesiumActiveConcentration")
+- Node6: plain IncompleteIonization
+- Node12 only Plot: eQuasiFermiEnergy, hQuasiFermiEnergy, pMagnesiumActiveConcentration, pMagnesiumMinusConcentration
+
+결론:
+현재 두 run은 NtSide-only split이 아니므로 Node12 exit(1)을 1e18 trap 자체 문제로 결론낼 수 없음.
+
+제안:
+원본 SDevice source를 성공 Node6 Physics/Plot과 동일하게 복구하고 NtSide-controlled trap Conc만 1e18로 유지. 새 pp deck이 Node6와 Conc만 다른지 확인 후 1e18만 rerun.
+
+주의:
+Thermionic 자체가 틀렸다는 판단은 아님. 필요하면 양 branch에 동일 적용해 별도 검증.
+
+---
+
+## 2026-09-26T05:56:31Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: CORRECTION / BLOCKER
+상태: USER-CONFIRMED / UNRESOLVED
+
+사용자 확인:
+Node 6과 Node 12는 동일한 원본 SDevice 코드에서 NtSide만 0 / 1e18로 split하여 실행했으며, branch별로 Physics/Plot 코드를 따로 수정하지 않음.
+
+정정:
+직전 'source deck drift' 해석과 Node12 Physics/Plot 삭제 제안은 철회. pp6/pp12 차이는 NtSide-dependent preprocessing/conditional 또는 node input/version/cache 차이일 수 있음.
+
+다음:
+원본 sd_fdiv_des.cmd에서 NtSide, Thermionic, IncompleteIonization, Dopants, Mg Plot fields 및 #if/#else 등 preprocessor 조건을 확인. Node6/12 Job Log의 동일 source path/timestamp도 대조.
+
+원인 확인 전 Physics/Plot/Nt/Et/sigma 변경 금지.
+
+---
+
+## 2026-09-26T05:58:17Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER / REPRODUCTION
+상태: OBSERVED / REPRODUCIBLE
+
+Node 12 (NtSide=1e18)만 단독 재실행했으나 동일 failure 재현.
+
+의미:
+일회성 queue/license glitch 가능성은 낮아지고 Node12 current input/configuration의 재현성 있는 문제 가능성이 높아짐.
+
+사용자 확인상 same source + NtSide-only split이므로 pp6/pp12 차이의 우선 후보는:
+1) source 내부 NtSide-dependent preprocessing conditional
+2) Node6이 과거 source revision의 stale/cached preprocess/output이고 Node12만 current source로 re-preprocess
+
+다음:
+원본 sd_fdiv_des.cmd의 NtSide/#if/#else/#endif 및 Thermionic/IncompleteIonization/Mg Plot conditional 확인, Node6/12 preprocess provenance 비교. 원인 확인 전 physics 변경/반복 rerun 중단.
+
+---
+
+## 2026-09-26T06:03:38Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: DIAGNOSIS / SOURCE REVIEW
+상태: OBSERVED / ROOT-CAUSE NARROWING
+
+현재 원본 SDevice 전체 코드 확보 및 검토.
+
+확인:
+- @NtSide@는 trap Conc에만 사용
+- NtSide-dependent #if/#else/#endif 없음
+- current source는 항상 Thermionic, IncompleteIonization(Dopants="pMagnesiumActiveConcentration"), Mg/quasi-Fermi Plot fields 포함
+
+결론:
+성공 Node6 pp6가 이 항목들을 포함하지 않았으므로 Node6은 current source revision으로 재-preprocess된 node가 아니라 과거 source revision의 generated/output artifact로 판단. 기존 Node6 vs current Node12는 clean same-source NtSide-only 비교가 아님.
+
+Node12 failure 후보:
+Mg incomplete-ionization을 명시적으로 선택한 상태에서 InGaN QW의 Mg incomplete-ionization parameters missing 메시지 직후 초기화 종료.
+
+다음:
+pp12_des.par에서 Ionization/Magnesium/InGaN/GaN/AlGaN parameter blocks 확인 후 species naming/material scope를 확정. 확인 전 추가 rerun/physics 수정 금지.
+
+---
+
+## 2026-09-26T06:08:07Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: DIAGNOSIS / PROPOSED FIX
+상태: OBSERVED / STRONGLY IDENTIFIED
+
+pp12_des.par 전체 확인:
+- Material="GaN" Ionization에 Species("pMagnesiumActiveConcentration")만 정의
+- E_0=0.2, alpha=8e-9, g=4.0, Xsec=1e-14
+- InGaN/AlGaN Ionization block 없음
+
+기존 failure log:
+- InGaN QW에서 Mg-related active species incomplete-ionization parameter missing 메시지 직후 SDevice 종료
+- current source는 Mg IncompleteIonization을 global Physics에서 활성화
+
+판단:
+Global model scope와 parameter material scope의 mismatch가 가장 강한 root-cause 후보.
+
+최소 수정 제안:
+- global IncompleteIonization 제거
+- Clean_pGaN, DmgL_pGaN, DmgR_pGaN에만 region-specific IncompleteIonization(Dopants="pMagnesiumActiveConcentration") 적용
+- Thermionic, Nt/Et/sigma, damage geometry, Plot은 유지
+
+확인:
+Node12 re-preprocess 후 InGaN missing-parameter message가 사라지고 initial Poisson solve에 진입하는지 확인.
+
+---
+
+## 2026-09-26T06:13:15Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: CORRECTION / DECISION
+상태: OBSERVED / CONFIRMED COMPARISON RULE
+
+성공 Node6 pp6_des.par 추가 확인:
+- PDopantActiveConcentration (E0=0.15, g=4, Xsec=1e-12)
+- NDopantActiveConcentration (E0=0.05, g=2, Xsec=1e-12)
+
+Current Node12 pp12_des.par:
+- pMagnesiumActiveConcentration (E0=0.2, alpha=8e-9, g=4, Xsec=1e-14)
+
+결론:
+Node6/Node12는 command뿐 아니라 parameter file revision도 다름. 따라서 Node12만 수정해 기존 Node6와 비교하는 것은 fair NtSide-only comparison이 아님.
+
+정정:
+직전 Node12-only region-scoped fix는 crash diagnosis 용도로만 유지. final quantitative comparison에는 사용 금지.
+
+최종 baseline 비교 규칙:
+같은 frozen SDevice source + same parameter-file revision에서 NtSide=0 및 1e18을 둘 다 새로 preprocess/run. CMD는 trap Conc만 달라야 하고 PAR은 동일해야 함.
+
+---
+
+## 2026-09-26T06:14:47Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: DIAGNOSIS
+상태: OBSERVED
+
+Project Log 확인:
+- Node12 SDevice가 정상 launch된 뒤 수 초 내 exited abnormally
+- scheduler failed 처리
+- gsub exits with status 1
+
+이 화면은 wrapper/scheduler-level failure fact만 보여주며 내부 SDevice root cause는 표시하지 않음.
+기존 des.log/des.err/pp12_des.par 증거를 합치면 현재 strongest candidate는 InGaN에 Mg incomplete-ionization parameter가 없는 상태에서 global Mg incomplete-ionization이 활성화된 material-scope mismatch.
+
+---
+
+## 2026-09-26T06:17:20Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: FIX
+상태: PROPOSED
+
+Exact minimal edit:
+1) Remove global IncompleteIonization(Dopants="pMagnesiumActiveConcentration")
+2) Apply the same block only to Clean_pGaN, DmgL_pGaN, DmgR_pGaN
+3) Keep Thermionic, NtSide, Et, sigma, geometry, Plot, Math, Solve unchanged
+4) Final comparison requires rerunning NtSide=0 and 1e18 from the same frozen source/PAR revision.
+
+---
+
+## 2026-09-26T06:29:02Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / DEADLINE PLAN
+상태: CONFIRMED
+
+사용자 제약: 오늘 안에 Common Baseline 정리 + PPT 제작 필요.
+
+판단:
+과거 runtime상 full 5V NtSide=1e18 run은 수일이 필요하므로 오늘 완료를 기다리지 않음.
+
+오늘 deliverable:
+- final source/PAR freeze
+- NtSide=0/1e18 preprocess consistency check
+- NtSide=1e18 initialization/early-solve sanity validation
+- geometry/doping/baseline provenance 정리
+- PPT에는 full same-revision 0 vs 1e18 electrical comparison을 ongoing으로 명확히 표시
+
+미완료 trap-on result를 완료 결과처럼 제시하지 않음.
+
+---
+
+## 2026-09-26T06:37:49Z — soybeanmilk0514-jpg
+
+[2026-09-26 15:33]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / PRESENTATION
+상태: CONFIRMED
+
+요약:
+오늘 작업 우선순위를 CES2027 선발 평가발표 준비로 전환. 심사위원은 공학및지식실무 교수 2명으로 1주차 발표를 이미 본 상태.
+
+1주차 약점:
+- 급한 주제 변경
+- simulation 결과 부재
+- Project A/B의 구체적 TCAD 구현/검증 절차 설명 부족
+
+이번 발표 핵심:
+- Common Baseline의 문헌/구조/코드 근거
+- 실제 구현 및 실행 증거
+- Project A Carbon high-resistance edge와 Project B localized AlGaN lateral heterobarrier의 구체적 TCAD 구현 단계
+- 공통 비교 지표와 성공 기준
+
+표현 원칙:
+완료/진행중/제안 단계 구분. 미완료 결과를 완료처럼 제시하지 않음.
+
+다음:
+발표 목차와 슬라이드별 메시지를 위 기준으로 재설계.
+
+---
+
+## 2026-09-26T06:43:20Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / PRESENTATION METHODOLOGY
+상태: CONFIRMED
+
+이번 CES2027 선발 발표의 핵심은 연구자 본인이 baseline/A/B의 논리를 설명하는 것.
+
+각 요소를 4종으로 구분:
+1) DIRECT LITERATURE
+2) LITERATURE-DERIVED MODELING CHOICE
+3) CALIBRATION / SENSITIVITY PARAMETER
+4) PROJECT HYPOTHESIS
+
+발표 설명 순서:
+문헌 근거 → baseline 선택 이유 → TCAD 코드/region/parameter 변경 → 관찰할 output → 성공 판정 → A/B 공정 비교.
+
+Project A Carbon edge와 Project B localized lateral AlGaN barrier는 문헌 구조의 단순 복제가 아니라, 알려진 compensation / carrier-confinement physics를 microLED sidewall 문제에 적용해 검증하는 연구 가설로 표현.
+
+---
+
+## 2026-09-26T08:41:33Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / PRESENTATION STRUCTURE
+상태: CONFIRMED
+
+15분 CES 선발 발표를 9장 구조로 압축.
+Week 1 limitation / why common baseline / literature roles를 각각 별도 슬라이드로 두지 않고, 첫 장에서 주제와 현재 진행상황을 빠르게 요약한 뒤 baseline 구축으로 즉시 진입.
+
+새 흐름:
+1) Title + project recap/progress
+2) Literature-grounded baseline logic
+3) Current baseline structure
+4) Parameter provenance
+5) Baseline validation + current status
+6) Project A implementation
+7) Project B implementation
+8) Fair comparison metrics
+9) Conclusion / next milestone
+
+발표 시간은 baseline 논리, A/B 코드 수정 지점, same-current comparison에 집중.
+
+---
+
+## 2026-09-26T08:57:32Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESEARCH JUDGMENT / CES IMPLEMENTATION
+상태: PROPOSED FOR MECHANISM SCREEN
+
+Project A/B의 command-level 구현 방식을 정밀화.
+
+A — Carbon High-R Edge:
+- 1차는 SProcess implantation 아님.
+- SDE에서 upper n-GaN edge를 Cedge_L/R GaN region으로 분리.
+- SDevice에서 Cedge에만 C_N-like deep acceptor/compensation 적용.
+- 이유: C implantation isolation은 lattice-damage contribution이 커서 carbon compensation mechanism과 혼재 가능.
+- implantation/process realism은 후속 단계.
+
+B — AlGaN Lateral Heterobarrier:
+- implantation 아님.
+- SDE에서 actual AlGaN material region AlBarrier_L/R 삽입, xAl/wAl sweep, interface mesh refinement.
+- SDevice에서 lateral Ec/Ev band offset과 carrier confinement 확인.
+- fabrication analogue: local recess/etch + selective-area AlGaN regrowth; exact microLED integration은 아직 hypothesis.
+
+공통: baseline 5 nm sidewall damage는 유지하고 edge-engineering region만 추가.
+
+---
+
+## 2026-09-26T10:04:28Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: LITERATURE EVIDENCE / CES
+상태: VERIFIED SOURCES + PROJECT HYPOTHESIS BOUNDARY
+
+Project A/B 선행문헌 근거를 논문 단위로 재정리.
+
+A 핵심 근거:
+- Richter 2020: GaN:C semi-insulating, max ~2e10 Ω·cm @ 8.8e18 cm^-3, C_N activation ~0.94 eV.
+- Ramdani 2012: several 1e18 cm^-3 C → GaN resistivity 증가 + trapping/crystal-quality penalty.
+- Cao 2023: Sentaurus GaN:C model, C_N Ev+0.9 eV / C_Ga Ec−0.11 eV; carbon-charge blocking mechanism.
+- Chang 2020: microLED current-path control can reduce sidewall nonradiative recombination.
+- Taube 2015: C implantation isolation includes strong lattice-damage contribution → Stage-1 mechanism screen에서 implantation 제외 근거.
+
+B 핵심 근거:
+- Baek 2023 Nature Communications: QB/AlGaN EBL engineering controls confinement/lateral diffusion and suppresses surface-related loss.
+- Furtmayr 2011 PRB: lateral AlGaN shell around GaN nanodiscs + 3D simulation demonstrates lateral carrier confinement and Al-composition dependence.
+- Chang 2020: sidewall carrier-access reduction principle.
+- JCG 2016 selective-area AlGaN-on-GaN growth: process feasibility support only.
+
+중요 경계: exact Carbon High-R microLED edge와 exact lateral AlGaN edge-wall microLED는 확인된 선행 구조가 아니라 우리 project hypothesis로 표현.
+
+---

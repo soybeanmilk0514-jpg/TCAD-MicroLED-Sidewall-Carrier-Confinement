@@ -1,5 +1,104 @@
 # Current Status
 
+## 2026-09-26 — Presentation-ready baseline scope
+
+For today's deadline, the baseline can be considered **implementation-frozen / structurally validated** once the corrected current source preprocesses cleanly and the NtSide=1e18 branch passes initialization/early solve. It is **not yet fully electrically validated** until same-revision NtSide=0 and 1e18 full runs complete.
+
+Presentation wording should preserve this distinction.
+
+
+## 2026-09-26 — Fair comparison requirement updated
+
+Successful Node6 and current Node12 differ in both generated command and parameter files.
+
+Node6 `pp6_des.par`:
+- PDopantActiveConcentration
+- NDopantActiveConcentration
+
+Node12 `pp12_des.par`:
+- pMagnesiumActiveConcentration
+
+Therefore the existing Node6 result cannot serve as the final control for a modified/current Node12. A valid baseline comparison requires both NtSide=0 and NtSide=1e18 to be regenerated from the same frozen SDevice source and same parameter-file revision, with NtSide as the only intentional difference.
+
+
+## 2026-09-26 — Mg incomplete-ionization scope mismatch identified
+
+Node 12 `pp12_des.par` contains incomplete-ionization parameters only for `Material="GaN"` and `Species("pMagnesiumActiveConcentration")`. It contains no InGaN ionization block.
+
+The failed Node 12 log terminates after reporting that an Mg-related active-concentration species in InGaN QW regions has no incomplete-ionization parameters. The current SDevice source activates Mg incomplete ionization globally.
+
+This establishes a strong configuration mismatch: the model is globally active where the parameter file does not provide the corresponding InGaN ionization parameters.
+
+Proposed minimal fix: scope Mg incomplete ionization to the p-GaN regions only (`Clean_pGaN`, `DmgL_pGaN`, `DmgR_pGaN`) rather than globally. Keep Thermionic, sidewall trap Nt/Et/sigma, geometry, and Plot unchanged for this diagnostic.
+
+
+## 2026-09-26 — Full source resolves the Node 6/12 preprocessing discrepancy
+
+The current full SDevice source contains no NtSide-dependent conditional preprocessing. `@NtSide@` appears in trap concentration only. The current source always includes `Thermionic`, species-selected Mg incomplete ionization, and the expanded Mg/quasi-Fermi Plot fields.
+
+Therefore the successful Node 6 generated deck (which lacked these lines) is almost certainly from an earlier source revision and was not regenerated when Node 12 was rerun. Existing Node 6 output remains a valid result for its historical deck, but it is not a clean same-source control for the current Node 12.
+
+The current Node 12 initialization failure remains strongly correlated with Mg incomplete-ionization setup in InGaN. Next evidence required: `pp12_des.par` Ionization/Magnesium/InGaN definitions.
+
+
+## 2026-09-26 — Node 12 failure reproducible on rerun
+
+The NtSide=1e18 Node 12 was rerun alone and failed again in the same manner. This makes a transient scheduler/license glitch less likely and points to a reproducible input/configuration problem for Node 12.
+
+Because the user confirms a single source with only NtSide split, the observed pp6/pp12 differences most plausibly come from either:
+1. NtSide-dependent preprocessing in the source, or
+2. stale/cached Node 6 generated files from an earlier source revision while Node 12 was re-preprocessed from the current source.
+
+No physics change should be made until the original source conditional logic/provenance is checked.
+
+
+## 2026-09-26 — Correction: Node 6/12 came from the same source split
+
+User explicitly confirmed that Node 6 and Node 12 were generated from the same SDevice source and only `NtSide` was split (0 vs 1e18).
+
+Therefore the observed pp6/pp12 differences must not be interpreted as proven manual/source-deck drift. Plausible mechanisms now include:
+- NtSide-dependent preprocessor conditionals in the source,
+- parameter-dependent macro expansion,
+- or node/input version/cache differences.
+
+No physics/model line should be removed yet. The next diagnostic is to inspect the original `sd_fdiv_des.cmd` around NtSide and any conditional preprocessing.
+
+
+## 2026-09-26 — Ju Subin Node 6/12 deck diff resolved a major confounder
+
+Direct comparison of the successful Node 6 and failed Node 12 preprocessed Physics/Plot blocks confirms that the two runs differ by more than NtSide:
+
+- Node 6: no `Thermionic`; plain `IncompleteIonization`; no Mg-specific/quasi-Fermi-energy Plot fields.
+- Node 12: `Thermionic`; `IncompleteIonization(Dopants="pMagnesiumActiveConcentration")`; extra `eQuasiFermiEnergy`, `hQuasiFermiEnergy`, `pMagnesiumActiveConcentration`, `pMagnesiumMinusConcentration` Plot fields.
+- Trap concentration: 0 vs 1e18 as intended.
+
+Therefore the failed Node 12 is **not a clean NtSide-only comparison**. The immediate recovery plan is to restore the successful Node 6 Physics/Plot configuration in the original SDevice source and vary only the trap concentration for the 1e18 rerun. No claim is made yet that Thermionic or species-selected incomplete ionization is intrinsically invalid.
+
+
+## 2026-09-26 — Failed Node 12 preprocessed deck differs from synchronized baseline
+
+User supplied the failed Node 12 preprocessed Physics/Plot section. It contains:
+- `Thermionic`
+- `IncompleteIonization(Dopants="pMagnesiumActiveConcentration")`
+- sidewall trap Conc=1e18 in DmgL/R pGaN, EBL, Barrier0~4, QW1~4, nGaN
+- expanded Plot keywords for SRH subcomponents, trap fields, and Mg species
+
+The synchronized baseline deck currently in GitHub has plain `IncompleteIonization`, no `Thermionic`, and a simpler Plot list. Therefore the failed Node 12 cannot yet be treated as a proven NtSide-only split until it is directly diffed against successful Node 6.
+
+
+## 2026-09-26 — Ju Subin baseline result strengthened
+
+**CONFIRMED:** successful `NtSide=0` Node 6 reached 5.0 V, finished the curve trace, wrote `n6_des.tdr`, and ended with normal SDevice completion text. Wallclock ≈235312 s (~65.4 h, ~2.7 days).
+
+**FAILED:** `NtSide=1e18` Node 12 exits during initialization with SDevice `exit(1)`, before normal solve/output completion.
+
+Key branch difference observed in logs:
+- Node 6 success: no `mMagnesiumActiveConcentration` message found by user search.
+- Node 12 fail: repeated InGaN incomplete-ionization parameter messages immediately before termination.
+
+This is a strong diagnostic difference but not yet sufficient to change physics. First verify preprocessed CMD/PAR files differ only by intended NtSide trap concentration.
+
+
 ## 2026-09-26 — Ju Subin baseline split-run result
 
 **OBSERVED:** 주수빈이 학교에서 이전에 실행해 둔 Common Baseline split run을 확인함.
