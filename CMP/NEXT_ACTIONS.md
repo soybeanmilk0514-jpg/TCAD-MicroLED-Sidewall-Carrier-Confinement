@@ -1,5 +1,59 @@
 # Next Actions
 
+## Ju Subin — compare failed Node 12 against successful NtSide=0 log (2026-09-26)
+
+1. Open the successful `NtSide=0` SDevice node.
+2. Open its `*_des.log`.
+3. Search for `mMagnesiumActiveConcentration`.
+4. Report whether the same incomplete-ionization messages for InGaN QW regions appear.
+5. If they do, capture the lines immediately after them showing the successful run proceeding.
+6. If they do not, compare failed/successful preprocessed parameter and command files around IncompleteIonization/material setup.
+7. Use `n12_des.sta` only if the successful-log comparison is inconclusive.
+
+
+## Ju Subin — after Find Error shows warnings only (2026-09-26)
+
+1. Open Node 12 output file `n12_des.log`.
+2. Go to the very bottom and capture the final 50–100 lines.
+3. Search for `Error`, `Fatal`, `abort`, `exception`, `signal`, `trap`, `memory`.
+4. If `n12_des.log` also ends without a clear cause, open `n12_des.sta`.
+5. Keep Nt/Et/sigma/geometry unchanged until the first actual failure message is identified.
+
+
+## Ju Subin — Node 12 SDevice exit(1) next step (2026-09-26)
+
+Preprocessing succeeded and SDevice itself returned `exit(1)`.
+
+Immediate diagnostic:
+1. In Node 12 Job Log, click **Find Error**.
+2. Capture the exact file/line/message Workbench jumps to.
+3. If it does not jump to a useful line, search `n12_des.err` for: `Error:`, `Fatal`, `Unsupported`, `invalid`, `not found`, `cannot`.
+4. Only after the first explicit error line is identified should code be changed.
+
+
+## Ju Subin — Node 12 wrapper exit follow-up (2026-09-26)
+
+`n12_local.err` only reports a generic child-process abnormal exit with status 1.
+
+Next diagnostic order:
+1. Node 12 **Job Log** tab → capture bottom ~30–50 lines including exit status/command.
+2. If still generic, open `n12_des.job`.
+3. Check `n12_des.sta` for last stage/status.
+4. Search `n12_des.err` and `n12_des.out` for: `Fatal`, `Error`, `Segmentation`, `Killed`, `signal`, `memory`, `license`, `abort`.
+5. Do not rerun or change baseline physics until the actual process-exit reason is found.
+
+
+## Ju Subin — Node 12 immediate diagnostic refinement (2026-09-26)
+
+The provided `n12_des.err` view contains warnings but no explicit fatal cause, while `n12_des.out` terminates before normal completion and no TDR/PLT is visible.
+
+Immediate order:
+1. Open `n12_local.err` and capture all contents.
+2. If empty/non-diagnostic, open the Node 12 **Job Log** tab and capture the bottom section with exit status.
+3. If still unclear, open `n12_des.job` and inspect wrapper/exit code.
+4. Only after the exact exit reason is identified, modify the minimum necessary numerical/model setting.
+
+
 ## Priority 0 — Ju Subin NtSide=1e18 failure diagnosis (2026-09-26)
 
 1. Workbench에서 `NtSide=1e18` failed scenario의 SDevice node를 선택.

@@ -1,3 +1,110 @@
+## 2026-09-26 — Node 12 log terminates after incomplete-ionization messages
+
+Observed:
+- `n12_des.log` ends immediately after repeated messages that `mMagnesiumActiveConcentration` has no incomplete-ionization parameters in InGaN QW regions.
+- The tool then checks licenses back in.
+- No normal solver start/completion sequence is visible.
+
+Interpretation: **UNRESOLVED**.
+This message can no longer be assumed harmless solely from formatting; its causal role must be tested against the successful NtSide=0 branch.
+
+Highest-value comparison:
+- Search the successful NtSide=0 node's `*_des.log` for `mMagnesiumActiveConcentration`.
+- If identical messages occur and the successful run proceeds, they are not the failure root cause.
+- If absent in the successful branch, investigate parameter/material setup differences in the failed branch.
+
+---
+
+## 2026-09-26 — Node 12 Find Error contains warnings only
+
+Observed:
+- Workbench `Find Error` reaches `**** End`.
+- Visible entries are model/material warnings only:
+  - vanOverstraetendeMan E0 isotropic vs anisotropic values.
+  - missing incomplete-ionization parameters for `mMagnesiumActiveConcentration` in InGaN QW regions.
+- No explicit `ERROR` / `FATAL` root-cause line is visible.
+
+Interpretation:
+- These warnings are not yet proven to be the cause of `sdevice exit(1)`.
+- The actual SDevice log file `n12_des.log` is now the highest-priority evidence source.
+
+Next:
+1. Open `n12_des.log`, inspect the last 50–100 lines.
+2. Search there for error/fatal/abort/exception/signal.
+3. If non-diagnostic, inspect `n12_des.sta`.
+
+Status: **UNRESOLVED**
+
+---
+
+## 2026-09-26 — Node 12 SDevice exit(1) after successful preprocessing
+
+Job Log evidence:
+- Preprocessor successfully initialized.
+- `pp12_des.cmd` and `pp12_des.par` were generated.
+- Node dependency on node 1 was resolved.
+- SDevice launched as:
+  `sdevice --max_threads 4 pp12_des.cmd`
+- SDevice then terminated with:
+  `sdevice exited abnormally: exit(1)`
+
+Interpretation:
+- Workbench preprocessing/dependency failure is not the primary blocker.
+- The failure occurs inside SDevice after launch, likely during deck/model/material initialization before normal solve completion.
+- Exact root cause still requires the first explicit SDevice error/fatal message.
+
+Next:
+1. Use Node 12 Job Log **Find Error**.
+2. Search `n12_des.err` for `Error:`, `Fatal`, `Unsupported`, `not found`, `invalid`, `cannot`.
+3. If needed inspect `n12_des.sta`.
+
+Status: **UNRESOLVED**
+
+---
+
+## 2026-09-26 — Node 12 gjob abnormal child exit
+
+Observed in `n12_local.err`:
+```text
+Job failed
+Error: Unknown error: child process exited abnormally
+gjob exits with status 1
+```
+
+Meaning:
+- Workbench wrapper confirms the SDevice child process exited abnormally.
+- This is **not yet the root cause**; it is a generic wrapper-level failure report.
+
+Next:
+1. Inspect Node 12 Job Log bottom section.
+2. Inspect `n12_des.job` if Job Log is non-diagnostic.
+3. Inspect `n12_des.sta` for the last tool stage/status.
+4. Search `n12_des.err` / `n12_des.out` for segmentation, killed, memory, fatal, abort, license, or signal text.
+
+Status: **UNRESOLVED**
+
+---
+
+## 2026-09-26 — NtSide=1e18 Node 12 early termination evidence
+
+Observed from Node 12:
+- `n12_des.err`: E0 anisotropy and incomplete-ionization parameter warnings are visible; no explicit fatal line in the provided view.
+- `n12_des.out`: output ends after material/reference-potential initialization and license check-in.
+- Missing normal terminal text: `Sentaurus Device simulation finished`, `Good Bye !`.
+- No visible `.tdr` / `.plt` output in the Node Output Files list.
+
+Interpretation: **UNRESOLVED**, but the failure appears to occur before normal solve/output completion rather than as an observed late transient convergence failure.
+
+Next evidence:
+1. `n12_local.err`
+2. Workbench Job Log
+3. `n12_des.job` if needed
+4. Search `n12_des.err` for `Error`, `Fatal`, `abort`
+
+Do not alter Nt/Et/sigma/geometry until the process exit reason is known.
+
+---
+
 ## 2026-09-26 — NtSide=1e18 baseline split-run failed
 
 Observed:

@@ -1,5 +1,53 @@
 # LIVE AI STATE
 
+## 2026-09-26 — Node 12 des.log comparison needed
+
+- Failed `n12_des.log` terminates immediately after InGaN Mg incomplete-ionization parameter messages, then returns licenses.
+- No normal solver start is visible.
+- Causality is unresolved.
+- Highest-priority discriminator: compare the successful NtSide=0 node log for the exact same message.
+- Do not alter baseline physics until this comparison is done.
+
+
+## 2026-09-26 — Node 12 Find Error exhausted
+
+- Find Error output reaches `**** End` with warnings only; no explicit fatal/root cause visible.
+- The warnings concern E0 anisotropy and missing Mg incomplete-ionization parameters in InGaN.
+- Their causal role is unproven.
+- Highest-priority next evidence: `n12_des.log` bottom, then `n12_des.sta`.
+- Status remains UNRESOLVED.
+
+
+## 2026-09-26 — Node 12 failure location narrowed further
+
+- Workbench preprocessing: successful.
+- `pp12_des.cmd` / `pp12_des.par`: generated.
+- SDevice command launched: `sdevice --max_threads 4 pp12_des.cmd`.
+- SDevice returned `exit(1)` shortly after launch.
+- Failure is therefore inside SDevice initialization/model setup, not SWB preprocessing/dependency.
+- Root cause still UNRESOLVED.
+- Next: use **Find Error** / explicit error search in `n12_des.err`.
+
+
+## 2026-09-26 — Node 12 local.err result
+
+- `n12_local.err`: `Job failed` / `child process exited abnormally` / `gjob exits with status 1`.
+- This is a generic wrapper-level failure, not the root cause.
+- Root cause remains UNRESOLVED.
+- Next evidence: Node 12 Job Log bottom; then `n12_des.job` / `n12_des.sta`.
+- Do not alter Common Baseline physics yet.
+
+
+## 2026-09-26 — Ju Subin Node 12 failure narrowed
+
+- `NtSide=1e18` failed Node = 12.
+- `n12_des.err` visible messages are warnings; no fatal cause yet observed.
+- `n12_des.out` ends during initialization/license return, without normal SDevice completion text.
+- No TDR/PLT visible in Node 12 output list.
+- Priority next evidence: `n12_local.err`, then Workbench Job Log.
+- Status: UNRESOLVED; do not change baseline physical parameters yet.
+
+
 ## 2026-09-26 — 주수빈 baseline split-run 확인
 
 - OBSERVED: `NtSide=0` run 정상 완료.

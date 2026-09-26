@@ -1,5 +1,67 @@
 # Ju Subin Timeline
 
+## 2026-09-26 — Node 12 des.log 종료 지점 확인
+
+- **작성자:** ChatGPT
+- **작업자:** 주수빈
+- **상태:** OBSERVED / UNRESOLVED
+- **근거:** `n12_des.log` 마지막 구간.
+- **관찰:** 로그는 InGaN QW region의 `mMagnesiumActiveConcentration` incomplete-ionization parameter 메시지 반복 직후 license check-in으로 끝남. 정상 solve 시작/완료 로그는 없음.
+- **해석:** 해당 메시지가 단순 warning인지 SDevice initialization을 중단시킨 configuration error인지 아직 확정 불가.
+- **가장 강한 판별법:** 성공한 `NtSide=0` node의 대응 `*_des.log`에서 같은 메시지가 존재하는지 비교. 성공 node에도 동일하면 원인 가능성 낮음; failed node에만 있으면 핵심 원인 후보.
+- **다음:** 성공 node log 비교 후 필요 시 `n12_des.sta` 확인.
+
+
+## 2026-09-26 — Node 12 Find Error 결과: explicit fatal 없음
+
+- **작성자:** ChatGPT
+- **작업자:** 주수빈
+- **상태:** OBSERVED / UNRESOLVED
+- **근거:** Node 12 Job Log의 `Find Error` 결과 마지막 화면.
+- **관찰:** Find Error 결과는 vanOverstraetendeMan E0 anisotropy warning, InGaN QW의 Mg incomplete-ionization parameter warning들을 나열한 뒤 `**** End`로 종료.
+- **판단:** 현재 error stream / Find Error 결과에는 직접적인 ERROR/FATAL root cause가 나타나지 않음.
+- **다음:** Node Output Files의 `n12_des.log`를 열어 실제 SDevice simulation log의 마지막 부분 확인. 이후 필요 시 `n12_des.sta`.
+- **주의:** warning만으로 trap physics 또는 incomplete-ionization을 원인으로 확정하지 않음.
+
+
+## 2026-09-26 — Node 12 Job Log 확인: preprocessing 성공, SDevice exit(1)
+
+- **작성자:** ChatGPT
+- **작업자:** 주수빈
+- **상태:** OBSERVED / UNRESOLVED
+- **근거:** Node 12 Job Log 화면.
+- **관찰:** preprocessor가 `pp12_des.cmd`, `pp12_des.par`를 정상 생성했고 dependency 분석도 완료.
+- **실행:** `sdevice --max_threads 4 pp12_des.cmd`로 SDevice가 실제 시작됨.
+- **종료:** 10:45:47 시작 → 10:45:14? 화면상 약 수십 초 내 `sdevice exited abnormally: exit(1)` 기록. (정확 timestamp 표기는 화면 원문 우선)
+- **판단:** Workbench preprocessing/dependency 오류가 아니라 SDevice가 command deck 초기화/모델 설정 단계에서 non-zero exit한 것으로 좁혀짐.
+- **다음:** Job Log의 `Find Error` 기능 또는 `n12_des.err` 검색으로 최초 explicit error/fatal line 확인.
+
+
+## 2026-09-26 — Node 12 local.err 확인: wrapper-level abnormal exit
+
+- **작성자:** ChatGPT
+- **작업자:** 주수빈
+- **상태:** OBSERVED / UNRESOLVED
+- **근거:** `n12_local.err` 화면.
+- **내용:** `Job failed`, `Error: Unknown error: child process exited abnormally`, `gjob exits with status 1` 확인.
+- **해석:** Workbench/gjob가 SDevice child process의 비정상 종료를 감지한 것은 확인되었지만, 이 메시지만으로 원인을 특정할 수 없음.
+- **다음:** Node 12 **Job Log** 하단의 command/exit 정보 확인. 필요 시 `n12_des.job` 및 `n12_des.sta` 확인.
+- **보호:** 원인 확인 전 Nt/Et/sigma/geometry 변경 금지.
+
+
+## 2026-09-26 — NtSide=1e18 Node 12 로그 1차 확인
+
+- **작성자:** ChatGPT
+- **작업자:** 주수빈
+- **상태:** OBSERVED / UNRESOLVED
+- **근거:** Node 12 Explorer의 `n12_des.err` 및 `n12_des.out` 화면.
+- **관찰:** `n12_des.err`에는 vanOverstraetendeMan E0 anisotropy 관련 warning과 InGaN 영역의 `mMagnesiumActiveConcentration` incomplete-ionization parameter warning이 반복되지만, 화면에 직접적인 fatal/error는 보이지 않음.
+- **관찰:** `n12_des.out`은 reference-potential/parameter 초기화 뒤 license check-in으로 끝나며 `Sentaurus Device simulation finished` / `Good Bye !`가 없음.
+- **관찰:** Node 12 Output Files 화면에 `.tdr` / `.plt` 결과 파일이 보이지 않음.
+- **판단:** 현재 증거는 Newton/Transient 수렴 실패보다 Solve 본격 시작 전 초기화/프로세스 종료 가능성을 우선 시사. 정확 원인은 아직 미확인.
+- **다음:** `n12_local.err` → Job Log / `n12_des.job` 순서로 process exit reason 확인.
+
+
 ## 2026-09-26 — Common Baseline split-run 결과 확인: NtSide=0 성공, NtSide=1e18 실패
 
 - **작성자:** ChatGPT
