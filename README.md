@@ -46,7 +46,7 @@ An ongoing Sentaurus TCAD study of sidewall recombination in InGaN/GaN MicroLEDs
 | [Source Code](./source/README.md) | 공개된 Sentaurus command·Tcl 위치 |
 | [Recorded Results](./results/README.md) | 기존 calibration 기록과 진행 상태 구분 |
 | [Source & Attribution](./report/README.md) | 원본 출처와 공동 작업 이력 보존 |
-| [Research Dashboard](./docs/index.html) | 원본 형식의 대시보드 소스 |
+| [Research Dashboard](https://soybeanmilk0514-jpg.github.io/TCAD-MicroLED-Sidewall-Carrier-Confinement/) | 공개된 연구 대시보드 |
 
 ## Repository Scope
 
