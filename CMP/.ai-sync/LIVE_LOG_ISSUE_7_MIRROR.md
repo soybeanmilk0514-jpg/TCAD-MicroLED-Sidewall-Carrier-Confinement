@@ -1193,3 +1193,114 @@ B 핵심 근거:
 중요 경계: exact Carbon High-R microLED edge와 exact lateral AlGaN edge-wall microLED는 확인된 선행 구조가 아니라 우리 project hypothesis로 표현.
 
 ---
+
+## 2026-09-26T11:18:03Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: EVIDENCE / PRESENTATION
+상태: PREVIOUS-REVISION STRUCTURE IMAGE RECEIVED
+
+지난 baseline revision의 SVisual device images 2장을 확인함.
+- full-device view는 previous SDE와 시각적으로 일치: 4 µm mesa가 5 µm domain 중앙에 위치하고, top epitaxy + 4 µm n-GaN mesa + 0.3 µm n-GaN base + 양측 Nitride geometry가 보임.
+- top zoom view도 p-GaN/EBL/MQW thin-stack 위쪽 구조와 broad n-GaN transition을 보여줌.
+- 현재 display는 DopingConcentration map이므로 5 nm DmgL/R region 자체는 화면 해상도상 명확히 식별되지 않음.
+- 최종 baseline SDE/SDevice와 대조 전까지 CES 재사용 여부는 확정하지 않음.
+
+---
+
+## 2026-09-26T11:19:34Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: CODE COMPARISON / CES EVIDENCE
+상태: PRELIMINARY — SDE ONLY
+
+지난 SDE와 최종 SDE v1.0을 대조함.
+
+Geometry/material stack은 동일:
+- Wmesa 4.0 um, Wdomain 5.0 um
+- p-GaN 0.120 um, Al0.15Ga0.85N EBL 0.026 um
+- 4× In0.15Ga0.85N QW 0.003 um + GaN barrier 0.022 um (5 barriers)
+- n-GaN 4.0 um + numerical n-GaN base 0.3 um
+- 양측 DmgL/R 5 nm, Nitride 0.1 um
+- DmgL|Clean|DmgR region/material layout 동일
+
+변경점:
+1) p-GaN doping model: old PDopantActiveConcentration=3e17 -> final pMagnesiumActiveConcentration=9.59e18 (incomplete-ionization calibration 기반).
+2) top anode: old center top edge 한 개 지정 -> final DmgL/Clean/DmgR 3개 top edge를 모두 명시적으로 anode로 지정.
+3) mesh 강화: final에 GaN/AlGaN, GaN/InGaN interface refinement 및 EBL dedicated mesh 추가.
+
+판단:
+- 소자 'geometry' 자체의 previous-revision image는 최종 구조 설명용으로 재사용 가능성이 매우 높음.
+- 단, 기존 screenshot은 DopingConcentration map이므로 최종 p-GaN Mg 모델과 수치/색상은 동일하지 않음. 따라서 'final baseline doping map/result'로 사용하면 안 됨.
+- 최종 SDevice까지 확인 후 발표용 캡션과 사용 범위를 확정 예정.
+
+---
+
+## 2026-09-26T11:20:33Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: CODE COMPARISON / CES EVIDENCE
+상태: CONCLUSION FOR STRUCTURE IMAGE
+
+최종 MAIN SDevice v1.1을 지난 SDevice v1과 대조함.
+
+구조/sidewall defect geometry 관련 결론:
+- sidewall trap 위치(DmgL/R across p-GaN, EBL, Barrier0~4, QW1~4, n-GaN), NtSide parameter, Et=Ev+0.75 eV, sigma_n=sigma_p=1e-15은 유지.
+- SDevice 변경은 geometry 변경이 아님.
+
+주요 physics 변경:
+1) Thermionic 추가.
+2) global IncompleteIonization 제거 후 p-GaN(Clean/DmgL/DmgR)에만 pMagnesiumActiveConcentration 대상으로 region-specific 적용.
+3) trap/Mg diagnostic outputs 확대.
+4) numerical solve ramp(0→5 V), SRH/Auger/Radiative, mobility, polarization은 유지.
+
+최종 판단:
+- previous-revision SVisual image는 'device geometry / layer stack / mesa structure' 설명용으로 사용 가능.
+- 단, 해당 screenshot은 DopingConcentration map이며 old SDE의 p-type definition이 final Mg model과 달라졌으므로 'final baseline doping result' 또는 'final simulation result'로 사용하면 안 됨.
+- 최선: 기존 TDR을 재실행 없이 SVisual에서 Materials 또는 Regions display로 전환해 새 screenshot을 뽑아 geometry evidence로 사용. 캡션은 'Common Baseline geometry (geometry unchanged in final revision)' 권장.
+- full electrical/defect result는 final revision 완료 전까지 ongoing으로 표기.
+
+---
+
+## 2026-09-26T11:22:32Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: FINAL CODE COMPARISON / CES EVIDENCE USE
+상태: CONFIRMED
+
+최종 SVisual 2까지 확인 완료. Final SVisual 2는 SDevice TDR을 load/create_plot/select/fit하는 visualization-only script이며 geometry/physics를 변경하지 않음.
+
+전체 previous vs final comparison 결론:
+- Geometry/material stack: unchanged for presentation purposes.
+- Changed items are p-GaN Mg doping representation, top contact edge assignment, mesh refinement, Thermionic, region-specific Mg incomplete ionization, diagnostic outputs.
+- Therefore previous-revision SVisual device image may be reused to explain the Common Baseline geometry/layer stack.
+- However the old screenshot is a DopingConcentration map from the old doping revision, so it must not be labeled as the final baseline doping/result or final validated simulation result.
+- Best practice: if old TDR remains, switch display to Materials/Regions and capture a fresh geometry-only screenshot without rerunning SDevice.
+- Suggested caption: 'Common Baseline geometry (previous simulation revision; geometry unchanged in final revision)'.
+- Final electrical/defect validation remains ongoing until current final revision finishes.
+
+---
+
+## 2026-09-26T12:10:36Z — soybeanmilk0514-jpg
+
+[2026-09-26]
+작업자: 주수빈
+AI: ChatGPT
+구분: CES PRESENTATION / TCAD ASSET CHECKLIST
+
+학교 TCAD에서 확보한 발표용 이미지 3종:
+1) 전체 baseline device + DopingConcentration
+2) active-region zoom + DopingConcentration
+3) left sidewall 5 nm Dmg region zoom + DopingConcentration
+
+추가로 학교에서만 가능한 백업 자산으로 MQW/sidewall mesh view 1장 확보 권장. Final SWB flow screenshot은 이미 확보됨. Project A/B proposed structures는 아직 결과가 아니므로 집에서 PPT schematic으로 제작 가능. Old revision NtSide=1e18 preliminary mechanism run은 가능하면 학교에서 queue/start 후 결과는 preliminary validation으로만 사용.
+
+---
