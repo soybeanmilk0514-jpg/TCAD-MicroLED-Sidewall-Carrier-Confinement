@@ -1,6 +1,9 @@
 name: Sync CMP from TaekGyu0801/GGYU
 
 on:
+  push:
+    paths:
+      - ".github/workflows/sync-cmp.yml"
   schedule:
     - cron: "*/5 * * * *"
   workflow_dispatch:
