@@ -1304,3 +1304,73 @@ AI: ChatGPT
 추가로 학교에서만 가능한 백업 자산으로 MQW/sidewall mesh view 1장 확보 권장. Final SWB flow screenshot은 이미 확보됨. Project A/B proposed structures는 아직 결과가 아니므로 집에서 PPT schematic으로 제작 가능. Old revision NtSide=1e18 preliminary mechanism run은 가능하면 학교에서 queue/start 후 결과는 preliminary validation으로만 사용.
 
 ---
+
+## 2026-09-27T05:04:52Z — soybeanmilk0514-jpg
+
+[2026-09-27]
+작업자: 주수빈
+AI: ChatGPT
+구분: BASELINE CODE LINEAGE / PRESENTATION Q&A
+
+공식 Synopsys Sentaurus Training의 Applications_Library/GettingStarted/sdevice/GaN_PiN_Diode 예제를 기준으로 final CMP baseline 코드의 계보를 비교함.
+
+확인된 유지 요소:
+- SWB/SDE/SDevice/SVisual workflow
+- SDevice File/Electrode skeleton
+- Fermi, Piezoelectric_Polarization(strain), DefaultParametersFromFile
+- EffectiveIntrinsicDensity(NoBandgapNarrowing)
+- SRH/Auger/Radiative
+- Masetti + CaugheyThomas + Lombardi
+- anisotropic Poisson
+- slow-transient coupled solution
+- III-N용 ExtendedPrecision/ILS 계열 numerical strategy
+- SDE global mesh + doping refinement + GaN/Nitride interface-refinement 개념
+
+CMP용 주요 변경:
+- simple GaN p-i-n -> p-GaN / AlGaN EBL / 4x InGaN-GaN MQW / n-GaN microLED
+- 4 um mesa, 5 nm DmgL/Clean/DmgR sidewall split
+- Nitride interface donor trap 제거; Dmg semiconductor bulk acceptor trap NtSide로 교체
+- avalanche/reverse-breakdown 목적 제거; 0->5 V forward LED operation으로 변경
+- p-GaN Mg incomplete ionization을 region-specific으로 제한
+- Thermionic 추가
+- MQW/EBL/GaN-InGaN/GaN-AlGaN/5 nm damage 전용 mesh refinement 추가
+- output을 SRH/radiative/trap/band/carrier diagnostics 중심으로 확대
+- SVisual은 reverse breakdown extraction 대신 raw forward I-V + 2D TDR visualization으로 단순화
+
+발표 표현 권장:
+'표준 GaN p-i-n 예제의 검증된 III-nitride physics/numerics skeleton은 유지하고, geometry·defect definition·bias condition·mesh·diagnostic outputs을 microLED sidewall-recombination 연구 목적에 맞게 재작성했다.'
+
+---
+
+## 2026-09-27T05:17:48Z — soybeanmilk0514-jpg
+
+[2026-09-27]
+작업자: 주수빈
+AI: ChatGPT
+구분: EXACT CODE LINEAGE / PRESENTATION Q&A
+상태: ORIGINAL 5-NODE EXAMPLE FULLY RECEIVED
+
+사용자가 실제 출발점으로 사용한 GaN_PIN_Diode 예제의 5개 코드를 모두 확인:
+1) SDE
+2) forward SDevice
+3) forward SVisual
+4) reverse-breakdown SDevice
+5) reverse SVisual
+
+현재 CMP final baseline(4-node: SDE -> SDevice -> SVisual1 -> SVisual2)과 비교한 핵심:
+- 유지: File/Electrode skeleton, Fermi, Piezoelectric_Polarization(strain), DefaultParametersFromFile, NoBandgapNarrowing, SRH/Auger/Radiative, Masetti/CaugheyThomas/Lombardi, anisotropic Poisson, BE transient, ExtendedPrecision, Blocked+ILS solver, global mesh + MaxTransDiff 개념.
+- SDE 구조 전면 재작성: cylindrical/radius GaN p-i-n -> planar 4 um mesa p-GaN/AlGaN EBL/4x InGaN-GaN MQW/n-GaN + 0.3 um base; DmgL|Clean|DmgR 5 nm sidewall split; alloy composition profiles; full-width top contact.
+- defect model 변경: GaN/Nitride interface donor trap(3e13 cm^-2, midgap+0.36) -> 5 nm damaged semiconductor bulk acceptor trap NtSide (Ev+0.75, sigma 1e-15), all semiconductor Dmg regions.
+- coordinate/numerics: Cylindrical(yAxis=0) 제거 -> 2D Cartesian planar.
+- incomplete ionization: global -> p-GaN Mg regions only.
+- Thermionic: example comments mention it but actual forward/reverse Physics blocks did not activate it; final code explicitly adds Thermionic for GaN/AlGaN and GaN/InGaN heterojunction transport.
+- bias purpose: forward example 0->10 V and reverse example 0->-1e4 V + avalanche/BV extraction -> final 0->5 V forward microLED only.
+- reverse branch/Avalanche/impact-ionization outputs/BV extraction removed entirely.
+- mesh: original global + n/i junction + GaN/Nitride offset refinement -> final dedicated EBL, MQW, 5 nm Dmg, GaN/AlGaN, GaN/InGaN interface refinement.
+- SVisual1: original forward IV + Vknee extraction -> final raw 2D IV visualization only, with warning not to interpret as physical 4x4 um pixel current.
+- SVisual2: new 2D TDR viewer for SRH/radiative/trap/carrier/band visualization; no direct original counterpart.
+
+Presentation framing:
+'예제의 검증된 III-Nitride physics/solver skeleton은 유지하고, geometry·defect model·coordinate assumption·bias objective·mesh·diagnostics를 microLED sidewall-recombination 연구 목적에 맞게 재설계했다.'
+
+---
