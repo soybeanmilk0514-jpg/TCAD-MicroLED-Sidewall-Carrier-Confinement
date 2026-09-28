@@ -1374,3 +1374,77 @@ Presentation framing:
 '예제의 검증된 III-Nitride physics/solver skeleton은 유지하고, geometry·defect model·coordinate assumption·bias objective·mesh·diagnostics를 microLED sidewall-recombination 연구 목적에 맞게 재설계했다.'
 
 ---
+
+## 2026-09-28T02:46:00Z — soybeanmilk0514-jpg
+
+[2026-09-28][주수빈] 1차 수정 Baseline NtSide preliminary validation: SVisual I–V에서 NtSide=1e18이 동일 전압에서 더 낮은 forward current를 보임. Tcl ExtractVti로 raw 2D TotalCurrent I=2e-11에서 NtSide=0(n6) V=4.928 V, NtSide=1e18(n12) V=4.979 V 추출 (ΔV≈+0.051 V). 따라서 SRH map은 동일 전압이 아니라 동일 injected current 기준 비교가 필요. Final Baseline freeze/validation 완료로 해석하지 않음.
+
+---
+
+## 2026-09-28T02:51:52Z — soybeanmilk0514-jpg
+
+[2026-09-28][주수빈] SVisual Tcl에서 list_datasets 실행 시 'invalid command name "st_datasets"' 확인. 재검토 결과 1차 수정 SDevice는 File{ Plot="@tdrdat@" }만 사용하고 Plot(Collected) 또는 Solve 내부 Plot(Time=...) 저장을 쓰지 않았으므로, 기존 n*_des.tdr에는 기본적으로 최종 spatial state만 저장된 것으로 판단. 따라서 기존 완료 run에서 I=2e-11에 해당하는 4.928 V / 4.979 V의 2D SRH map을 사후 추출할 수 없음. 이번 발표는 I–V same-current extraction (4.928 vs 4.979 V, ΔV≈51 mV)을 preliminary electrical result로 사용하고, 5 V SRH maps는 equal-voltage qualitative illustration로만 취급. Final revision에는 필요 시 Solve 내부 Plot(-Loadable ... Time=...) 또는 Plot(Collected)로 중간 bias spatial states 저장하도록 보완.
+
+---
+
+## 2026-09-28T03:57:00Z — soybeanmilk0514-jpg
+
+[2026-09-28][주수빈] Final SDevice validation workflow correction: existing v1.1 already allows same-voltage comparison at final 5 V, but does not save intermediate spatial TDR states needed for same-current SRH/Radiative comparison (e.g., NtSide=0 at 4.928 V vs NtSide=1e18 at 4.979 V). Before long final reruns, add intermediate Plot output inside the 0→5 V Transient sweep (e.g. FilePrefix + Time/NoOverwrite) or Plot(Collected) workflow so spatial states near turn-on can be recovered. Physics itself need not change; this is an output/save-control change.
+
+---
+
+## 2026-09-28T03:58:40Z — soybeanmilk0514-jpg
+
+[2026-09-28][주수빈] Runtime decision for current Final Baseline run: do NOT abort/restart the run already ~2 days in solely to add intermediate-bias TDR Plot saves. Finish the current run and use it for final-state (5 V) validation plus I–V/current extraction. Same-current spatial SRH/Radiative maps are desirable but not required to justify completing this run; they can be added in the next sweep/A-B runs by updating the SDevice output/save control. Existing 5 V maps should be treated as same-voltage qualitative diagnostics, not same-current quantitative comparisons.
+
+---
+
+## 2026-09-28T04:04:52Z — soybeanmilk0514-jpg
+
+[2026-09-28][주수빈] User-provided Final SDevice v1.1을 v1.2로 수정. Physics/trap/solver/0→5 V ramp는 변경하지 않고 Transient 내부에 intermediate visualization TDR만 추가: t=(0.80,0.84,0.88,0.92,0.94,0.96,0.97,0.98,0.985,0.99,0.995) → 약 4.0~4.975 V. 5.0 V는 기존 최종 @tdrdat@ 사용. 목적은 same-current SRH/Radiative spatial comparison. 현재 2일째 실행 중인 Final run은 중단하지 않고 다음 run부터 적용.
+
+---
+
+## 2026-09-28T04:09:33Z — TaekGyu0801
+
+[2026-09-28]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / SYNC AUDIT
+상태: OBSERVED + UNRESOLVED
+
+요약:
+JuSubin의 Issue #7/개인 TIMELINE에는 Final SDevice v1.2 수정 이력이 존재하지만, 실제 CMP/tcad/CURRENT/sdevice2_defect_on.cmd는 아직 오래된 deck이다. 현재 파일에는 hard-coded Conc=1e18, global IncompleteIonization이 남아 있고 v1.2 intermediate TDR Plot/Time save가 없다.
+
+근거:
+- GitHub CURRENT 실제 파일 직접 확인
+- JuSubin Issue #7 최신 기록과 대조
+- Gmail 최신 CMP 알림은 Issue #7 알림이며 내용은 로그와 일치
+
+변경:
+- 코드 자체는 수정하지 않음. exact Final SDevice 전체 원문이 현재 GitHub에 없으므로 Issue 요약으로 재구성하지 않음.
+- CURRENT_STATUS / NEXT_ACTIONS / LIVE_STATE / RELAY / LeeTaekGyu TIMELINE / TEAM_TIMELINE에 sync gap 기록.
+
+다음:
+JuSubin이 실제 제공한 Final SDevice v1.1/v1.2 전체 원문을 회수해 CURRENT에 동기화한 뒤 provenance 재검증.
+
+---
+
+## 2026-09-28T06:20:54Z — TaekGyu0801
+
+[2026-09-28]
+작업자: 이택규
+AI: ChatGPT
+구분: LITERATURE EVIDENCE / BASELINE PARAMETER
+상태: CONFIRMED BOUNDARY
+
+요약:
+NtSide=1e18 cm^-3의 근거 수준을 재검증. Wu et al. (Micro and Nanostructures 177, 207542, 2023)은 sidewall 양쪽 5 nm 이내 acceptor-like trap 및 trap-density/energy-level sweep 방법을 직접 지지하지만, 현재 확인 가능한 근거만으로 1e18 cm^-3 자체를 Wu의 보편적/직접 측정 정답값으로 주장하면 안 됨.
+
+판단:
+CMP에서는 NtSide=1e18 cm^-3를 nominal Defect-ON calibration/sensitivity starting value로 유지하고, 최종 결론은 NtSide sweep으로 검증한다. 다른 III-nitride MicroLED 수치 모델에서 1e18 cm^-3 규모 sidewall trap 사용 사례가 있어 order-of-magnitude plausibility는 있음.
+
+산출물:
+발표/Q&A용 paper-style PDF 연구노트 작성.
+
+---
