@@ -1,3 +1,20 @@
+## 2026-09-29 — JuSubin active run direct evidence: Node 6 alive, high-bias convergence slowdown
+
+- Direct file evidence: active output is `n6_des.out` (Node 6), superseding the earlier Node-19 inference.
+- pseudo-time ≈0.93254, equivalent to ≈4.66 V on the known 0→5 V transient ramp.
+- A BE step exceeded 50 Newton iterations, was rejected, then automatically retried with a smaller timestep (~8.67e-06).
+- One failed attempt cost ~1244 s wallclock, dominated by solve time (~999 s).
+- Status: RUNNING, not hung at the captured moment; repeated high-bias cutbacks are the present runtime bottleneck.
+- Next check: confirm continued pseudo-time advance and timestep recovery before considering any restart or solver change.
+
+## 2026-09-29 — JuSubin 3-day Workbench status screenshot
+
+- OBSERVED: selected upper SDevice node reports `Status: waiting`; it has not started solving.
+- Lower branch Node 19 appears running in Workbench, but actual solver progress is not proven from topology alone.
+- Runtime blocker is now split into (1) scheduler/resource waiting for one branch and (2) unknown progress/hang status for the active branch.
+- Next evidence: Node 19 Job Log + last lines/timestamps of `n19_des.out`.
+- Do not abort/restart or modify baseline physics solely from this screenshot.
+
 # LIVE AI STATE
 
 ## 2026-09-28 — CRITICAL SOURCE SYNC GAP FOUND

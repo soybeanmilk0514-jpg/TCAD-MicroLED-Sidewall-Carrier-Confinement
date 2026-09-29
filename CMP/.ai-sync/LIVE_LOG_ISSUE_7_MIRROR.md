@@ -1448,3 +1448,48 @@ CMP에서는 NtSide=1e18 cm^-3를 nominal Defect-ON calibration/sensitivity star
 발표/Q&A용 paper-style PDF 연구노트 작성.
 
 ---
+
+## 2026-09-29T04:21:29Z — soybeanmilk0514-jpg
+
+[2026-09-29 13:19]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER / RUNTIME STATUS
+상태: OBSERVED + UNRESOLVED
+
+요약:
+사용자 제공 Sentaurus Workbench 화면에서 선택된 상단 SDevice branch의 Properties가 'Status: waiting'으로 확인됨. 따라서 해당 branch는 아직 solver 계산을 시작하지 않은 대기 상태다. 하단 Node 19는 topology상 실행 중 표시로 보이지만, 화면만으로 3일 동안 실제 BE-step이 계속 전진했는지는 확인 불가.
+
+근거:
+- 사용자 제공 Workbench screenshot
+- selected SDevice Properties: Status = waiting
+
+다음:
+Node 19의 Job Log bottom과 n19_des.out 마지막 30~50줄/마지막 수정시각 확인. 로그가 계속 갱신되고 bias/BE-step이 증가하면 정상 장시간 run으로 유지. 장시간 timestamp/step 정지라면 scheduler/license/resource/hang 진단.
+
+주의:
+이 화면만으로 run abort/restart 또는 baseline physics 변경하지 않음.
+
+---
+
+## 2026-09-29T04:25:12Z — soybeanmilk0514-jpg
+
+[2026-09-29 13:21]
+작업자: 주수빈
+구분: PROGRESS / BLOCKER
+상태: OBSERVED
+
+Node 6 n6_des.out에서 pseudo-time 약 0.93254까지 진행 확인. 한 BE step이 Newton 50회 초과로 reject된 뒤 timestep 약 8.67e-06으로 줄여 자동 재시도함. 캡처 시점에는 hang이 아니라 high-bias convergence slowdown 상태. 다음 확인은 pseudo-time 추가 증가 및 timestep 회복 여부.
+
+---
+
+## 2026-09-29T04:37:26Z — soybeanmilk0514-jpg
+
+[2026-09-29]
+작업자: 주수빈
+구분: RISK ASSESSMENT
+상태: OBSERVED + UNRESOLVED
+
+Node 6은 약 4.66 V까지 진행했고 Newton 비수렴 후 timestep cutback으로 재시도 중. 현재는 fatal error 징후가 아니라 정상 adaptive retry 상태. 다만 마지막 고전압 구간에서 반복 cutback이 지속되어 timestep이 MinStep까지 내려가고 accepted progress가 사라지면 nonconvergence failure 가능성은 남아 있음. 마지막까지 성공을 보장할 수는 없으며, pseudo-time 증가 여부와 timestep 회복이 핵심 판별 기준.
+
+---

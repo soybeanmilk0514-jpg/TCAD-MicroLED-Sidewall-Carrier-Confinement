@@ -1,3 +1,36 @@
+## 2026-09-29 — Node 6 end-of-ramp failure risk assessment
+
+- **작업자:** 주수빈
+- **상태:** RESEARCH JUDGMENT / RUNNING
+- 현재 Node 6은 pseudo-time 약 0.93254(약 4.66 V)까지 진행했고, Newton 50회 초과 후 timestep cutback으로 재시도 중.
+- 이 상태는 즉시 fatal error를 의미하지 않으며, 캡처 시점에는 solver가 정상적으로 adaptive retry를 수행하고 있음.
+- 다만 마지막 고전압 구간에서 반복 비수렴이 지속되어 timestep이 `MinStep`까지 축소되거나 accepted progress가 사라지면 최종적으로 nonconvergence failure가 발생할 가능성은 남아 있음.
+- 현재 근거만으로 마지막까지 반드시 성공한다고 보장할 수는 없지만, 이미 high-bias 구간까지 진입했고 자동 cutback이 작동 중이므로 즉각적인 오류 징후로 보지는 않음.
+- 판별 기준: pseudo-time이 계속 증가하고 successful step이 간헐적으로라도 나오면 계속 진행; 동일 위치에서 장시간 정지하며 timestep이 계속 축소되면 failure risk 상승.
+
+## 2026-09-29 — Active Node 6 output confirms ongoing solve with severe cutback
+
+- **작업자:** 주수빈
+- **상태:** OBSERVED / RUNNING BUT SLOW
+- **근거:** 사용자 제공 `Node 'n6' Output` / `n6_des.out` 화면.
+- pseudo-time 약 0.93254까지 진행했으며, 0→5 V ramp 기준 약 4.66 V 구간에 해당.
+- 한 BE step이 Newton iteration 50회를 넘겨 수렴하지 못해 reject됨.
+- SDevice가 자동으로 timestep을 약 8.67e-06으로 줄여 재시도 시작.
+- 해당 실패 step의 wallclock은 약 1244 s(약 20.7분), solve time 약 999 s.
+- 캡처 시점에는 hang이 아니라 adaptive timestep cutback 중이나, high-bias 수렴성이 나빠 전체 runtime이 크게 늘고 있음.
+- 직전 topology 화면만으로 active node를 Node 19로 추정했던 내용은 direct output 증거에 따라 Node 6으로 정정.
+- **다음:** `n6_des.out`에서 pseudo-time이 0.93255 이후 계속 증가하는지와 timestep 회복 여부 확인. 장시간 같은 위치 정지 또는 MinStep까지 지속 cutback일 때만 solver intervention 검토.
+
+## 2026-09-29 — 3-day run status screenshot checked
+
+- **작업자:** 주수빈
+- **상태:** OBSERVED / RUNTIME BLOCKER
+- **근거:** 사용자 제공 Sentaurus Workbench 화면.
+- 선택된 상단 SDevice branch는 오른쪽 Properties에서 `Status: waiting` 확인. 즉 해당 branch는 아직 계산 시작 전 대기 상태.
+- 하단 branch의 Node 19는 Workbench topology상 실행 중 표시로 보이지만, 이 화면만으로 실제 solver가 계속 전진 중인지/hang인지 확정할 수 없음.
+- 따라서 현재 상태는 "두 branch 모두 3일 동안 계산 중"으로 해석하지 않음. 최소 한 branch는 scheduler/resource 대기 상태이며, 실행 중 branch의 실제 진행 여부는 Node 19 Job Log와 `n19_des.out` 마지막 timestamp/BE-step으로 확인해야 함.
+- **다음:** Node 19 선택 → Job Log bottom 및 `n19_des.out` 마지막 30~50줄 확인. 마지막 로그 시간이 현재에 가깝고 BE-step이 증가하면 정상 장시간 계산; 오래 멈춰 있으면 resource/hang 진단.
+
 # Ju Subin Timeline
 
 ## 2026-09-26 — Project A/B command-level implementation strategy refined

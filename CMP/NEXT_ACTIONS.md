@@ -1,3 +1,21 @@
+## 2026-09-29 — Ju Subin next check for active Node 6
+
+1. Leave Node 6 running for now.
+2. Reopen `n6_des.out` after additional runtime and confirm pseudo-time advances beyond ~0.93255.
+3. Check whether timestep recovers after successful steps or continues shrinking toward `MinStep`.
+4. If pseudo-time continues increasing, keep the run; this is slow convergence, not a hang.
+5. If the same pseudo-time persists for many hours or timestep repeatedly collapses without accepted progress, then diagnose solver settings/resource state before restarting.
+6. Do not change NtSide, Et, sigma, geometry, or other Common Baseline physics for this runtime symptom alone.
+
+## 2026-09-29 — Ju Subin immediate run-status check
+
+1. Select Node 19 (the branch that appears active) in Workbench.
+2. Open **Job Log** and inspect the bottom for current state, host/job ID, exit/wait messages, or continuing SDevice output.
+3. Open `n19_des.out` and inspect the last 30–50 lines; note the last BE-step/time/bias and whether the file timestamp is still updating.
+4. If the log is still updating and BE-step/bias increases, leave it running; the other SDevice branch can remain `waiting` until resources free.
+5. If the log timestamp has not changed for many hours and the same solve line is frozen, then diagnose scheduler/license/memory/hang before any restart.
+6. Do not change baseline physics or abort both branches based only on the Workbench graph.
+
 # Next Actions
 
 ## 2026-09-28 — Highest priority sync repair
