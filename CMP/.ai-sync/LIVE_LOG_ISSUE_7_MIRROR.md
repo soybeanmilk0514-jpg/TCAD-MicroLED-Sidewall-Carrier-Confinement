@@ -1493,3 +1493,54 @@ Node 6 n6_des.out에서 pseudo-time 약 0.93254까지 진행 확인. 한 BE step
 Node 6은 약 4.66 V까지 진행했고 Newton 비수렴 후 timestep cutback으로 재시도 중. 현재는 fatal error 징후가 아니라 정상 adaptive retry 상태. 다만 마지막 고전압 구간에서 반복 cutback이 지속되어 timestep이 MinStep까지 내려가고 accepted progress가 사라지면 nonconvergence failure 가능성은 남아 있음. 마지막까지 성공을 보장할 수는 없으며, pseudo-time 증가 여부와 timestep 회복이 핵심 판별 기준.
 
 ---
+
+## 2026-10-03T12:30:34Z — TaekGyu0801
+
+[2026-10-03]
+작업자: 이택규
+AI: ChatGPT
+구분: RESEARCH FRAMING / MANUSCRIPT STRATEGY
+상태: PROPOSED
+
+요약:
+Common Baseline의 동일 5 nm sidewall damage를 유지한 상태에서 Project A(GaN:C resistive edge)와 Project B(localized AlGaN lateral heterobarrier)를 동일 injected current 기준으로 비교하는 논문 구조를 제안.
+
+핵심 novelty framing:
+- generic sidewall mitigation/current confinement이 아니라
+- 동일 defect physics 하에서 resistive blocking vs band-offset blocking을 mechanism-resolved head-to-head 비교
+- Carbon localized high-R edge는 잠재적으로 강한 차별점
+- AlGaN은 lateral confinement 선행문헌이 있으므로 exact planar edge geometry/use-case/comparison 수준으로 claim 제한
+
+필수 결과:
+edge carrier access 감소 -> integrated sidewall SRH 감소 -> MQW radiative/IQE 보존/증가를 공간 분포로 증명하고, Vf/current crowding/Auger penalty와 optimum design window를 함께 제시.
+
+파일:
+CMP/PAPER_MANUSCRIPT_STRATEGY_PROPOSED.md
+
+---
+
+## 2026-10-03T12:38:16Z — TaekGyu0801
+
+[2026-10-03]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / RUNTIME OPTIMIZATION
+상태: USER-REPORTED + PROPOSED
+
+요약:
+사용자가 주수빈 baseline run이 약 7일간 계산 중인 것으로 보인다고 보고. 최신 solver output으로 7일 연속 progress는 아직 직접 검증되지 않음.
+
+기존 근거:
+- 2026-09-29 Node 6: ~4.66 V에서 Newton failure 후 timestep ~8.67e-6까지 cutback.
+- stale GitHub CURRENT deck의 Transient MaxStep=1e-3은 0→5 V ramp에서 최대 5 mV/accepted-step으로, cutback이 없어도 최소 약 1000 accepted steps 필요.
+
+판단:
+physics/Nt/Et/sigma/geometry를 바꾸기보다 exact running v1.1/v1.2 source 회수 후 numerical-only optimization branch를 benchmark하는 것이 우선.
+
+다음:
+latest output 확보 → step/Newton/wallclock 진단 → MaxStep/staged ramp, Newton iteration policy, ErrRef, far-field mesh를 하나씩 benchmark. Quasistationary는 transient와 final DC 결과 일치 여부를 검증하는 acceleration branch로만 시험.
+
+주의:
+현재 GitHub CURRENT SDevice는 Final v1.2와 sync되지 않았으므로 직접 수정하지 않음.
+
+---
