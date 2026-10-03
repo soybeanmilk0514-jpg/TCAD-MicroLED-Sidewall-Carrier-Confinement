@@ -1,3 +1,112 @@
+## 2026-10-03 — Copy x6 vs x7 semantic mesh identity confirmed
+
+- 작업자: 이택규
+- 상태: CONFIRMED
+- Copy x6 and x7 use identical pp1_dvs.cmd, identical pp6_des.cmd, and identical pp6_des.par.
+- Mesh logs show the same 138137 vertices, 274946 elements, and max connectivity 9.
+- n1_msh.log differences are limited to process ID and mesh-generation timing/rate.
+- Therefore x6 and x7 are semantically the same device/mesh/solver input for the active SDevice run; differing TDR binary hashes are non-physical serialization/metadata differences.
+- Operational conclusion: x6 and x7 are duplicate active computations. Since x6 is farther progressed, keep x6 if one v1.1 reference is desired and stop x7 after preserving provenance.
+- x8 remains the preferred latest v1.2 reference with intermediate TDR snapshots.
+
+## 2026-10-03 — correction: Copy x6 vs x7 SDE inputs are identical
+
+- 작업자: 이택규
+- 상태: OBSERVED / CORRECTION
+- Copy x6 and Copy x7 `pp1_dvs.cmd` SHA-256 are identical: `5685528bc3ec338ce104040b0503be43ef032094976d69995529eb5d6fb4e658`.
+- `diff -u pp1_dvs.cmd` produced no differences.
+- Therefore the SDE geometry/mesh-generation command input is byte-identical between x6 and x7.
+- Previous interpretation that differing `n1_msh.tdr` hashes prove a different mesh is withdrawn. Binary TDR hash differences can reflect metadata/order/output serialization and must be verified semantically.
+- Next verification: compare TDR sizes plus SDE/mesh logs and node/element statistics before declaring the meshes different.
+
+## 2026-10-03 — active baseline lineage clarified by timestamps and diff
+
+- 작업자: 이택규
+- 상태: CONFIRMED / IMPORTANT PROVENANCE
+- Copy x6 current source header = Final SDevice v1.1.
+- Copy x7 current source header = Final SDevice v1.2 and differs from x6 source only by intermediate Plot snapshots block.
+- However Copy x7 active pp6_des.cmd timestamp is 2026-09-28 10:31, while its sd_fdiv_des.cmd was edited later at 12:17. Therefore the already-running Copy x7 job did NOT preprocess from the later v1.2 source revision.
+- Copy x8 pp6_des.cmd timestamp is 18:43 and exact diff vs Copy x7 active pp6 shows only the intermediate Plot block. Thus Copy x8 is the actual v1.2-running deck; Copy x7 active run is effectively v1.1 numerics/output behavior despite the folder's source file later being edited to v1.2.
+- Copy x6 and Copy x7 active pp6_des.cmd/par hashes are identical, but their n1_msh.tdr hashes differ; therefore their active simulations are not identical because the grid input differs.
+- Copy x7 and Copy x8 share identical grid hash and parameter hash, with pp6 difference only intermediate output save block.
+- Preferred exact running reference: Copy x8.
+- Remaining provenance task: determine why Copy x6 and x7 mesh hashes differ by comparing SDE/preprocessed mesh-generation inputs.
+
+## 2026-10-03 — Copy x7 vs Copy x8 exact command diff confirmed
+
+- 작업자: 이택규
+- 상태: CONFIRMED
+- Copy x7 and Copy x8 have identical source hash, grid hash, and pp6_des.par hash.
+- Exact `diff -u pp6_des.cmd` shows the only command-file difference is an added intermediate `Plot(-Loadable FilePrefix="n6_inter" NoOverWrite Time=(0.80 ... 0.995))` block in Copy x8.
+- No Physics, Math, Solve, trap, bias-ramp, or parameter differences were shown by the exact diff.
+- Therefore Copy x7 and Copy x8 are the same device/physics/numerics; Copy x8 is an output-save revision only.
+- Runtime implication: the multi-day slowdown is not caused by a changed physical model between x7 and x8. Intermediate TDR writes may add I/O overhead at specified save points, but the dominant observed bottleneck remains high-bias Newton nonconvergence and timestep cutback.
+- Preferred future reference for analysis/manuscript workflow: Copy x8, because it preserves intermediate spatial states while retaining the same underlying device model.
+
+## 2026-10-03 — active run identity correction after grid/source hashes
+
+- 작업자: 이택규
+- 상태: OBSERVED / CORRECTION
+- 추가 터미널 검증 결과:
+  - Copy x6 path: n1_msh.tdr SHA256 = 716df696..., sd_fdiv_des.cmd SHA256 = ee13bea5...
+  - Copy x7 path: n1_msh.tdr SHA256 = 762d2d57..., sd_fdiv_des.cmd SHA256 = 56a8be69...
+  - Copy x8 path: n1_msh.tdr SHA256 = 762d2d57..., sd_fdiv_des.cmd SHA256 = 56a8be69...
+- 따라서 Copy x7과 Copy x8은 source + generated mesh가 byte-identical.
+- Copy x6과 Copy x7은 pp6_des.cmd/par은 동일했지만 source/grid가 다르므로 전체 simulation input이 동일하다고 볼 수 없음.
+- Copy x8은 Copy x7과 same source/grid/par이지만 pp6_des.cmd hash가 다르며 intermediate TDR files가 존재. Exact diff로 output-save-only revision인지 확인 필요.
+- 다음: Copy x7 vs x8 pp6_des.cmd diff, Copy x6 vs x7 source diff 확인.
+
+## 2026-10-03 — active run comparison from terminal
+
+- 작업자: 이택규
+- 상태: OBSERVED
+- semi437의 세 SDevice run을 직접 비교함.
+- 첫 번째와 두 번째 run은 pp6_des.cmd와 pp6_des.par SHA-256이 각각 동일하여 preprocessed SDevice command/parameter가 동일함.
+- 첫 번째 진행: pseudo-time 약 0.94147, anode 약 4.707 V.
+- 두 번째 진행: pseudo-time 약 0.92964, anode 약 4.648 V.
+- 세 번째 run은 pp6_des.par은 동일하지만 pp6_des.cmd 해시가 다르고 intermediate TDR 파일들이 존재함. 진행은 pseudo-time 약 0.92647, anode 약 4.632 V.
+- 세 run 모두 고전압 구간에서 Newton iteration 정체와 timestep cutback이 runtime 병목으로 관찰됨.
+- 다음: 첫 번째와 세 번째 pp6_des.cmd exact diff, grid input hash 확인.
+
+## 2026-10-03 — semi437 3 active baseline runs: exact pp6 hash/progress comparison
+
+- **작성자:** ChatGPT
+- **작업자:** 이택규
+- **상태:** OBSERVED
+- **근거:** semi437 터미널에서 세 active project directory의 file list, SHA-256, n6_des.out tail 직접 확인.
+- **Run A:** `...Copy_Copy_Copy_Copy_Copy_Copy` (Sep26 start)
+  - pp6_des.cmd SHA256 = `928613d261c0265b8ac44acb97ed6d80867557dd2910f2648abcc477f60440c3`
+  - pp6_des.par SHA256 = `60405755de61500d9815a8e9ecca6a7a465783d77eb8e5dadf1db515aeb10039`
+  - latest visible pseudo-time ≈0.94147, anode ≈4.707 V
+  - repeated high-bias Newton stalls; a failed step exceeded 50 iterations and cost ~1073 s before timestep cutback.
+- **Run B:** `...Copy_Copy_Copy_Copy_Copy_Copy_Copy` (Sep28 start)
+  - pp6_des.cmd SHA256 identical to Run A
+  - pp6_des.par SHA256 identical to Run A
+  - latest visible pseudo-time ≈0.92964, anode ≈4.648 V
+  - same high-bias convergence pattern.
+  - Therefore SDevice preprocessed command/parameter are byte-identical to Run A.
+- **Run C:** `...Copy_Copy_Copy_Copy_Copy_Copy_Copy_Copy` (Sep28 start)
+  - pp6_des.cmd SHA256 = `2dfcc98effe145ec944fb8ee5d6914f5f098e54d1bf2319c69acc76afe1692e6` (different)
+  - pp6_des.par SHA256 identical to A/B
+  - latest visible pseudo-time ≈0.92647, anode ≈4.632 V
+  - intermediate TDRs `n6_inter_0000..0003_des.tdr` exist, consistent with a revised output-save workflow.
+- **Interpretation:** A and B are duplicate SDevice decks at cmd/par level; C is a different command revision with the same parameter file. Exact command-line differences between A/B and C are not yet inspected.
+- **Next:** run `diff -u` between A and C pp6_des.cmd, hash the grid input(s), and inspect Solve/Math blocks before deciding whether any duplicate run should be stopped.
+
+## 2026-10-03 — semi437 active TCAD process inventory 확인
+
+- **작성자:** ChatGPT
+- **작업자:** 이택규
+- **구분:** runtime evidence
+- **상태:** OBSERVED
+- **직접 확인:** 2026-10-03 22:31:57 KST 터미널 `ps -ef` 출력에서 semi437 계정의 active SDevice가 3개 확인됨.
+  1. PID 61681 — started Sep26 — `.../GaN_PiN_Diode_Copy_Copy_Copy_Copy_Copy_Copy` — `sdevice --max_threads 4 pp6_des.cmd`
+  2. PID 42738 — started Sep28 — `.../GaN_PiN_Diode_Copy_Copy_Copy_Copy_Copy_Copy_Copy` — `sdevice --max_threads 4 pp6_des.cmd`
+  3. PID 79167 — started Sep28 — `.../GaN_PiN_Diode_Copy_Copy_Copy_Copy_Copy_Copy_Copy_Copy` — `sdevice --max_threads 4 pp6_des.cmd`
+- **사용자 설명:** 세 작업 중 두 개는 같은 조건이며, 사용자가 Workbench에서 부르는 Copy 6 / Copy 7이 같은 소자라고 설명.
+- **주의:** 폴더명의 Copy 반복 횟수와 사용자가 부르는 Workbench Copy 번호의 정확한 대응은 아직 확정하지 않음.
+- **다음:** 각 3개 작업 디렉터리에서 `pp6_des.cmd`, `pp6_des.par`, `n6_des.out` tail을 직접 수집해 동일/상이 조건을 확정.
+
 ## 2026-10-03 — 7-day baseline runtime concern / numerics optimization direction
 
 - **작성자:** ChatGPT

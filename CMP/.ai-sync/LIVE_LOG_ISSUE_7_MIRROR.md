@@ -1544,3 +1544,22 @@ latest output 확보 → step/Newton/wallclock 진단 → MaxStep/staged ramp, N
 현재 GitHub CURRENT SDevice는 Final v1.2와 sync되지 않았으므로 직접 수정하지 않음.
 
 ---
+
+## 2026-10-03T14:22:10Z — TaekGyu0801
+
+[2026-10-03 22:31 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RUNTIME EVIDENCE
+상태: OBSERVED
+
+semi437 계정 터미널 ps 출력에서 active SDevice 3개 확인:
+- PID 61681, Sep26 start, ...Copy x6 folder, pp6_des.cmd, 4 threads
+- PID 42738, Sep28 start, ...Copy x7 folder, pp6_des.cmd, 4 threads
+- PID 79167, Sep28 start, ...Copy x8 folder, pp6_des.cmd, 4 threads
+
+사용자 설명상 3개 중 2개는 동일 조건이며 Workbench에서 Copy 6 / Copy 7이 같은 소자. 폴더명 반복횟수와 UI Copy 번호 매핑은 아직 확정하지 않음.
+
+다음: 세 디렉터리 각각의 pp6_des.cmd / pp6_des.par / n6_des.out tail을 확보해 동일/상이 조건과 runtime 병목을 직접 비교.
+
+---

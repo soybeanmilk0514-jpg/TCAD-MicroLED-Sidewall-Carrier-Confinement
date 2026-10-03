@@ -1,3 +1,146 @@
+## 2026-10-03 — overnight execution plan
+
+### Tonight
+- Keep Copy x6 running as the historical v1.1 reference because it is currently the farthest progressed.
+- Keep Copy x8 running as the preferred v1.2 reference with intermediate spatial TDR saves.
+- Stop/retire Copy x7 through Workbench because it is semantically duplicate with x6 for the active v1.1 calculation and less progressed.
+- Do not start a new full FAST baseline tonight before the exact x8 bundle is reviewed.
+- Preserve/upload `CMP_Copy8_active_20261003.tgz` for tomorrow's code audit.
+
+### Tomorrow
+1. Review exact x8 source/preprocessed cmd/par/log.
+2. Create a separate FAST_BASELINE branch/copy; never edit x8 live directory.
+3. First benchmark only the highest-value numerical change: Newton iteration/cutback policy.
+4. Then test staged bias/MaxStep and ErrRef one at a time.
+5. Only after short benchmark equivalence is confirmed, launch full 0→5 V FAST baseline.
+6. Split subsequent validated runs across JuSubin and LeeTaekGyu accounts.
+
+## 2026-10-03 — CORRECTION: abstract deadline does NOT reduce baseline validation scope
+
+- 작업자: 이택규
+- 상태: DECISION
+- 사용자 결정: 초록 마감이 있어도 Common Baseline 자체의 검증 강도는 낮추지 않는다.
+- 따라서 abstract fast-track은 validation 항목 삭제가 아니라 runtime 최적화, 중복 run 제거, dual-account 병렬화로 시간을 줄이는 전략으로 수정한다.
+
+### Baseline must-have before Project A/B main sweep
+1. Exact baseline source freeze and provenance.
+2. FAST numerical deck validated against Copy x8 reference.
+3. Defect OFF vs nominal Defect ON physical trend.
+4. NtSide sensitivity: 0 / 1e17 / 1e18 / 1e19.
+5. Mesa-size sensitivity: 4 / 10 / 20 um.
+6. Same-current comparison for I-V/Vf, sidewall SRH, MQW radiative/IQE proxy, spatial carrier/current distribution.
+7. Mesh-convergence check around the chosen production mesh.
+8. Reproducibility on JuSubin and LeeTaekGyu accounts using the same frozen baseline.
+
+### Time compression strategy
+- Stop duplicate runs.
+- Optimize numerics without changing physics.
+- Run short convergence benchmarks before full sweeps.
+- Split independent validation cases across two accounts in parallel.
+- Reuse already-completed trustworthy reference outputs where provenance is exact.
+
+### Abstract strategy
+Do not claim Project A/B final optimization until baseline gate is passed. If needed, submit an abstract centered on the validated baseline + initial mechanism results while full DOE continues, but baseline itself remains fully validated.
+
+## 2026-10-03 — ABSTRACT-DEADLINE FAST TRACK
+
+### Deadline context
+논문 초록을 2026-10 내 제출해야 하므로 validation scope를 단계화한다.
+
+### Phase 1 — Minimum defensible baseline (immediate priority)
+Goal: scientific baseline + runtime reduction sufficient to start Project A/B.
+Required before A/B:
+- Copy x8 exact source bundle frozen.
+- Duplicate x7 retired to free resources.
+- One FAST numerical candidate benchmarked against Copy x8.
+- Defect OFF vs nominal Defect ON trend confirmed.
+- Same-current I-V / sidewall-SRH / MQW-radiative comparison available at representative bias/current.
+Not required before abstract:
+- full NtSide sweep 0/1e17/1e18/1e19
+- mesa 4/10/20 um sweep
+- full mesh-convergence campaign
+- exhaustive A/B DOE
+
+### Phase 2 — Abstract-supporting preliminary A/B
+After FAST baseline freeze:
+- Run one nominal Project A condition and one nominal Project B condition.
+- Compare against Defect-ON baseline at same injected current.
+- Minimum evidence: Vf, integrated sidewall SRH, MQW radiative/IQE proxy, spatial current/carrier redistribution.
+- If one project is delayed, abstract can be framed around baseline + one demonstrated edge-access mechanism and the second as ongoing comparative extension only if wording is accurate.
+
+### Phase 3 — Full paper validation after abstract
+Perform NtSide, mesa scaling, A/B DOE, mesh convergence, robustness, dual-account reproduction.
+
+### Operational principle
+Do not spend the abstract window on exhaustive validation. Freeze a defensible baseline quickly, collect one clear mechanism result per project, then expand after abstract submission.
+
+## 2026-10-03 — PROPOSED fast-baseline acceptance protocol
+
+Runtime optimization must not be accepted solely because it is faster. Compare each candidate against the Copy x8 reference with frozen physics.
+
+Proposed numerical-equivalence checks:
+- same I-V / total current trend at matched bias/current
+- target-current Vf difference preferably within ~10 mV
+- integrated sidewall SRH difference preferably within ~2%
+- MQW radiative/IQE-proxy difference preferably within ~2%
+- no qualitative change in carrier/current spatial distribution
+- identical conclusions for Defect OFF vs nominal Defect ON
+
+These are project acceptance targets, not literature-standard universal tolerances, and may be tightened after the first benchmark.
+
+First runtime target:
+- reduce week-scale runs to <=24 h if possible without losing numerical equivalence.
+- observed normal accepted steps are often ~25 s while rejected high-bias steps can exceed 1000 s, so Newton-failure handling is the highest-priority lever.
+
+## 2026-10-03 — Baseline freeze + runtime acceleration plan
+
+### Goal
+Create a baseline that is both scientifically defensible and fast enough for repeated DOE/sweeps.
+
+### Baseline reference
+- Use Copy x8 as the preferred latest reference.
+- Preserve its exact running source/preprocessed input before any edits.
+- Keep geometry, epitaxy, contacts, trap model, Nt/Et/sigma, recombination models, Mg incomplete-ionization setup, heterojunction physics, and output definitions frozen during runtime optimization.
+
+### Immediate actions
+1. Stop/retire Copy x7 after preserving provenance, because x6/x7 are semantically duplicate active calculations.
+2. Keep one v1.1 historical reference if desired (x6) and keep x8 as the latest v1.2 reference.
+3. Build a separate FAST_BASELINE branch cloned from x8; never edit the live x8 directory.
+4. Optimize numerics in controlled short benchmarks, one group at a time:
+   A. Newton iteration/cutback policy
+   B. bias-step strategy and staged ramp
+   C. ErrRef / convergence tolerance sensitivity
+   D. mesh reduction only outside MQW, 5 nm sidewall damage, and heterointerfaces
+5. For each candidate, compare against x8 at the same bias/current:
+   - I-V / Vf
+   - total current
+   - integrated sidewall SRH
+   - MQW radiative recombination / IQE proxy
+   - spatial carrier/current distribution
+   - convergence failures / cutbacks
+   - wallclock per accepted step
+6. Accept a faster deck only if electrical/physical outputs remain within a predefined tolerance versus the reference.
+7. Once accepted, run the frozen FAST_BASELINE independently on JuSubin and LeeTaekGyu accounts before Project A/B divergence.
+
+### Current observed runtime bottleneck
+- High-bias Newton stagnation near RHS ~1e-3 causes 40–50 iteration failures, >1000 s wasted per rejected step, followed by timestep cutback.
+- This is the first optimization target; output TDR saving is secondary.
+
+## 2026-10-03 — next actions after identifying Copy x8 as latest useful baseline revision
+
+1. Preserve the exact Copy x8 active-run bundle before any edits:
+   - sd_fdiv_des.cmd
+   - pp6_des.cmd / pp6_des.par
+   - n1_msh.tdr hash
+   - n6_des.out/log/sta/err
+   - intermediate n6_inter_*.tdr inventory
+2. Confirm Copy x6 vs Copy x7 source differences to document prior-revision changes.
+3. Treat Copy x8 as the preferred latest reference because x7/x8 have identical source/grid/par and x8 differs only by intermediate TDR saves.
+4. Copy x7 is numerically redundant with x8 for device physics; after preserving provenance, consider stopping x7 to free compute/license resources while keeping x8 running.
+5. Do not stop Copy x6 until its source/grid differences vs x7 are documented and its value as historical reference is decided.
+6. Create a separate numerical-optimization branch from Copy x8 exact source; do not edit the running directory in place.
+7. Benchmark runtime changes with frozen physics/geometry/traps before launching another multi-day full run.
+
 ## Lee Taek Gyu — runtime optimization before another full-week baseline run (2026-10-03)
 
 1. Recover the exact SDevice source currently/routinely used by JuSubin (Final v1.1/v1.2); do not optimize the stale GitHub CURRENT deck.
