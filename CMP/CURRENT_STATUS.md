@@ -1,3 +1,70 @@
+## 2026-10-04 — Runtime strategy re-evaluation: do not brute-force full 0–5 V for every A/B case
+
+- 작업자: 이택규
+- 상태: DECISION / PROPOSED IMPLEMENTATION
+- 냉정한 재평가 결과, 모든 baseline/A/B parameter case를 동일한 0→5 V full sweep으로 순차 실행하는 방식은 총 연구시간 관점에서 비효율적임.
+- validation scope는 유지하되 계산 전략을 staged 방식으로 변경한다.
+- 즉시 수정:
+  - 현재 FAST_C1 Node 6은 이미 실제 SDevice solve 중이고 generated pp6_des.cmd/par가 존재함.
+  - 먼저 running 상태에서 read-only preprocess equivalence gate를 수행한다.
+  - gate PASS이면 현재 진행분을 버리지 않고 B1 run으로 계속 인정한다.
+  - gate FAIL일 때만 FAST_C1 Node 6을 중지한다.
+- production 전략:
+  1. numerical FAST validation용 full reference sweep는 소수의 대표 case에만 수행.
+  2. Project A/B parameter screening은 실제 연구 지표가 필요한 operating-current/bias window를 먼저 정의한 후 그 구간 중심으로 수행.
+  3. screening winner/representative/worst case만 full 0→5 V sweep으로 최종 검증.
+  4. independent parameter points는 가능한 자원 범위에서 병렬화.
+  5. future long runs에는 loadable Save checkpoint를 별도 검토하여 crash/restart 손실을 줄인다. 현재 x8 intermediate Plot은 `-Loadable`이라 restart checkpoint가 아님.
+- 근거:
+  - x8 B0에서 rejected attempts가 관측 attempt wallclock의 약 75%를 차지했고, high-bias가 주요 병목.
+  - Sentaurus 공식 training은 ramped solve에서 Newton 15–20회 이후에는 timestep을 줄이는 편이 더 효율적일 수 있다고 설명함.
+- 이 전략은 physics/validation을 생략하는 것이 아니라, screening과 final validation을 분리하는 방식임.
+
+## 2026-10-04 — Runtime planning implication for Project A/B
+
+- 작업자: 이택규
+- 연구 판단: FAST common baseline optimization은 단순 baseline 편의가 아니라 이후 Project A/B parameter study의 총 계산시간을 줄이기 위한 필수 단계.
+- Project A의 localized GaN:C high-resistance 영역은 carrier transport를 더 강하게 제한하고 수치 stiffness/cutback을 증가시킬 수 있어 baseline보다 느려질 가능성이 있음. 단, 실제 slowdown magnitude는 아직 미측정이며 추측하지 않음.
+- 따라서 production A/B sweep 전에 representative single-case pilot를 먼저 실행해 runtime/convergence를 측정하고, 그 결과로 parameter grid/parallelization 계획을 확정해야 함.
+- baseline C1 검증 후 동일 numerical framework를 A/B에 유지하고, physics shortcut 대신 numerical efficiency + independent parallel runs로 시간을 단축한다.
+
+## 2026-10-04 — FAST C1 baseline acceptance sequence clarified
+
+- 작업자: 이택규
+- 연구 판단: FAST_C1은 단순히 Node 6/12가 완주했다는 이유만으로 baseline으로 확정하지 않는다.
+- 최종 공통 baseline은 두 조건을 포함한다:
+  - NtSide=0: defect-free control
+  - NtSide=1e18: nominal sidewall-defect baseline
+- acceptance sequence:
+  1. FAST_C1 preprocess equivalence gate PASS.
+  2. NtSide=0 B1 run: golden x8 overlap에서 accepted/rejected trajectory, Iterations=15 적용, I-V/Vf/출력 등가성 검증.
+  3. NtSide=1e18 run: 동일한 C1 source/mesh/physics 유지, trap concentration만 1e18로 변경되었는지 확인하고 완주/물리 sanity 검증.
+  4. 두 조건이 모두 통과하면 FAST_C1을 Project A/B 공통 baseline numerical implementation으로 freeze.
+- Project A/B는 이후 이 frozen common baseline 위에서 각각 GaN:C high-resistance 영역과 AlGaN barrier를 추가한다.
+
+## 2026-10-04 — FAST_C1 Node 6 solve accidentally launched before preprocess gate
+
+- 작업자: 이택규
+- 상태: OBSERVED / BLOCKER
+- process check shows FAST_C1 Node 6 was actually launched, not preprocess-only:
+  - gsub PID 69166: `-e 6 .../GaN_PiN_Diode_FAST_C1`
+  - gjob PID 69396
+  - sdevice PID 69457: `sdevice --max_threads 4 pp6_des.cmd`
+  - start time 15:46, active at ~99% CPU.
+- therefore the ~3 h delay is real SDevice solve runtime, not preprocess delay.
+- since SDevice is running from `pp6_des.cmd`, preprocessing has already produced the generated deck.
+- this run began before the mandatory preprocess equivalence gate, so it must not be accepted as B1 evidence unless the generated deck is validated.
+- immediate action: stop only the FAST_C1 Node 6 job via Workbench (do not kill unrelated jobs), then audit `pp6_des.cmd/par` before any restart.
+- the current process list showed no other user-owned x8 gsub/sdevice process; user had reported stopping other runs.
+
+## 2026-10-04 — FAST_C1 preprocess appears stalled >3 h
+
+- 작업자: 이택규
+- 상태: USER-REPORTED / BLOCKER
+- 사용자가 FAST_C1 단계가 약 3시간째 완료되지 않았다고 보고함.
+- preprocess-only라면 비정상적으로 긴 시간이며, 실제 SDevice solve가 시작되었거나 Workbench 상태/queue 문제일 가능성 확인 필요.
+- 아직 원인 확정 전. 임의 종료하지 말고 프로세스와 최근 로그를 먼저 확인한다.
+
 ## 2026-10-04 — FAST_C1 copied .status ownership resolved
 
 - 작업자: 이택규
