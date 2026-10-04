@@ -1,3 +1,185 @@
+## 2026-10-04 — FAST_C1 preprocess-only next
+
+1. 원래 Copy x8 live process PID 78941은 건드리지 않는다.
+2. Workbench에서 FAST_C1 프로젝트를 별도로 열고 Node 6 (NtSide=0)만 Preprocess한다.
+3. Run/Solve는 누르지 않는다.
+4. preprocess 완료 후 `pp6_des.cmd`, `pp6_des.par` timestamp/hash를 확인한다.
+5. `fast_preprocess_check.py`로 golden-vs-C1 gate 수행.
+6. PASS 후에만 NtSide=0 B1 solve를 시작한다.
+
+## 2026-10-04 — FAST_C1 source installed; inspect Workbench status before preprocess
+
+1. Read `.status` and `gtree.dat` in FAST_C1.
+2. Confirm Node 6 is NtSide=0 and Node 12 is NtSide=1e18.
+3. Confirm copied execution state will not accidentally launch/resume a solve.
+4. Then preprocess Node 6 only; do not run SDevice.
+5. Run `fast_preprocess_check.py`.
+6. Only after gate PASS start NtSide=0 B1.
+
+## 2026-10-04 — B0 CLOSED; begin separate FAST C1 preprocess
+
+1. Keep live x6/x7/x8 untouched.
+2. Create a separate FAST C1 Workbench project/copy.
+3. Generate/install the exact C1 source from the frozen x8 source with only the transient inner Coupled `Iterations=15` change.
+4. Verify C1 source SHA-256 = `f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93`.
+5. Preprocess only.
+6. Run the preprocess gate:
+   - golden mesh/parameter provenance preserved
+   - exactly one intended executable change in SDevice: `Iterations=15`
+   - no physics/trap/geometry/step-control drift
+7. Only after preprocess PASS: run NtSide=0 B1 benchmark with A1'/A1''.
+
+## 2026-10-04 — Regenerate B0 CSV using explicit Stepsize
+
+1. Download current `sdevice_newton_audit.py` from GitHub main.
+2. Run `--selftest`.
+3. Rerun the copied x8 log audit to regenerate `~/CMP_B0/x8_attempts.csv`.
+4. Recompute `retry_dt / rejected_dt` across all 285 rejection/retry pairs.
+5. Treat a tight cluster around 0.5 as confirmation of the fixed cutback rule; do not use the old 0.478–0.522 spread.
+
+## 2026-10-04 — FAST C1 next action after B0 PASS
+
+1. Claude B0 review complete: C1 source unchanged; `Iterations=15` retained.
+2. Before/alongside B1, verify the full B0 CSV cutback ratio `retry dt / rejected dt` across all rejection pairs. Existing raw excerpts show ~0.5, but full-CSV constancy is still pending.
+3. Create a **separate** Workbench project/copy for FAST C1. Do not modify/stop live x6/x7/x8.
+4. Install the exact Claude C1 source locally and verify SHA-256 `f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93`.
+5. Preprocess only and run `fast_preprocess_check.py`.
+6. Require: golden SDE/parameter equivalence + exactly one intended executable change (`Iterations=15`).
+7. Run NtSide=0 C1 first.
+8. Compare against Copy x8 using A1'/A1'':
+   - accepted steps `(t0,t1,Newton count)` and rejection points `(t0,dt)` should match over the overlap
+   - ~4.33 V is the first rejected attempt where Newton count is expected to change 50 -> 15, **not** a trajectory divergence
+   - every C1 rejection must report `#iterations larger than 15.`; a 50-cap message means stop
+   - I-V / matched-current Vf and available snapshots should match printed precision on the observed overlap; 1e-3 / 1 mV are outer limits
+   - wallclock / mV-per-hour in the high-bias bottleneck
+9. Do not declare FAST baseline CONFIRMED until numerical/physical equivalence and runtime criteria pass.
+
+## 2026-10-04 — Rerun B0 with patched real-log parser
+
+1. Re-download `CMP/tcad/tools/sdevice_newton_audit.py` from GitHub to `~/CMP_B0/`.
+2. Run `--selftest`.
+3. Re-run the x8 copied-log audit with `--raw 1` and CSV output.
+4. Verify parsed first rejected/accepted attempt against raw log text.
+5. Use the real accepted-step iteration distribution to decide whether C1 `Iterations=15` is safe.
+
+## 2026-10-04 — Immediate B0 action: identify real x8 log syntax
+
+1. Do not use the current audit statistics; parser matched zero attempts.
+2. Inspect the raw x8 log for the exact transient step-start wording.
+3. Patch `sdevice_newton_audit.py` to the actual T-2022.03 format.
+4. Validate the patched parser by comparing parsed fields against raw log rows.
+5. Only then evaluate accepted-step max iterations / false rejection for N=15.
+
+## 2026-10-04 — B0 next: raw x8 n6_des.out audit
+
+1. Copy live x8 `n6_des.out` to a safe home/bench location.
+2. Download/run `CMP/tcad/tools/sdevice_newton_audit.py`.
+3. First run `--selftest`.
+4. Run x8 audit with `--raw 1` and CSV output.
+5. Manually compare parser output with the raw Newton table.
+6. Determine accepted-step max iteration and whether N=15 would create false rejections.
+7. Send B0 output to Claude for independent interpretation before C1 execution.
+
+## 2026-10-04 — FAST C1 immediate next action: B0 read-only audit
+
+1. Do **not** launch FAST C1 yet.
+2. Copy the active/reference x8 `pp6_des.cmd` and `n6_des.out` to a safe analysis location.
+3. Inspect preprocessed settings:
+   `grep -n -i "Iterations\\|RHSMin\\|CheckRhsAfterUpdate\\|NotDamped" pp6_des.cmd`
+4. Run Claude `sdevice_newton_audit.py` on the copied x8 log with `--raw 1`.
+5. Manually verify parser output against the raw Newton table before trusting any statistics.
+6. Resolve why project records show ~50 Newton iterations while Synopsys 2022 training documents a default cap of 20 for ramped solves.
+7. Confirm that no accepted x8 step requires >15 iterations.
+8. Only after B0 passes: create/preprocess separate `GaN_PiN_Diode_FAST_C1`; keep live x6/x7/x8 untouched.
+9. Acceptance targets remain provisional until baseline repeatability / actual A-B effect scale is known.
+
+## 2026-10-04 — Immediate: hand golden source to Claude
+
+1. Claude project에서 작업자 `이택규`로 시작.
+2. exact file `Copy_x8_sd_fdiv_des.cmd` 첨부.
+3. Claude에게 `CMP/prompts/CLAUDE_FAST_BASELINE_IMPLEMENTATION.md`를 읽고 그대로 구현 업무를 수행하도록 지시.
+4. Claude는 attached source hash를 golden SHA-256과 확인.
+5. Claude가 complete FAST_BASELINE source + diff + Workbench 적용법 + short benchmark plan을 작성.
+6. live Copy x8은 수정하지 않음.
+7. full proprietary source는 public GitHub에 commit하지 않음.
+
+## 2026-10-04 — FAST v0.1 short benchmark
+
+- Copy x8 live directory는 수정하지 않는다.
+- 별도 Workbench copy/project에서 FAST v0.1을 시험한다.
+- 첫 후보의 유일한 solver change는 transient inner Coupled `Iterations=15`.
+- full DOE 전에 short benchmark로 다음을 비교:
+  1. accepted/rejected Newton iterations
+  2. high-bias timestep cutback pattern
+  3. wallclock per accepted/rejected step
+  4. I-V/current at matched bias
+  5. spatial result availability
+- 결과가 numerical tolerance 내에서 reference와 일치하면서 runtime이 개선될 때만 다음 후보로 채택.
+
+## 2026-10-04 — CORRECTION: begin FAST code now; clean-account reproduction is a later freeze gate
+
+- 작업자: 이택규
+- 상태: DECISION / CORRECTION
+- Copy x8 golden reference source/hash freeze가 완료되었으므로 numerical-only FAST_BASELINE 코드 작성과 short benchmark를 지금 시작한다.
+- clean-account reproduction을 FAST 코드 작성 전 blocker로 두지 않는다.
+- 올바른 순서:
+  1. Copy x8 exact source/reference freeze
+  2. separate FAST_BASELINE code/project 생성
+  3. Newton iteration/cutback policy를 첫 numerical-only change로 short benchmark
+  4. Copy x8과 결과 등가성 확인
+  5. 필요 시 staged bias/MaxStep, ErrRef, far-field mesh를 하나씩 추가 benchmark
+  6. 최종 FAST deck 후보가 확정되면 JuSubin/LeeTaekGyu clean-account reproduction gate 수행
+  7. 그 뒤 Project A/B production runs 시작
+- 기존 x6/x7/x8 live directories는 수정하지 않는다.
+- Common Baseline physics/Nt/Et/sigma/5 nm damage width는 변경하지 않는다.
+
+## 2026-10-04 — Next: clean-account reproduction gate
+
+- Copy x8 golden snapshot/hash freeze 완료.
+- 이제 이택규 clean account에서 새 Workbench project를 생성하고 exact frozen source를 가져온다.
+- full multi-day solve는 아직 시작하지 않는다.
+- preprocess / early initialization까지만 실행 후 golden reference와 비교:
+  - sd_fdiv_des.cmd revision
+  - pp1_dvs.cmd
+  - pp6_des.cmd
+  - pp6_des.par
+  - n1_msh.tdr hash + mesh statistics
+- unexplained difference가 하나라도 있으면 long run 시작 금지.
+- 모두 일치/설명 가능할 때 numerical-only FAST baseline branch로 이동.
+
+## 2026-10-04 — Immediate next action: finish Copy x8 golden reference package
+
+- 작업자: 이택규
+- 상태: ACTION READY
+- 기존 local package `~/CMP_REFERENCE_20261004.tgz`에는 핵심 editable SDevice source `sd_fdiv_des.cmd`가 빠져 있음.
+- 먼저 Copy x8 active directory에서 exact `sd_fdiv_des.cmd`를 reference snapshot에 포함하고 SHA-256 manifest를 다시 생성한다.
+- 이후에만 이택규 clean account에서 새 Workbench project를 만들고 preprocess/init 단계까지만 실행한다.
+- full multi-day solve 시작 전 필수 비교:
+  - original editable source revision
+  - `pp1_dvs.cmd`
+  - `pp6_des.cmd`
+  - `pp6_des.par`
+  - `n1_msh.tdr` hash + mesh statistics
+  - Workbench variables/tree/scenario context
+  - Sentaurus executable path / 4-thread setting
+- helper: `CMP/tcad/capture_reference_snapshot.sh`
+- protocol: `CMP/FAST_BASELINE_REPRO_PROTOCOL.md`
+- physics baseline은 이 단계에서 수정하지 않는다.
+
+## 2026-10-04 — Decision: leave legacy runs untouched and build a new clean FAST baseline
+
+- 작업자: 이택규
+- 상태: DECISION
+- 기존 Copy x6/x7/x8 active runs은 당장 중단하지 않고 reference/history 확보용으로 그대로 둔다.
+- 새 baseline은 기존 live project를 수정하지 않고, exact Copy x8 golden pair를 기준으로 새 Workbench project에서 cleanly 재구성한다.
+- 새 baseline 목표:
+  1. Node6 NtSide=0 / Node12 NtSide=1e18 pair 유지
+  2. 동일 geometry/physics/parameter/mesh intent 유지
+  3. generated/stale/cached files에 의존하지 않는 clean reproduction
+  4. numerical-only runtime optimization
+  5. short preprocess/init benchmark 통과 후 full run
+- Claude는 이 clean FAST_BASELINE branch/project만 수정 대상으로 삼고, 기존 Copy x6/x7/x8 live directories는 건드리지 않는다.
+
 ## 2026-10-03 — overnight execution plan
 
 ### Tonight

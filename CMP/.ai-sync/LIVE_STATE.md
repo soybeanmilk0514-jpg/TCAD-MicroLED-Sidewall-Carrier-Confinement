@@ -1,3 +1,136 @@
+# 2026-10-04 — FAST_C1 exact source install PASS
+
+- exact C1 source SHA-256 f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93 confirmed in separate FAST_C1 project.
+- golden backup preserved.
+- next: inspect copied Workbench status metadata, then preprocess only.
+- no SDevice solve yet; live x6/x7/x8 untouched.
+
+---
+
+# 2026-10-04 — B0 COMPLETE; FAST C1 ready for preprocess
+
+- updated Stepsize-based x8 CSV verified all 285 retry/rejection pairs.
+- retry_dt / rejected_dt: min 0.499975805, max 0.500023337, mean 0.499999621.
+- cutback factor = 0.5 to log-print precision.
+- B0 is closed.
+- C1 unchanged: Iterations=15, source SHA-256 f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93.
+- next: separate FAST C1 project/copy -> source hash -> preprocess gate -> NtSide=0 B1.
+- live x6/x7/x8 untouched.
+
+---
+
+# 2026-10-04 — Claude B0 review: C1 unchanged, A1'/A1'' added
+
+- C1 source unchanged: SHA-256 `f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93`; `Iterations=15`.
+- correction: ~4.33 V is the first rejected attempt where Newton count changes 50->15, not a trajectory divergence.
+- A1': accepted-step sequence + rejection points should match over the observed overlap; unexplained mismatch = UNEXPECTED.
+- A1'': every C1 rejection must show `#iterations larger than 15.`; 50 means cap not applied -> stop.
+- A3/A4: printed-precision identity expected on observed overlap; 1e-3 / 1 mV are outer limits.
+- new audit tool SHA-256 `9a935633e92bc55fa86849b6988b60a8a8ee55f637387ced62721d9f6267d281`; synthetic selftest passed.
+- observed raw retry/rejected dt examples are ~0.5; full 285-event CSV ratio verification remains pending because the CSV was not included in the review package.
+- patch-equivalent commit: `ace056fcb01d2e6e785dbee08a213e1148d6be35`.
+- next: separate FAST C1 preprocess gate, then NtSide=0 B1 benchmark; live x6/x7/x8 untouched.
+
+---
+
+# 2026-10-04 — B0 PASS for C1 Iterations=15
+
+- 1950 accepted x8 attempts, accepted max Newton=4.
+- 285 rejected attempts, all 50 iterations.
+- N=15 false_rej=0 through observed x8 progress (~4.643 V).
+- rejected attempt wallclock fraction ~75%; idealized observed-path speedup estimate ~2.11x.
+- next: separate FAST C1 preprocess gate -> NtSide=0 benchmark.
+- live x6/x7/x8 untouched.
+
+---
+
+# 2026-10-04 — B0 parser patched for actual BE-step log format
+
+- real T-2022.03 x8 step syntax identified and parser patched.
+- next: re-download tool and rerun B0 audit; Iterations=15 remains unconfirmed until real accepted-step distribution is parsed.
+
+---
+
+# 2026-10-04 — B0-1 passed: no explicit transient Iterations in x8 pp6
+
+- observed x8 pp6_des.cmd:
+  - RHSMin=1e-3
+  - CheckRhsAfterUpdate
+  - Iterations=500 (initial Poisson)
+  - Iterations=100 (equilibrium)
+  - no transient Iterations
+  - no NotDamped
+- remaining blocker: interpret raw x8 n6_des.out and accepted/rejected Newton iteration distribution before confirming C1 Iterations=15.
+
+---
+
+# 2026-10-04 — FAST C1 reviewed; B0 audit required
+
+- Claude C1 SHA: `f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93`
+- golden Copy x8 SHA: `56a8be698321e5056e33bf22d4b873063728013e8a2383f4e264a42662c4aa2c`
+- executable change: transient inner Coupled `Iterations=15` only
+- C1 and prior ChatGPT v0.1 are executable-statement equivalent
+- status: PROPOSED / REVIEWED / NOT EXECUTED
+- blocker: B0 must resolve documented default 20 vs project-recorded ~50-iteration failures and verify no accepted x8 step needs >15
+- Claude tools are synthetic-tested only; actual x8 format validation pending
+- live x6/x7/x8 remain untouched
+- guide: `CMP/FAST_BASELINE_C1.md`
+
+---
+
+# 2026-10-04 sequence correction — FAST coding starts now
+
+Copy x8 golden reference has been frozen. The next task is to build a separate numerical-only FAST_BASELINE and benchmark the first solver change against Copy x8.
+
+Clean-account reproduction remains mandatory before final FAST baseline freeze / Project A-B production, but it is not a blocker for writing and short-benchmarking the FAST code.
+
+Priority:
+1. obtain/use exact Copy x8 editable source
+2. create separate FAST_BASELINE
+3. first candidate = Newton iteration/cutback policy only
+4. short benchmark against Copy x8
+5. accept/reject by runtime + physical/numerical equivalence
+6. reproduce the accepted FAST deck on both accounts before production
+
+---
+
+# 2026-10-04 Copy x8 golden reference frozen
+
+Golden local snapshot completed and core hashes fixed.
+
+- n1_msh.tdr: 762d2d57a352a00bb030b968985cbf3b71d53118c68e5c53b7586e613f392ea3
+- pp1_dvs.cmd: 5685528bc3ec338ce104040b0503be43ef032094976d69995529eb5d6fb4e658
+- pp6_des.cmd: 2dfcc98effe145ec944fb8ee5d6914f5f098e54d1bf2319c69acc76afe1692e6
+- pp6_des.par: 60405755de61500d9815a8e9ecca6a7a465783d77eb8e5dadf1db515aeb10039
+- sd_fdiv_des.cmd: 56a8be698321e5056e33bf22d4b873063728013e8a2383f4e264a42662c4aa2c
+
+Immediate next task: reproduce preprocessing in Lee Taek Gyu clean account before any full FAST solve.
+
+---
+
+# 2026-10-04 FAST baseline handoff
+
+**Current task:** freeze Copy x8 as the golden local reference, then reproduce preprocessing in Lee Taek Gyu's clean account before any full FAST solve.
+
+**Newest confirmed repository action:**
+- `CMP/FAST_BASELINE_REPRO_PROTOCOL.md` added.
+- `CMP/tcad/capture_reference_snapshot.sh` added.
+- Public GitHub `CMP/tcad/CURRENT` is still not the authoritative Copy x8 running source.
+
+**Immediate blocker:**
+Existing local reference package `~/CMP_REFERENCE_20261004.tgz` is recorded as missing the exact editable SDevice source `sd_fdiv_des.cmd`. This source must be added locally and hashed before clean-account reproduction.
+
+**Next:**
+1. Complete Copy x8 local snapshot with exact source.
+2. Generate SHA-256 manifest.
+3. In clean account, preprocess only / early initialization.
+4. Diff `pp1_dvs.cmd`, `pp6_des.cmd`, `pp6_des.par`; compare mesh hash/statistics.
+5. Only after reproducibility gate passes, create numerical-only FAST branch.
+
+**Do not change:** Common Baseline geometry, Nt/Et/sigma, 5 nm sidewall damage width, common A/B physics.
+
+---
+
 ## 2026-09-29 — JuSubin active run direct evidence: Node 6 alive, high-bias convergence slowdown
 
 - Direct file evidence: active output is `n6_des.out` (Node 6), superseding the earlier Node-19 inference.

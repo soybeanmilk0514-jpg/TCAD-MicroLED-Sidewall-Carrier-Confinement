@@ -1563,3 +1563,536 @@ semi437 계정 터미널 ps 출력에서 active SDevice 3개 확인:
 다음: 세 디렉터리 각각의 pp6_des.cmd / pp6_des.par / n6_des.out tail을 확보해 동일/상이 조건과 runtime 병목을 직접 비교.
 
 ---
+
+## 2026-10-04T04:25:12Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / REPRODUCIBILITY TOOLING
+상태: PROPOSED / TOOLING READY
+
+요약:
+FAST baseline을 바로 수정하지 않고, active Copy x8을 golden local reference로 freeze한 뒤 clean account에서 preprocess/hash/diff를 통과해야만 numerical-only FAST branch로 넘어가는 gate를 정식화함.
+
+변경:
+- CMP/FAST_BASELINE_REPRO_PROTOCOL.md 추가
+- CMP/tcad/capture_reference_snapshot.sh 추가
+- LeeTaekGyu/TIMELINE, NEXT_ACTIONS, LIVE_STATE.md/json 갱신
+
+현재 blocker:
+기존 local reference package ~/CMP_REFERENCE_20261004.tgz에는 exact editable SDevice source sd_fdiv_des.cmd가 누락된 것으로 최신 타임라인에 기록되어 있음. public GitHub CURRENT deck은 active x8 source-of-truth가 아님.
+
+다음:
+1. Copy x8 exact sd_fdiv_des.cmd를 local reference package에 포함
+2. SHA-256 manifest 재생성
+3. 이택규 clean account에서 preprocess/early-init까지만 실행
+4. pp1_dvs.cmd / pp6_des.cmd / pp6_des.par exact diff + n1_msh.tdr hash/mesh-stat 비교
+5. gate 통과 후 numerical-only FAST branch 생성
+
+주의:
+Common Baseline physics/Nt/Et/sigma/5 nm sidewall damage width는 변경하지 않음.
+
+---
+
+## 2026-10-04T04:28:14Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / REFERENCE FREEZE
+상태: OBSERVED
+
+요약:
+active Copy x8 directory에서 exact core files 존재를 터미널로 확인.
+
+확인 파일:
+- sd_fdiv_des.cmd
+- pp1_dvs.cmd
+- pp6_des.cmd
+- pp6_des.par
+- n1_msh.tdr
+
+다음:
+Copy x8 directory에서 capture_reference_snapshot.sh 실행 → local golden snapshot + SHA-256 manifest 생성.
+
+---
+
+## 2026-10-04T04:30:28Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / REFERENCE FREEZE
+상태: CONFIRMED
+
+Copy x8 golden reference freeze 완료.
+
+SHA-256:
+- n1_msh.tdr = 762d2d57a352a00bb030b968985cbf3b71d53118c68e5c53b7586e613f392ea3
+- pp1_dvs.cmd = 5685528bc3ec338ce104040b0503be43ef032094976d69995529eb5d6fb4e658
+- pp6_des.cmd = 2dfcc98effe145ec944fb8ee5d6914f5f098e54d1bf2319c69acc76afe1692e6
+- pp6_des.par = 60405755de61500d9815a8e9ecca6a7a465783d77eb8e5dadf1db515aeb10039
+- sd_fdiv_des.cmd = 56a8be698321e5056e33bf22d4b873063728013e8a2383f4e264a42662c4aa2c
+
+다음:
+이택규 clean account에서 새 Workbench project 생성 → preprocess/early-init까지만 실행 → golden reference와 exact diff/hash 비교 → 통과 후 FAST numerical branch 생성.
+
+---
+
+## 2026-10-04T04:32:20Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / CORRECTION
+상태: CONFIRMED
+
+GitHub 기록 재검토 결과, 원래 계획은 Copy x8 reference freeze 직후 separate numerical-only FAST_BASELINE을 작성하고 Newton iteration/cutback policy부터 short benchmark하는 순서였음.
+
+정정:
+- clean-account reproduction은 FAST 코드 작성 전 blocker가 아님.
+- 최종 FAST deck freeze 및 Project A/B production 전에 반드시 수행하는 verification gate로 유지.
+- 현재 Copy x8 golden hashes는 이미 frozen.
+- 다음 작업은 exact x8 source를 기준으로 FAST code 작성.
+
+주의:
+public CURRENT SDevice는 stale이므로 FAST code의 base로 사용하지 않음.
+
+---
+
+## 2026-10-04T04:39:14Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: ChatGPT
+구분: CODE / NUMERICAL OPTIMIZATION
+상태: PROPOSED
+
+Copy x8 uploaded source hash가 frozen golden hash와 일치함.
+
+FAST_BASELINE v0.1:
+- only intentional change: Transient inner Coupled Iterations=15
+- candidate SHA-256: 6ccf386cd8959b5953c2c1b241f2c868916bf222814a03f9f774edbc82011040
+- Physics/Traps/Nt/Et/sigma/step controls/ILS unchanged
+
+목적:
+high-bias에서 50회 이상 Newton 반복 후 reject되는 낭비를 줄이고 더 일찍 timestep cutback하도록 시험.
+
+다음:
+live Copy x8은 보존하고 separate Workbench copy에서 short benchmark.
+
+---
+
+## 2026-10-04T04:44:22Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: ChatGPT
+구분: HANDOFF / CLAUDE IMPLEMENTATION
+상태: READY
+
+Claude가 GitHub만 읽어도 FAST_BASELINE 구현 맥락을 알 수 있도록 종합 prompt를 commit함.
+
+파일:
+CMP/prompts/CLAUDE_FAST_BASELINE_IMPLEMENTATION.md
+
+Claude에 별도 첨부할 exact source:
+Copy_x8_sd_fdiv_des.cmd
+
+Expected SHA-256:
+56a8be698321e5056e33bf22d4b873063728013e8a2383f4e264a42662c4aa2c
+
+문서에는:
+- golden hashes
+- baseline physics 보호
+- exact numerical settings
+- high-bias runtime bottleneck
+- Project A/B 목적
+- provenance 주의
+- complete-code 산출물 요구
+- Workbench/preprocess/benchmark/acceptance 기준
+을 포함.
+
+이전 ChatGPT Iterations=15 아이디어는 PROPOSED 참고안일 뿐 확정 patch가 아님.
+
+Public GitHub에는 proprietary full source를 올리지 않음.
+
+---
+
+## 2026-10-04T04:53:36Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: ChatGPT
+구분: COLLAB / PERMISSION
+상태: CONFIRMED
+
+이택규 Claude의 GitHub 권한:
+- READ 가능
+- WRITE / EDIT 불가
+
+따라서 Claude는 코드 구현/분석 결과만 채팅으로 반환하고, 실제 GitHub 기록은 ChatGPT가 검토 후 수행한다.
+Claude FAST implementation prompt도 이 구조로 정정함.
+
+---
+
+## 2026-10-04T05:18:29Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: Claude implementation / ChatGPT review
+구분: PROGRESS / DECISION
+상태: PROPOSED / REVIEWED / NOT EXECUTED
+
+요약:
+FAST_BASELINE C1 package 검토 완료.
+
+검증:
+- golden Copy x8 source SHA-256:
+  56a8be698321e5056e33bf22d4b873063728013e8a2383f4e264a42662c4aa2c
+- Claude FAST C1 source SHA-256:
+  f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93
+- executable statement diff:
+  forward Transient inner Coupled에 Iterations=15 추가만 존재.
+- Physics / traps / Math tolerances / ILS / step control / 5 V Goal / Plot schedule은 statement 수준 유지.
+- 기존 ChatGPT FAST v0.1과 Claude C1은 executable statement 기준 동일하며 comments/formatting만 다름. C1을 canonical candidate로 사용.
+
+중요 검토 결과:
+- Iterations=15를 첫 numerical-only 후보로 두는 방향은 타당.
+- Synopsys 2022 training은 ramped solve의 Iterations default=20, 보통 3-6 Newton iterations, 15-20회 내 수렴하지 않으면 작은 step으로 재시도하는 전략을 권장.
+- 따라서 CMP 기존 기록의 약 50-iteration failure와 documented default 20의 불일치는 UNRESOLVED.
+- C1 실행 전 B0에서 exact x8 pp6_des.cmd + raw n6_des.out을 반드시 교차검증.
+- parser는 synthetic selftest만 통과했으므로 첫 실제 사용에서 --raw 출력과 원문을 수동 대조.
+
+GitHub 반영:
+- CMP/FAST_BASELINE_C1.md
+- CMP/tcad/tools/FAST_C1_vs_CopyX8.diff
+- CMP/tcad/tools/fast_preprocess_check.py
+- CMP/tcad/tools/sdevice_newton_audit.py
+- CMP/tcad/tools/plt_compare.py
+- CURRENT_STATUS / NEXT_ACTIONS / LeeTaekGyu TIMELINE / TEAM_TIMELINE / LIVE_STATE / RELAY
+
+Raw Claude patch는 그대로 적용하지 않음:
+- 최신 결정과 충돌한 “x7 먼저 정리” 권고는 폐기.
+- 이미 해결된 sd_fdiv_des.cmd missing blocker는 제거.
+- “physical solution이 변하지 않는다”는 절대 표현 대신 “local convergence criteria는 그대로지만 trajectory equivalence는 실측 필요”로 교정.
+- acceptance thresholds는 PROVISIONAL engineering criteria로 기록.
+
+다음:
+1. x8 pp6_des.cmd에서 Iterations/RHSMin/CheckRhsAfterUpdate/NotDamped 확인.
+2. x8 n6_des.out 복사본 B0 audit + raw parser 검증.
+3. accepted x8 step 중 >15 iteration 존재 여부 확인.
+4. 20-vs-50 불일치 해소 후 Iterations=15 확정/수정.
+5. 그 다음에만 separate FAST C1 project preprocess/run.
+
+주의:
+live Copy x6/x7/x8은 수정/종료하지 않음.
+FAST full SDevice source는 public GitHub에 업로드하지 않음.
+
+---
+
+## 2026-10-04T05:21:29Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / B0
+상태: OBSERVED
+
+Copy x8 active pp6_des.cmd grep 결과:
+- RHSMin = 1e-3
+- CheckRhsAfterUpdate
+- Iterations = 500 (initial Poisson)
+- Iterations = 100 (equilibrium Coupled)
+- transient inner Coupled explicit Iterations 없음
+- NotDamped 없음
+
+의미:
+프로젝트 기록의 약 50 failed Newton rows/iterations는 pp6_des.cmd에 명시된 Iterations=50 때문이 아님.
+
+다음:
+raw x8 n6_des.out을 read-only audit하여
+1) 50의 실제 의미,
+2) accepted step max iteration,
+3) Iterations=15 false rejection 가능성
+을 확인한 뒤 C1 실행 여부 결정.
+
+---
+
+## 2026-10-04T05:23:05Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / FIX
+상태: OBSERVED / RESOLVED
+
+B0 log copy command using bash-style $(date ...) failed with:
+Illegal variable name.
+
+semi437 shell behaves as csh/tcsh. Future B0 commands will use backtick command substitution instead.
+
+No simulation/source file was modified.
+
+---
+
+## 2026-10-04T05:32:36Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / TOOLING
+상태: OBSERVED / UNRESOLVED
+
+Claude sdevice_newton_audit.py:
+- synthetic --selftest PASS
+- real x8 n6_des.out: attempts=0
+- parser expected "Computing step from t=... to t=..." but actual T-2022.03 log uses a different format.
+
+따라서 B0의 iteration 통계/Iterations=15 판단은 아직 유효하지 않음.
+
+다음:
+raw x8 log의 실제 step/Rhs/time 문구를 확인 → parser 수정 → raw-vs-parsed 검증 → B0 재실행.
+
+---
+
+## 2026-10-04T05:34:31Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: ChatGPT
+구분: FIX / B0 TOOLING
+상태: OBSERVED / FIXED
+
+실제 x8 n6_des.out 형식 확인:
+Computing BE-step from <t0> s to <t1> s (Stepsize: <dt> s)
+
+accepted:
+|RHS| less than 1.0000E-03.
+
+rejected:
+Newton didn't converge, trying again with smaller timestep...
+
+같은 t0에서 더 작은 dt로 retry하는 패턴이 직접 확인됨.
+
+조치:
+CMP/tcad/tools/sdevice_newton_audit.py를 실제 T-2022.03 BE-step 형식을 인식하도록 수정.
+
+다음:
+업데이트된 parser로 B0 재실행 → raw-vs-parsed 검증 → accepted step max iteration / N=15 false rejection 판단.
+
+---
+
+## 2026-10-04T05:42:42Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: ChatGPT
+구분: CORRECTION / FIX
+상태: FIXED (tool), B0 still pending
+
+Correction:
+앞서 BE-step parser를 수정했다고 기록했지만, user rerun은 여전히 attempts=0이었음.
+
+GitHub source를 직접 재확인한 결과 RE_STEP가 실제로는 옛 정규식
+"Computing step from t=..."
+그대로 남아 있었음.
+
+Actual fix:
+commit c9e5804ba0d84e424fcde6f4fd83bb4a04cd686a
+
+- observed T-2022.03 syntax
+  "Computing BE-step from <t0> s to <t1> s (Stepsize: <dt> s)"
+  인식하도록 수정
+- exact observed x8 line을 selftest regression case로 추가
+
+No simulation/deck change.
+Next: commit-pinned script download → selftest → B0 rerun.
+
+---
+
+## 2026-10-04T05:46:28Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: ChatGPT
+구분: CORRECTION / FIX
+상태: FIXED TOOL / B0 PENDING
+
+c9e5804 parser가 selftest에서 실패한 정확한 원인:
+raw regex에 \s가 아니라 \\s가 들어가 실제 whitespace가 아닌 literal backslash+s를 찾고 있었음.
+
+Actual corrected commit:
+a0ff43f2aff4b76ed390dcd6831e3ebeba6cb366
+
+쓰기 후 GitHub source를 재조회하여
+Computing\s+BE-step...
+형태로 single-backslash regex가 실제 저장된 것을 확인함.
+
+다음:
+commit-pinned download → selftest → real x8 B0 audit 재실행.
+
+No TCAD deck/simulation change.
+
+---
+
+## 2026-10-04T05:50:39Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / DECISION
+상태: OBSERVED B0 PASS / C1 PROPOSED
+
+B0 raw Copy x8 audit result:
+- attempts 2236
+- accepted 1950
+- rejected 285
+- accepted Newton iteration histogram:
+  - 2: 1019
+  - 3: 778
+  - 4: 153
+- accepted max = 4
+- rejected attempts: 285/285 at 50 iterations
+- raw log confirms: "#iterations larger than 50."
+- predicted Iterations=15 false rejection = 0 on observed x8 path
+- first predicted C1/reference divergence near 4.33 V
+- copied x8 log reaches ~4.643 V
+
+Wallclock over parsed attempts:
+- total 495106 s (~137.5 h)
+- accepted 123464 s
+- rejected 371643 s (~75.1%)
+- simple uniform-per-iteration estimate for cap15: save ~260150 s (~72.3 h), idealized ~2.11x speedup before extra recovery overhead
+
+Tool caveats:
+- real-log error column still not parsed, so err<1 output ignored
+- current cutback-recovery median/max metric is not used for acceptance
+
+Decision:
+Iterations=15 is cleared as the first PROPOSED numerical candidate for a separate FAST C1 preprocess gate + NtSide=0 benchmark.
+
+Not yet CONFIRMED:
+- evidence only through ~4.643 V
+- actual C1 runtime/equivalence not yet measured
+
+Do not modify/stop live x6/x7/x8.
+
+---
+
+## 2026-10-04T06:04:31Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: Claude B0 review / ChatGPT verification
+구분: DECISION / CORRECTION
+상태: PROPOSED / REVIEWED / READY FOR SEPARATE PREPROCESS
+
+Claude B0 review 결론을 검토하고 반영함.
+
+C1:
+- source 변경 없음
+- SHA-256 f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93
+- Iterations=15 유지
+
+정정:
+- 기존 Issue #7의 "~4.33 V first predicted C1/reference divergence" 표현은 정정.
+- ~4.33 V는 trajectory divergence가 아니라, 첫 rejected attempt에서 Newton count가 x8 50 -> C1 15로 달라질 것으로 기대되는 지점.
+- observed overlap에서는 accepted-step sequence와 rejection points가 같아야 하는 것이 A1' 기대값이며, 설명되지 않는 차이는 UNEXPECTED로 조사.
+
+검증 기준:
+- A1': accepted steps (t0,t1,Newton count) + rejection points (t0,dt) should match over overlap.
+- A1'': every C1 rejected attempt must print "#iterations larger than 15."; 50이면 cap 미적용이므로 즉시 중단.
+- A3/A4: observed overlap에서는 printed-precision identity가 기대값. 1e-3 / 1 mV는 outer limit.
+
+도구:
+- updated sdevice_newton_audit.py SHA-256:
+  9a935633e92bc55fa86849b6988b60a8a8ee55f637387ced62721d9f6267d281
+- package selftest를 ChatGPT에서도 재실행해 PASS.
+- patch-equivalent changes applied in commit:
+  ace056fcb01d2e6e785dbee08a213e1148d6be35
+
+Cutback ratio:
+- 기존 실제 x8 excerpt에서 여러 rejection/retry pair가 약 0.5를 보임
+  (예: 2.2968e-05 -> 1.1484e-05, 2.3813e-05 -> 1.1907e-05, 2.4690e-05 -> 1.2345e-05).
+- 그러나 이번 ZIP에는 B0 CSV 자체가 없어 285개 전체 pair의 ratio constancy는 아직 FULL-CSV PENDING으로 기록.
+
+다음:
+1. full B0 CSV ratio 검증
+2. separate FAST C1 project 생성
+3. C1 source hash 확인
+4. preprocess gate
+5. NtSide=0 B1 benchmark with A1'/A1''
+
+live x6/x7/x8은 수정/종료하지 않음.
+
+---
+
+## 2026-10-04T06:14:02Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / CORRECTION
+상태: OBSERVED
+
+Old B0 CSV full-ratio check: 285 pairs, min 0.47826087, max 0.52173913, mean 0.499405569.
+
+This CSV used dt=t1-t0 from rounded printed endpoints, so the spread is a rounding artifact and cannot validate cutback-factor constancy.
+
+Next: regenerate the CSV with the updated audit tool that reads explicit Stepsize, then repeat the ratio check.
+
+C1 Iterations=15 decision is unchanged.
+
+---
+
+## 2026-10-04T07:16:01Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / GATE
+상태: OBSERVED / B0 COMPLETE
+
+Updated Stepsize-based CSV verification:
+- rejection/retry pairs: 285/285
+- retry_dt / rejected_dt min = 0.499975805
+- max = 0.500023337
+- mean = 0.499999621
+
+Conclusion:
+fixed 0.5 timestep cutback is confirmed to printed Stepsize precision.
+
+This closes the B0 assumption used by Claude's A1'/A1'' logic.
+C1 remains unchanged:
+- Iterations=15
+- SHA-256 f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93
+
+Next:
+separate FAST C1 Workbench project/copy -> exact source hash -> preprocess gate -> NtSide=0 B1.
+
+live x6/x7/x8 untouched.
+
+---
+
+## 2026-10-04T07:30:46Z — TaekGyu0801
+
+[2026-10-04]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / GATE
+상태: OBSERVED / SOURCE-INSTALL PASS
+
+Separate FAST_C1 project:
+- exact patch applied to sd_fdiv_des.cmd
+- resulting SHA-256:
+  f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93
+- exact canonical C1 source confirmed
+- golden backup preserved
+- live x6/x7/x8 untouched
+
+Next:
+read copied Workbench status/node metadata, then preprocess Node 6 only. Do not start SDevice yet.
+
+---

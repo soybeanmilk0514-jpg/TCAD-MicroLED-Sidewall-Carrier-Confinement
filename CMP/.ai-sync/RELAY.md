@@ -1,3 +1,131 @@
+## 2026-10-04 — B0 COMPLETE; handoff to FAST C1 preprocess
+
+- 285/285 rejection/retry pairs checked with explicit Stepsize-derived dt.
+- ratio min=0.499975805, max=0.500023337, mean=0.499999621 -> fixed 0.5 cutback confirmed.
+- C1 source unchanged, Iterations=15.
+- next: separate project/copy -> exact C1 source SHA -> preprocess gate.
+- live x6/x7/x8 untouched.
+
+---
+
+## 2026-10-04 — Claude B0 review accepted: C1 unchanged
+
+- 작업자: 이택규
+- C1 source unchanged; SHA `f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93`; `Iterations=15`.
+- correction: ~4.33 V is not trajectory divergence; it is the first rejected attempt where x8/C1 Newton count is expected to differ 50->15.
+- A1': accepted-step sequence and rejection points should match over overlap; unexplained mismatch = UNEXPECTED.
+- A1'': all C1 rejections must show `#iterations larger than 15.`; 50 => cap not applied, stop.
+- new audit tool SHA-256: `9a935633e92bc55fa86849b6988b60a8a8ee55f637387ced62721d9f6267d281`.
+- package selftest independently passed by ChatGPT.
+- raw observed cutback ratios are ~0.5; full 285-rejection CSV constancy is pending because CSV was not included in package.
+- patch-equivalent commit: `ace056fcb01d2e6e785dbee08a213e1148d6be35`.
+- next: separate-project preprocess -> NtSide=0 B1 benchmark.
+- live x6/x7/x8 untouched.
+
+---
+
+## 2026-10-04 — B0 result: C1 Iterations=15 cleared for first benchmark
+
+- worker: 이택규
+- x8 raw audit parsed 2236 attempts: 1950 accepted / 285 rejected.
+- accepted Newton iterations: 2–4 only; max=4.
+- all 285 rejected attempts reached 50 iterations; raw log explicitly says `#iterations larger than 50.`
+- predicted N=15 false rejection = 0 on observed path through ~4.643 V.
+- rejected attempts consume ~75% of observed attempt wallclock.
+- idealized saved time for cap 15 ≈72.3 h over the copied trajectory; simple idealized speedup ≈2.11x, before extra recovery overhead.
+- C1 is therefore cleared as PROPOSED first numerical candidate for separate-project preprocess + NtSide=0 benchmark.
+- limitations: no evidence yet for 4.643→5.0 V; parser does not yet parse real-log `error` column; current recovery-step metric should be ignored.
+- do not modify live x6/x7/x8.
+
+---
+
+## 2026-10-04 — B0 preprocessed check result
+
+- active Copy x8 `pp6_des.cmd`: transient inner Coupled has no explicit `Iterations`; only initial 500 and equilibrium 100 are present.
+- `RHSMin=1e-3`, `CheckRhsAfterUpdate`; no `NotDamped`.
+- The recorded ~50 failed Newton rows therefore cannot be attributed to an explicit `Iterations=50` in pp6_des.cmd.
+- Next evidence needed: raw x8 `n6_des.out` + parser-verified B0 audit.
+- Claude should receive this observation and the B0 output before C1 is executed.
+
+---
+
+## 2026-10-04 — ChatGPT review of Claude FAST C1
+
+- 작업자: 이택규
+- Claude C1 status: PROPOSED / REVIEWED / NOT EXECUTED.
+- golden SHA: `56a8be698321e5056e33bf22d4b873063728013e8a2383f4e264a42662c4aa2c`.
+- C1 SHA: `f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93`.
+- only executable change: transient inner Coupled `Iterations=15`.
+- C1 and ChatGPT v0.1 are executable-statement equivalent.
+- first-candidate logic is supported by Synopsys 2022 training (default 20; 15–20 recommended before timestep reduction).
+- blocker: project record of ~50-iteration failures conflicts with documented default 20. B0 must inspect exact x8 `pp6_des.cmd` + raw `n6_des.out` and validate the parser.
+- Claude tools passed syntax/synthetic selftests only; actual Sentaurus log/PLT formats unverified.
+- raw patch was not applied verbatim: stale `sd_fdiv_des.cmd missing` state and “stop x7” recommendation were rejected/corrected.
+- live x6/x7/x8 remain untouched.
+- canonical reviewed record: `CMP/FAST_BASELINE_C1.md`.
+
+---
+
+## 2026-10-04 — Claude GitHub permission clarification
+
+- 작업자: 이택규
+- 이택규의 Claude는 GitHub READ 가능, WRITE/EDIT 불가.
+- Claude는 구현/분석 결과를 채팅에 반환하고 GitHub 저장 성공을 주장하지 않는다.
+- 실제 GitHub 기록/수정은 ChatGPT가 Claude 결과를 검토한 뒤 수행한다.
+- `CMP/prompts/CLAUDE_FAST_BASELINE_IMPLEMENTATION.md`도 이 권한 구조로 정정됨.
+
+---
+
+## 2026-10-04 — Claude implementation package is ready
+
+- 구현 담당: Claude
+- GitHub handoff/prompt: `CMP/prompts/CLAUDE_FAST_BASELINE_IMPLEMENTATION.md`
+- user must attach exact source: `Copy_x8_sd_fdiv_des.cmd`
+- expected source SHA-256: `56a8be698321e5056e33bf22d4b873063728013e8a2383f4e264a42662c4aa2c`
+- Claude must read project instructions/state before coding.
+- public `CMP/tcad/CURRENT` SDevice is stale and must not be used as the base.
+- previous ChatGPT `Iterations=15` is PROPOSED only, not a required patch.
+- Claude must produce complete code, unified diff, Workbench steps, preprocess checks, short benchmark, acceptance and rollback criteria.
+- do not commit proprietary full source to public GitHub.
+
+---
+
+## 2026-10-04 — sequence correction: FAST coding precedes final clean-account freeze gate
+
+- 작업자: 이택규
+- Copy x8 golden reference freeze는 완료.
+- 지금부터 separate numerical-only FAST_BASELINE 코드를 작성하고 short benchmark한다.
+- clean-account reproduction은 최종 FAST deck freeze 및 Project A/B production 전에 반드시 수행하되, FAST 코드 작성 자체의 선행 blocker로 두지 않는다.
+- 첫 benchmark 변수는 Newton iteration/cutback policy.
+- x8 live directory는 수정 금지.
+
+---
+
+## 2026-10-04 — clean-account reproducibility requirement before FAST baseline freeze
+
+- 작업자: 이택규
+- 사용자 목표: 최종 baseline은 주수빈 계정과 이택규 계정에서 동일 source로 독립 재현되어야 함.
+- 과거 경험: 동일 코드/파라미터를 다른 계정에 복사했을 때 실행되지 않은 사례가 있었음. 원인을 단순한 "계정에 축적된 상태"로 확정하지 않음.
+- Claude/ChatGPT는 working account의 exact source뿐 아니라 preprocessed outputs와 project/runtime context를 함께 비교해야 함.
+- 필수 비교 대상:
+  - original SDE/SDevice source
+  - pp1_dvs.cmd
+  - pp6_des.cmd / pp6_des.par
+  - mesh statistics and reference n1_msh.tdr hash
+  - Workbench variables/tree/scenario files where relevant
+  - n6_des.job/sta/err/out/log
+  - Sentaurus version/path and thread settings
+- 재현 절차:
+  1. working semi437 Copy x8를 immutable reference로 보존.
+  2. new account에서 source를 새 project로 import.
+  3. full solve 전에 preprocess only / early initialization 단계까지 실행.
+  4. pp1_dvs.cmd, pp6_des.cmd, pp6_des.par를 working account와 exact diff.
+  5. mesh vertex/element statistics 비교.
+  6. 차이가 있으면 full multi-day solve를 시작하지 않고 먼저 원인을 해결.
+- FAST_BASELINE은 이 clean-account reproducibility gate를 통과할 수 있게 설계한다.
+
+---
+
 ## 2026-10-03 — baseline execution split plan
 
 - 최종 baseline 구현 단계에서는 동일한 검증 baseline을 주수빈 계정 1개, 이택규 계정 1개에 각각 실행할 계획.

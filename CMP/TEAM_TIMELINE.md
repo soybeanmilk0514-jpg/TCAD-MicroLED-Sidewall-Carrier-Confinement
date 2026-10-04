@@ -1,3 +1,43 @@
+## 2026-10-04 — B0 cutback-rule validation CLOSED
+
+- 작업자: 이택규
+- 상태: OBSERVED / B0 COMPLETE
+- regenerated x8 CSV with the updated audit tool using explicit `Stepsize`.
+- all 285 rejection/retry pairs were checked.
+- `retry_dt / rejected_dt`:
+  - pairs = 285
+  - min = 0.499975805
+  - max = 0.500023337
+  - mean = 0.499999621
+- interpretation: the retry timestep is effectively exactly 0.5 of the rejected timestep; remaining spread is consistent with printed Stepsize precision.
+- this closes the B0 assumption that the transient cutback factor is independent of whether the rejected Newton attempt ran to 50 or is capped at 15.
+- therefore C1 should preserve the x8 rejection points/accepted-step trajectory over the observed overlap; only the rejected-attempt Newton count changes 50 -> 15.
+- C1 source remains unchanged: SHA-256 `f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93`, `Iterations=15`.
+- next: separate FAST C1 Workbench project/copy -> source hash -> preprocess gate.
+- live x6/x7/x8 untouched.
+
+## 2026-10-04 — FAST C1 B0 review strengthened acceptance criteria
+
+- **작업자:** 이택규
+- **구현/검토:** Claude B0 review + ChatGPT verification
+- **상태:** PROPOSED / READY FOR SEPARATE PREPROCESS
+- C1 source remains `Iterations=15`; no physics/source change beyond the already-reviewed numerical cap.
+- ~4.33 V interpretation corrected: first rejected attempt with changed Newton count, not trajectory divergence.
+- A1'/A1'' added: preserve accepted/rejection trajectory over overlap and require C1 rejection message to show 15-cap.
+- full CSV cutback-ratio constancy remains pending; observed examples are ~0.5.
+- live x6/x7/x8 remain untouched.
+
+## 2026-10-04 — FAST_BASELINE C1 selected as first numerical candidate (PROPOSED)
+
+- **작업자:** 이택규
+- **구현:** Claude / **검토:** ChatGPT
+- **상태:** PROPOSED / REVIEWED / NOT EXECUTED
+- Copy x8 golden 대비 유일한 executable change는 forward Transient inner Coupled `Iterations=15`.
+- Common Baseline physics/traps/geometry/step controls는 유지.
+- Synopsys 2022 training의 15–20 iteration 권고와 방향은 일치하지만, 프로젝트의 ~50-iteration failure 기록과 documented default 20 사이 불일치가 있어 B0 raw-log audit이 선행되어야 함.
+- 최종 FAST 채택 전에는 numerical/physical equivalence + runtime 모두 검증.
+- live x6/x7/x8은 보존.
+
 ## 2026-09-28 — Final SDevice v1.2 source-sync gap 발견
 
 - **작성자:** ChatGPT

@@ -1,10 +1,10 @@
 {
-  "updated": "2026-09-26",
-  "primaryWorker": "주수빈",
-  "phase": "Phase 0 — Common Baseline validation",
-  "task": "SDevice2 to SVisual2 TDR output/linkage debugging",
-  "status": "UNRESOLVED",
-  "blocker": "Node12 Mg incomplete-ionization applied globally but pp12_des.par provides Mg ionization parameters only for GaN, not InGaN",
+  "updated": "2026-10-04",
+  "primaryWorker": "이택규",
+  "phase": "Phase 0 — Common Baseline FAST numerical optimization",
+  "task": "Inspect copied Workbench node/status metadata, then preprocess Node 6 only",
+  "status": "FAST_C1_SOURCE_INSTALLED_READY_FOR_STATUS_CHECK",
+  "blocker": "None; must avoid accidental solve/resume from copied x8 state.",
   "parallelWork": {
     "worker": "주수빈",
     "status": "OBSERVED",
@@ -180,5 +180,100 @@
     "path": "CMP/tcad/CURRENT/sdevice2_defect_on.cmd",
     "finding": "Issue #7 and JuSubin timeline record Final SDevice v1.2, but tcad/CURRENT still contains an older stale deck without v1.2 intermediate TDR saves.",
     "next_action": "Recover exact full user-provided Final SDevice v1.1/v1.2 source and sync it; do not reconstruct from summaries."
+  },
+  "fastBaseline": {
+    "status": "FAST_C1_B0_COMPLETE_READY_FOR_PREPROCESS",
+    "goldenReference": "semi437 Copy x8",
+    "localPackage": "~/CMP_REFERENCE_20261004.tgz",
+    "protocol": "CMP/FAST_BASELINE_REPRO_PROTOCOL.md",
+    "captureHelper": "CMP/tcad/capture_reference_snapshot.sh",
+    "nextAction": [
+      "Create separate FAST C1 Workbench project/copy",
+      "Install exact C1 source and verify SHA-256 f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93",
+      "Preprocess only and run preprocess equivalence gate",
+      "Run NtSide=0 B1 only after preprocess PASS"
+    ],
+    "snapshot": "~/CMP_REFERENCE_SNAPSHOTS/Copy_x8_20261004_124024",
+    "hashes": {
+      "n1_msh.tdr": "762d2d57a352a00bb030b968985cbf3b71d53118c68e5c53b7586e613f392ea3",
+      "pp1_dvs.cmd": "5685528bc3ec338ce104040b0503be43ef032094976d69995529eb5d6fb4e658",
+      "pp6_des.cmd": "2dfcc98effe145ec944fb8ee5d6914f5f098e54d1bf2319c69acc76afe1692e6",
+      "pp6_des.par": "60405755de61500d9815a8e9ecca6a7a465783d77eb8e5dadf1db515aeb10039",
+      "sd_fdiv_des.cmd": "56a8be698321e5056e33bf22d4b873063728013e8a2383f4e264a42662c4aa2c"
+    },
+    "sequence": [
+      "Copy x8 golden reference frozen",
+      "Create separate numerical-only FAST_BASELINE",
+      "Benchmark Newton iteration/cutback policy first",
+      "Validate equivalence against Copy x8",
+      "Benchmark further numerical changes one at a time if needed",
+      "Run clean-account reproduction before final FAST freeze and Project A/B production"
+    ],
+    "referenceFreeze": "CONFIRMED",
+    "candidateC1": {
+      "status": "PROPOSED_CLAUDE_REVIEWED_B0_PASSED_NOT_EXECUTED",
+      "author": "Claude",
+      "reviewedBy": "ChatGPT",
+      "goldenSourceSha256": "56a8be698321e5056e33bf22d4b873063728013e8a2383f4e264a42662c4aa2c",
+      "sourceSha256": "f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93",
+      "change": "forward Transient inner Coupled: Iterations=15 only",
+      "executableEquivalentToChatGPTV01": true,
+      "documentedRampDefaultIterations": 20,
+      "documentedGuidance": "Usually 3-6 iterations; 15-20 is a reasonable cap before reducing step size.",
+      "unresolved": "CMP records show some failed attempts near ~50 iterations; reconcile with pp6_des.cmd/raw n6_des.out before run.",
+      "toolsValidation": "Python syntax + synthetic selftests only; actual Sentaurus formats pending",
+      "acceptanceStatus": "PROVISIONAL",
+      "guide": "CMP/FAST_BASELINE_C1.md",
+      "claudeB0Review": "NO_SOURCE_CHANGE",
+      "acceptance": {
+        "A1prime": "C1 vs x8 accepted-step sequence (t0,t1,Newton count) and rejection points (t0,dt) should match over the entire overlap; unexplained mismatch is UNEXPECTED.",
+        "A1doubleprime": "Every C1 rejected attempt must report #iterations larger than 15.; a 50-cap message means cap not applied and the run must stop.",
+        "A3A4": "On the observed overlap, printed-precision identity is expected; 1e-3 current-relative and 1 mV Vf remain outer limits."
+      },
+      "auditToolSha256": "9a935633e92bc55fa86849b6988b60a8a8ee55f637387ced62721d9f6267d281",
+      "patchCommit": "ace056fcb01d2e6e785dbee08a213e1148d6be35"
+    },
+    "b0": {
+      "status": "OBSERVED_PASS_TO_4P643V",
+      "log": "~/CMP_B0/x8_n6_des_20261004_1335.out",
+      "attempts": 2236,
+      "accepted": 1950,
+      "rejected": 285,
+      "acceptedNewtonHistogram": {
+        "2": 1019,
+        "3": 778,
+        "4": 153
+      },
+      "acceptedNewtonMax": 4,
+      "rejectedAt50": 285,
+      "cap15FalseReject": 0,
+      "observedMaxV": 4.64301,
+      "totalAttemptWallclockSeconds": 495106,
+      "acceptedAttemptWallclockSeconds": 123464,
+      "rejectedAttemptWallclockSeconds": 371643,
+      "rejectedWallclockFraction": 0.7506,
+      "idealizedSavedSecondsAt15": 260150,
+      "idealizedSpeedupAt15": 2.107,
+      "limitations": [
+        "x8 evidence only through ~4.643 V",
+        "real-log error column not parsed yet",
+        "cutback recovery metric from current script is not used"
+      ],
+      "firstRejectedNewtonCountChangeV": 4.33,
+      "trajectoryInterpretation": "~4.33 V is not a trajectory divergence; it is the first rejected attempt where Newton count is expected to change from 50 to 15.",
+      "cutbackRatio": {
+        "status": "CONFIRMED_FIXED_HALF",
+        "pairs": 285,
+        "min": 0.499975805,
+        "max": 0.500023337,
+        "mean": 0.499999621,
+        "interpretation": "retry timestep is 0.5 of rejected timestep to printed Stepsize precision"
+      },
+      "speedupInterpretation": "~2.11x is a prediction under approximately uniform per-iteration cost and the observed fixed cutback rule, not a claim of measured C1 speedup."
+    },
+    "preprocess": {
+      "c1SourceInstall": "PASS",
+      "c1SourceSha256": "f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93"
+    }
   }
 }

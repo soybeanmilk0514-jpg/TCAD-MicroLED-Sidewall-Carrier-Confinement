@@ -1,3 +1,86 @@
+## 2026-10-04 — B0 CSV ratio check command quoting error under csh/tcsh
+
+- 작업자: 이택규
+- 상태: OBSERVED / RESOLVED COMMAND SYNTAX
+- multiline `python3 -c '...'` command was pasted into csh/tcsh and split across prompts, causing `Unmatched '`, `Badly placed ()'s`, and globbing errors.
+- no file/simulation change occurred.
+- correction: use a single-line awk command for the CSV retry-dt/rejected-dt ratio check.
+
+## 2026-10-04 — Root cause of failed BE-step parser patch: regex escaping error
+
+- 작업자: 이택규
+- 상태: FIXED / B0 PENDING
+- commit `c9e5804...` still failed its real-line regression selftest.
+- direct source inspection found the regex contained raw-string tokens like `\\\\s` instead of `\\s`, so it searched for a literal backslash+s rather than whitespace.
+- actual fix committed as:
+  - `a0ff43f2aff4b76ed390dcd6831e3ebeba6cb366`
+- GitHub source was reread after the write and now contains single-backslash regex tokens such as `Computing\\s+BE-step`.
+- next: download commit-pinned script, run selftest, then rerun B0.
+- no TCAD simulation/source deck modified.
+
+## 2026-10-04 — Correction: previous BE-step parser patch had not changed RE_STEP; fixed at commit c9e5804
+
+- 작업자: 이택규
+- 상태: FIXED / PROPOSED TOOL
+- user reran the supposed patched parser and still got attempts=0.
+- direct GitHub inspection showed `RE_STEP` was still the old `Computing step from t=...` regex.
+- prior statement that the BE-step parser patch was applied was incorrect.
+- actual fix now committed:
+  - commit `c9e5804ba0d84e424fcde6f4fd83bb4a04cd686a`
+  - recognizes observed `Computing BE-step from <t0> s to <t1> s (Stepsize: <dt> s)` syntax
+  - adds a regression selftest using the exact observed x8 line.
+- next: download the commit-pinned script, rerun selftest and B0 audit.
+- no simulation/source deck was modified.
+
+## 2026-10-04 — Real T-2022.03 BE-step syntax identified; B0 parser patched
+
+- 작업자: 이택규
+- 상태: OBSERVED / TOOL FIXED
+- real x8 log uses:
+  - `Computing BE-step from <t0> s to <t1> s (Stepsize: <dt> s)`
+  - `Iteration |Rhs| factor |step| error #inner #iterative time`
+  - rejected attempt message: `Newton didn't converge, trying again with smaller timestep...`
+  - accepted attempt message: `|RHS| less than 1.0000E-03.`
+- repeated retry at the same t0 with a smaller dt is directly visible, validating the high-level accepted/rejected classification rule.
+- `CMP/tcad/tools/sdevice_newton_audit.py` patched to recognize the actual T-2022.03 BE-step start format while preserving the previous synthetic format.
+- B0 statistics must be rerun with the updated parser before any Iterations=15 decision.
+
+## 2026-10-04 — B0 parser mismatch on real x8 SDevice log
+
+- 작업자: 이택규
+- 상태: OBSERVED / UNRESOLVED TOOLING
+- `sdevice_newton_audit.py --selftest` passed on synthetic data.
+- Real Copy x8 log audit returned:
+  - attempts=0
+  - no wallclock found
+  - `NO "Computing step from t=... to t=..." lines found`
+- Interpretation: actual T-2022.03 `n6_des.out` format does not match the parser's assumed step-start regex.
+- B0 scientific conclusion is therefore still pending; no claim about accepted/rejected iteration distribution or Iterations=15 is valid yet.
+- Next: inspect raw x8 log wording around "Computing", "Rhs", "step", and transient time, then patch the parser to the actual format and rerun B0.
+
+## 2026-10-04 — B0 audit script missing locally
+
+- 작업자: 이택규
+- 상태: OBSERVED / RESOLVED PATH ISSUE
+- x8 log copy succeeded:
+  - `~/CMP_B0/x8_n6_des_20261004_1335.out`
+  - size ≈ 3.4M
+- csh/tcsh `LOG` variable setup succeeded.
+- audit command failed only because `~/CMP_B0/sdevice_newton_audit.py` was not present:
+  - `python3: can't open file ... [Errno 2] No such file or directory`
+- no simulation/source modification occurred.
+- next: download the GitHub tool to `~/CMP_B0/`, run `--selftest`, then execute B0 audit.
+
+## 2026-10-04 — semi437 shell syntax mismatch during B0 log copy
+
+- 작업자: 이택규
+- 상태: OBSERVED / RESOLVED
+- command `cp n6_des.out ~/CMP_B0/x8_n6_des_$(date +%Y%m%d_%H%M).out` returned `Illegal variable name.`
+- interpretation: login shell behaves as csh/tcsh, where bash-style `$(...)` command substitution is invalid.
+- correction: use backticks for command substitution, e.g. `x8_n6_des_`date +%Y%m%d_%H%M`.out`.
+- no simulation/source files were modified; only the attempted copy command failed.
+- next B0 commands should use csh/tcsh-compatible syntax.
+
 ## 2026-09-26 — Project Log does not expose root cause
 
 Project Log shows:

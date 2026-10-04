@@ -1,3 +1,283 @@
+## 2026-10-04 — FAST_C1 copied .status ownership resolved
+
+- 작업자: 이택규
+- 상태: OBSERVED / RESOLVED
+- FAST_C1 `.status`에 남아 있던 PID 78941을 `/proc/78941/cwd`와 cmdline으로 확인함.
+- PID 78941의 실제 cwd와 gsub 대상은 원래 live Copy x8:
+  `/user/semi/semi437/tmp/myproject/GaN_PiN_Diode_Copy_Copy_Copy_Copy_Copy_Copy_Copy_Copy`
+- 따라서 FAST_C1의 `.status`는 Save As 과정에서 복사된 stale metadata이고, live process ownership은 x8에 있음.
+- PID 78941은 절대 종료/수정하지 않음.
+- FAST_C1 source는 exact C1 SHA-256 `f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93`.
+- 다음: Workbench에서 FAST_C1 프로젝트만 열고 Node 6(NtSide=0)을 preprocess-only. SDevice solve는 시작하지 않음.
+
+## 2026-10-04 — FAST_C1 exact source installation PASS
+
+- 작업자: 이택규
+- 상태: OBSERVED / SOURCE-INSTALL PASS
+- separate project: `/user/semi/semi437/tmp/myproject/GaN_PiN_Diode_FAST_C1`
+- exact patch applied successfully to `sd_fdiv_des.cmd`.
+- resulting SHA-256:
+  `f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93`
+- this matches the canonical Claude C1 source hash exactly.
+- golden backup remains `sd_fdiv_des.cmd.golden_x8`.
+- live x6/x7/x8 untouched.
+- next: inspect copied Workbench node/status metadata before preprocess; do not launch SDevice yet.
+
+## 2026-10-04 — FAST_C1 patch dry-run PASS
+
+- 작업자: 이택규
+- 상태: OBSERVED
+- separate FAST_C1 directory에서 `patch --dry-run -p0 < ~/CMP_B0/FAST_C1_exact_source.patch` 실행.
+- 출력: `checking file sd_fdiv_des.cmd`; reject/error 없음.
+- 아직 실제 patch 적용 전.
+- 다음: actual patch apply 후 `sd_fdiv_des.cmd` SHA-256이 exact C1 hash와 일치하는지 확인.
+
+## 2026-10-04 — B0 cutback-rule validation CLOSED
+
+- 작업자: 이택규
+- 상태: OBSERVED / B0 COMPLETE
+- regenerated x8 CSV with the updated audit tool using explicit `Stepsize`.
+- all 285 rejection/retry pairs were checked.
+- `retry_dt / rejected_dt`:
+  - pairs = 285
+  - min = 0.499975805
+  - max = 0.500023337
+  - mean = 0.499999621
+- interpretation: the retry timestep is effectively exactly 0.5 of the rejected timestep; remaining spread is consistent with printed Stepsize precision.
+- this closes the B0 assumption that the transient cutback factor is independent of whether the rejected Newton attempt ran to 50 or is capped at 15.
+- therefore C1 should preserve the x8 rejection points/accepted-step trajectory over the observed overlap; only the rejected-attempt Newton count changes 50 -> 15.
+- C1 source remains unchanged: SHA-256 `f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93`, `Iterations=15`.
+- next: separate FAST C1 Workbench project/copy -> source hash -> preprocess gate.
+- live x6/x7/x8 untouched.
+
+## 2026-10-04 — Old B0 CSV ratio spread is a rounding artifact, not a physics/cutback result
+
+- 작업자: 이택규
+- 상태: OBSERVED / VALIDATION PENDING
+- old CSV ratio check over all 285 rejection/retry pairs: min 0.47826087, max 0.52173913, mean 0.499405569.
+- old audit CSV computed dt from rounded t0/t1, so these values cannot be used to test whether the cutback factor is constant.
+- updated Claude audit tool reads the explicit `Stepsize` field and must regenerate the CSV before the cutback-ratio assumption is closed.
+- existing raw log examples using printed Stepsize are ~0.5.
+- C1 `Iterations=15` decision is unchanged; this affects only the auxiliary validation of the timestep-reduction rule.
+
+## 2026-10-04 — Full CSV cutback-ratio check exposed old-dt rounding artifact
+
+- 작업자: 이택규
+- 상태: OBSERVED / TOOLING INTERPRETATION
+- old B0 CSV ratio check across all 285 rejection/retry pairs returned:
+  - pairs = 285
+  - min = 0.47826087
+  - max = 0.52173913
+  - mean = 0.499405569
+- This CSV was produced by the older audit parser whose `dt` was computed from printed `t1-t0`.
+- T-2022.03 prints t0/t1 with limited decimal precision, so small high-bias timesteps are distorted when subtracting the rounded endpoints.
+- Therefore the 0.478–0.522 spread is **not valid evidence that the cutback factor varies**.
+- Claude's updated audit tool specifically fixes this by reading the explicit `(Stepsize: ... s)` value from each log line.
+- Existing raw examples using printed Stepsize show exact/near-exact 0.5 cutback.
+- Next: regenerate x8_attempts.csv with the updated audit tool and repeat the 285-pair ratio check using the explicit Stepsize-derived dt.
+
+## 2026-10-04 — Claude B0 review accepted; C1 source unchanged
+
+- 작업자: 이택규
+- 상태: PROPOSED / CLAUDE-REVIEWED / READY FOR SEPARATE PREPROCESS
+- Claude review package verified:
+  - C1 source unchanged
+  - C1 SHA-256 = `f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93`
+  - `Iterations = 15` retained
+- B0 interpretation correction accepted:
+  - ~4.33 V is **not** a trajectory divergence.
+  - It is the first observed rejected attempt where the Newton count is expected to differ: x8 50 -> C1 15.
+  - Over the overlapping observed path, C1 is expected to preserve the accepted-step sequence and rejection points; any unexplained mismatch is UNEXPECTED and must be investigated.
+- Acceptance additions:
+  - A1': accepted steps (t0,t1,Newton count) + rejection points (t0,dt) should match over the overlap.
+  - A1'': every C1 rejected attempt must report `#iterations larger than 15.`; seeing 50 means the cap did not apply and the run must stop.
+  - A3/A4: identical-to-printed-precision is the expectation on the observed overlap; 1e-3 / 1 mV remain outer limits, not automatic acceptance bands.
+- Updated audit tool package SHA-256:
+  - `9a935633e92bc55fa86849b6988b60a8a8ee55f637387ced62721d9f6267d281`
+  - package selftest independently rerun by ChatGPT and passed.
+- Cutback-ratio evidence:
+  - actual x8 excerpts already observed show retry/rejected dt ratios approximately 0.5 (e.g. 2.2968e-05->1.1484e-05, 2.3813e-05->1.1907e-05, 2.4690e-05->1.2345e-05).
+  - the full B0 CSV itself was not included in the Claude review ZIP, so constancy across all 285 rejections is still **PENDING FULL-CSV VERIFICATION**.
+- Patch-equivalent review changes applied at commit `ace056fcb01d2e6e785dbee08a213e1148d6be35`.
+- live x6/x7/x8 remain untouched.
+
+## 2026-10-04 — FAST C1 cleared by B0 for separate-project benchmark
+
+- 작업자: 이택규
+- 상태: PROPOSED / B0-PASSED / NOT YET EXECUTED
+- raw Copy x8 audit: 1950 accepted steps, max accepted Newton iterations = 4; 285 rejected attempts, each reaching 50 iterations.
+- N=15 false rejection count on observed x8 trajectory = 0.
+- raw log confirms effective failed-attempt cap behavior of >50 iterations even though transient inner Coupled has no explicit Iterations in pp6_des.cmd.
+- rejected attempts account for ~75% of observed attempt wallclock; under the observed fixed-cutback pattern and approximately uniform per-iteration cost, N=15 predicts ~2.1x speedup over the observed path.
+- B0 evidence currently covers x8 only to ~4.643 V.
+- next: create/preprocess separate FAST C1 project, run preprocess gate, then NtSide=0 benchmark. Keep live x6/x7/x8 untouched.
+- C1 remains PROPOSED until execution/equivalence checks pass.
+
+## 2026-10-04 — Real T-2022.03 BE-step syntax identified; B0 parser patched
+
+- 작업자: 이택규
+- 상태: OBSERVED / TOOL FIXED
+- real x8 log uses:
+  - `Computing BE-step from <t0> s to <t1> s (Stepsize: <dt> s)`
+  - `Iteration |Rhs| factor |step| error #inner #iterative time`
+  - rejected attempt message: `Newton didn't converge, trying again with smaller timestep...`
+  - accepted attempt message: `|RHS| less than 1.0000E-03.`
+- repeated retry at the same t0 with a smaller dt is directly visible, validating the high-level accepted/rejected classification rule.
+- `CMP/tcad/tools/sdevice_newton_audit.py` patched to recognize the actual T-2022.03 BE-step start format while preserving the previous synthetic format.
+- B0 statistics must be rerun with the updated parser before any Iterations=15 decision.
+
+## 2026-10-04 — B0-1: Copy x8 preprocessed Iterations check
+
+- 작업자: 이택규
+- 상태: OBSERVED
+- active Copy x8 `pp6_des.cmd`에서:
+  - `RHSMin = 1e-3`
+  - `CheckRhsAfterUpdate`
+  - `Iterations = 500` (initial Poisson)
+  - `Iterations = 100` (equilibrium Coupled)
+  - transient inner Coupled에 explicit `Iterations` 없음
+  - `NotDamped` 없음
+- 따라서 프로젝트 기록의 ~50-row/iteration failure는 preprocessed deck에 명시된 `Iterations=50` 때문이 아님.
+- 다음: exact x8 `n6_des.out` raw audit으로 50의 의미를 확인하고 accepted-step iteration 분포를 측정.
+
+## 2026-10-04 — FAST_BASELINE C1 reviewed; B0 required before execution
+
+- 작업자: 이택규
+- 상태: PROPOSED / REVIEWED / NOT EXECUTED
+- Claude C1 golden/FAST hashes verified.
+- executable change vs Copy x8: transient inner `Coupled` only → `Iterations=15`.
+- C1 and prior ChatGPT FAST v0.1 are executable-statement equivalent; C1 is now the canonical provenance candidate.
+- Synopsys 2022 training documents default 20 Newton iterations for ramped solves and recommends roughly 15–20 before timestep reduction. This supports 15 as a first candidate but conflicts with the project record of ~50-iteration failed attempts.
+- Current blocker: B0 read-only audit of exact x8 `pp6_des.cmd` and raw `n6_des.out` to resolve the 20-vs-50 discrepancy, verify parser correctness, and ensure no accepted x8 step needs >15.
+- Do not launch C1 until B0 passes.
+- live Copy x6/x7/x8 remain untouched.
+- reviewed record: `CMP/FAST_BASELINE_C1.md`.
+
+## 2026-10-04 — Current Copy x8 Node12 pending location narrowed to Workbench/gsub dispatch queue
+
+- 작업자: 이택규
+- 상태: OBSERVED / NARROWED
+- Current Copy x8 gexec.cmd:
+  - Node6: `job 6 -d "1" ... sdevice pp6_des.cmd`
+  - Node12: `job 12 -d "1" ... sdevice pp12_des.cmd`
+  - therefore both depend on Node1 and Node12 does not depend on Node6 at graph level.
+- Current Node12 status: `pending`, `local:-1`.
+- No current `n12_des.job` exists.
+- No current Node12 `gjob` or `sdevice` process exists.
+- Sep26 n12 out/log/err/local.err are stale historical artifacts.
+- Current x8 gsub0 process was launched with `-q local:default -e remaining`, while only Node6 has been dispatched to gjob/sdevice.
+- Three separate project copies currently each have one active Node6 SDevice process.
+- Therefore current Node12 is waiting before SDevice launch, inside Workbench/gsub scheduling/dispatch, not failing inside the current SDevice deck.
+- Most plausible explanation is local queue/resource/concurrency serialization while three SDevice jobs are already active, but exact queue limit is not yet proven.
+- If immediate Node12 execution is desired, first retire one duplicate active run (prefer x7), then observe whether x8 gsub dispatches Node12 automatically. If not, inspect Workbench local queue/concurrency settings before manually relaunching.
+
+
+## 2026-10-04 — Why Node12 is not running: separate old solver failure from current pending state
+
+- 작업자: 이택규
+- 상태: CONFIRMED BOUNDARY
+- Two different events must not be conflated.
+1. OLD Sep26 Node12 execution:
+   - actually launched and terminated during SDevice initialization.
+   - logs show Mg incomplete-ionization parameter mismatch in InGaN while global/species ionization handling was active.
+   - this is the historical solver-initialization failure.
+2. CURRENT Sep28 Copy x8 Node12:
+   - pp12_des.cmd/par were freshly preprocessed at Sep28 18:43.
+   - n12_des.sta = pending, local:-1.
+   - there is no current n12 gjob/sdevice process and no current Sep28 n12 output/log.
+   - gexec.cmd shows Node12 depends only on Node1, not on Node6.
+   - therefore the current Node12 has not failed in SDevice; it has not been launched yet.
+- Current cause of pending is outside the SDevice numerical solve. Possible causes include Workbench launch selection / project execution policy / job concurrency-resource scheduling, but the exact scheduler reason is not proven by the captured package.
+- Three separate project copies currently consume active SDevice jobs on the same account/host, so resource/concurrency pressure is plausible, but not yet proven as the exact pending cause.
+- Do not attribute current Node12 pending to the stale Sep26 Mg error.
+
+
+## 2026-10-04 — Golden baseline pair confirmed at preprocess level
+
+- 작업자: 이택규
+- 상태: CONFIRMED
+- Copy x8 current preprocess:
+  - Node 6 = NtSide 0 control
+  - Node 12 = NtSide 1e18 damaged branch
+- pp6_des.par SHA256 = 60405755de61500d9815a8e9ecca6a7a465783d77eb8e5dadf1db515aeb10039
+- pp12_des.par SHA256 = 60405755de61500d9815a8e9ecca6a7a465783d77eb8e5dadf1db515aeb10039
+- diff pp6_des.par vs pp12_des.par = no differences.
+- Current pp6_des.cmd vs pp12_des.cmd differences are node-specific filenames/intermediate-output prefix plus trap Conc 0 -> 1e18 in the intended sidewall trap regions; no parameter-file difference.
+- Therefore the current Copy x8 Node6/Node12 pair is a valid NtSide-only validation pair at preprocess/parameter level.
+- Important: current Node12 remains pending; current Sep28 pp12 has not yet been executed. Sep26 Node12 failure logs are stale and must not be used to judge this pair.
+- Next:
+  1. re-upload the refreshed CMP_REFERENCE_20261004.tgz containing pp12 files/diffs/timestamps;
+  2. sync exact reference bundle metadata and safe source files to GitHub;
+  3. generate Claude FAST_BASELINE prompt against this exact pair;
+  4. require clean-account preprocess/hash equivalence before any multi-day full run.
+
+
+## 2026-10-04 — Copy x8 Node12 current preprocess is NtSide-only pair; visible Node12 failure logs are stale
+
+- 작업자: 이택규
+- 상태: CONFIRMED
+- Evidence from current Copy x8 directory:
+  - pp6_des.cmd timestamp: 2026-09-28 18:43
+  - pp12_des.cmd / pp12_des.par timestamp: 2026-09-28 18:43
+  - n12_des.out / log / err timestamp: 2026-09-26 14:24
+  - n12_des.sta: pending, local -1
+- Exact diff pp6_des.cmd vs pp12_des.cmd shows:
+  - node-specific Parameters/Plot/Current/Output filenames
+  - trap Conc 0 -> 1e18 in all intended sidewall regions
+  - intermediate FilePrefix n6_inter -> n12_inter
+  - no shown Physics/Math/Solve differences in the captured diff
+- Therefore the current Copy x8 Node6/Node12 command pair is consistent with an NtSide-only validation pair at cmd level.
+- Critical provenance correction:
+  - the visible Node12 Mg-incomplete-ionization failure logs are from Sep26 and do NOT correspond to the current Sep28 pp12_des.cmd/par.
+  - current Node12 has not yet executed; status is pending.
+- Do not use stale n12 logs to judge the current v1.2 Node12 deck.
+- Next discriminator:
+  1. exact SHA/diff pp6_des.par vs pp12_des.par
+  2. if identical, current Node12 should be launched in a clean execution context and initialization checked before full run.
+  3. clean-account reproduction must avoid inheriting stale outputs from copied Workbench directories.
+
+
+## 2026-10-04 — Copy x8 exact reference package audited: active Node 6 is NtSide=0 control, not nominal damaged baseline
+
+- 작업자: 이택규
+- 상태: CONFIRMED FROM UPLOADED ACTIVE PACKAGE
+- 근거: user-uploaded `CMP_REFERENCE_20261004.tgz` extracted and inspected.
+- Exact hashes:
+  - sd_fdiv_des.cmd: `56a8be698321e5056e33bf22d4b873063728013e8a2383f4e264a42662c4aa2c`
+  - pp1_dvs.cmd: `5685528bc3ec338ce104040b0503be43ef032094976d69995529eb5d6fb4e658`
+  - pp6_des.cmd: `2dfcc98effe145ec944fb8ee5d6914f5f098e54d1bf2319c69acc76afe1692e6`
+  - pp6_des.par: `60405755de61500d9815a8e9ecca6a7a465783d77eb8e5dadf1db515aeb10039`
+  - n1_msh.tdr reference hash: `762d2d57a352a00bb030b968985cbf3b71d53118c68e5c53b7586e613f392ea3`
+- Critical correction:
+  - gtree.dat maps Node 6 to NtSide=0 and Node 12 to NtSide=1e18.
+  - pp6_des.cmd contains `Conc = 0` in all sidewall trap regions.
+  - Therefore the currently inspected/running Copy x8 Node 6 is the pristine validation control, NOT the nominal NtSide=1e18 damaged baseline.
+  - The Workbench tree currently contains only NtSide={0,1e18}; the source comments list 1e17/1e19 but those sweep points are not in the captured tree.
+- Runtime:
+  - Math: Digits=5, ErrRef(e/h)=1e4, RHSMin=1e-3, Transient=BE, ExtendedPrecision(80), Blocked + ILS(set=22).
+  - Transient: InitialStep=1e-5, MinStep=1e-9, MaxStep=1e-3, Increment=1.2; transient Coupled has no explicit Iterations setting.
+  - Logs show repeated high-bias residual stagnation slightly above RHSMin with long rejected steps.
+- External runtime event:
+  - n6_des.err records license-server outage/suspension from 2026-09-30 23:02 to 2026-10-01 13:02, roughly 14 hours, so calendar runtime is inflated by infrastructure downtime in addition to solver convergence cost.
+- Mesh:
+  - 138137 vertices, 274946 elements, 41 regions, max connectivity 9.
+- Immediate consequence:
+  - FAST optimization should first benchmark against this exact NtSide=0 control for numerical equivalence, but a scientifically valid Common Baseline still requires the NtSide=1e18 branch (Node 12) to be independently recovered/run from the same frozen source and parameter revision.
+
+
+## 2026-10-04 — overnight active-run progress confirms severe high-bias runtime bottleneck
+
+- 작업자: 이택규
+- 상태: OBSERVED
+- 2026-10-04 11:52 KST 터미널 확인:
+  - Copy x6: still running; latest visible pseudo-time ~0.942317, anode ~4.712 V.
+  - Copy x8: still running; latest visible pseudo-time ~0.928460, anode ~4.642 V.
+  - Copy x7 is also still running despite being previously identified as a duplicate v1.1 active calculation.
+- Compared with the 2026-10-03 evening captures, overnight progress is only a few to ~10 mV while repeated Newton stagnation persists near RHS ~1e-3.
+- Copy x6 again shows a step spending >1000 s while residual stalls around 1.42–1.43e-3.
+- Copy x8 is entering the same pattern.
+- Conclusion: do not wait for current decks to reach 5 V before starting runtime optimization. Preserve x8 as reference, retire duplicate x7, and begin a separate FAST_BASELINE benchmark today.
+
 ## 2026-09-29 — Active baseline run confirmed alive; severe Newton cutback near 4.66 V
 
 **OBSERVED:** direct `n6_des.out` output shows the active job is Node 6. It has reached pseudo-time ≈0.93254, corresponding to ≈4.66 V for the 0→5 V linear transient ramp.
