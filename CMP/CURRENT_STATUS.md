@@ -1,3 +1,35 @@
+## 2026-10-06 — Node 6 / Node 12 actual runtime paths confirmed
+
+- 작업자: 이택규
+- 상태: OBSERVED / DIRECT PROCESS EVIDENCE
+- ps -fu semi437에서 두 SDevice run의 실제 경로와 process chain을 직접 확인.
+- Node 6 (NtSide=0):
+  - project: /user/semi/semi437/tmp/myproject/GaN_PiN_Diode_FAST_C1
+  - gsub PID 69166
+  - gjob PID 69396
+  - sdevice PID 69457
+  - command: sdevice --max_threads 4 pp6_des.cmd
+- Node 12 (NtSide=1e18):
+  - project: /user/semi/semi437/tmp/myproject/GaN_PiN_Diode_FAST_C1_Copy
+  - gsub PID 93737
+  - gjob PID 93864
+  - sdevice PID 93915
+  - command: sdevice --max_threads 4 pp12_des.cmd
+- 두 SDevice process 모두 CPU 99%로 active.
+- Node 12 exact project path가 이제 확인되었으므로 기존 VERIFY NEEDED path blocker는 해소.
+- 다음: 각 project에서 source/preprocessed cmd/par/mesh/log provenance를 실제 파일 기준으로 확인.
+
+## 2026-10-06 — CRITICAL DEADLINE: abstract due Oct 23; runtime is now primary blocker
+
+- 작업자: 이택규
+- 상태: DECISION / BLOCKER
+- 사용자 명시: 논문 초록 제출 마감은 2026-10-23.
+- 현재 primary blocker는 node failure 자체가 아니라 multi-day runtime/high-bias timestep collapse로 인해 Common Baseline 및 A/B 결과 확보가 일정에 맞지 않을 위험이 큰 것.
+- FAST_C1 Node 6과 별도 Node 12는 가능한 한 reference evidence로 계속 보존하되, 완주만 기다리는 전략은 중단.
+- 오늘부터 병행: exact same physics/mesh를 유지한 numerical-only acceleration branch를 short benchmark로 검증.
+- 우선 후보: DC sweep용 Quasistationary 또는 staged continuation, existing converged state 재사용/Save-Load, bias segmentation, thread/I/O benchmark. T-2022.03 지원 syntax는 공식 자료와 실제 preprocess/log로 검증 후 사용.
+- 금지: 논문 일정 때문에 SRH/trap/polarization/geometry를 임의 제거하거나 convergence criterion을 검증 없이 완화.
+
 ## 2026-10-06 — Node 12 appears to be running normally by Workbench F7 check
 
 - 작업자: 이택규

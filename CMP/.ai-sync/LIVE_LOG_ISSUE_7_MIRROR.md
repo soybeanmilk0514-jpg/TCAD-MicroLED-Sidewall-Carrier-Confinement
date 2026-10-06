@@ -2261,3 +2261,26 @@ AI: ChatGPT
 Node 12 solver log/process는 아직 직접 확인하지 않았으므로 CONFIRMED running 표기는 보류.
 
 ---
+
+## 2026-10-06T05:13:55Z — TaekGyu0801
+
+[2026-10-06 14:07 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / BLOCKER / DEADLINE
+상태: CONFIRMED USER DEADLINE
+
+요약:
+논문 초록 제출 마감이 2026-10-23으로 명시됨. 현재 가장 큰 blocker는 FAST_C1/Common Baseline node의 multi-day runtime이며, Node 6에서 high-bias timestep collapse가 직접 관찰됨.
+
+결정:
+- 기존 Node 6/Node 12는 자원 충돌이 없으면 full-reference evidence로 유지.
+- 두 node 완주만 기다리는 전략은 중단.
+- same physics/mesh 기반 numerical-only accelerated branch를 즉시 병행 benchmark.
+- 우선 검토: Quasistationary DC/staged continuation, Save-Load/restart, bias segmentation, thread/I-O optimization.
+- physics/trap/geometry 또는 convergence criterion을 일정 때문에 검증 없이 완화하지 않음.
+
+초록 전 목표:
+모든 sweep 완료가 아니라 defensible Common Baseline + 최소 mechanism-relevant preliminary A/B evidence 확보.
+
+---
