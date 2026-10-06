@@ -1,3 +1,53 @@
+## 2026-10-06 — Priority reset: finish and validate Common Baseline before Project A/B
+
+- 작업자: 이택규
+- 상태: DECISION / PRIORITY
+- 사용자가 연구 우선순위를 Common Baseline 완성으로 재확정.
+- 즉시 우선순위:
+  1. FAST_C1 Node 6 (NtSide=0) 현재 run 유지 및 완주.
+  2. 별도 프로젝트로 시작한 Node 12 (NtSide=1e18)의 실제 정상 실행 여부를 process/log로 확인.
+  3. 두 run의 source/mesh/parameter/numerical provenance를 확인.
+  4. 완주 후 I-V, convergence, key output sanity를 검증.
+  5. 두 조건이 모두 통과한 뒤에만 FAST_C1 Common Baseline을 freeze.
+- Project A/B 설계 및 sweep은 baseline freeze 이후로 보류.
+- publication-grade 기준 유지: physics/trap/geometry/convergence criterion을 일정 때문에 임의 완화하지 않음.
+
+## 2026-10-06 — Deadline-aware publication plan
+
+1. Keep FAST_C1 Node 6 running as the full-reference NtSide=0 case.
+2. Check server capacity; if sufficient, launch NtSide=1e18 in a separate clean FAST_C1 project in parallel.
+3. Do not loosen RHSMin for the publication baseline without a dedicated sensitivity study.
+4. Build the next acceleration test around safer numerical levers first: staged step-growth policy / thread count / checkpointing.
+5. Define the scientific operating-current window from the validated baseline.
+6. Use that reduced window for broad Project A/B screening.
+7. Full 0–5 V validation only for baseline, best/representative/worst A/B cases, and cases needed to establish Vf/I–V limits.
+8. Perform mesh-convergence on a small representative set, not every sweep point.
+9. Final paper plots/tables must come only from validated full or explicitly convergence-checked runs.
+
+## 2026-10-06 — Quantify FAST_C1 high-bias progress rate
+
+1. Keep FAST_C1 Node 6 running for now; it is confirmed alive at ~4.682 V and C1 Iterations=15 is active.
+2. Do not infer completion ETA from the 0→4.682 V average.
+3. Use a fixed recent log window to measure:
+   - pseudo-time / anode-voltage advance,
+   - accepted attempts,
+   - rejected attempts,
+   - average accepted-step wallclock,
+   - average rejected-step wallclock.
+4. Recalculate mV/hour from that recent high-bias window.
+5. Decide whether to continue to 5 V or redesign the numerical schedule based on the measured tail rate.
+6. Preserve the current run and logs; no physics changes.
+
+## 2026-10-06 — Immediate runtime check before waiting longer
+
+1. FAST_C1 Node 6 has been running ~41 h 48 min without a completed node by user report.
+2. Before simply waiting longer, inspect current process state and the tail of FAST_C1 n6_des.out.
+3. Record latest pseudo-time/anode voltage and compare with the last known point to prove forward progress.
+4. Confirm C1 rejected attempts report the 15-iteration cap; if 50 still appears, stop because the intended C1 cap is not active.
+5. If progress is real, estimate mV/hour from recent log intervals rather than extrapolating from the old 65.4 h run.
+6. If progress has stopped or repeated cutbacks dominate with no meaningful voltage advance, reassess numerics before investing another multi-day run.
+7. Keep staged A/B screening strategy; do not brute-force every parameter case over full 0→5 V.
+
 ## 2026-10-04 — Revised immediate action and staged production plan
 
 1. Do NOT discard the currently running FAST_C1 Node 6 yet.

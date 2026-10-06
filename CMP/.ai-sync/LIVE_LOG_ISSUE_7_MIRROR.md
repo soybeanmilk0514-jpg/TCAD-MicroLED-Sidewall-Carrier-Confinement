@@ -2096,3 +2096,168 @@ Next:
 read copied Workbench status/node metadata, then preprocess Node 6 only. Do not start SDevice yet.
 
 ---
+
+## 2026-10-06T00:35:50Z — TaekGyu0801
+
+[2026-10-06 09:34 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / RUNTIME CHECK
+상태: USER-REPORTED / UNRESOLVED
+
+요약:
+FAST_C1 Node 6의 기록된 시작 시각은 2026-10-04 15:46 KST이며, 현재 확인 시각 2026-10-06 09:34 KST 기준 약 41시간 48분 경과. 사용자는 아직 어떤 node도 완료되지 않았다고 보고함.
+
+비교:
+- historical NtSide=0 full run: ~65.4 h
+- current elapsed: ~41.8 h (~64% of historical wallclock)
+- prior ~2.11x speedup figure was an idealized observed-path estimate, not a full-run ETA, and is not yet demonstrated by C1.
+
+판단:
+현재 정보만으로 slow progress와 stall을 구분할 수 없음. 단순히 더 기다리기 전에 최신 solver evidence를 확인해야 함.
+
+다음:
+1. FAST_C1 process state 확인
+2. n6_des.out tail에서 latest pseudo-time/anode voltage 확인
+3. rejected attempts가 '#iterations larger than 15.'인지 확인
+4. 최근 voltage advance / hour 산출
+5. 실제 progress가 없으면 numerical strategy 재검토
+
+A/B production은 full 0→5 V brute-force가 아니라 staged screening 전략 유지.
+
+---
+
+## 2026-10-06T00:39:36Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / RUNTIME
+상태: OBSERVED
+
+FAST_C1 Node 6 direct evidence:
+- sdevice PID 69457 active at ~99% CPU
+- n6_des.out updated 08:49 KST
+- latest accepted pseudo-time ≈0.936405 -> anode ≈4.682025 V
+- current attempted endpoint 0.936419 -> ≈4.682095 V
+- recent solver table reports anode 4.682E+00 V
+- repeated '#iterations larger than 15.' confirms C1 cap is active
+- recent accepted solves: 2–3 Newton iterations, ~21–22 s
+- recent high-bias stepsize only ~7.8e-6 to 1.6e-5 pseudo-time
+- run is not hung, but high-bias timestep collapse is now the dominant runtime bottleneck
+- prior x8 audit endpoint ~4.643 V has been exceeded by ~39 mV
+- remaining to 5 V ≈0.318 V
+
+Next:
+measure progress over a fixed recent high-bias window before estimating completion time; do not use the whole-run average.
+
+---
+
+## 2026-10-06T00:41:34Z — TaekGyu0801
+
+[2026-10-06 08:51 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / RUNTIME
+상태: OBSERVED
+
+Direct evidence:
+- FAST_C1 sdevice PID 69457 alive
+- ELAPSED 1-17:05:26 (~41 h 05 min)
+- CPU 280%
+- n6_des.out modified at 08:51:49, so log is actively updating
+- recent accepted pseudo-time >= 0.936443; attempted to 0.936458 (~4.682 V)
+- repeated '#iterations larger than 15.' confirms C1 active
+- high-bias step size ~7e-6 to 1.45e-5 pseudo-time
+
+Interpretation:
+Node 6 is progressing, not hung. Runtime bottleneck is severe high-bias timestep contraction. Sequential completion of both Node 6 and Node 12 may require multiple additional days; Node 12 runtime remains unmeasured.
+
+Next:
+complete/benchmark Node 6 first, quantify final tail runtime, then decide whether Node 12 should run sequentially or in parallel under available resources.
+
+---
+
+## 2026-10-06T00:49:53Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / RESEARCH STRATEGY
+상태: CONFIRMED STRATEGY
+
+사용자 요구:
+논문에 사용할 수 있을 정도의 수치적 타당성 + 일정 준수.
+
+결정:
+- full validated reference/final cases와 reduced-window screening을 분리.
+- baseline 및 최종 대표 A/B cases는 publication-grade full validation 유지.
+- broad sweep는 operating-current/bias window 중심으로 screening.
+- winner/representative/worst만 full 0–5 V 재검증.
+- RHSMin 완화는 baseline에 즉시 적용하지 않고 sensitivity study 후에만 허용.
+- 우선 시간 단축 수단: 병렬 독립 run, staged numerical schedule, thread benchmark, restart checkpoint, mesh convergence 기반 coarsening.
+
+현재 Node 6은 C1 full-reference evidence로 계속 유지.
+
+---
+
+## 2026-10-06T00:56:53Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / PARALLEL RUN
+상태: USER-REPORTED / VERIFY NEEDED
+
+사용자가 Node 12(NtSide=1e18)를 별도 복사 프로젝트/파일로 병렬 실행했다고 보고함.
+현재 FAST_C1 Node 6은 계속 실행 중.
+
+아직 직접 미확인:
+- 새 project path
+- C1 source hash
+- pp12_des.cmd/par
+- Node12 initialization / active solver log
+
+따라서 Node12 정상 실행은 로그 확인 전까지 CONFIRMED로 처리하지 않음.
+
+---
+
+## 2026-10-06T01:00:29Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / PRIORITY
+상태: CONFIRMED STRATEGY
+
+우선순위를 Common Baseline 완성으로 재설정.
+
+다음:
+1. Node 6(NtSide=0) 현재 run 유지 및 완주
+2. 별도 시작한 Node 12(NtSide=1e18) 정상 실행 여부 확인
+3. 두 run provenance/convergence/output 검증
+4. 둘 다 PASS 후 FAST_C1 Common Baseline freeze
+5. 이후 Project A/B 진행
+
+Project A/B 관련 추가 설계/스윕은 baseline freeze 전까지 보류.
+
+---
+
+## 2026-10-06T01:05:53Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS
+상태: USER-REPORTED / WORKBENCH OBSERVED
+
+사용자가 Workbench F7로 확인했을 때 별도 Node 12 run이 정상 진행 중으로 보인다고 보고함.
+
+현재:
+- Node 6 FAST_C1 계속 실행
+- Node 12 별도 병렬 실행
+- 추가 physics/numerical 변경 없음
+
+Node 12 solver log/process는 아직 직접 확인하지 않았으므로 CONFIRMED running 표기는 보류.
+
+---

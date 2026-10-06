@@ -1,3 +1,119 @@
+## 2026-10-06 — Node 12 appears to be running normally by Workbench F7 check
+
+- 작업자: 이택규
+- 상태: USER-REPORTED / OBSERVED VIA WORKBENCH
+- 사용자가 Workbench에서 F7로 확인했을 때 별도 Node 12 run이 정상적으로 돌아가는 것으로 보인다고 보고함.
+- 현재 계획:
+  - Node 6 (NtSide=0): 기존 FAST_C1 run 계속 유지
+  - Node 12 (NtSide=1e18): 별도 병렬 run 계속 유지
+- 아직 Node 12의 solver log/process output은 직접 검증하지 않았으므로 CONFIRMED running으로 승격하지 않음.
+- baseline 두 run이 진행 중인 동안 physics/numerical settings를 추가 변경하지 않음.
+- 다음 검증 시점: Node 12 n12_des.out/process 확인 또는 어느 한 node 완료 시점.
+
+## 2026-10-06 — Priority reset: finish and validate Common Baseline before Project A/B
+
+- 작업자: 이택규
+- 상태: DECISION / PRIORITY
+- 사용자가 연구 우선순위를 Common Baseline 완성으로 재확정.
+- 즉시 우선순위:
+  1. FAST_C1 Node 6 (NtSide=0) 현재 run 유지 및 완주.
+  2. 별도 프로젝트로 시작한 Node 12 (NtSide=1e18)의 실제 정상 실행 여부를 process/log로 확인.
+  3. 두 run의 source/mesh/parameter/numerical provenance를 확인.
+  4. 완주 후 I-V, convergence, key output sanity를 검증.
+  5. 두 조건이 모두 통과한 뒤에만 FAST_C1 Common Baseline을 freeze.
+- Project A/B 설계 및 sweep은 baseline freeze 이후로 보류.
+- publication-grade 기준 유지: physics/trap/geometry/convergence criterion을 일정 때문에 임의 완화하지 않음.
+
+## 2026-10-06 — Node 12 separate parallel run started by user
+
+- 작업자: 이택규
+- 상태: USER-REPORTED / VERIFY NEEDED
+- User reports that a separate copied project/file for Node 12 (NtSide=1e18) has been started in parallel while FAST_C1 Node 6 continues.
+- Exact new project path, source hash, pp12_des.cmd/par provenance, and initialization success are not yet directly verified.
+- Do not mark Node 12 as CONFIRMED running until process/log evidence is checked.
+- Intended purpose: reduce wall-clock schedule by parallelizing the two Common Baseline branches.
+- Publication-grade baseline conditions remain unchanged; no physics/convergence relaxation is authorized by this action.
+
+## 2026-10-06 — Deadline-aware publication-grade simulation strategy
+
+- 작업자: 이택규
+- 상태: DECISION / RESEARCH STRATEGY
+- 사용자 요구: 결과는 논문에 사용할 수 있을 정도로 수치적으로 타당해야 하지만, 전체 연구 일정도 맞춰야 함.
+- 결정:
+  1. publication-grade reference/final cases와 screening cases를 분리한다.
+  2. Common Baseline 및 최종 대표 A/B case는 full validation(0–5 V, same physics, mesh/convergence checks)으로 유지한다.
+  3. broad parameter exploration은 operating-current/bias window 중심의 reduced-window screening으로 수행한다.
+  4. screening winner/representative/worst case만 full 0–5 V로 최종 검증한다.
+  5. C1 Iterations=15은 numerical-only candidate로 유지; full-range equivalence validation 후에만 baseline freeze.
+  6. RHSMin 완화 같은 convergence-criterion 변경은 publication baseline에 바로 적용하지 않는다. 별도 sensitivity/convergence study로 결과 불변성이 입증될 때만 고려한다.
+  7. 우선순위 높은 시간 단축 수단: parallel independent runs, staged bias schedule, thread benchmark, checkpoint/restart, mesh coarsening only after mesh-convergence evidence.
+- 논문 방어 원칙:
+  - physics/geometry/trap model을 runtime 때문에 임의 완화하지 않는다.
+  - numerical acceleration은 reference와 I–V/Vf/spatial metrics equivalence를 검증한다.
+  - 최종 논문 figures/tables는 validated runs에서만 생성한다.
+- 현재 실행:
+  - FAST_C1 Node 6은 C1 full-reference evidence로 유지.
+  - Node 12는 자원 확인 후 separate clean project에서 병렬 실행 고려.
+  - A/B full brute-force sweep은 하지 않는다.
+
+## 2026-10-06 — FAST_C1 Node 6 confirmed progressing after 41 h 05 min wall time
+
+- 작업자: 이택규
+- 상태: OBSERVED / RUNTIME
+- direct process evidence at 2026-10-06 08:51 KST:
+  - sdevice PID 69457
+  - ELAPSED = 1-17:05:26 (~41 h 05 min wall time)
+  - CPU = 280%, consistent with multithreaded activity
+  - process state SNl
+- n6_des.out modification time = 2026-10-06 08:51:49 KST, proving the log was actively updating.
+- recent accepted pseudo-time advanced to at least ~0.936443; current attempted endpoint ~0.936458.
+- mapped anode bias remains ~4.682 V.
+- C1 cap is active: repeated '#iterations larger than 15.'
+- recent successful attempts still converge in ~21 s with 2–3 Newton iterations, but occasional attempts sit just above RHSMin and run toward the 15-iteration cap.
+- high-bias timestep remains ~7e-6 to 1.45e-5 pseudo-time, so the remaining ~0.318 V can still take a long time.
+- conclusion: Node 6 is not hung; current blocker is high-bias timestep collapse, not process death.
+- planning implication: two-node sequential completion can plausibly take multiple additional days; Node 12 runtime cannot be assumed equal without evidence and may be similar or worse.
+- do not launch broad A/B full-sweep brute force from this runtime pattern.
+
+## 2026-10-06 — FAST_C1 Node 6 confirmed alive at ~4.682 V; Iterations=15 active
+
+- 작업자: 이택규
+- 상태: OBSERVED / RUNTIME EVIDENCE
+- process evidence:
+  - gsub PID 69166
+  - gjob PID 69396
+  - sdevice PID 69457 at ~99% CPU
+  - FAST_C1 project path confirmed
+- `n6_des.out` timestamp observed: 2026-10-06 08:49 KST, size ~3.5 MB.
+- latest accepted pseudo-time observed: approximately 0.936405.
+- 0→5 V ramp mapping gives latest accepted anode target ≈ 4.682025 V; current attempted step to 0.936419 corresponds ≈ 4.682095 V.
+- solver output directly shows anode voltage 4.682E+00 V on recent accepted steps.
+- C1 cap is definitely active: repeated `#iterations larger than 15.` followed by timestep retry.
+- recent accepted steps converge in 2–3 Newton iterations and ~21–22 s wallclock.
+- current difficult attempt at 0.936405→0.936419 reached iteration 14 with RHS ~1.03e-3, just above RHSMin=1e-3; likely near rejection unless the next iteration converges.
+- recent timestep scale is ~7.8e-6 to 1.6e-5 pseudo-time, showing severe high-bias timestep contraction.
+- interpretation:
+  - run is NOT hung at the captured time.
+  - C1 successfully removes the old 50-iteration cap behavior, but the dominant remaining bottleneck is now very small high-bias timesteps and repeated 15-iteration rejections.
+  - latest accepted bias exceeds the prior copied x8 audit endpoint (~4.643 V) by ~39 mV.
+- remaining voltage from 4.682025 V to 5.0 V is ~0.317975 V.
+- do not estimate finish time from full-run average; high-bias tail is strongly nonlinear.
+- next: quantify recent progress rate over a longer fixed window (e.g. 30–60 min of log) and count accepted/rejected attempts to estimate remaining runtime more defensibly.
+
+## 2026-10-06 — FAST_C1 Node 6 still unfinished after ~41 h 48 min
+
+- 작업자: 이택규
+- 상태: USER-REPORTED / RUNTIME BLOCKER
+- FAST_C1 Node 6 recorded start: 2026-10-04 15:46 KST.
+- Current checked time: 2026-10-06 09:34 KST.
+- Elapsed since recorded start: approximately 41 h 48 min.
+- User reports that no node has completed yet.
+- For comparison, the historical NtSide=0 run completed in ~65.4 h; current elapsed time is already ~64% of that historical full-run wallclock.
+- The prior ~2.11x C1 speedup number was an idealized estimate from the observed x8 path, not a completion-time prediction; the current run has not yet demonstrated that speedup.
+- This observation alone does not distinguish slow progress from a stall. Do not infer hang/failure without current n6_des.out/process evidence.
+- Next: read current FAST_C1 n6_des.out tail + process state, determine latest pseudo-time/anode voltage, confirm rejected attempts cap at 15, and measure progress rate before deciding whether to continue/stop.
+- Research strategy remains staged: do not plan brute-force full 0→5 V for every Project A/B parameter point.
+
 ## 2026-10-04 — Runtime strategy re-evaluation: do not brute-force full 0–5 V for every A/B case
 
 - 작업자: 이택규
