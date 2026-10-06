@@ -1,3 +1,80 @@
+## 2026-10-06 — C2 smoke immediate handling
+
+1. Check whether premature restart PIDs 14179/14180 are still alive; terminate them if so.
+2. Keep smoke PID 13881 running.
+3. Do not run Load test until smoke reaches the 0.2 V Save point and `c2smk_ckpt_0p2V*` exists.
+4. Then launch exactly one check-only Load test and inspect its log.
+
+## 2026-10-06 — D6 이후 다음 단계
+
+1. 기존 C1 intermediate TDR restart 시도는 종료.
+2. Node 6/12 reference run 유지.
+3. `make_c2_smoke_deck.py`로 copied `pp6_des.cmd`에서 short smoke deck 생성.
+4. smoke 조건: segment1 0→0.2 V, Increment=1.2, Iterations=15; Save checkpoint 생성; segment2 0.2→0.3 V, Increment=1.05, Iterations=15.
+5. smoke 완료 후 Save-generated checkpoint 파일 존재 확인.
+6. 그 checkpoint를 `make_restart_deck.py --mode check`로 Load-test.
+7. Save/Load smoke가 통과한 뒤에만 production C2 preprocess/launch.
+
+## 2026-10-06 — Next: D6 Node 6 4.7 V Load gate
+
+1. Keep Node 6/12 running.
+2. CPU headroom PASS; license headroom still unknown.
+3. Run D6 only in a separate scratch directory using copies of n1_msh.tdr, pp6_des.par/cmd and n6_inter_0004_des.tdr.
+4. Generate a check-only restart deck; do not continue bias yet.
+5. Launch as a third short SDevice job and inspect immediately for license wait or Load syntax/data error.
+6. If Load succeeds, compare steady re-solve anode current at 4.7 V with the reference current around 4.7 V before allowing Option 3.
+7. Decision 0 J-window remains pending; current provisional J values are far below 0.1 A/cm2.
+
+## 2026-10-06 — D3 next: extract I(V) / provisional J(V)
+
+1. D2 exception check CLOSED: Node 12 13/15-iteration accepted steps are real and barely meet RHSMin.
+2. D3 structural gate PASS: live .plt files exist, are current, contain anode TotalCurrent, and no explicit AreaFactor is present in pp cmd/par.
+3. Copy live .plt files and run iv_window.py read-only.
+4. Treat J values as provisional until exact T-2022.03 2D current normalization is verified; I(V) itself is directly usable.
+5. Keep Decision 0 pending until I(V)/J(V) window is inspected.
+6. In parallel, perform D4 progress snapshot and D5 resource check.
+
+## 2026-10-06 — D2 complete; inspect Node 12 exceptions, then D3
+
+1. D2 CLOSED: cap 8 and cap 10 are not safe universal C2 settings because Node 12 has accepted 13- and 15-iteration steps.
+2. Extract the exact Node 12 accepted attempts with iterations >8 from the audit CSV and confirm their bias/time/final RHS.
+3. First common C2 candidate: Iterations=15 retained; Increment=1.05 is the first runtime lever.
+4. Do not execute the original cap-8 C2 deck as-is.
+5. Then D3: verify .plt update plus AreaFactor/2D current normalization before using current-density windows.
+
+## 2026-10-06 — D1 complete; D2 is next
+
+1. D1 CLOSED: current Node 6 failure is not a GMRES maxit stall; keep linear solver unchanged for first C2 candidate.
+2. D2 NOW: audit full current Node 6 and Node 12 logs for accepted Newton-iteration distribution and cap-8 false rejection risk.
+3. Keep both live C1 reference runs running during the audit.
+4. Only if D2 shows sufficient accepted-iteration margin may FAST_C2 retain high-bias Iterations=8; otherwise use 10 or keep 15.
+5. After D2 proceed to D3 current-density normalization/window check.
+
+## 2026-10-06 — FAST_C2 immediate validation sequence (PROPOSED)
+
+1. Keep current FAST_C1 Node 6 and FAST_C1_Copy Node 12 running; do not stop for C2.
+2. D1: inspect failed/success Newton table columns to diagnose dt* mechanism.
+3. D2: audit current Node 6/12 accepted-iteration distribution; Iterations=8 is allowed as a candidate only if the observed accepted-step margin remains sufficient.
+4. D3: inspect .plt update and verify AreaFactor/2D normalization before using current-density values.
+5. D4: measure Node 6/12 progress over fixed 1–2 h windows.
+6. D5: verify CPU/license headroom before launching smoke/C2 parallel work.
+7. D6: test whether existing intermediate TDR can be loaded; Option 3 is blocked unless this passes.
+8. Run C2 smoke test to verify segmented global time/Goal and Save/Load syntax.
+9. Only after smoke/preprocess gates pass: launch NtSide=1e18 C2 first, then NtSide=0 if resources allow.
+10. Validate C2 against C1 at matched bias/current including I-V/Vf, trap charge/occupancy, sidewall SRH, QW radiative/Auger and carrier distributions.
+11. Decision 0 remains TEAM DECISION PENDING: J-window analysis endpoint. Do not change the protected 5 V baseline endpoint yet.
+
+## 2026-10-06 — Immediate runtime-first branch: half + coarse mesh
+
+1. Keep existing FAST_C1 full Node 6/12 untouched as reference evidence.
+2. Create a separate half-domain candidate centered at the mirror plane; retain one physical sidewall and matching one-sided SDevice region references.
+3. Coarsen only remote/global homogeneous bulk first; preserve MQW/EBL/heterointerface/5 nm damage refinement near current resolution.
+4. Build SDE mesh before any long SDevice solve and record Elements/Points plus mesh screenshots around MQW, EBL, sidewall damage, and n-GaN bulk.
+5. Runtime-oriented engineering target: reduce mesh substantially from 290,814 elements; do not claim a fixed target as validated physics.
+6. If only one accelerated electrical case is launched first, prioritize the nominal damaged baseline NtSide=1e18 for mechanism-relevant preliminary A/B comparisons; keep NtSide=0 as control/reference when resources allow.
+7. For half-domain comparison, compare 2×half terminal current with full current (or current density); IQE itself should not be multiplied by 2.
+8. Treat this branch as preliminary/screening until full-vs-half/coarse equivalence is checked at matched bias/current.
+
 ## 2026-10-06 — Deadline triage for Oct 23 abstract
 
 1. 현재 FAST_C1 Node 6/Node 12는 자원 충돌이 없으면 계속 유지하여 full-reference evidence를 확보한다.
@@ -858,3 +935,34 @@ Common Baseline Final 통과 후에만:
    - trap region list 및 syntax
 3. old/current `.out` 시작부의 grid/vertex/element/equation/unknown 통계를 비교해 mesh 변화 여부 확인.
 4. current가 Conc=1e18이면 old fast deck과 직접 속도 비교를 중단하고, current NtSide=0 node와 old NtSide=0을 비교.
+
+
+## Lee Taek Gyu — FAST_C2 geometry/mesh acceleration candidate (2026-10-06)
+
+1. 현재 Node 6/12 full-reference run은 중단하지 않는다.
+2. 실제 실행 중인 SDE source를 확보하여 reflect 사용 여부, centerline 좌표, contacts, trap 적용 sidewall, refinement windows를 확인한다.
+3. 좌우 대칭이 확인되면 별도 FAST_C2 branch에서 half-domain을 구성한다.
+4. 5 nm sidewall damage, active/heterointerface/junction, depletion/high-field 및 relevant contact edge는 fine mesh를 유지한다.
+5. 이 영역에서 충분히 떨어진 homogeneous bulk만 단계적으로 coarsen한다. abrupt mesh jump는 피한다.
+6. short benchmark에서 full/fine vs half/selective mesh의 element/point count, wallclock/step, I-V/current normalization, SRH/radiative/carrier/field spatial metrics를 동일 bias/physics로 비교한다.
+7. equivalence를 확인하기 전에는 Common Baseline final mesh로 교체하지 않는다.
+
+
+## Project B — half-domain/selective mesh constraint (2026-10-06)
+
+- symmetric AlBarrier_L/R 구조가 유지되면 B에도 half-domain 적용 가능.
+- 계산 영역 가운데 mesh를 없애지 말고, remote homogeneous bulk만 coarsen.
+- B 전용 fine zones: GaN/AlGaN lateral interfaces, MQW stack, sidewall 5 nm damage, barrier/MQW corner, high-field/contact edges.
+- center MQW는 radiative recombination/current crowding 평가 때문에 fine/adequate resolution 유지.
+- full/fine reference 대비 lateral Ec/Ev, I-V, SRH, Rrad, Jmax/Javg equivalence 검증 필수.
+
+
+## Baseline half-domain validation path (2026-10-06)
+
+1. Physical baseline definition remains W_mesa = 4.0 µm.
+2. Recover actual running SDE source and confirm mirror symmetry of geometry, doping, contacts, sidewall traps, BCs, and reflect/centerline handling.
+3. Build a separate half-domain candidate representing 2.0 µm of the 4.0 µm physical mesa.
+4. First keep mesh philosophy as close as possible to the full reference; validate symmetry-only change.
+5. Then apply selective coarsening only to remote homogeneous bulk.
+6. Compare full/fine vs half candidate: I-V/Vf, IQE, integrated SRH/Radiative/Auger, current normalization, e/h density, current density, E-field; Project B additionally lateral Ec/Ev barrier.
+7. If equivalent, use the half-domain model as the common production baseline for Baseline/A/B. Keep one full/fine model as publication/reference validation evidence.

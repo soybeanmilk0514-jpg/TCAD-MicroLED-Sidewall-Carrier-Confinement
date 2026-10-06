@@ -1,10 +1,10 @@
 {
-  "updated": "2026-10-04",
+  "updated": "2026-10-06",
   "primaryWorker": "이택규",
-  "phase": "Phase 0 — Common Baseline FAST numerical optimization",
-  "task": "Inspect copied Workbench node/status metadata, then preprocess Node 6 only",
-  "status": "FAST_C1_SOURCE_INSTALLED_READY_FOR_STATUS_CHECK",
-  "blocker": "None; must avoid accidental solve/resume from copied x8 state.",
+  "phase": "Phase 0 — Common Baseline runtime acceleration validation",
+  "task": "Inspect Node 12 accepted >8-iteration exceptions, then D3 current-normalization/J-window gate",
+  "status": "D2_COMPLETE_CAP8_10_REJECTED",
+  "blocker": "High-bias timestep rejection/cutback runtime; C2 segmented-time/Save-Load semantics and current normalization are not yet validated.",
   "parallelWork": {
     "worker": "주수빈",
     "status": "OBSERVED",
@@ -275,5 +275,93 @@
       "c1SourceInstall": "PASS",
       "c1SourceSha256": "f62eab51816ba21a9fba6f9d26ef39606ea76b17c2a522153d4b45ed8cf27f93"
     }
+  },
+  "runtimeCheck20261006_2143": {
+    "worker": "이택규",
+    "status": "OBSERVED",
+    "node6": {
+      "project": "GaN_PiN_Diode_FAST_C1",
+      "pid": 69457,
+      "process": "sdevice --max_threads 4 pp6_des.cmd",
+      "alive": true
+    },
+    "node12": {
+      "project": "GaN_PiN_Diode_FAST_C1_Copy",
+      "pid": 93915,
+      "process": "sdevice --max_threads 4 pp12_des.cmd",
+      "alive": true
+    },
+    "providedBeStep": {
+      "from": 0.845455,
+      "to": 0.845473,
+      "stepsize": 0.000017909,
+      "originNode": "UNRESOLVED"
+    },
+    "note": "ls n6_des.out was run from ~, so file-not-found does not indicate missing project log",
+    "nextAction": "Read n6_des.out and n12_des.out timestamps/tails from each project directory and verify accepted pseudo-time progress versus retry loop."
+  },
+  "runtimeDiagnosis20261006Evening": {
+    "worker": "이택규",
+    "status": "OBSERVED",
+    "node6": {
+      "progressPseudoTime": "~0.942147 to ~0.942238",
+      "mappedBiasV": "~4.711",
+      "behavior": "periodic reject at Iterations=15, ~0.5 timestep cutback, then 2-iteration convergence and regrowth",
+      "hardStall": false
+    },
+    "node12": {
+      "progressPseudoTime": "~0.848534 to ~0.848697",
+      "mappedBiasV": "~4.243",
+      "behavior": "repeated larger-step rejection/cutback with continued accepted-step progress",
+      "hardStall": false
+    },
+    "conclusion": "No evidence of syntax error or frozen solver in supplied tails; high-bias nonlinear convergence and timestep cutback dominate runtime."
+  },
+  "fastC2": {
+    "status": "PROPOSED_NOT_EXECUTED",
+    "strategyPath": "CMP/FAST_BASELINE_C2.md",
+    "productionDeckSha256": "b876f614424202e6deaf0655411d7bc15733095da297c1df9ca5ebaacbb578d1",
+    "smokeDeckSha256": "dd261ee4fb45b65cf2f5ae8b1a2d707b39b74e2bced61f4e1fac02de6bc414a4",
+    "proposedHighBiasPolicy": {
+      "increment": 1.05,
+      "iterations": 15
+    },
+    "currentRuns": "KEEP_RUNNING_AS_REFERENCE",
+    "validation": [
+      "D1 Newton table diagnosis",
+      "D2 accepted-iteration audit",
+      "D3 J normalization/window",
+      "D4 measured progress",
+      "D5 resource headroom",
+      "D6 restart/load gate",
+      "C2 smoke syntax/Save gate",
+      "matched-bias transient/trap equivalence"
+    ],
+    "caveat": "Changing transient step sequence can change trap state; same RHSMin does not guarantee identical NtSide=1e18 transient solution.",
+    "d2": {
+      "status": "COMPLETE",
+      "node6": {
+        "accepted": 3311,
+        "rejected": 645,
+        "maxAcceptedIterations": 4,
+        "falseRejCap8": 0,
+        "rejectedWallclockFraction": 0.542
+      },
+      "node12": {
+        "accepted": 1223,
+        "rejected": 101,
+        "maxAcceptedIterations": 15,
+        "falseRejCap8": 2,
+        "falseRejCap10": 2,
+        "rejectedWallclockFraction": 0.276
+      },
+      "decision": "First common C2 keeps Iterations=15 and tests high-bias Increment=1.05. Original cap-8 deck not approved as-is."
+    }
+  },
+  "decision0": {
+    "topic": "Use validated current-density analysis window as production endpoint instead of requiring every A/B run to 5 V",
+    "status": "TEAM_DECISION_PENDING",
+    "baseline5VEndpointChanged": false,
+    "requirement": "Verify AreaFactor/2D current normalization and inspect actual J(V) first."
   }
 }

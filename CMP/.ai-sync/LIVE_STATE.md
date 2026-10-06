@@ -1,3 +1,176 @@
+## 2026-10-06 — D6 complete; Save-based C2 smoke next
+
+- 기존 C1 `Plot(-Loadable)` intermediate는 restart state 정보가 없어 current Node 6 restart에 사용 불가.
+- Option 3 폐기, Option 2만 유지.
+- Node 6/12 reference run 계속.
+- 다음: revised C2 smoke에서 `Save` checkpoint를 생성하고, 그 Save 파일에 대한 `Load` check 수행.
+- 첫 common C2 정책: Iterations=15 유지, Increment=1.05 시험.
+
+## 2026-10-06 — D3 IV extraction and D5 CPU headroom check
+
+- 작업자: 이택규
+- 상태: OBSERVED / VALIDATION
+
+### D3 I(V) extraction
+- copied live current files parsed successfully with proposed `iv_window.py`.
+- Node 6: 3323 points, V range 0 -> 4.7128 V, I_max = 2.8954e-12 A/um (under standard 2D no-AreaFactor interpretation).
+- Node 12: 1236 points, V range 0 -> 4.2474 V, I_max = 7.9816e-14 A/um.
+- selected same-voltage Node12/Node6 total-current ratios:
+  - 3.0 V: 0.9566
+  - 3.5 V: 0.9562
+  - 4.0 V: 0.9252
+  - 4.1 V: 0.8150
+  - 4.2 V: 0.5829
+  - 4.23 V: 0.5276
+  - 4.24 V: 0.5125
+- provisional current-density conversion with 4 um mesa gives values only ~1.5e-6 to 3.8e-6 A/cm2 in the shared 3.0-4.24 V range; default target list 0.1-1000 A/cm2 is not reached.
+- therefore Decision 0 (truncate production range based on already-reached J window) is NOT supported by current data and remains pending.
+- explicit AreaFactor is absent in pp6/pp12 cmd/par. Older Sentaurus documentation states default 2D width 1 um / current unit A/um, but exact T-2022.03 manual confirmation is still pending before publication use of J.
+- the extremely low extracted current density should be treated as a model/result sanity-check item, not automatically as a valid LED operating-current range.
+
+### D4 current snapshot
+- 21:52 KST:
+  - Node 6 latest attempt t0=0.942564 -> ~4.71282 V.
+  - Node 12 latest attempt t0=0.849478 -> ~4.24739 V.
+- both runs remain live and progressing.
+- fixed 1-2 h progress-rate measurement is not yet complete from this snapshot alone.
+
+### D5 CPU resource
+- nproc=128.
+- load average ~7.46 / 7.70 / 7.81.
+- active SDevice CPU: Node6 ~280%, Node12 ~268%.
+- CPU headroom is ample for a short third smoke/load test.
+- Sentaurus license headroom remains unverified.
+
+- next: D6 scratch Load test using Node 6 4.7 V intermediate TDR without stopping Node 6/12; if license unavailable, the test must not disturb reference runs.
+
+## 2026-10-06 — D2 exception check confirmed; D3 structural gate passed
+
+- 작업자: 이택규
+- 상태: OBSERVED / VALIDATION
+- Node 12 accepted >8-iteration exceptions are real accepted transient steps, not parser artifacts:
+  - idx 1103: V0=4.233805 V -> V1=4.233915 V, dt=2.1351e-5, 15 iterations, final RHS=9.98e-4, wallclock=121.55 s.
+  - idx 1165: V0=4.237610 V -> V1=4.237710 V, dt=1.9766e-5, 13 iterations, final RHS=9.98e-4, wallclock=104.02 s.
+- both barely satisfy RHSMin=1e-3, confirming that universal C2 caps 8/10 would create genuine false rejections.
+- common C2 Iterations=15 decision is strengthened.
+
+### D3 structural checks
+- Node 6 current file: n6_des.plt, 1.4 MB, mtime 2026-10-06 21:45.
+- Node 12 current file: n12_des.plt, 496 KB, mtime 2026-10-06 21:46.
+- both preprocessed File blocks point Current to the corresponding .plt.
+- both .plt datasets include time, anode OuterVoltage/InnerVoltage, eCurrent, hCurrent, TotalCurrent, Charge.
+- no explicit AreaFactor string found in pp6_des.cmd/par or pp12_des.cmd/par.
+- therefore .plt files are suitable for I(V) extraction.
+- absolute current-density normalization remains provisional until exact T-2022.03 default 2D current/AreaFactor semantics are verified; older Sentaurus documentation indicates default 2D current units A/um when no AreaFactor is specified.
+- next: run iv_window.py on copied live .plt files to obtain I(V) and provisional J(V), while keeping Decision 0 pending.
+
+## 2026-10-06 — D2 complete: cap 8/10 not safe for common C2
+
+- Node 6 accepted max Newton=4; cap 8 false_rej=0.
+- Node 12 accepted max Newton=15; accepted 13-iteration and 15-iteration steps exist.
+- Node 12 cap 8/10 each predict 2 false rejections; first divergence ~4.195 V.
+- Decision: first common C2 keeps Iterations=15; test Increment=1.05 first.
+- Original cap-8 C2 deck is provenance only and must not be executed as-is.
+- Next: inspect Node 12 >8 accepted exceptions, then D3 current normalization/J-window.
+
+## 2026-10-06 — D1 complete: high-bias failure is not a GMRES-maxit stall
+
+- 작업자: 이택규
+- 상태: OBSERVED / DIAGNOSIS
+- Node 6 representative failed step (0.942217 -> 0.942229, dt=1.1842e-5):
+  - nonlinear factor remains 1.00e+00.
+  - |step| remains about 1.33e-2 to 1.34e-2 instead of collapsing toward zero.
+  - #iterative is typically ~48-54, far below configured linear-solver maxit=200.
+  - RHS drops rapidly to ~1.41e-3 by Newton iteration 2 and then remains essentially flat through iteration 15.
+- half-step retry (dt=5.9211e-6):
+  - #iterative remains similar (~50-52), yet RHS reaches 4.58e-4 at Newton iteration 2 and converges.
+- therefore the observed failure is NOT explained by the inner GMRES reaching maxit, and the linear-solver iteration count itself does not distinguish failure from success.
+- the logged error column alternates between values similar to those also seen on the successful retry, so its semantic meaning must not be over-interpreted without the T-2022.03 manual.
+- working interpretation: a timestep-dependent nonlinear residual floor just above RHSMin is the immediate bottleneck; this supports testing safer high-bias timestep growth before changing the linear solver.
+- implication for FAST_C2: keep linear solver unchanged for the first C2 candidate. Proceed to D2 accepted-iteration audit before approving Iterations=8.
+
+## 2026-10-06 — Claude high-bias runtime analysis reviewed; FAST_C2 proposed
+
+- 작업자: 이택규
+- 상태: REVIEWED / PROPOSED / NOT EXECUTED
+- Claude package `FAST_C2_strategy_for_GPT.zip` reviewed by ChatGPT.
+- central diagnosis accepted as a working numerical model:
+  - high-bias runtime is dominated by a local convergent-timestep ceiling (`dt*`) plus `Increment=1.2` growth -> expensive rejection -> ~0.5 cutback cycling.
+  - Node 6 representative failure: dt=1.1842e-5, RHS ~1.41e-3 stagnates through Iteration 15; retry dt=5.9211e-6 converges in 2 iterations.
+  - idealized cycle model reproduces current Node 6 speed (~2.24 mV/h model vs ~2.2 mV/h observed).
+  - under the same idealized assumptions, Increment=1.05 + Iterations=8 gives ~5.24 mV/h; this is a model prediction, not measured C2 performance.
+- FAST_C2 remains numerical-only PROPOSED:
+  - staged global-time Transient
+  - 4 V+ Increment 1.05
+  - candidate Iterations 8 subject to D2 accepted-iteration audit
+  - checkpoints at 4.0/4.4/4.6/4.8 V
+  - RHSMin/physics/mesh/5 V endpoint unchanged
+- important ChatGPT caveat:
+  - changing iteration cap/timestep growth changes the transient step sequence; identical convergence criteria do not by themselves guarantee identical trap/transient state.
+  - NtSide=1e18 C2 validation must include trap charge/occupancy, SRH, radiative/Auger and carrier distributions, not I-V alone.
+  - Claude trap-emission estimate uses generic GaN assumptions and is not a confirmed active-deck timescale.
+- current Node 6/12 runs MUST continue as reference evidence.
+- syntax/manual gates remain unresolved: segmented InitialTime/FinalTime+Goal semantics, Save/Load syntax, and whether existing Plot(-Loadable) TDR can be loaded.
+- Decision 0 is separate and pending team approval: whether production analysis endpoint may be defined by a validated current-density window instead of always requiring 5 V. Baseline 5 V endpoint is not changed.
+- `iv_window.py` J values are provisional until AreaFactor/2D current normalization is verified.
+- public files added:
+  - `CMP/FAST_BASELINE_C2.md`
+  - `CMP/tcad/tools/make_restart_deck.py`
+  - `CMP/tcad/tools/iv_window.py`
+- proprietary full C2 deck was NOT uploaded; recorded production deck SHA-256 = `b876f614424202e6deaf0655411d7bc15733095da297c1df9ca5ebaacbb578d1`.
+- helper scripts passed Python syntax and synthetic-only tests; no live Sentaurus test yet.
+- next: D1–D6 in order, then C2 smoke gate before any production C2 run.
+
+## 2026-10-06 — Node 6/12 logs confirm forward progress with repeated timestep cutback, not a hard stall
+
+- 작업자: 이택규
+- 상태: OBSERVED / RUNTIME DIAGNOSIS
+- user-provided logs show both SDevice runs are advancing in accepted pseudo-time.
+- Node 6 (FAST_C1):
+  - recent BE-step attempts progress through ~0.942147 -> 0.942238.
+  - representative failed attempt: 0.942217 -> 0.942229, dt=1.1842e-05, reaches Iteration 15 with RHS ~1.41e-3 and is rejected.
+  - automatic retry halves the step to 5.9211e-06 and converges in 2 iterations with RHS 4.58e-4.
+  - subsequent accepted steps increase again (7.1054e-06, then 8.5265e-06).
+  - mapped bias is ~4.711 V at pseudo-time ~0.9422 for the known 0->5 V ramp.
+  - diagnosis: not hung; local nonlinear convergence causes periodic reject -> ~0.5 cutback -> quick recovery.
+- Node 12 (FAST_C1_Copy):
+  - recent BE-step attempts progress through ~0.848534 -> 0.848697.
+  - repeated pattern visible: larger attempt rejected, then step approximately halved (e.g. 2.1922e-05 -> 1.0961e-05; 1.8941e-05 -> 9.4703e-06; 1.9638e-05 -> 9.8188e-06), followed by renewed growth.
+  - accepted steps generally converge in 2 iterations around 18-19 s in the provided tail.
+  - mapped bias is ~4.243 V around pseudo-time ~0.8486 for the known 0->5 V ramp.
+  - current last shown attempt at dt=2.0360e-05 had RHS ~1.17e-3 by iteration 3, so its eventual accept/reject outcome is not yet shown.
+- conclusion:
+  - no evidence of syntax error or frozen solver in these logs.
+  - dominant runtime cost is repeated high-bias step rejection/cutback, especially Node 6.
+  - do not terminate current runs solely on suspicion of a stall.
+- next:
+  - keep current runs as reference evidence.
+  - accelerated branch should target numerical continuation / sweep strategy and/or reduced mesh, while preserving physics.
+  - any solver-policy change must be validated against these reference trajectories.
+
+## 2026-10-06 — Node 6 and Node 12 SDevice processes confirmed alive at evening check
+
+- 작업자: 이택규
+- 상태: OBSERVED / RUNTIME
+- user-provided process listing at ~2026-10-06 21:43 KST shows both baseline runs have live SDevice processes:
+  - FAST_C1 Node 6: PID 69457, command `sdevice --max_threads 4 pp6_des.cmd`
+  - FAST_C1_Copy Node 12: PID 93915, command `sdevice --max_threads 4 pp12_des.cmd`
+- both processes showed active CPU usage in the provided `ps` output.
+- a solver line `Computing BE-step from 0.845455 s to 0.845473 s (Stepsize: 1.7909e-05 s)` was also provided, but the originating project/node is not yet attributable from the pasted context alone.
+- `ls n6_des.out` failed only because it was run from the home directory (`~`), not from the FAST_C1 project directory; this is not evidence that the log file is missing.
+- next: inspect timestamp and tail of `n6_des.out` and `n12_des.out` from their respective project directories to determine whether accepted pseudo-time is still advancing or a convergence retry loop is occurring.
+
+## 2026-10-06 — Runtime-first half + coarse-mesh candidate prioritized
+
+- 작업자: 이택규
+- 상태: DECISION / DEADLINE ACCELERATION
+- 기존 FAST_C1 full Node 6/12는 reference로 유지.
+- 새 accelerated branch는 half-domain + coarse remote/global bulk mesh를 동시에 적용하여 10/23 전 preliminary result 확보를 우선.
+- active physics/critical mesh는 유지: MQW, EBL, GaN/InGaN and GaN/AlGaN interfaces, 5 nm sidewall damage.
+- first gate before long solve: SDE mesh build only -> element/point count + visual mesh sanity.
+- half-domain current normalization: full-device total current 비교 시 2×I_half 또는 current density 사용; IQE ratio 자체는 ×2 하지 않음.
+- branch classification: preliminary/screening until full-reference equivalence/mesh-convergence is demonstrated.
+
 ## 2026-10-06 — Oct 23 abstract deadline: runtime-first triage
 
 - 작업자: 이택규
@@ -613,3 +786,52 @@ The original synchronized SDevice2 deck contains `SRHRecombination`; the fact th
 - Old numerical stepping: InitialStep=1e-5, MinStep=1e-9, MaxStep=1e-3, Increment=1.2, Goal anode=5 V — same as the slow current Solve block already observed.
 - Old Math signature: 4 threads, Digits=5, ErrRef=1e4, RHSMin=1e-3, BE, ExtendedPrecision(80), Blocked + ILS(22), gmres(100), tolrel=1e-10, ilut(1e-8,-1).
 - Priority: verify current slow node's actual trap Conc. Only compare runtime directly if current is also NtSide=0.
+
+
+## 2026-10-06 — FAST_C2 half-domain / selective-mesh direction accepted
+
+- 작업자: 이택규
+- 상태: DECISION / IMPLEMENTATION CANDIDATE
+- user accepted a runtime-optimization branch using half-domain symmetry plus localized fine mesh.
+- keep current Node 6/12 full-device runs as reference evidence.
+- candidate only: half-domain is allowed only after confirming left-right symmetry of geometry, doping, contacts, traps and BCs in the actual SDE source.
+- preserve fine resolution at the 5 nm sidewall-damage region and other solution-critical interfaces/high-field zones; coarsen only remote homogeneous bulk with graded transitions.
+- publication gate: compare against full/fine reference at identical physics/bias, including current normalization and key spatial metrics, before adopting.
+- immediate next step: recover/inspect exact running SDE source, then create separate FAST_C2 short benchmark.
+
+
+## 2026-10-06 — Project B compatible with half-domain, but center active region remains mesh-critical
+
+- Project B symmetric AlBarrier_L/R concept is compatible with half-domain if the actual SDE/contact/BC setup is mirror-symmetric.
+- do not remove mesh from the retained center domain; only coarsen remote homogeneous bulk.
+- Project B requires additional refinement at GaN/AlGaN lateral interfaces and barrier/MQW intersections, while the center MQW must remain adequately resolved for radiative/current-crowding metrics.
+- adoption still gated by full/fine equivalence validation.
+
+
+## 2026-10-06 — A/B half-domain + selective mesh formally recommended as validated candidate
+
+- 작업자: 이택규
+- 상태: REVIEWED / RECOMMENDED CANDIDATE
+- A/B 모두 mirror symmetry가 actual SDE/contact/BC에서 확인되면 half-domain 적용 가능.
+- retained center domain의 mesh는 제거하지 않고 remote homogeneous bulk만 graded coarsening.
+- common fine zones: 5 nm sidewall damage, MQW, junction/heterointerfaces, high-field/depletion/contact edges.
+- A-specific: refine Cedge/GaN:C boundary.
+- B-specific: refine lateral AlGaN/GaN interface and barrier-MQW intersections; B has stricter interface-mesh need because band offsets/fields are primary mechanism.
+- final adoption requires full/fine equivalence validation; current Node 6/12 reference runs remain preserved.
+
+
+## 2026-10-06 — Half-domain preserves IQE ratio under mirror symmetry
+
+- current CMP IQE metric: integrated Rrad / (Rrad + RSRH + RAuger) over an identical physical integration region.
+- for an exactly mirror-symmetric device, each full-domain integrated recombination term is twice the half-domain term, so the factor of 2 cancels in IQE.
+- half-domain is therefore valid for IQE comparison, provided symmetry and identical integration-region definitions hold.
+- do not multiply IQE by 2; only absolute total current/recombination/power may require full-device symmetry scaling/2D normalization checks.
+
+
+## 2026-10-06 — Recommended baseline strategy: physical 4 µm device, validated half-domain production model
+
+- physical Common Baseline remains a 4.0 µm mesa.
+- recommended computational representation, after validation: simulate only the 2.0 µm half-domain with centerline symmetry.
+- retain full/fine runs as reference evidence; do not delete the full model from the methodology.
+- validate symmetry-only change before mesh coarsening, then use the same validated half-domain mesh policy for Baseline/A/B production comparisons.
+- IQE is compatible with the half-domain under exact symmetry; absolute totals still need normalization/symmetry scaling checks.

@@ -2284,3 +2284,347 @@ AI: ChatGPT
 모든 sweep 완료가 아니라 defensible Common Baseline + 최소 mechanism-relevant preliminary A/B evidence 확보.
 
 ---
+
+## 2026-10-06T09:10:41Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / RUNTIME
+상태: OBSERVED
+
+Node 6 FAST_C1 direct evidence:
+- intermediate TDR writes confirmed at 4.0, 4.2, 4.4, 4.6, 4.7 V.
+- newest snapshot: n6_inter_0004_des.tdr at 4.700 V.
+- current log tail: pseudo-time 0.940668 = 4.70334 V.
+- recent accepted steps: 7.2336e-06 and 8.6804e-06 pseudo-time (~36.2 and 43.4 microvolts).
+- accepted solves take about 22.6 s and converge by RHSMin.
+- n6_des.tdr is stale (timestamp 2026-09-24), so current spatial snapshots are n6_inter_*.tdr.
+- primary blocker remains timestep collapse / slow recovery, not process hang or large Newton count per accepted step.
+- constant-step no-rejection extrapolation at the current step scale is roughly 43-52 additional hours to 5 V; not an ETA, only a scale estimate.
+
+---
+
+## 2026-10-06T10:11:56Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION CANDIDATE / RUNTIME STRATEGY
+상태: PROPOSED / NOT YET VALIDATED
+
+사용자 관찰:
+- current n1_msh screenshot: Elements=290,814, Points=137,831.
+- reflected full cross-section appears to be used; user proposes half-domain and localized mesh refinement for sidewall-defect study.
+
+제안:
+1. left-right symmetry가 geometry/doping/contacts/material/sidewall-trap/BC까지 유지되는 baseline 및 symmetric cases에서는 centerline half-domain을 검토.
+2. half-domain에는 physical sidewall 1개만 남기고 centerline에 symmetry/no-normal-flux boundary를 사용.
+3. 5 nm sidewall-damage region, active heterointerfaces/junctions, depletion/high-field/contact edges는 fine mesh 유지.
+4. 멀리 떨어진 homogeneous bulk는 coarsen.
+5. 기존 full/fine reference와 동일 bias/physics에서 equivalence 검증 후에만 publication-grade branch로 채택.
+
+주의:
+현재 high-bias blocker는 ~4.7 V 부근 timestep collapse도 포함하므로 mesh reduction은 solve당 비용은 줄일 수 있지만 tiny-step bottleneck 자체를 없앤다고 가정하면 안 됨.
+
+다음:
+실제 SDE source/좌표/boundary를 먼저 확인 후 half-domain implementation benchmark.
+
+---
+
+## 2026-10-06T10:16:21Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / NEXT ACTION
+상태: USER-ACCEPTED CANDIDATE / NOT YET VALIDATED
+
+결정:
+- 현재 full reflected geometry 대신, 실제 SDE가 좌우 대칭임이 확인되는 경우 half-domain symmetry model을 FAST_C2 후보로 구현.
+- 5 nm damaged sidewall 및 active/heterointerface/junction/high-field/contact-edge는 fine mesh 유지.
+- sidewall/active region에서 떨어진 homogeneous bulk만 graded coarsening.
+- 현재 Node 6/12 full-reference run은 유지.
+
+검증 gate:
+- full/fine reference와 동일 physics/bias에서 I-V/current normalization 및 SRH/radiative/carrier/field spatial metrics equivalence 확인 전에는 baseline final로 교체하지 않음.
+
+다음:
+actual running SDE source의 reflect/coordinates/contacts/trap/refinement definitions를 회수해 FAST_C2 short benchmark 설계.
+
+---
+
+## 2026-10-06T10:45:06Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / PROJECT B MESH
+상태: IMPLEMENTATION CANDIDATE
+
+Project B 검토:
+- symmetric AlBarrier_L/R + symmetric contacts/BC라면 half-domain 적용 가능.
+- retained center domain의 mesh는 제거할 수 없고, remote homogeneous bulk만 coarsen.
+- B에서는 5 nm sidewall damage 외에 GaN/AlGaN lateral interface, MQW stack, barrier/MQW intersection, high-field/contact edges를 fine mesh로 유지.
+- center MQW는 radiative recombination 및 current crowding 평가 때문에 과도한 coarsening 금지.
+- full/fine reference 대비 lateral Ec/Ev barrier, I-V/current normalization, sidewall SRH, MQW radiative, crowding equivalence 검증 후 채택.
+
+---
+
+## 2026-10-06T10:52:10Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / DESIGN REVIEW
+상태: REVIEWED / RECOMMENDED CANDIDATE
+
+Project A/B 공통 runtime 전략 검토 결과:
+- 실제 SDE/contact/BC가 mirror-symmetric이면 centerline half-domain 사용을 권장 후보로 채택.
+- retained domain의 mesh는 제거하지 않고 remote homogeneous bulk만 graded coarsening.
+- 공통 fine: 5 nm sidewall damage, MQW/active region, junction/heterointerfaces, high-field/depletion/contact edges.
+- A: Cedge/GaN:C boundary fine.
+- B: lateral AlGaN/GaN interface 및 barrier-MQW intersection fine; B가 interface mesh에 더 민감.
+- one-sided/asymmetric A/B 구조에는 half-domain 적용 금지.
+- full/fine reference 대비 I-V/Vf, current normalization, sidewall SRH, MQW radiative/Auger, carrier/current maps, B lateral Ec/Ev equivalence 확인 전 final adoption 금지.
+- runtime 절감률은 실제 short benchmark 전에는 수치 확정하지 않음.
+
+---
+
+## 2026-10-06T10:54:26Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: ANALYTICAL REVIEW / IQE
+상태: REVIEWED
+
+Half-domain IQE 결론:
+- CMP IQE = integrated Rrad / (Rrad + RSRH + RAuger), identical integration region.
+- exact mirror symmetry이면 full-domain 각 적분항 = 2 × half-domain 각 적분항이므로 factor 2가 ratio에서 상쇄됨.
+- 따라서 Baseline/A/B symmetric cases의 IQE는 half-domain으로 계산 가능.
+- IQE 자체에는 x2 금지. absolute total current/recombination/power는 full-device 보고 시 symmetry scaling/2D normalization을 별도 확인.
+- asymmetric/one-sided case에는 half-domain 적용 불가.
+
+---
+
+## 2026-10-06T11:03:57Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: DESIGN REVIEW / BASELINE STRATEGY
+상태: REVIEWED / RECOMMENDED WITH VALIDATION
+
+권고:
+- physical Common Baseline은 계속 4.0 µm mesa로 정의.
+- 실제 geometry/doping/contact/trap/BC mirror symmetry 확인 + full/fine equivalence validation 후, production 계산은 centerline half-domain(physical 4 µm의 2 µm 절반)으로 수행 가능/권장.
+- full/fine Node 6/12는 reference/validation evidence로 보존.
+- 먼저 half-domain만 바꿔 등가성 확인 후, 그 다음 remote homogeneous bulk mesh coarsening.
+- Baseline/A/B 모두 같은 validated half-domain mesh policy 사용.
+- 검증: I-V/Vf, IQE, integrated SRH/Rrad/RAuger, current normalization, carrier/current/E-field maps; B는 lateral Ec/Ev 추가.
+- IQE 자체 x2 금지. absolute totals만 symmetry/2D normalization 확인.
+- future asymmetric/one-sided case에는 half-domain 금지.
+
+---
+
+## 2026-10-06T11:21:22Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / SOURCE AUDIT
+상태: OBSERVED
+
+사용자가 FAST_C1/Common Baseline SDE v1.0 전체 코드를 제공함.
+
+확인된 mesh 정의:
+- Global: max x/y = 0.050/0.100 um, min = 0.005/0.005 um.
+- EBL: max = 0.002/0.020 um, min = 0.001/0.002 um.
+- MQW: max = 0.0010/0.020 um, min = 0.0005/0.002 um.
+- Sidewall damage (5 nm strip): max = 0.005/0.001 um, min = 0.001/0.0005 um.
+- Interface MaxLenInt: GaN/Nitride 0.002 um; GaN/AlGaN 0.001 um; GaN/InGaN 0.0005 um; factor=1.2.
+- source coordinate: x vertical growth, y lateral.
+- finest requested spacing = 0.0005 um = 0.5 nm.
+
+주의: refinement parameter로 5 nm strip 내부 element 수를 정확히 고정했다고 해석하면 안 됨. 실제 triangulation은 mesher 결과로 검증해야 함.
+
+---
+
+## 2026-10-06T11:36:25Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / RUNTIME STRATEGY
+상태: PROPOSED IMPLEMENTATION
+
+사용자 우선순위:
+- 2026-10-23 전 결과 확보가 우선.
+
+결정:
+- 기존 FAST_C1 full Node 6/12는 reference로 보존.
+- 별도 accelerated branch에서 half-domain + remote/global bulk mesh coarsening을 동시에 적용.
+- MQW/EBL/heterointerface/5 nm damaged sidewall mesh는 현 수준에 가깝게 유지.
+- 장시간 SDevice 전에 SDE mesh만 먼저 생성하여 Elements/Points 및 critical-region mesh를 확인.
+- half current는 full total-current 비교 시 2배 normalization 또는 current density 사용; IQE 자체는 2배하지 않음.
+- 이 branch는 preliminary/screening이며 final publication adoption은 full-reference equivalence/mesh convergence 후 결정.
+
+---
+
+## 2026-10-06T13:20:25Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT (Claude 분석 검토)
+구분: ANALYSIS / DECISION CANDIDATE / HANDOFF
+상태: REVIEWED / PROPOSED / NOT EXECUTED
+
+요약:
+- Claude FAST_C2 runtime package를 검토함.
+- high-bias 병목을 local dt* 상한 + Increment=1.2 증가 -> expensive rejection -> 약 0.5 cutback 순환으로 보는 모델은 현재 Node 6/12 로그와 정합적.
+- Node 6 모델 진행률 약 2.24 mV/h가 실측 약 2.2 mV/h와 일치.
+- Increment=1.05 + Iterations=8은 같은 이상화 가정에서 약 5.24 mV/h candidate이나 아직 실측 C2 결과가 아님.
+- 현재 Node 6/12는 reference로 계속 유지.
+
+FAST_C2:
+- staged global-time Transient
+- high-bias Increment=1.05
+- Iterations=8은 D2 audit 조건부
+- 4.0/4.4/4.6/4.8 V checkpoint 제안
+- physics/mesh/RHSMin/5 V endpoint 변경 없음
+- production deck은 public 업로드 금지; SHA-256 b876f614424202e6deaf0655411d7bc15733095da297c1df9ca5ebaacbb578d1
+
+ChatGPT 검토 주의:
+- timestep/iteration policy 변경은 transient step sequence를 바꾸므로, 동일 RHSMin만으로 NtSide=1e18 trap state 동일성을 보장하지 않음.
+- C2 검증은 I-V/Vf뿐 아니라 trap charge/occupancy, SRH, radiative/Auger, carrier distribution까지 포함.
+- trap emission time 추정은 generic GaN 가정을 사용하므로 확정 물성값 아님.
+- iv_window.py의 J 환산은 AreaFactor/2D current normalization 확인 전 provisional.
+- segmented InitialTime/FinalTime+Goal, Save/Load syntax, 기존 Plot(-Loadable) TDR restartability는 smoke/D6 gate 전 미확인.
+
+변경:
+- CMP/FAST_BASELINE_C2.md 추가
+- CMP/tcad/tools/make_restart_deck.py 추가 (PROPOSED, synthetic-only tested)
+- CMP/tcad/tools/iv_window.py 추가 (PROPOSED, synthetic-only tested)
+- CURRENT_STATUS / NEXT_ACTIONS / LIVE_STATE / RELAY / LeeTaekGyu TIMELINE / TEAM_TIMELINE 갱신
+
+결정 0:
+- production 분석 endpoint를 validated current-density window로 정의할지는 TEAM DECISION PENDING.
+- protected Common Baseline 5 V endpoint는 변경하지 않음.
+
+다음:
+- D1–D6 -> C2 smoke -> preprocess/equivalence gate.
+- 현재 Node 6/12는 중단하지 않음.
+
+---
+
+## 2026-10-06T13:27:16Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: DIAGNOSIS
+상태: OBSERVED / D1 COMPLETE
+
+D1 결과:
+- Node 6 실패 step에서 factor=1.0, |step|~1.33e-2, #iterative~48-54.
+- configured linear maxit=200에 전혀 근접하지 않음.
+- half-step retry도 #iterative~50-52로 비슷하지만 Newton 2회에서 RHS=4.58e-4로 수렴.
+- 실패 step은 Newton 2부터 RHS~1.41e-3로 정체하여 RHSMin=1e-3 바로 위에서 실패.
+- 따라서 현재 증거는 GMRES maxit/선형 solver saturation보다 timestep-dependent nonlinear residual floor를 지지.
+- first FAST_C2에서는 linear solver를 건드리지 않고 timestep growth/iteration-cap 후보부터 검증.
+
+다음:
+D2 — Node 6/12 전체 현재 로그 accepted Newton iteration audit. Iterations=8 안전성 판정.
+
+---
+
+## 2026-10-06T13:34:19Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: VALIDATION / DECISION
+상태: D2 COMPLETE
+
+Node 6:
+- accepted 3311 / rejected 645
+- accepted max Newton=4
+- cap 8 false_rej=0
+- rejected attempt wallclock ~54.2%
+
+Node 12:
+- accepted 1223 / rejected 101
+- accepted histogram includes 13 iters x1, 15 iters x1
+- cap 8 false_rej=2
+- cap 10 false_rej=2
+- first predicted cap-induced divergence ~4.195 V
+- rejected attempt wallclock ~27.6%
+
+결정:
+- universal/common C2 Iterations=8 REJECT.
+- Iterations=10도 evidence-safe하지 않음.
+- first common C2는 Iterations=15 유지 + high-bias Increment=1.05를 첫 runtime lever로 시험.
+- 기존 cap-8 C2 full-deck hash b876f6...78d1은 as-is 실행 금지/provenance only.
+
+다음:
+Node 12 accepted >8 두 attempt의 정확한 bias/final RHS 확인 후 D3 current normalization/J-window gate.
+
+---
+
+## 2026-10-06T13:39:25Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: VALIDATION
+상태: D2 EXCEPTION CONFIRMED / D3 STRUCTURAL PASS
+
+Node 12 >8 accepted:
+- 4.233805->4.233915 V, 15 iters, final RHS 9.98e-4, 121.55 s
+- 4.237610->4.237710 V, 13 iters, final RHS 9.98e-4, 104.02 s
+둘 다 RHSMin=1e-3를 실제 통과한 accepted step. cap 8/10 false rejection은 실제 위험.
+
+D3:
+- n6_des.plt / n12_des.plt current run에서 갱신됨.
+- pp File blocks가 각각 해당 Current=.plt를 가리킴.
+- .plt에 anode OuterVoltage/TotalCurrent 존재.
+- pp cmd/par에서 explicit AreaFactor 없음.
+- I(V) extraction 가능.
+- J normalization은 exact T-2022.03 default semantics 확인 전 provisional.
+
+다음:
+copied .plt에 iv_window.py 실행 + D4/D5 병행.
+
+---
+
+## 2026-10-06T13:44:44Z — TaekGyu0801
+
+[2026-10-06]
+작업자: 이택규
+AI: ChatGPT
+구분: VALIDATION / RESOURCE CHECK
+상태: D3 OBSERVED / D5 CPU PASS / D6 NEXT
+
+D3:
+- Node6 .plt: Vmax 4.7128 V, Imax 2.8954e-12
+- Node12 .plt: Vmax 4.2474 V, Imax 7.9816e-14
+- Node12/Node6 I ratio falls from 0.9566 @3.0 V to 0.5125 @4.24 V.
+- provisional J conversion does not reach 0.1 A/cm2.
+- Decision 0 J-window endpoint is therefore not supported yet.
+- exact T-2022.03 2D current normalization still to verify for publication; no explicit AreaFactor in pp cmd/par.
+
+D4 snapshot:
+- Node6 ~4.71282 V
+- Node12 ~4.24739 V
+- both live; fixed 1-2 h rate not yet completed.
+
+D5:
+- 128 CPUs, load avg ~7.5, Node6 ~280%, Node12 ~268% CPU.
+- CPU headroom sufficient for short D6 test.
+- license headroom unresolved.
+
+Next:
+D6 scratch Load test from Node6 n6_inter_0004 (4.7 V); current reference runs remain untouched.
+
+---
