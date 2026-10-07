@@ -2628,3 +2628,229 @@ Next:
 D6 scratch Load test from Node6 n6_inter_0004 (4.7 V); current reference runs remain untouched.
 
 ---
+
+## 2026-10-07T07:02:34Z — TaekGyu0801
+
+[2026-10-07 15:56 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / ACCOUNT-TRANSFER TEST
+상태: OBSERVED / UNRESOLVED
+
+요약:
+- 새 계정 cmp216@ssudisu2에서 기존 semi437 계정의 FAST_C1_ACCOUNT_TEST.tar.gz를 직접 scp pull 시도.
+- 명령: scp semi437@ssudisu3:~/FAST_C1_ACCOUNT_TEST.tar.gz .
+- 결과: ssh: connect to host ssudisu3 port 22: Connection refused
+- 따라서 현재 실패는 TCAD 파일/코드 문제가 아니라 ssudisu3의 SSH port 22 직접 접속이 허용되지 않거나 서비스가 열려 있지 않은 전송 경로 문제로 관찰됨.
+
+다음:
+1. 우선 새 계정에서 /user/semi/semi437 경로가 shared filesystem으로 직접 보이는지 read-only 확인.
+2. 보이지 않으면 semi437 세션에서 cmp216@ssudisu2 방향의 reverse scp를 시험.
+3. 전송 성공 후 pp6_des.cmd / pp6_des.par / n1_msh.tdr SHA-256 동일성 확인 후 SDevice 비교 테스트 진행.
+
+
+---
+
+## 2026-10-07T07:03:58Z — TaekGyu0801
+
+[2026-10-07]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / ACCOUNT-ENV CHECK
+상태: OBSERVED
+
+요약:
+- 새 계정 cmp216@ssudisu2에서 Sentaurus Device 실행환경 확인.
+- `which sdevice` = `/user/tools/synopsys/sentaurus/T-2022.03/bin/sdevice`.
+- 따라서 새 계정에서도 T-2022.03 SDevice executable은 정상적으로 PATH에 잡혀 있음.
+- `grep pp6_des.cmd pp6_des.par` 실패는 해당 파일들이 아직 새 계정 홈에 복사되지 않았기 때문이며, 코드 오류 증거가 아님.
+
+다음:
+- shared filesystem에서 /user/semi/semi437 경로 및 FAST_C1_ACCOUNT_TEST.tar.gz 접근 가능 여부 확인.
+- 불가하면 semi437 -> cmp216@ssudisu2 reverse scp 시도.
+
+
+---
+
+## 2026-10-07T07:04:40Z — TaekGyu0801
+
+[2026-10-07]
+작업자: 이택규
+AI: ChatGPT
+구분: DIAGNOSIS / ACCOUNT-TRANSFER
+상태: OBSERVED
+
+요약:
+- cmp216@ssudisu2에서 /user/semi/semi437 경로가 존재하지 않음을 확인.
+- 따라서 ssudisu2와 ssudisu3 사이에서 해당 user filesystem은 새 계정 기준 shared mount로 노출되지 않음.
+- 새 계정 pull scp도 ssudisu3:22 connection refused로 실패했으므로, 다음 전송 경로는 semi437@ssudisu3 세션에서 cmp216@ssudisu2 방향 reverse scp.
+
+다음:
+- semi437 계정에서 ~/FAST_C1_ACCOUNT_TEST.tar.gz 존재 확인 후
+  scp ~/FAST_C1_ACCOUNT_TEST.tar.gz cmp216@ssudisu2:~/
+- 성공 후 cmp216에서 SHA-256 및 압축 해제/입력 동일성 확인.
+
+
+---
+
+## 2026-10-07T07:05:44Z — TaekGyu0801
+
+[2026-10-07]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / ACCOUNT-TRANSFER
+상태: CONFIRMED
+
+요약:
+- cmp216@ssudisu2 -> semi437@ssudisu3 scp: port 22 connection refused.
+- semi437@ssudisu3 -> cmp216@ssudisu2 reverse scp: port 22 connection refused.
+- /user/semi/semi437 path is not visible from ssudisu2.
+- 따라서 두 서버 사이 직접 SSH/SCP 및 shared user filesystem 경로는 사용할 수 없음.
+
+의미:
+- FAST_C1 동일-input 계정 비교를 위해 n1_msh.tdr/pp6_des.cmd/pp6_des.par 전송에는 별도 경로가 필요.
+- 우선순위: (1) 사용자 로컬 PC를 중간 브리지로 download/upload, 또는 (2) 새 계정에서 exact source를 이용해 동일 mesh/input 재생성 후 hash 검증.
+
+다음:
+- proprietary TCAD binary/input을 public GitHub에 업로드하지 않음.
+- 로컬 브리지 가능 여부에 따라 전송 절차 진행.
+
+
+---
+
+## 2026-10-07T07:14:29Z — TaekGyu0801
+
+[2026-10-07]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / ACCOUNT-TRANSFER
+상태: OBSERVED
+
+요약:
+- MobaXterm SFTP browser에서 새 계정 cmp216 홈(/user2/cmp/cmp216/)에 FAST_C1_ACCOUNT_TEST 디렉터리가 업로드된 것이 화면으로 확인됨.
+- tar.gz 파일 자체는 홈에 없어서 'ls -lh FAST_C1_ACCOUNT_TEST.tar.gz'가 실패했지만, 이는 전송 실패가 아니라 폴더 형태로 이미 업로드된 상태로 보임.
+
+다음:
+- ~/FAST_C1_ACCOUNT_TEST로 이동하여 pp6_des.cmd, pp6_des.par, n1_msh.tdr 존재 및 SHA-256 확인.
+
+
+---
+
+## 2026-10-07T07:17:33Z — TaekGyu0801
+
+[2026-10-07]
+작업자: 이택규
+AI: ChatGPT
+구분: VALIDATION / ACCOUNT-COMPARISON
+상태: CONFIRMED
+
+요약:
+- semi437 FAST_C1 원본과 cmp216으로 전송한 테스트 입력의 SHA-256이 3개 모두 일치.
+- pp6_des.cmd = 48d8de1a0d596e9c3b308498efda653486d6df839ae2bb8826f83ff569e3ac22
+- pp6_des.par = 60405755de61500d9815a8e9ecca6a7a465783d77eb8e5dadf1db515aeb10039
+- n1_msh.tdr = 762d2d57a352a00bb030b968985cbf3b71d53118c68e5c53b7586e613f392ea3
+- 새 계정 sdevice는 T-2022.03 경로로 확인됨.
+
+의미:
+- 전송 중 파일 변형 없음.
+- 새 계정에서 동일 mesh/cmd/par 기반 runtime comparison 가능.
+
+다음:
+- 기존 계정 절대경로 참조가 없는지 확인 후 새 계정에서 Node 6 SDevice 실행.
+
+
+---
+
+## 2026-10-07T07:49:52Z — soybeanmilk0514-jpg
+
+[2026-10-07]
+작업자: 주수빈
+AI: ChatGPT
+구분: CODE REVIEW / SAME-CURRENT COMPARISON
+상태: REVIEWED / PARTIALLY CONFIRMED
+
+요약:
+- FAST_C1은 Copy x8 golden source 대비 executable change가 Transient inner Coupled Iterations=15 추가뿐이며 spatial Plot schedule은 유지됨.
+- 2026-09-28 v1.2에서 추가한 same-current용 intermediate TDR 저장점(4.0~4.975 V)이 FAST_C1 계열에 보존됨.
+- 실제 FAST_C1 Node 6에서 4.0/4.2/4.4/4.6/4.7 V intermediate TDR 생성이 관찰되어 save-control 작동 근거가 있음.
+- 이 기능은 current를 직접 Goal로 구동하는 것이 아니라, I-V에서 동일 injected current에 해당하는 V를 찾고 그 V 근처 spatial TDR을 비교하는 방식.
+
+판정:
+- Project A/B same-current spatial comparison 기반은 현재 FAST_C1에 있음.
+- Baseline을 다시 버리거나 physics를 수정할 근거는 없음.
+- 다만 absolute J[A/cm2]는 2D current/AreaFactor normalization 확인 전 provisional.
+- A/B production 전에 target current-density window를 정하고 saved-voltage grid가 충분히 촘촘한지 확인 필요. 부족하면 Plot schedule 또는 exact matched-current state extraction을 보완.
+
+다음:
+1) T-2022.03 2D current/AreaFactor normalization 확정.
+2) A/B target J points 결정.
+3) 각 target J의 V(J)가 4.0~4.975 V snapshot grid에 충분히 근접하는지 확인.
+4) 부족할 때만 output/save-control 수정; physical baseline은 유지.
+
+---
+
+## 2026-10-07T07:53:11Z — TaekGyu0801
+
+[2026-10-07]
+작업자: 이택규
+AI: ChatGPT
+구분: MINOR ERROR / SHELL SYNTAX
+상태: OBSERVED / RESOLVED
+
+요약:
+- semi437 로그인 shell에서 bash-style stderr redirect `2>/dev/null`를 붙인 find 명령이 `find: paths must precede expression: 2`로 실패.
+- 기존 기록과 마찬가지로 semi437 shell이 csh/tcsh 계열이라 bash redirection 문법을 그대로 쓰면 안 됨.
+- 실제 .gzp 위치는 Workbench tree상 myproject 아래에 생성된 것으로 보이므로 parent directory에서 직접 `ls`로 확인하는 방식으로 전환.
+
+다음:
+- `ls -lh /user/semi/semi437/tmp/myproject/GaN_PiN_Diode_FAST_C1.gzp`
+- 또는 현재 FAST_C1 디렉터리에서 `ls -lh ../GaN_PiN_Diode_FAST_C1.gzp`
+
+
+---
+
+## 2026-10-07T08:00:07Z — soybeanmilk0514-jpg
+
+[2026-10-07]
+작업자: 주수빈
+AI: ChatGPT
+구분: DESIGN REVIEW / PRE-RUN GATE
+상태: REVIEWED / A-B PRODUCTION NO-GO
+
+요약:
+- FAST_C1/Common Baseline은 Project A/B parent로 사용할 수 있으며 physical baseline을 다시 만들 필요는 없음.
+- 그러나 한 case가 multi-day이므로 broad A/B production sweep은 사전 gate 완료 전 시작하지 않음.
+- 필수 gate:
+  1) 실제 active pp1_dvs/ppN_des.cmd/par audit
+  2) existing TDR에서 required dataset 확인 + region-integral/IQE/current-crowding/band-profile extraction 선검증
+  3) 2D current -> J normalization 확정
+  4) A: parameterized Cedge_L/R + explicit same-material boundary mesh + carbon physics + null control
+  5) B: exact AlBarrier vertical span 결정 + xAl/wAl parameterization + lateral heterointerface mesh + null control
+  6) Save/Load smoke
+  7) 대표 A/B pilot 후 broad DOE
+
+중요 연구 판단:
+- A의 GaN:C는 고농도 self-compensation 가능성이 있어 optional donor/compensation parameter를 production code 구조에 미리 예약.
+- B가 QW edge 일부를 AlGaN으로 치환하면 active QW volume이 바뀔 수 있으므로 total Rrad/IQE만으로 barrier 효과를 해석하면 안 됨. QW-volume normalization + injection/leakage metric 병행.
+- 상세 GO/NO-GO: CMP/PROJECT_AB_PRE_RUN_AUDIT.md
+
+---
+
+## 2026-10-07T08:06:18Z — soybeanmilk0514-jpg
+
+[2026-10-07]
+작업자: 주수빈
+AI: ChatGPT
+구분: BASELINE FREEZE CRITERIA
+상태: DECISION CLARIFIED
+
+- "Code freeze"와 "publication-grade baseline validation complete"를 구분.
+- Code freeze/A-B parent 사용 조건:
+  1) actual active pp-deck audit PASS
+  2) required output/extraction workflow PASS
+  3) NtSide=0/1e18 full reference runs 정상 완료 및 same-current key metrics sanity PASS
+  4) source/hash/provenance 동결
+- 위 조건 통과 후 Baseline 코드는 더 이상 임의 수정하지 않고 A/B parent로 사용 가능.
+- 단 publication-grade final baseline 검증은 COMMON_BASELINE의 mesh convergence, Nt sensitivity 및 주장 범위에 따른 mesa-size sensitivity가 별도 남음.
+
+---
