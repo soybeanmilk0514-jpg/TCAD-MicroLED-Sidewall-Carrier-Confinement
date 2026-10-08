@@ -3804,3 +3804,280 @@ AI: ChatGPT
 판정: parameter provenance PASS. 주수빈 half+coarse SDevice smoke에 그대로 사용 가능. 다음은 SWB SDevice tool 설치/parameter NtSide 설정/short smoke.
 
 ---
+
+## 2026-10-08T10:34:51Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: JUSUBIN HALF+COARSE SDEVICE PREPROCESS
+상태: PASS
+
+SWB Preprocessor Log screenshot 확인:
+- `@NtSide@` -> `0` 치환 반복 확인
+- `@node@` -> `2`
+- preprocessed file: `pp2_des.cmd`
+- SDevice node 2 depends on node 1
+- `PREPROCESSING FINISHED`
+- `STATUS: OK`
+- processing time 0 s
+
+다음 gate: 실제 pp2_des.cmd 정적 확인 후 smoke run. 확인 항목: Grid가 n1_msh.tdr인지, DmgR_* reference 0개인지, retained DmgL trap Conc=0인지, RHSMin=1e-3/Iterations=15 유지 여부.
+
+---
+
+## 2026-10-08T10:41:32Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: JUSUBIN HALF+COARSE SDEVICE PP2 STATIC GATE
+상태: PASS / SMOKE GO
+
+사용자 `grep -n -E 'Grid|DmgR_|DmgL_|RHSMin|Iterations' pp2_des.cmd` 결과 확인:
+- Grid = `n1_msh.tdr` -> half+coarse SDE mesh correctly linked.
+- executable Physics refs shown only for 12 retained DmgL regions: pGaN, EBL, Barrier0~4, QW1~4, nGaN.
+- DmgR appears only in provenance/comment text (`all DmgR_* Physics removed`), no executable `Physics(Region="DmgR_...")` shown.
+- RHSMin = 1e-3 preserved.
+- startup Coupled iterations 500/100 preserved.
+- transient inner Coupled(Iterations=15) preserved.
+
+판정: preprocess/static gate PASS. Next: run Node 2 short smoke (0->0.3 V) only; do not install/run 0->5 V production deck until smoke normal-completion and log sanity are confirmed.
+
+---
+
+## 2026-10-08T10:49:20Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: JUSUBIN HALF+COARSE SDEVICE SMOKE RUNTIME SNAPSHOT
+상태: RUNNING
+
+사용자 Node n2 Output screenshot:
+- accepted state anode voltage ≈ 8.302e-3 V
+- pseudo-time ≈ 1.6604e-3 / FinalTime 0.06 -> progress ≈ 2.77% of 0->0.3V smoke
+- next BE-step 1.6604e-3 -> 1.7204e-3, dt=6.0e-5
+- previous accepted step converged in 2 Newton iterations; final RHS=2.82e-5 < 1e-3
+- previous step wallclock ≈109.74 s (assembly 18.46 s, solve 90.20 s)
+- current warnings in n2_des.err about vanOverstraetenMan E0 isotropic/anisotropic mismatch are warnings, not fatal in screenshot.
+
+Ideal no-cutback extrapolation with Increment=1.2 and MaxStep=1e-3 gives ~69 accepted steps remaining. At ~110 s/step this is ~2.1 h; practical estimate ~2-4 h depending on timestep growth/rejections. Note current per-step wallclock is unexpectedly high relative to earlier full-mesh C2 smoke, so runtime configuration/threading should be checked after smoke.
+
+---
+
+## 2026-10-08T10:54:21Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: JUSUBIN SDEVICE RUNTIME ROOT-CAUSE / REDESIGN
+상태: DIAGNOSIS + PROPOSED NEXT TEST
+
+현재 half+coarse smoke accepted step 증거:
+- Elements 138,194 / Points 65,513 (~47.5% of full mesh)
+- Newton converged in 2 iterations, final RHS 2.82e-5 < 1e-3
+- step wallclock 109.74 s = assembly 18.46 s + linear solve 90.20 s
+- ILS #iterative ~31 per Newton update
+
+판단:
+1) mesh는 크게 줄었지만 현재 wallclock은 linear solve가 ~82%를 차지하므로 mesh reduction만으로 전체 속도가 비례해 줄지 않음.
+2) current smoke/FAST_C1 transient uses InitialStep=1e-5, MaxStep=1e-3. 0->5V over normalized time 0->1이면 MaxStep alone imposes <=5mV accepted voltage steps; 0->4V easy region도 최소 ~800 accepted steps. High bias에서는 observed dt ceiling ~1e-5 이하로 collapse되어 step count가 훨씬 증가.
+3) 따라서 3~4일 병목의 핵심은 (a) transient step count/cutback + (b) expensive ILS/ExtendedPrecision linear solves. Current step already converges in 2 Newton iterations, so lowering Newton cap is not main lever.
+
+권고 redesign:
+- accuracy-sensitive III-N numerics(ExtendedPrecision, RHSMin=1e-3, current ILS tolrel/preconditioner)은 우선 보존.
+- DC I-V/IQE baseline 목적에 맞춰 Quasistationary accelerated candidate를 short benchmark. Sentaurus training defines QS for steady-state boundary-condition sweeps; transient retained only if QS convergence fails.
+- fallback hybrid: Quasistationary 0->~4.0/4.2V, then original-time-mapped Transient only difficult high-bias tail with Increment=1.05 + Save checkpoints.
+- separately benchmark NumberOfThreads 4 vs 8, since ILS is parallel; do not assume 8 is faster until wallclock measured.
+- current long 0->0.3V smoke has already passed mesh/region/initial convergence gate; full completion is not required before launching a much shorter performance benchmark.
+
+---
+
+## 2026-10-08T10:59:35Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: CODE / ACCELERATED SDEVICE QUASISTATIONARY
+상태: PROPOSED / STATIC CHECK PASS / TCAD RUN NOT YET DONE
+
+요약:
+Half+coarse 0→0.3 V transient smoke에서 accepted Newton step 하나가 109.74 s (solve 90.20 s) 걸려, time-stepping 부담 완화를 목표로 QS 0→0.3 V 별도 smoke deck을 생성함.
+
+근거:
+- 기존 SWB half+coarse n1_msh.tdr: 138,194 elements / 65,513 points, SDE mesh build PASS.
+- 실제 pp6 FAST_C1 기반 이전 Half+coarse smoke deck을 기반으로 File/Electrode/Physics/Plot/Math 전체 동일 유지.
+
+변경:
+- Solve의 0→0.3 V Transient만 Quasistationary로 전환.
+- InitialStep=.03, MaxStep=.15, MinStep=1e-6, Increment=1.5, Decrement=2; initial Poisson/Coupled 500/100, QS Coupled Iterations=15 unchanged.
+- RHSMin=1e-3, ExtendedPrecision(80), threads=4, ILS(set=22), NtSide macro(12), DmgL(12), DmgR(0) 유지.
+- Test final checkpoint n@node@_qs0p3_ckpt after completion.
+- Private full input provided in chat only (not in public GitHub). File SHA256 a7281c79e7e440c6192726f4ce6edefb58f8d76ed30ec921900fee5ff5a5ec01.
+- Static syntax/region check PASS. T-2022.03 preprocess/solver validation pending.
+
+다음:
+1) Existing half-domain Node2 transient smoke output preserve; if switching, SWB에서 해당 Node2만 중지.
+2) JUSUBIN_FAST_HALF_SWB SDevice source 백업 후 QS 설치.
+3) SWB preprocess, pp2_des.cmd에 Quasistationary( 및 Goal=0.3, n1_msh mesh, NtSide=0, DmgR 실행 참조 0개 확인.
+4) 짧은 QS run 진행, 종료/수렴/실제 wallclock/I-V 비교 후 production 채택 판단.
+5) Original full FAST_C1 reference untouched.
+
+---
+
+## 2026-10-08T11:02:36Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: QS PARALLEL SWB BRANCH
+상태: OBSERVED (GUI COPY CREATED) / PROPOSED (DECK INSTALL PENDING)
+
+사용자 화면에서 기존 JUSUBIN_FAST_HALF_SWB를 복제한 별도 SWB 프로젝트 JUSUBIN_FAST_HALF_SWB_Copy가 확인됨. 기존 원본 SWB에서는 0->0.3V Transient smoke를 계속 유지하고, Copy 프로젝트에만 이전에 작성한 Quasistationary 0->0.3V smoke를 설치하여 solver 속도와 수렴을 비교할 계획.
+
+Copy 폴더: /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_SWB_Copy
+QS source file: sdevice_des_JUSUBIN_HALF_COARSE_QS_SMOKE.cmd (chat artifact, not publicly synced)
+실제 서버 Copy folder에 QS 설치/실행은 아직 사용자 확인 전. 설치 시 기존 sdevice_des.cmd를 sdevice_des_TRANSIENT_backup.cmd로 백업, QS 파일을 sdevice_des.cmd로 복사, parameter FASTC1_pp6_des.par 존재 확인. Copy의 SDE mesh node 상태 확인 후 SDevice preprocess 0.3 V, QS smoke run. 기존 original project/reference untouched.
+
+---
+
+## 2026-10-08T11:05:29Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: QS SDEVICE BRANCH INSTALL
+상태: OBSERVED / SOURCE INSTALLED / PREPROCESS PENDING
+
+사용자 MobaXterm terminal screenshot 확인:
+- project directory: /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_SWB_Copy
+- `FASTC1_pp6_des.par`: 283 B, present
+- original transient source backed up to `sdevice_des_TRANSIENT_backup.cmd`: 5.9K
+- QS source copied as `sdevice_des.cmd`: 6.3K, mtime Oct 8 19:15
+- new QS source file `sdevice_des_JUSUBIN_HALF_COARSE_QS_SMOKE.cmd` remains in Copy project
+
+이 화면이 증명하는 건 Copy project 파일 설치 성공이지 SWB preprocess나 runtime 성공이 아님. 원본 JUSUBIN_FAST_HALF_SWB transient run은 수정하지 않았음.
+
+다음: Copy SWB project에서 SDE mesh/node readiness 확인, SDevice node Ctrl+P preprocess only, preprocessed `pp2_des.cmd`에서 Quasistationary Goal 0.3V, Grid n1_msh.tdr, NtSide=0, RHSMin=1e-3, Iterations=15, no active DmgR 확인. QS short run은 그 후.
+
+---
+
+## 2026-10-08T11:06:45Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: SWB QS PREPROCESS STALE OUTPUT DETECTED
+상태: OBSERVED / UNRESOLVED
+
+사용자 JUSUBIN_FAST_HALF_SWB_Copy 터미널 grep 결과:
+- Source `sdevice_des.cmd` earlier file-copy verified ~6.3K QS candidate.
+- 하지만 현재 `pp2_des.cmd` shows `Transient(` at line 585, `Voltage = 0.3` line 597, `Coupled(Iterations=15)` line 600.
+- `Quasistationary(` not shown in preprocessed deck. `Transient = BE` Math setting at line 515 is separate from Solve-level transient.
+- 따라서 파일 교체 후 SWB가 QS source를 재preprocess하지 않았거나 다른 source를 읽고 있을 가능성. QS 실행 전 corrected preprocess 필요.
+
+NEXT: In COPY project terminal verify `grep -n -E 'Quasistationary|Transient\(' sdevice_des.cmd`; in SWB COPY project select Node2 and rerun Ctrl+P preprocessing, then verify `pp2_des.cmd` contains Quasistationary and not Solve-level Transient. If still stale verify SWB project input path/cache and preprocess log; do NOT launch old transient unintentionally. Original transient project unchanged.
+
+---
+
+## 2026-10-08T11:07:36Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: QS SOURCE VS PP2 DECK VERIFICATION
+상태: OBSERVED / SOURCE CORRECT, PP STALE
+
+주수빈 Copy terminal screenshot direct evidence:
+- `grep -n -E 'Quasistationary|Transient\(' sdevice_des.cmd` shows line 589: `Quasistationary(` (line 9 comment steady-state DC). 따라서 Copy source QS 설치 성공 확인.
+- `grep -n -E 'Quasistationary|Transient|Grid|Voltage|RHSMin|Iterations' pp2_des.cmd` shows line 585: `Transient(`, Goal 0.3, RHSMin 1e-3, Grid n1_msh.tdr.
+- root cause now confirmed as source/pp discrepancy (pp2 not regenerated from current QS source yet); no proof of SDevice QS failure.
+- Next: copy SWB SDevice Node 2 `Ctrl+P` preprocess AGAIN; check status OK & `grep -n -E 'Quasistationary|Transient\(' pp2_des.cmd`. If still stale, verify SWB GUI cached input/project and force reopen input/project before re-preprocessing. Do not Run until `pp2_des.cmd` contains QS; reference transient project unchanged.
+
+---
+
+## 2026-10-08T11:09:43Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: QS PREPROCESS RESULT
+상태: OBSERVED / QS PREPROCESS GATE PASS / RUN PENDING
+
+주수빈의 JUSUBIN_FAST_HALF_SWB_Copy 터미널 스크린샷에서 마지막 `grep -n -E 'Quasistationary|Transient\(' pp2_des.cmd` 결과:
+- 9: comment steady-state DC Quasistationary sweep 0 -> 0.3 V
+- 589: actual executable `Quasistationary(`
+- 이전 `pp2_des.cmd`에 있었던 line585 `Transient(`는 새 결과에 없음.
+- 즉 QS source -> current preprocessed pp2_des.cmd 반영 성공. 앞서 발견한 stale pp2 문제 해결.
+
+기존 pp2 검토에서 Grid=n1_msh.tdr, RHSMin=1e-3, Coupled(Iterations=15), NtSide=0 parameter substitution 확인. 아직 실제 QS SDevice run은 시작하지 않았으므로 수렴/속도 개선은 미검증.
+
+NEXT: Copy project Node 2 SDevice만 SWB에서 Run; 초기 QS progress, convergence, wallclock/linear solver time, .err and final 0.3 V 확인. 기존 JUSUBIN_FAST_HALF_SWB transient 및 full FAST_C1 reference는 유지.
+
+---
+
+## 2026-10-08T11:11:09Z — soybeanmilk0514-jpg
+
+[2026-10-08 20:10 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: QS SDEVICE INITIAL EXECUTION
+상태: OBSERVED / RUNNING / FIRST QS STEP PENDING
+
+사용자가 JUSUBIN_FAST_HALF_SWB_Copy Node n2 Output screenshot 제공.
+- 실제 SDevice가 `Quasistationary` 시작함을 확인: InitialStep in t=0.03, MinStep=1e-6, MaxStep=0.15, Increment=1.5, Decrement=2, anode Goal 0.3 V, inner Coupled iterations=15.
+- 첫 QS trial: `Computing step from t=0.0000e+00 to 0.03 (Stepsize: 0.03)`; 이것은 QS virtual t, 첫 bias step 0.009 V 상당.
+- 첫 반복 RHS=6.78e+05, accepted/converged message는 아직 표시되지 않음. 따라서 정상 startup은 확인되었으나 QS convergence/elapsed benchmark는 미확정.
+- n2_des.err에서 vanOverstraetenMan E0 isotropic/anisotropic mismatch warning observed; previous transient에도 동일 계열 warning 존재. fatal 증거 없음.
+
+다음: accepted QS step 여부, Newton iterations, time and end of run, retries/cutbacks 확인. 기존 Half+coarse transient 약 109.74s/accepted-step과 실제 wallclock 및 I-V 비교. 기존 JUSUBIN_FAST_HALF_SWB reference untouched.
+
+---
+
+## 2026-10-08T11:12:59Z — soybeanmilk0514-jpg
+
+[2026-10-08 20:11 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: HALF+COARSE TRANSIENT SMOKE PROGRESS
+상태: OBSERVED / RUNNING
+
+사용자 스크린샷은 기존 JUSUBIN_FAST_HALF_SWB (NOT QS Copy) Node n2 SDevice:
+- Current BE-step t=5.4004e-3 -> 5.4604e-3, dt=6.0000e-5; target t=0.06 for 0->0.3V => ~9.0% by virtual time (~0.027V attempted).
+- Last accepted contact anode voltage shown 2.270e-2 V (0.0227V), i.e. ~7.6% confirmed accepted bias; distinguish attempted t vs last confirmed contact.
+- Last accepted Newton step converged in 2 iterations; RHS=3.31e-5 < 1e-3, wallclock=9.27s, assembly=4.02s, solve=5.18s.
+- Earlier accepted step wallclock 109.74s. Runtime per-step highly variable.
+- At fixed dt 6e-5, remaining ~910 accepted steps; 10s/step => ~2.5h, 20s => ~5.1h, 40s => ~10.1h; adaptive step growth/shrink changes estimate. No guaranteed ETA.
+- Original long full FAST_C1 reference not affected. Compare with QS Copy after accepted QS steps / final 0.3V.
+
+---
+
+## 2026-10-08T11:29:52Z — soybeanmilk0514-jpg
+
+[2026-10-08 20:27 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BASELINE DOPING PROFILE PHYSICAL VALIDITY REVIEW
+상태: OBSERVED / UNRESOLVED / PROPOSED VALIDATION
+
+요약:
+- Half+coarse n1_msh SVisual shows near-layerwise-uniform, abrupt signed DopingConcentration map; this is compatible with idealized piecewise-constant epi doping but does not itself validate as-grown doping profile.
+- Actual MOCVD p-GaN Mg doping may exhibit interfacial transition, back-diffusion and reactor memory; Mg chemical concentration, activated acceptor, net doping and free holes must not be conflated.
+- User requested physical check before baseline adoption; preserve current frozen Common Baseline, add sensitivity validation gate (not an approved baseline redesign).
+
+근거:
+- User SVisual screenshot: 138194 elements, 65513 points; color range about -9.59e18 to +5e18 cm^-3.
+- Literature: doi:10.1016/j.jcrysgro.2022.126962; doi:10.1002/pssc.201001039.
+- Active SDE doping directives / pp1_dvs.cmd not directly verified this turn.
+
+변경:
+- CMP/members/JuSubin/TIMELINE.md (validation plan only; TCAD geometry/physics unchanged).
+
+다음:
+- Audit active SDE doping placements/values and n1_msh TDR donor/acceptor/Mg depth cutline.
+- Only after baseline source audit, propose isolated graded-Mg interface sensitivity pilot and compare I-V, carrier injection, Rrad, SRH, IQE.
+- Continue QS smoke independently; do not conflate physical sensitivity with solver speed.
+
+
+---
