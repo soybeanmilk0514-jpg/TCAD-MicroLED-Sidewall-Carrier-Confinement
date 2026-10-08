@@ -2854,3 +2854,953 @@ AI: ChatGPT
 - 단 publication-grade final baseline 검증은 COMMON_BASELINE의 mesh convergence, Nt sensitivity 및 주장 범위에 따른 mesa-size sensitivity가 별도 남음.
 
 ---
+
+## 2026-10-08T06:12:45Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: OUTPUT AUDIT / SVisual
+상태: OBSERVED
+
+Node 12 intermediate TDR `n12_inter_0000_des.tdr`를 SVisual T-2022.03에서 정상 로드함.
+
+화면 직접 확인:
+- mesh statistics: Elements=290814, Points=137831
+- visible Scalars include: AugerRecombination, ConductionBandEnergy, CurrentPotential, DopingConcentration, EffectiveBandGap, ElectricField, ElectronAffinity, PE_Charge, polarization-related fields 등
+- Materials list에 GaN / AlGaN / InGaN / Nitride 등이 표시됨
+
+의미:
+- Node 12 intermediate spatial TDR은 정상 생성/로드됨.
+- 기존 FAST_C1 reference mesh statistics와 일치.
+- Project A/B에 필요한 output audit를 실제 intermediate TDR 기준으로 진행 가능.
+
+다음:
+SRHRecombination, RadiativeRecombination, eDensity, hDensity, eCurrent/hCurrent, ValenceBandEnergy, trap-related fields 존재 여부를 Scalars/Vectors 목록에서 추가 확인.
+
+---
+
+## 2026-10-08T06:16:09Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: OUTPUT AUDIT / SVisual
+상태: PARTIAL PASS
+
+Node 12 intermediate TDR scalar dataset 추가 확인:
+- RadiativeRecombination: present
+- TotalRecombination: present
+- TotalTrapConcentration: present
+- ValenceBandEnergy: present
+- TotalCurrentDensity: present
+- eCurrentDensity: present
+- eDensity: present
+- eSRHRecombination: present
+- eTrappedCharge: present
+- AugerRecombination / ConductionBandEnergy / ElectricField / polarization outputs: previous SVisual screen에서 present 확인
+
+Vectors tab:
+- PE_Polarization-V only visible
+- current-density vector is not visible in the current TDR.
+
+판정:
+- recombination IQE / sidewall SRH / carrier density / scalar current-crowding / band/trap analysis용 핵심 scalar는 거의 충족.
+- current-direction/streamline figure가 필요하면 vector current output 추가 여부를 별도 검토.
+- 다음: hCurrentDensity, hDensity, hSRHRecombination, hTrappedCharge 존재 여부 확인.
+
+---
+
+## 2026-10-08T06:17:39Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: OUTPUT AUDIT / SVisual
+상태: PASS
+
+Node 12 intermediate TDR 추가 scalar 확인:
+- hCurrentDensity: present
+- hDensity: present
+- hSRHRecombination: present
+- hTrappedCharge: present
+- additionally visible: tSRHRecombination, hMobility, hVelocity, Mg-related concentration fields, xMoleFraction
+
+종합 판정:
+- Baseline intermediate TDR의 spatial scalar outputs는 Project A/B 후속 분석에 필요한 핵심 항목을 충족.
+- recombination IQE, sidewall SRH, carrier density, scalar current-crowding, band/trap analysis 가능.
+- current vector는 현재 Vectors에서 보이지 않으므로 streamline/vector figure가 필요할 경우 별도 output 추가 검토.
+- 다음 gate: actual pp-deck code audit + region-integral extraction smoke test.
+
+---
+
+## 2026-10-08T06:19:18Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: RUNTIME BLOCKER / STRATEGY
+상태: USER-REPORTED + REVIEWED
+
+사용자 보고:
+- 현재 이택규가 최종 수정해 실행 중인 FAST_C1 계열 baseline이 high-bias에서 약 0.05 V/day 진행.
+- 이는 약 2.08 mV/h로, 2026-10-06 Node 6에서 관찰된 ~2.2 mV/h 병목과 거의 같은 규모.
+
+판단:
+- C1의 Iterations=15는 failed Newton attempt 비용을 줄였지만 root cause인 high-bias timestep collapse 자체를 해결하지 못함.
+- broad A/B production에 이 속도를 그대로 사용하면 일정상 불가능.
+- 현재 full/fine C1 reference는 가능하면 유지하고, 별도 accelerated branch를 병렬 검증하는 것이 최선.
+
+즉시 권고:
+1) current C1 reference run 중단하지 않음.
+2) C2 Save/Load smoke를 먼저 완료.
+3) common C2는 Iterations=15 유지, >4 V Increment=1.05 staged Transient + true Save checkpoints로 시험.
+4) C2는 C1의 4.0/4.2/4.4... snapshot/I-V와 equivalence 비교.
+5) 별도 half-domain + remote homogeneous bulk coarsening branch를 SDE-only -> short pilot로 검증; MQW/EBL/heterointerface/5 nm damage mesh는 유지.
+6) A/B screening은 validated accelerated branch 사용, final representative cases만 full/fine reference로 재검증.
+7) Iterations=8/10, RHSMin 완화는 현재 evidence상 common baseline에 적용 금지.
+
+계획상 의미:
+- 0.05 V/day가 지속되면 0.30 V에 약 6일 규모이므로 현재 C1을 모든 A/B case에 적용하는 전략은 폐기해야 함.
+
+---
+
+## 2026-10-08T06:34:41Z — TaekGyu0801
+
+[2026-10-08]
+작업자: 이택규
+AI: ChatGPT
+구분: REVIEW / CLAUDE HALF-DOMAIN ANALYSIS
+상태: REVIEWED / PROPOSED
+
+Claude의 J 계산은 2D 전류 A/um 및 W=4um 가정에서 산술상 맞다: Node6 4.7128V에서 약 7.24e-5 A/cm2. 다만 'LED가 켜지지 않는다'는 최종 진단은 아님. 실제 terminal e/h/displacement 분해, 정규화/접촉 정의, 기존 TDR band/quasi-Fermi 및 recombination 적분을 먼저 확인할 것. Polarization activation=1은 매뉴얼 기본값이지만 그것만으로 오류임을 뜻하지 않음.
+
+Half-domain은 contacts/doping/geometry/physics 좌우 대칭 검증 후 별도 branch로 SDE-only 및 short-run full-vs-half 등가성 시험. RhsMin=1e-3/sqrt(2) 변경안은 residual 노름 스케일링 가설에 기반한 감도시험일 뿐, 무검증 production 변경 금지. 기존 FAST_C1 reference는 무단 중단 금지. SVisual scalar 출력은 10/08 주수빈 관찰에서 핵심 항목 PASS, actual region-integral smoke는 미완.
+
+다음: 기존 TDR/PLT로 turn-on/injection sanity와 extraction smoke → SDE 대칭 검사 → half pilot → C2 체크포인트 상태 확인. Full A/B production은 기존 GO/NO-GO gates 유지.
+
+---
+
+## 2026-10-08T06:39:14Z — TaekGyu0801
+
+[2026-10-08]
+작업자: 이택규
+AI: ChatGPT
+구분: VALIDATION GATE / LED EMISSION MODEL
+상태: DOCUMENTED_MANUAL / ACTIVE-DECK_UNRESOLVED
+
+질문: TCAD에서 LED가 실제 발광한다고 무엇으로 확인하는가?
+
+공식 근거: 사용자가 업로드한 Synopsys Sentaurus Device User Guide T-2022.03, §16 pp.488-489 및 §34 pp.1040-1043.
+- 기본 Radiative 모델은 Physics Recombination(Radiative), Plot RadiativeRecombination으로 생성율을 출력함.
+- 해당 UG는 C 기본값을 GaAs 2e-10 cm3/s, 다른 재료 0이라고 명시함. 그러나 현재 활성 InGaN/GaN material DB 및 pp*.par의 실제 override 값은 **미확인**이며, C=0이라고 단정해서는 안 됨.
+- RadiativeRecombination 데이터셋의 '존재'만으로 비영(非零) 발광을 입증할 수 없다. 실제 수치와 QW 전체 영역 적분, 전류 주입/바이어스 의존, 전자/정공 및 전도/변위 전류 구성을 확인해야 한다.
+- 일반 Radiative recombination 계산은 '내부 광자 생성 가능성'을 뜻함. 실제 외부 광출력/스펙트럼은 별도의 LED optical module/optical raytracing 등에서 Photon_Spontaneous, Photon_Exited, Power_Exited 등을 검증해야 함.
+- 본 프로젝트 A/B의 우선 목표는 same-J의 QW Rrad / SRH / Auger 적분과 recombination IQE, 부작용 평가. 외부 광출력(EQE)을 실제 계산한 것으로 주장 금지.
+
+다음:
+1) active pp6/pp12_des.cmd/par, material file/database에서 InGaN/GaN Radiative C와 active model 실제 값 확인;
+2) 이미 저장된 Node6/Node12 TDR에서 QW의 RadiativeRecombination 양(+) 값과 공간 적분 검증;
+3) .plt의 전자/정공 전류와 변위 전류를 확인해 유효 주입을 판정;
+4) 비교 단계에서 같은 J에 맞춘 snapshot 및 활성 QW 정의 검증. 기존 baseline을 확인 없이 수정하지 않음.
+
+---
+
+## 2026-10-08T06:46:10Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: FAST_C2 SAVE/LOAD SMOKE
+상태: LOAD MECHANICS PASS / STEADY RE-SOLVE FAIL
+
+사용자 제공 c2smk_ld02.out tail 확인:
+- 0.2 V checkpoint load 이후 Coupled solve가 실제 수행됨.
+- 기존 C1 Plot TDR load 실패 때의 `contains no SLP information !` 오류는 보이지 않음.
+- 결과 TDR `c2smk_ld02_des.tdr`가 작성됨.
+- run은 `Sentaurus Device simulation finished` / `Good Bye !`까지 종료.
+- 따라서 Save-generated `.sav` checkpoint의 **Load mechanics 자체는 PASS**로 판단.
+
+단, loaded state에서 수행한 steady Coupled re-solve는 비수렴:
+- RHS가 1.52e4 -> 3.94e9 -> 1.41e11 ... 증가
+- 여러 Newton row에서 linear iterations 200 도달
+- `Finished, because... |RHS| increased by more than factor 1.0000E+10.`
+- 따라서 “Load 후 steady DC re-solve가 정상 수렴/동일 current 재현” gate는 FAIL.
+
+결론:
+- true Save/Load restart 파일 형식은 동작함.
+- 다음 C2 continuation test는 load 직후 별도 steady Coupled re-solve를 강제하지 않고, saved transient state에서 동일 global-time axis의 다음 Transient segment로 직접 continuation하는 방식으로 짧게 검증해야 함.
+- 이 continuation smoke가 PASS하기 전 production C2 full run 시작 금지.
+
+---
+
+## 2026-10-08T06:51:22Z — TaekGyu0801
+
+[2026-10-08]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / SVisual PROBE
+상태: OBSERVED / FIELD-NAME CONFIRMATION PENDING
+
+요약:
+- 기존 Node 6 intermediate TDR 'n6_inter_0004_des' (~4.7 V)에서 InGaN의 Clean_QW1, QW2, QW3, QW4를 각각 SVisual Probe로 선택한 화면을 제공함.
+- 강조된 값의 항목명은 가로 스크롤 때문에 좌측이 잘려 '...bination'만 보여 RadiativeRecombination으로 보이나 전체 항목명 최종 확인 필요.
+- 화면에 나온 선택 항목의 국소 값(필드가 RadiativeRecombination이면 cm^-3 s^-1): QW1=5.531972320698e12; QW2=9.346620224854e14; QW3=4.188264170176e13; QW4=6.069760269935e14.
+
+판단:
+- 네 QW 지점에서 선택된 물리량이 양수임을 보여 주지만 각 QW 전체 적분이나 IQE, 외부 광출력의 증거는 아님.
+- Source/physics는 수정하지 않음.
+
+다음:
+1) Probe에서 선택 항목의 완전한 명칭 RadiativeRecombination 확인.
+2) active pp/par/material의 Radiative parameter 확인.
+3) 각 QW/전체 MQW 영역 적분과 e/h density 및 주입전류 분해로 LED 정상 동작 여부 점검.
+
+---
+
+## 2026-10-08T06:52:06Z — TaekGyu0801
+
+[2026-10-08 15:51 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / DIAGNOSIS
+상태: OBSERVED / UNRESOLVED
+
+요약:
+- 사용자가 cmp216@ssudisu2 터미널 출력을 제공함.
+- ps -fu $USER | grep '[s]device' 출력 없음: 이 서버의 cmp216 사용자 계정에서는 현재 SDevice 프로세스 미관측.
+- SWB GUI는 실행 중(pid 75755).
+- 기존 semi437 경로 cd 실패. cmp216 프로젝트 폴더/실행 호스트는 아직 미확인.
+- '216'은 노드번호가 아니라 사용자 계정 cmp216임을 정정.
+
+근거: 사용자가 제공한 2026-10-08 터미널 로그
+변경: 코드/실행 설정 변경 없음.
+다음: HOME/프로젝트 경로, SDevice 출력 로그, SWB 노드 상태 확인. 미확인 상태에서 중단/재실행 금지.
+
+---
+
+## 2026-10-08T06:53:04Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: FAST_C2 RESTART CONTINUATION TEST PLAN
+상태: READY TO EXECUTE
+
+기존 smoke deck 확인:
+- Save at 0.2 V: c2smk_ckpt_0p2V
+- original segment2: InitialTime=0.04 -> FinalTime=0.06, Goal anode 0.3 V, InitialStep=1e-4, MinStep=1e-9, MaxStep=1e-3, Increment=1.05, Coupled Iterations=15.
+- 기존 Load check deck은 Load 후 steady Coupled를 강제하여 발산했음.
+
+다음 test:
+- 별도 복사본 c2smk_cont_des.cmd 생성.
+- File outputs는 c2cont_*로 분리해 기존 smoke를 덮어쓰지 않음.
+- anode initial Voltage=0.2 V로 맞춤.
+- Solve는 오직:
+  Load(FilePrefix="c2smk_ckpt_0p2V")
+  -> Transient 0.04->0.06, Goal anode 0.3 V
+  -> Increment=1.05, Iterations=15
+  -> c2cont_s2 snapshots
+- steady Coupled re-solve는 넣지 않음.
+
+PASS criteria:
+1) Load parse/read 성공, SLP error 없음.
+2) transient global time 0.04에서 시작해 0.06까지 accepted progress.
+3) anode reaches 0.3 V.
+4) no fatal/nonconvergence termination.
+5) c2cont .plt/.tdr 생성.
+6) original c2smk segment2와 final current/state가 일관적인지 확인.
+
+이 continuation smoke PASS 전에는 production C2 full run 시작 금지.
+
+---
+
+## 2026-10-08T06:53:14Z — TaekGyu0801
+
+[2026-10-08]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS
+상태: OBSERVED / UNRESOLVED
+
+터미널에서 HOME은 /user2/cmp/cmp216으로 확인됨. 계정 내 tmp/myproject 폴더는 없음. C-shell에서 Bash식 리다이렉션을 사용한 find 명령은 Ambiguous output redirect 오류로 실행되지 않음. 로그/실행 프로젝트 위치 미확인.
+
+다음: C-shell 호환 명령으로 프로젝트 디렉터리 및 로그 파일 위치 검색. 기존 실행은 중단하거나 변경하지 않음.
+
+---
+
+## 2026-10-08T06:57:55Z — TaekGyu0801
+
+[2026-10-08] 이택규 cmp216 cross-account run check — OBSERVED: FAST_C1_ACCOUNT_TEST n6_des.log last accepted 0.9534 V, then incomplete next step. Log and PLT last written Oct 7 17:47/17:45. No local SDevice process on ssudisu2 and no final TDR. Cause and remote job status UNRESOLVED. Next inspect job status/output; do not restart blindly.
+
+---
+
+## 2026-10-08T07:01:10Z — TaekGyu0801
+
+[2026-10-08]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / PILOT PLAN
+상태: PROPOSED / NOT RUN
+
+요약:
+- 개별 LED 재결합 Probe 검증은 잠시 후순위로 두고, 좌우 대칭 half-domain + 일부 먼 bulk/numerical n-base mesh 완화를 함께 적용한 별도 실험 branch를 먼저 만드는 방향을 요청함.
+- 기존 FAST_C1 reference는 그대로 두며 원본 파일/현재 run 미변경.
+- MQW/EBL/heterointerface/5 nm physical damaged sidewall mesh, contacts and baseline physics/traps, Iterations=15/RHSMin은 변경하지 않음.
+- Half cut plane은 소자의 실제 좌우 대칭 중심이어야 하고 인공 면에는 측벽 damage를 넣지 않는다.
+- 합쳐서 시험하는 branch이므로 speedup을 half 때문인지 coarsening 때문인지 분리해 주장하지 않음.
+- 현재 실제 SDE/SDevice source는 public GitHub에 없어 active source 확보 전 코드 생성 불가; 실제 TCAD 실행을 시작했다고 주장하지 않음.
+
+다음:
+1) active SDE source(pp1_dvs.cmd)와 SDevice pp6_des.cmd/par 확보;
+2) 중심선·contacts/doping 좌우 대칭 확인;
+3) copy branch SDE-only mesh/build 확인;
+4) pp preprocessing + 0→low-bias short smoke;
+5) 성공 시 장시간 pilot 실행.
+
+---
+
+## 2026-10-08T07:03:33Z — TaekGyu0801
+
+[2026-10-08 16:00 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / DIAGNOSIS
+상태: OBSERVED / UNRESOLVED
+
+cmp216 FAST_C1_ACCOUNT_TEST Node6 last accepted 0.9534 V (RHS 6.15e-5). Next BE step started; log ends immediately after iteration-table header. License checkout reported Oct 7 at run start; no fatal, killed, aborted, signal, Good Bye or simulation-finished markers detected. File log last modified Oct 7 17:47; no local sdevice running on ssudisu2 when checked Oct 8. Cause of interruption remains unknown. No final TDR. Keep semi437 reference untouched; inspect launch mode and login/job history before any new run.
+
+---
+
+## 2026-10-08T07:06:00Z — TaekGyu0801
+
+[2026-10-08]
+작업자: 이택규
+AI: ChatGPT
+구분: HANDOFF / FAST_HALF PACKAGE
+상태: OBSERVED (source filenames) / PROPOSED (implementation)
+
+서버 위치:
+semi437@ssudisu3:/user/semi/semi437/tmp/myproject/GaN_PiN_Diode_FAST_C1/
+사용자 find 실제 출력:
+./sde_dvs.cmd
+./pp1_dvs.cmd
+./n1_dvs.cmd
+./pp6_des.par
+pp6_des.cmd 와 n1_msh.tdr 는 앞선 프로젝트 기록에 존재함(이번 명령 출력을 다시 받은 것은 아님).
+
+사용자는 세부 진단을 계속하기보다 Claude에게 관련 파일을 일괄 전달해 FAST_HALF_BULK_R15 별도 가속 pilot을 곧바로 준비·실행하도록 요청.
+SDE 실제 geometry 및 pp6 내용을 아직 전달받지 않았으므로 half cut 좌표/mesh 숫자/전극은 추정 금지.
+
+실행 원칙: 기존 full/fine reference 유지. 대칭성 확인 → SDE Mesh build → SDevice preprocess/short smoke → separate detached Node6 trial. MQW/EBL/heterointerface/5nm physical damaged edge 보호; 먼 homogeneous nGaN/n-base mesh만 1.5–2x 후보; physics/traps/RHSMin/Iterations=15 불변. Synthetic symmetry wall에 trap 금지. Half+coarsening의 속도 효과는 구별되지 않음.
+cmp216 이전 cross-account n6 run 0.9534 V 로그 중단 원인은 여전히 UNRESOLVED.
+
+
+---
+
+## 2026-10-08T07:18:55Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: FAST_C2 RESTART CONTINUATION DECK REVIEW
+상태: STRUCTURE PASS / ELECTRODE CHECK PENDING
+
+사용자 제공 c2smk_cont_fixed.cmd 확인:
+- File outputs are isolated as c2cont_des.tdr / c2cont_des.plt / c2cont_des.log.
+- Solve block contains only:
+  Load(FilePrefix="c2smk_ckpt_0p2V")
+  -> Transient InitialTime=0.04, FinalTime=0.06
+  -> InitialStep=1e-4, MinStep=1e-9, MaxStep=1e-3
+  -> Increment=1.05
+  -> Goal anode Voltage=0.3
+  -> Coupled(Iterations=15){Poisson Electron Hole}
+  -> c2cont_s2 snapshots at 0.05, 0.06.
+- No stale Save/original second Transient block remains after the new Solve block.
+
+Pending before execution:
+- verify Electrode anode initial Voltage=0.2 in c2smk_cont_fixed.cmd.
+- if confirmed, execute one continuation smoke and inspect c2cont_des.log / .plt / .tdr.
+
+---
+
+## 2026-10-08T07:24:32Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: FAST_C2 RESTART CONTINUATION SMOKE
+상태: SYNTAX FAIL / NO SOLVE STARTED
+
+사용자 실행:
+sdevice --max_threads 4 c2smk_cont_fixed.cmd
+
+결과:
+- parser error at line 809, offending input: Solve
+- c2cont_des.log was not created because SDevice stopped during command-file parsing.
+- 따라서 이는 physics/convergence/restart 실패가 아니라 edited continuation deck의 command-file brace/block structure 문제.
+- production conclusion 금지.
+- 다음: inspect lines ~780-815 and rebuild continuation deck from clean original rather than compounding manual edits.
+
+---
+
+## 2026-10-08T07:40:14Z — TaekGyu0801
+
+[2026-10-08] 작업자: 이택규 / AI: ChatGPT
+
+구분: CODE REVIEW / FAST_HALF_BULK_R15; 상태: REVIEWED / STATIC PASS / SENTAURUS NOT RUN
+
+사용자 제공 Claude ZIP(14 files)을 검사. ZIP SHA256SUMS 13 entries PASS; Python 4 scripts syntax PASS; sh -n runner PASS; SDE Scheme parentheses/string balance PASS.
+
+SDE: proposed y=2.5um half-domain, preserve physical DmgL 5nm and protect MQW/EBL/interface/damage mesh; bulk candidate BulkFac=1.5. Actual server SDE build NOT RUN.
+
+SDevice: DmgL 12 Physics blocks, DmgR 0; n6 trap Conc=0, n12 Conc=1e18; production Iterations=15, RHSMin=1e-3, Increment=1.2, Goal=5V retained. Server active original source independently not present in this review session.
+
+Important postprocessing issue: tdr_region_integrals.py is untested on solution TDR; missing ElectrostaticPotential skips vertex order continuity verification but still prints metrics, and q*SRH shows zero when field is missing. Do not use as confirmed IQE/recombination without data mapping/field integrity test.
+
+GO only for separate mesh Gate a; Gate b Poisson and Gate c 0..1V smoke must complete before full 5V node6 exploratory run. No Sentaurus execution done by ChatGPT. Preserve FAST_C1/C2 work.
+
+Next: user uploads ZIP to semi437, sha256sum -c SHA256SUMS, sh run_r15h.sh mesh; send mesh logs if errors. Claude-estimated 5% bulk vertex savings and overall speedup remain unverified.
+
+---
+
+## 2026-10-08T07:42:13Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: FAST_C2 RESTART CONTINUATION DECK FIX
+상태: READY TO RUN
+
+사용자 제공 확인:
+- c2smk_cont_fixed.cmd에서 Math/ILSrc 블록 닫힘 구조 수정됨.
+- Electrode anode initial Voltage=0.2 확인.
+- Transient Goal anode Voltage=0.3 확인.
+- continuation Solve는 Load(c2smk_ckpt_0p2V) -> Transient 0.04->0.06, Increment=1.05, Iterations=15 구조.
+
+다음:
+- sdevice --max_threads 4 c2smk_cont_fixed.cmd 실행.
+- 종료 후 c2cont_des.log에서 Load 성공, transient progress, 0.3 V 도달, fatal 여부 확인.
+
+---
+
+## 2026-10-08T07:44:30Z — TaekGyu0801
+
+[2026-10-08]
+
+작업자: 이택규 / AI: ChatGPT
+
+구분: CODE PREPARATION / SWB MANUAL FAST_HALF
+
+상태: PROPOSED / STATIC CHECKED / NOT RUN
+
+사용자 요청에 따라 standalone Claude R15H 소스를 SWB에서 직접 입력 가능한 파일로 별도 작성. Source 전체는 공개 GitHub에 업로드하지 않음.
+
+프로젝트: 새 SWB topology SDE -> SDevice (SVisual optional).
+
+파일: sde_dvs.cmd (mesh output n@node@), sdevice_des.cmd (File @tdr@/@parameter@/@tdrdat@/@plot@/@log@; Plot prefix n@node@_inter; trap Conc=@NtSide@ in 12 DmgL regions), sdevice.par, SWB_README_KO.md.
+
+SWB parameter NtSide: values 0 / 1e18; SDE code BulkFac=1.5 fixed, protected MQW/EBL/5nm Dmg unchanged. Math RHSMin=1e-3, Iterations=15, Increment=1.2, 5V unchanged. All 12 trap macro edits and filenames statically checked.
+
+NO SDE mesh built, NO preprocessed actual SWB deck, NO SDevice run. Must verify Workbench File macros, input dependency, active pp device, mesh and short startup prior full long run. Keep full/fine original reference files and jobs untouched.
+
+Shared file in user's chat: CMP_FAST_HALF_SWB_READY_20261008.zip
+
+---
+
+## 2026-10-08T07:46:43Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: FAST_C2 RESTART CONTINUATION RUN
+상태: RUNNING
+
+화면에서 Load 후 transient continuation이 실제 진행 중임을 확인. 0.0400063 -> 0.0400086 step은 RHS가 8.72e2 -> 7.41e-1 -> 3.22e-5로 감소했고 RHS < 1e-3 조건으로 accepted/converged. 다음 step도 시작됨. 화면의 red error는 Newton table의 수치 열 이름이며 현재 fatal error 메시지가 아님. 최종 PASS는 FinalTime 0.06, anode 0.3 V 도달 및 정상 종료 확인 후 선언.
+
+---
+
+## 2026-10-08T07:59:12Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: MODEL REDUCTION REVIEW / HALF-DOMAIN
+상태: PROPOSED / VALIDATION REQUIRED
+
+판정:
+- 현재 Common Baseline은 2D Cartesian, 좌우 5 nm DmgL/DmgR, 대칭 vertical stack으로 정의되어 있고 Project A/B도 Cedge_L/R 및 AlBarrier_L/R의 좌우 대칭 구현을 전제로 하므로, 실제 active SDE의 contact/region/BC가 centerline mirror-symmetric임이 확인되면 half-domain은 수학적으로 타당한 reduction 후보.
+- half model은 centerline에서 mirror/symmetry 조건(정상방향 전류 0, 정상방향 전기장/퍼텐셜 구배 대칭)을 만족해야 하며 centerline에 damage/trap을 새로 만들면 안 됨.
+- full-equivalent terminal current와 적분량(SRH/Radiative/Auger)은 half 결과에 2배 scaling, IQE 및 local current density/Vf는 2배하지 않음.
+- same-J 비교에는 half mesa area를 사용하면 J 자체는 full과 동일해야 함.
+- 예상 speed benefit은 mesh/unknown 감소에 따른 per-step runtime 단축이며, high-bias timestep collapse의 step-count 자체는 남을 수 있으므로 C2 continuation/timestep strategy와 병행 권고.
+
+NO-GO 조건:
+- top/bottom contact가 centerline 비대칭, 한쪽 side contact/grid, 비대칭 A/B 구조, 비대칭 trap/process, 3D/radial effect를 직접 주장하는 경우 half를 exact replacement로 사용 금지.
+
+검증 gate 제안:
+1) actual SDE contact/geometry symmetry audit.
+2) SDE-only half mesh inspection; MQW/EBL/heterointerface/5nm damage critical mesh 유지.
+3) short full-vs-half comparison at overlapping bias/current: 2*I_half vs I_full, Vf@same-J, 2*integrated SRH/Rrad/Auger, IQE, centerline normal current.
+4) numerical equivalence 통과 후 half branch를 A/B screening에 사용.
+5) full C1은 reference로 유지하고 final representative cases는 full-domain 재검증 또는 symmetry-equivalence 근거를 논문에 명시.
+
+---
+
+## 2026-10-08T08:01:27Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: MODEL REDUCTION DECISION / HALF-DOMAIN
+상태: REVIEWED / LOGICALLY VALID WITH SYMMETRY GATE
+
+판정:
+- 현재 Common Baseline은 2D Cartesian, 좌우 동일 DmgL/DmgR 5 nm, 동일 epitaxy와 좌우 대칭 A/B 설계를 전제로 하므로, centerline mirror symmetry가 실제 SDE contact/region/BC에도 성립하면 half-domain은 단순 근사가 아니라 full-domain의 대칭해를 계산하는 수학적으로 타당한 reduction.
+- 따라서 runtime 단축 목적으로 half-domain을 사용하는 전략은 논리적으로 타당.
+
+필수 조건:
+1) centerline 기준 geometry/material/doping/trap/mesh target이 좌우 대칭.
+2) contact/BC가 좌우 비대칭이 아님.
+3) centerline은 새 sidewall이 아니므로 damage/trap/passivation 금지; symmetry/no-normal-current 조건으로 취급.
+4) A/B도 한쪽만 넣는 게 아니라 full-device 관점에서 mirror-symmetric한 설계를 half로 표현.
+
+환산:
+- terminal I_full = 2*I_half (full-equivalent total current 필요 시)
+- integrated SRH/Rrad/Auger full-equivalent = 2*half
+- J, Vf, IQE, local carrier density/current density는 2배하지 않음
+
+검증:
+- full reference는 유지.
+- SDE-only half mesh -> short full-vs-half equivalence test 수행.
+- I/Vf/IQE/SRH/Rrad/Auger/current-density profile이 tolerance 내 일치하면 half를 accelerated baseline/A-B screening에 채택 가능.
+- 단 high-bias timestep collapse는 half 자체로 사라지지 않을 수 있어 C2 timestep strategy와 병행 권고.
+
+---
+
+## 2026-10-08T08:10:15Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: HALF-DOMAIN PHYSICS CLARIFICATION
+상태: REVIEWED / VALID IF MIRROR-SYMMETRIC
+
+핵심 판단:
+- 양쪽 sidewall로 향하는 lateral electron/hole transport가 존재해도, full device의 geometry/material/trap/contact/BC가 centerline 기준 mirror-symmetric이면 half-domain은 논리적으로 타당함.
+- full-domain에서는 centerline을 기준으로 J_y(x,+y) = -J_y(x,-y) 형태의 mirror current가 형성되며 centerline에서 normal lateral current는 0이 됨. Half-domain symmetry plane은 이 zero-normal-flux 조건만 강제하고, centerline->physical sidewall 방향의 lateral carrier transport는 그대로 계산함.
+- 즉 half-domain은 lateral sidewall transport를 제거하는 것이 아니라 좌우 중복된 한쪽을 생략하는 것.
+
+주의:
+- 실제 contact가 한쪽 lateral n-contact/grid 구조, asymmetric injection, asymmetric trap/process, one-sided Project A/B라면 half는 exact replacement가 아님.
+- 현재 TCAD가 deterministic continuum model이라 microscopic random sidewall-trap asymmetry는 원래 full model에도 explicit하게 들어가 있지 않음.
+- production 전 actual SDE contact symmetry와 centerline BC를 확인하고, short full-vs-half comparison으로 centerline Jy≈0 및 I/Vf/IQE/SRH equivalence를 검증해야 함.
+
+---
+
+## 2026-10-08T08:12:17Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: FAST_C2 CONTINUATION MONITORING
+상태: RUNNING / ACCEPTED STEPS
+
+사용자 화면에서 continuation run이 정상 진행 중임을 확인.
+- 예시 step: 0.0402154 -> 0.0402282, dt=1.2771e-05
+- Newton RHS: 4.81e3 -> 2.26e1 -> 3.22e-5
+- 종료 사유: |RHS| less than 1.0000E-03 -> accepted/converged step
+- 다음 step 0.0402282 -> 0.0402416 시작됨
+- 화면의 빨간 'error'는 Newton iteration table의 열 이름이며 자체적으로 fatal error 메시지가 아님.
+- 실제 문제 판정은 step rejection/divergence/fatal/exit message로 해야 함.
+
+최종 PASS는 FinalTime=0.06 / anode=0.3 V 도달 후 확인.
+
+---
+
+## 2026-10-08T08:20:36Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: PARALLEL ACCELERATION PLAN
+상태: DECISION
+
+- 이택규: FAST_HALF_BULK_R15 = half-domain + bulk mesh coarsening(BulkFac=1.5).
+- 주수빈: 별도 pure half-domain branch를 만들어 half-domain 효과만 분리 검증.
+- 수빈 branch는 첫 단계에서 mesh/numerics/physics를 FAST_C1과 동일하게 유지하고 geometry만 centerline half로 축소.
+- full reference / pure-half / half+bulk-coarse를 같은 bias/current에서 I, Vf, IQE, SRH/Rrad/RAuger, carrier/current maps, runtime으로 비교.
+- equivalence 통과한 가장 빠른 branch를 공통 accelerated baseline 후보로 채택.
+- 이후 필요 시 C2 Increment=1.05 + checkpoint를 선택된 half branch에 추가.
+- 기존 full FAST_C1 reference는 보존.
+
+---
+
+## 2026-10-08T08:22:06Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: ACCELERATED BASELINE PLAN REVISION
+상태: DECISION / SUPERSEDES PURE-HALF-ONLY
+
+목표: 오늘 안에 최대한 빠르게 돌아가는 practical accelerated baseline 후보 구축.
+
+주수빈 branch:
+1) centerline mirror half-domain.
+2) physical 5 nm damaged sidewall 1개 유지; synthetic center plane에는 damage/trap 없음.
+3) MQW/EBL/heterointerfaces/5 nm damage/high-field/contact-edge mesh는 보호.
+4) remote homogeneous n-GaN bulk 및 numerical n-base mesh를 약 1.5~2x 후보로 완화하고 graded transition 사용.
+5) physics/material/traps/contacts, RHSMin=1e-3, Iterations=15 유지.
+6) full reference 290814 elements / 137831 points 대비 mesh reduction과 runtime 측정.
+7) short smoke equivalence 통과 후 high-bias C2 Increment=1.05 + true Save checkpoint 전략 결합.
+8) final freeze 전 full-vs-accelerated I/Vf/IQE/SRH/Rrad/RAuger/current-field equivalence 필수.
+
+기존 pure-half-only 분리 실험 계획은 superseded.
+
+---
+
+## 2026-10-08T08:32:11Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: FAST_HALF INPUT PACKAGE CHECK
+상태: OBSERVED / INPUTS PRESENT
+
+semi437 home의 CMP_FAST_HALF_INPUT_20261008.tar.gz 내부 목록을 사용자 터미널에서 확인:
+- sde_dvs.cmd
+- pp1_dvs.cmd
+- n1_dvs.cmd
+- pp6_des.cmd
+- pp6_des.par
+- n1_msh.tdr
+
+주수빈 accelerated branch 생성에 필요한 SDE source + preprocessed SDE/SDevice + parameter + reference mesh 입력이 패키지에 존재함. 다음은 원본을 건드리지 않고 별도 JUSUBIN_FAST_HALF 디렉터리에 압축 해제 후 sde_dvs.cmd를 기준으로 half-domain + selective mesh coarsening 수정.
+
+---
+
+## 2026-10-08T08:38:46Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: JUSUBIN FAST HALF BRANCH SETUP
+상태: INPUT EXTRACTED / READY FOR SDE AUDIT
+
+사용자 터미널에서 ~/JUSUBIN_FAST_HALF 생성 후 CMP_FAST_HALF_INPUT_20261008.tar.gz 압축 해제 완료.
+확인된 파일:
+- sde_dvs.cmd (18K)
+- pp1_dvs.cmd (18K)
+- n1_dvs.cmd -> pp1_dvs.cmd symlink
+- pp6_des.cmd (7.5K)
+- pp6_des.par (283B)
+- n1_msh.tdr (2.9M)
+
+다음: sde_dvs.cmd 원본 백업 후 geometry/contact/refinement 정의를 실제 코드에서 읽고 half-domain + selective mesh coarsening 수정안을 작성.
+
+---
+
+## 2026-10-08T08:41:18Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: EXECUTION WORKFLOW DECISION
+상태: DECISION
+
+주수빈 accelerated baseline은 실제 실행을 terminal standalone이 아니라 Sentaurus Workbench(SWB)에서 수행하기로 함.
+- terminal은 필요 시 파일 확인/백업 정도에만 사용하고 solve 실행은 SWB에서 수행.
+- 새 SWB project에서 SDE -> SDevice topology로 구성.
+- JUSUBIN_FAST_HALF의 sde_dvs.cmd를 half+selective coarse 버전으로 만든 뒤 SDE node command로 사용.
+- SDevice는 기존 FAST_C1 pp/source를 기준으로 physics/numerics 유지, NtSide split 0/1e18 구성.
+- 먼저 SDE mesh build/visual inspection -> preprocess -> short smoke -> long run 순서.
+- 기존 full FAST_C1 reference는 유지.
+
+---
+
+## 2026-10-08T09:04:52Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: JUSUBIN FAST HALF SWB SOURCE COPY
+상태: OBSERVED / READY FOR SDE EDIT
+
+FAST_C1 원본 SDE command를 주수빈 새 SWB 프로젝트로 복사 완료 확인:
+- source: /user/semi/semi437/tmp/myproject/GaN_PiN_Diode_FAST_C1/sde_dvs.cmd
+- destination: /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_SWB/sde_dvs.cmd
+- destination size: 18K, mtime 2026-10-08 17:15
+
+기존 FAST_C1 원본은 유지. 다음 단계는 SWB SDE Edit Input에서 복사본이 실제로 로드되는지 확인한 뒤 geometry/contact/refinement 코드를 기준으로 half-domain + selective mesh coarsening 수정.
+
+---
+
+## 2026-10-08T09:19:37Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: CODE GENERATION / JUSUBIN HALF+COARSE SDE
+상태: STATIC CHECK PASS / SENTAURUS NOT RUN
+
+사용자가 실제 FAST_C1 sde_dvs.cmd를 업로드했고, 이를 기준으로 주수빈 accelerated SDE 후보를 생성함.
+
+변경:
+- full-domain -> LEFT half-domain, yC=W_domain/2=2.5um.
+- physical left DmgL 5nm 유지, DmgR 전체 제거.
+- centerline y=yC는 synthetic symmetry boundary이며 damage/trap/nitride 없음.
+- nGaN_base도 y=0..yC로 축소.
+- top anode는 DmgL+Clean 두 edge, bottom cathode는 half base 중앙점으로 지정.
+- pGaN/EBL/nGaN/barrier/QW의 DmgR doping/composition placement 제거.
+- EBL/MQW/DmgL fine mesh 유지.
+- global homogeneous mesh를 FAST_C1 대비 약 2x 완화: max 0.100/0.200um, min 0.010/0.010um.
+- p-GaN와 MQW 아래 upper n-GaN 0.20um에 보호 refinement 추가.
+- right nitride/right damage refinement 제거.
+
+정적 검사:
+- executable DmgR/yR/yDR/Nitride_R/Ref.Win.DmgR refs = 0.
+- crude Scheme parenthesis balance open=221 close=221.
+- Sentaurus SDE 실제 build는 아직 미실행.
+
+생성 파일: sde_dvs_JUSUBIN_HALF_COARSE_v1_1.cmd (chat artifact). 다음 gate: SWB에서 이 파일을 SDE input으로 교체 -> SDE only build -> mesh elements/points 및 critical mesh 시각 검증. SDevice는 DmgR trap Physics references를 별도로 제거/half-compatible하게 수정해야 함.
+
+---
+
+## 2026-10-08T09:25:56Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: JUSUBIN HALF+COARSE SDE FINAL STATIC REVIEW
+상태: STATIC PASS / SDE RUN NOT YET VERIFIED
+
+FAST_C1 원본 sde_dvs.cmd 기반으로 주수빈용 half-domain + selective coarse mesh 최종 후보를 재검토/수정.
+핵심:
+- left physical sidewall 1개와 5 nm DmgL 유지.
+- mirror centerline yC=2.5 um에서 절단, centerline Dmg/Nitride 없음.
+- DmgR/yR/yDR/Nitride_R executable reference 제거.
+- full 4 um physical mesa interpretation 유지, simulated active width 2 um.
+- global homogeneous mesh 약 2x 완화: max 0.1/0.2 um, min 0.01/0.01 um.
+- MQW/EBL/DmgL mesh 유지.
+- p-GaN 및 MQW 바로 아래 upper n-GaN은 원 FAST_C1 global mesh limits로 보호.
+- bottom numerical base 마지막 0.1 um에 cathode-side protection 추가.
+- anode/cathode contact geometry half-domain에 맞게 유지.
+- build output n@node@ 유지.
+정적 audit: parentheses PASS, right-side executable refs 0, contact/MQW/EBL/DmgL/base-protection definitions present.
+주의: 실제 Sentaurus SDE build는 아직 미실행이므로 error-free numeric run을 보장하지 않음. 먼저 SDE node only 실행 후 mesh Elements/Points, region/contact geometry를 확인하고 SDevice는 half용 region physics 수정 전 실행 금지.
+
+---
+
+## 2026-10-08T09:36:37Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: JUSUBIN HALF+COARSE SDE INSTALL
+상태: INSTALLED IN SWB PROJECT / READY FOR SDE RUN
+
+사용자 터미널에서 JUSUBIN_FAST_HALF_SWB 프로젝트 폴더 확인 후 파일 교체 완료:
+- 기존 FAST_C1 복사본 -> sde_dvs_FASTC1_backup.cmd (18K)
+- half+coarse candidate -> sde_dvs.cmd (20K)
+- sde_dvs.prf 존재
+- 프로젝트 폴더: /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_SWB
+
+다음 단계: SWB에서 SDE node만 실행하여 syntax/geometry/mesh build 검증. 아직 SDevice 실행 금지.
+
+---
+
+## 2026-10-08T09:48:54Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: JUSUBIN HALF+COARSE SDE MESH BUILD
+상태: SDE MESH BUILD PASS
+
+SWB Node n1 output screenshot 확인:
+- `Saving file n1_msh.tdr...done.`
+- `Total Mesh Generation Time: 23.5s`
+- n1_dvs.err pane은 화면상 비어 있음.
+- mesh generation이 완료되었으므로 SDE syntax/geometry/build 단계는 PASS로 판단.
+- 화면상 rates: vertices ~2.79e3/s, edges ~5.84e3/s, faces ~5.55e3/s. 정확한 Elements/Points 수는 별도 mesh statistics로 확인 필요.
+
+다음:
+1) n1_msh.tdr를 SVisual/SDE에서 열어 half geometry와 critical mesh(MQW/EBL/5nm DmgL)를 시각 확인.
+2) exact Elements/Points를 full reference 290814 / 137831과 비교.
+3) PASS 후 half-domain용 SDevice deck에서 removed DmgR region physics references를 제거하고 short smoke.
+
+---
+
+## 2026-10-08T09:56:19Z — soybeanmilk0514-jpg
+
+[2026-10-08] 주수빈 HALF+COARSE SDE: SDE GUI shows `Meshing successful`; generated `n1_msh.tdr` is present (~1.54 MiB in file dialog). The SDE process remained open because it was launched interactively. Recommended: do not save an extra GUI model; cancel the save dialog and close SDE normally so the process exits. Next check SWB node status and mesh statistics/visual quality.
+
+---
+
+## 2026-10-08T09:58:05Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: JUSUBIN HALF+COARSE SDE FINAL STATUS
+상태: PASS
+
+SWB에서 SDE GUI 종료 후 Node 1 status가 `done`으로 정상 전환됨. 이전 running 유지 원인은 interactive SDE process가 열려 있었던 것이며, mesh build 자체는 성공 상태였음.
+
+확인된 SDE 결과:
+- `Meshing successful`
+- `n1_msh.tdr` 생성
+- mesh generation time ~23.5 s
+- SWB node status = done
+
+다음: mesh statistics(Elements/Points) 및 critical-region mesh visual inspection 후 half-domain SDevice deck 수정/short smoke.
+
+---
+
+## 2026-10-08T10:01:45Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: JUSUBIN HALF+COARSE MESH STATS
+상태: OBSERVED / STRONG REDUCTION
+
+SVisual n1_msh.tdr screenshot 확인:
+- Elements = 138,194
+- Points = 65,513
+- full FAST_C1 reference = 290,814 elements / 137,831 points
+- reduction: elements ~52.5%, points ~52.5% 감소 (half+coarse candidate is ~47.5% of full mesh size).
+- geometry/material/doping map loads successfully; half-domain mesh TDR is readable.
+
+주의:
+- 현재 screenshot은 DopingConcentration/material map이라 actual mesh-line density(MQW/EBL/5nm DmgL vs deep n-GaN) 시각 검증은 아직 미완.
+- 다음: mesh lines/vertices 표시해서 active-region refinement 보호 및 deep-bulk coarsening 확인 후 SDevice short smoke.
+
+---
+
+## 2026-10-08T10:10:44Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: JUSUBIN HALF+COARSE MESH VISUAL CHECK
+상태: ACTIVE-REGION MESH PASS / DEEP-BULK CHECK PENDING
+
+SVisual mesh-line screenshot 검토:
+- Elements=138194, Points=65513 유지 확인.
+- retained physical sidewall 부근(Y≈0.50) mesh가 매우 조밀하며 5 nm DmgL refinement가 살아 있음.
+- p-GaN/EBL/MQW stack(X≈0.12~0.27)에서 vertical interface refinement가 조밀하게 유지됨.
+- active region에서 center 방향으로 갈수록 mesh가 graded하게 완화되는 모습 확인.
+- 현재 화면은 top/active region 확대라 deep n-GaN bulk 및 numerical base의 coarse mesh는 직접 확인하지 못함.
+
+판정: critical active-region mesh protection은 시각적으로 PASS. 다음 한 장은 전체 X range 또는 deep n-GaN/base zoom으로 bulk coarsening과 급격한 mesh jump 부재를 확인하면 SDE mesh gate를 닫을 수 있음.
+
+---
+
+## 2026-10-08T10:11:45Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: JUSUBIN HALF+COARSE SDE MESH GATE
+상태: PASS
+
+전체-domain SVisual mesh-line screenshot 검토:
+- Elements=138,194 / Points=65,513.
+- full FAST_C1 reference 290,814 / 137,831 대비 약 52.5% 감소.
+- retained physical sidewall과 active stack은 조밀 mesh 유지.
+- deep n-GaN bulk는 active region 대비 확실히 coarse.
+- MQW/upper-nGaN -> deep bulk로 mesh가 graded하게 완화되며, 시각상 급격한 pathological size jump 없음.
+- bottom numerical n-GaN base도 coarse branch 의도대로 구성됨.
+
+판정: SDE geometry/mesh gate PASS. 다음은 half-domain용 SDevice deck 생성/정적 audit -> short smoke. SDevice에서 removed DmgR region Physics references를 반드시 제거하고, physics/RHSMin=1e-3/Iterations=15는 유지.
+
+---
+
+## 2026-10-08T10:12:48Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: JUSUBIN HALF+COARSE NEXT STEP
+상태: SDEVICE IMPLEMENTATION START
+
+SDE mesh gate PASS 후 SDevice 단계로 전환. 원칙:
+- 실제 FAST_C1의 active pp6_des.cmd / pp6_des.par를 source of truth로 사용.
+- 새 SWB project에는 SDevice tool을 SDE 뒤에 연결.
+- pp6_des.cmd를 그대로 production source로 쓰지 않고, 내용을 감사한 뒤 SWB source 형태(`@tdr@`, `@parameter@`, `@tdrdat@`, `@plot@`, `@log@`)로 변환.
+- half mesh에 없는 DmgR_* region Physics/Trap references는 제거.
+- DmgL trap physics, common material physics, RHSMin=1e-3, Iterations=15는 유지.
+- first run은 short smoke; full 5 V 장시간 run은 smoke PASS 후.
+
+---
+
+## 2026-10-08T10:14:14Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: JUSUBIN SDEVICE RUNTIME DESIGN
+상태: DESIGN DECISION / IMPLEMENTATION PENDING
+
+핵심 판단:
+- 과거 3~4일 병목은 SDE가 아니라 SDevice high-bias transient. 현재 SDE half+coarse mesh는 ~23.5 s로 완료되므로 runtime 개선의 핵심은 SDevice numerics.
+- half+coarse mesh는 per-step 비용을 낮추지만 high-bias rejected-step/cutback 횟수 자체를 해결하지 못할 수 있음.
+
+첫 accelerated SDevice 원칙:
+1) Physics/material/trap/contacts 유지, removed DmgR_* Physics만 삭제.
+2) RHSMin=1e-3 유지.
+3) Iterations=15 유지 (Node12 accepted 13/15-iteration evidence 때문에 8/10 금지).
+4) staged Transient: low/mid bias는 기존 Increment=1.2 유지, high-bias bottleneck 구간은 Increment=1.05 후보.
+5) true Save checkpoints 추가하여 multi-day restart 가능하게 함.
+6) same-current spatial Plot schedule은 필요한 high-bias points 유지하되 불필요한 extra output은 최소화.
+7) short smoke + preprocess audit 후 full run.
+8) high-bias Increment=1.05는 C2 working hypothesis이며 final validated speedup은 benchmark 전 확정 금지.
+
+다음: actual FAST_C1 pp6_des.cmd/par를 가져와 half+coarse용 SWB SDevice source로 변환/정적 audit.
+
+---
+
+## 2026-10-08T10:21:20Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+구분: JUSUBIN HALF+COARSE SDEVICE CANDIDATE
+상태: SOURCE GENERATED / STATIC AUDIT PASS / NOT YET PREPROCESSED
+
+Actual FAST_C1 pp6_des.cmd를 기준으로 half-domain용 SWB SDevice source 두 개를 생성함(전체 vendor deck은 public GitHub 미업로드): production candidate + short smoke.
+
+변경 원칙:
+- DmgR_* Physics 12개 제거, DmgL_* 12개 유지.
+- retained DmgL trap Conc를 @NtSide@로 parameterize (0 / 1e18 split용).
+- RHSMin=1e-3, Iterations=15, physics/Math/ILS/Plot fields 유지.
+- production staged transient: 0→4.0V Increment1.2; 4.0→5.0V Increment1.05.
+- high-bias InitialStep=5e-6; true Save checkpoints at 4.0/4.5/4.8/5.0V.
+- original same-current snapshot times preserved across stages.
+- smoke: 0→0.3V only, same mesh/physics/numerics.
+
+정적 audit: DmgR region refs 0, DmgL refs 12, @NtSide@ 12, brace/parenthesis balance PASS.
+
+다음: FASTC1_pp6_des.par을 project에 유지, SDevice tool source 설치, NtSide parameter 생성, preprocess-only 확인 후 smoke run. Production 5V run은 smoke PASS 후.
+
+---
+
+## 2026-10-08T10:22:56Z — soybeanmilk0514-jpg
+
+[2026-10-08]
+작업자: 주수빈
+AI: ChatGPT
+구분: JUSUBIN SDEVICE PARAMETER AUDIT
+상태: PASS
+
+업로드된 FASTC1_pp6_des.par 실제 내용 확인:
+- LatticeParameters: X=(0,0,-1), Y=(1,0,0)
+- Thermionic Formula=1
+- GaN Mg incomplete-ionization species `pMagnesiumActiveConcentration`: E_0=0.2, alpha=8e-9, g=4.0, Xsec=1e-14
+- SHA256 = 60405755de61500d9815a8e9ecca6a7a465783d77eb8e5dadf1db515aeb10039
+이는 기존 FAST_C1 기록의 pp6_des.par SHA와 byte-identical.
+
+판정: parameter provenance PASS. 주수빈 half+coarse SDevice smoke에 그대로 사용 가능. 다음은 SWB SDevice tool 설치/parameter NtSide 설정/short smoke.
+
+---

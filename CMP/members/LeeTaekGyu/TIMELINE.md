@@ -1,3 +1,92 @@
+## 2026-10-08 — FAST_HALF_BULK_R15 SWB manual implementation package prepared
+
+- 작업자: 이택규; 상태: PROPOSED / STATIC CHECKED / NOT RUN.
+- User specifically chose to create new SWB project, tools, parameters and source manually rather than use Claude standalone run_r15h.sh.
+- From Claude ZIP made a **separate chat-delivered** SWB-ready four-file package `CMP_FAST_HALF_SWB_READY_20261008.zip` (not committed because it contains full TCAD source): `sde_dvs.cmd`, `sdevice_des.cmd`, `sdevice.par`, `SWB_README_KO.md`.
+- SDE change vs Claude half code: `sde:build-mesh "" "n@node@"`; half y=0..2.5um, physical damaged DmgL 5nm and bulk mesh factor 1.5 preserved.
+- SDevice changes vs Claude Node6 standalone: `Grid=@tdr@`, `Parameters=@parameter@`, `Plot=@tdrdat@`, `Current=@plot@`, `Output=@log@`, intermediate FilePrefix=`n@node@_inter`; 12 left-side trap concentrations `@NtSide@` for SWB split `0` / `1e18`. Original physics/Math/RHSMin=1e-3, Iterations=15, Increment=1.2, endpoint=5 V retained.
+- par `sdevice.par` has SHA256 `60405755de61500d9815a8e9ecca6a7a465783d77eb8e5dadf1db515aeb10039`, same as recorded FAST_C1 parameter file.
+- Static substitutions/counts passed; **no SWB preprocess, SDE mesh, SDevice or comparison run yet**. Need actual Workbench mesh/preprocess check; do not call this confirmed numeric equivalent; preserve original full/fine reference.
+
+## 2026-10-08 — Claude FAST_HALF_BULK_R15 package static audit by ChatGPT
+
+- 작업자: 이택규; 상태: REVIEWED / STATIC TEST PASS / SENTAURUS NOT RUN.
+- User supplied `FAST_HALF_BULK_R15_for_GPT_20261008.zip` (14 files; source SDE, standalone SDevice decks, scripts and README). `sha256sum -c SHA256SUMS` all PASS, Python syntax 4 scripts PASS, POSIX shell `sh -n` PASS; SDE Scheme parentheses/strings statically balanced.
+- SDE cuts at proposed yC=2.5 um with one DmgL physical sidewall and clean artificial symmetry face; `BulkFac=1.5` is restricted by protection windows. Actual SDE mesh and source-vs-input exact diff not verified here (original active SDE/pp6 archive not in this review session).
+- Node6 retains 12 DmgL trap regions at Conc=0; Node12 retains 12 DmgL trap regions at Conc=1e18; 0 DmgR region Physics in both. Main deck Iterations=15, RHSMin=1e-3, Increment=1.2, 5V target. Smoke normalized transient scaling appears consistent with T-2022.03 UG p.144-145, requires log validation.
+- **Safety finding:** supplied `tdr_region_integrals.py` not tested on result TDR; its potential-ordering check can skip when `ElectrostaticPotential` unavailable yet continue printing metrics, and missing SRH gets default 0 in q*SRH print. Do NOT use those integrals as validated scientific results until corrected/tested.
+- Current decision: **GO for separate SDE-only mesh Gate a**, not yet GO for full 5V run. Gate b Poisson and Gate c 0–1V detached smoke must complete PASS before Node6 trial. Historical FAST_C1 reference runs remain untouched. No sentaurus job launched from ChatGPT environment.
+- Review note delivered to user as `FAST_HALF_R15H_GPT_REVIEW_20261008.md`. Do not publicly commit full vendor input/decks.
+
+## 2026-10-08 — FAST_C1 실제 SDE 소스 파일 위치 확인; FAST_HALF Claude 전달 패키지 준비
+
+- 작업자: 이택규; 상태: OBSERVED (터미널 파일명) / PROPOSED (구현·실행).
+- 서버: `semi437@ssudisu3`, 프로젝트: `/user/semi/semi437/tmp/myproject/GaN_PiN_Diode_FAST_C1`.
+- 사용자 명령 `find . -name '*dvs.cmd' -print` 결과: `./sde_dvs.cmd`, `./pp1_dvs.cmd`, `./n1_dvs.cmd`.
+- `find . -name 'pp6_des.par' -print` 결과: `./pp6_des.par`. `pp6_des.cmd`와 `n1_msh.tdr`은 이전 프로젝트 기록상 같은 경로에서 관찰되었으나 이번 터미널 메시지에서 목록을 새로 확인하지 않음.
+- 사용자는 일일이 확인하지 않고 Claude에 원본 파일을 한 번에 전달하여 별도 FAST_HALF + selective remote bulk coarsening 분기를 빠르게 만들고 short smoke 후 시험 실행하기를 요청함.
+- 최소 입력 패키지 후보: `sde_dvs.cmd pp1_dvs.cmd pp6_des.cmd pp6_des.par n1_msh.tdr` (서버에서 존재 확인 후 archive). Private Synopsys/deck 입력을 public GitHub에 업로드하지 않는다.
+- 실제 geometry/contact/doping/refinement 코드를 읽지 못했으므로 절반 자르는 y 좌표나 mesh 숫자는 아직 확정·적용하지 않음. Run 미실시; 기존 reference 불변.
+
+## 2026-10-08 — cmp216 FAST_C1_ACCOUNT_TEST n6 logging stopped during new BE-step (OBSERVED / TERMINATION CAUSE UNRESOLVED)
+
+- 이택규 제공 2026-10-08 16:00 KST 터미널 증거: `n6_des.log` grep `fatal|killed|aborted|signal|license|good bye|simulation finished`에서 라이선스 checkout 문구만 보이며 명시적 fatal/killed/normal-completion 문자열 없음.
+- 마지막 accepted step: `0.189674→0.190674 s` at anode 0.9534 V, |RHS|=6.15e-05 (<1e-3), wallclock=23.65s. 다음 `0.190674→0.191674 s`에서 iteration header 이후 로그가 끊김.
+- 파일 mtime: log Oct 7 17:47, PLT Oct 7 17:45; 폴더에는 `n1_msh.tdr`, `pp6_des.cmd`, `pp6_des.par`, `n6_des.log`, `n6_des.plt`만 보임. 5 V 완료 증거/최종 TDR 없음.
+- 어제 license checkout 성공 ≠ 중단 원인이 license 아님을 증명하지는 않음. **종료 원인 미확인**, 오류를 특정하지 말 것. 서버의 프로세스/세션 이력, 시작 명령과 작업 방식 확인 후 재실행 여부 결정. 기존 semi437 reference run 손대지 않음.
+
+## 2026-10-08 — 이택규 half-domain + selective bulk coarsening pilot 요청
+
+- 작업자: 이택규; 상태: PROPOSED / NOT CODED / NOT RUN.
+- 시간 제약으로 개별 발광 Probe 검증을 잠시 뒤로 두고, 기존 FAST_C1 reference를 유지한 채 별도 실험 branch에서 (1) 좌우 대칭 half-domain, (2) 활성영역에서 떨어진 bulk/numerical n-GaN base의 selective mesh relaxation을 **동시에 적용한 exploratory pilot**을 우선 준비하기로 요청함.
+- 필수 보존: 4um full-mesa interpretation, Kou epitaxy, MQW/EBL/heterointerface mesh, 5nm damaged sidewall mesh/physics, contacts/material/physics/traps, 0–5V reference endpoint. Original full/fine C1 runs/files unchanged.
+- Half symmetry gate: **실제 active SDE source**에서 contact, domain offset, doping, material boundary, electrode symmetry/region names를 확인. Center cut is an artificial symmetry boundary, not a 5nm damaged wall; preserve one genuine 5nm physical edge.
+- Same SDevice region references to removed left/right regions must be updated in copied deck, not by changing trap values. At equivalent bias compare half current ×2 (postprocessed, no unverified AreaFactor change) and spatial QW/edge fields. Domain + mesh combined speedup is exploratory, not isolated evidence of either factor. Later isolate mesh-convergence effect for publication.
+- Code cannot responsibly be generated until exact active SDE source and SDevice source/pp deck are available. GitHub public CURRENT may be stale; no solver/server access via connector.
+- First action: obtain source SDE/mesh and SDevice/parameter files from current Workbench, generate separate SDE-only + mesh check, preprocess SDevice, then short pilot. No simulation launched yet.
+
+## 2026-10-08 — cmp216 cross-account FAST_C1 Node 6 run stopped writing near 0.9534 V (OBSERVED / CAUSE UNRESOLVED)
+
+- 작업자: 이택규; 근거: 직접 제공된 `cmp216@ssudisu2` terminal listing and `tail -n 80 n6_des.log`.
+- Project directory: `/user2/cmp/cmp216/FAST_C1_ACCOUNT_TEST`; files: `pp6_des.par` (283 B), `pp6_des.cmd` (7.5 K), `n1_msh.tdr` (2.9 M), `n6_des.plt` (87 K; Oct 7 17:45), `n6_des.log` (345 K; Oct 7 17:47).
+- Last clearly **accepted** transient step: simulation time `0.189674→0.190674 s`, anode voltage `9.534E-01 V` (0.9534 V); cathode current `-1.215E-14`; RHS `6.15e-05 < 1e-3`; wallclock `23.65 s`.
+- Next step `0.190674→0.191674 s` begins, but the supplied file tail ends at the Newton-table header; no accepted next step nor normal end marker shown. Progress after 0.9534 V **not evidenced**.
+- Local `cmp216` `sdevice` process absent on `ssudisu2` in earlier `ps`; log/plt timestamps remain Oct 7, while inspection Oct 8. No `n*_des.tdr` was found. Suggests this local run is **not active**, but another host / cause and SWB job state not yet checked.
+- This was a cross-account same-input benchmark; cannot claim numerical speedup from low-bias step time or determine why it stopped.
+- NEXT: inspect end of log/other output files, SWB execution host/status, investigate process exit before deciding on restart. Preserve files; do not alter original `semi437` runs.
+
+## 2026-10-08 — Node 6 4.7 V QW1–QW4 local recombination Probe screenshots
+
+- 작업자: 이택규; 상태: OBSERVED / FIELD LABEL NEEDS FULL CONFIRMATION.
+- File displayed: `n6_inter_0004_des` (recorded ~4.7 V). User SVisual screenshots show four separate probe zones `Clean_QW1(InGaN)` through `Clean_QW4(InGaN)`.
+- Selected row label is clipped on the left (`...bination`); based on context it appears to be `RadiativeRecombination`, but fully visible field name must be confirmed before scientific reporting.
+- Screen-read local Probe values [cm^-3 s^-1, conditional on RadiativeRecombination identification]: QW1=5.531972320698e12 at (x,y)=(0.169227828103, 0.578178492482); QW2=9.346620224854e14 at (0.193404232523, 0.579185842666); QW3=4.188264170176e13 at (0.219595337312, 0.578850059272); QW4=6.069760269935e14 at (0.244443308521, 0.577506925693).
+- These are four positive **local point** values, not integrated QW recombination, photon escape, LED turn-on, or an IQE value. No need to modify baseline or run SDevice yet.
+- Next: screenshot the full active field name (e.g. left horizontal scroll, `Show Only Active Field`) and conduct per-region integration; compare local carrier densities and active radiative parameter B via actual pp/par/material database.
+
+## 2026-10-08 — How to establish LED emission in TCAD (manual-verified gate)
+
+- 작업자: 이택규; 상태: REFERENCE VERIFIED / ACTIVE COEFFICIENT UNRESOLVED.
+- Sentaurus Device T-2022.03 UG §16 pp.488–489: RadiativeRecombination dataset creation is not evidence of positive luminescence; inspect numeric QW Rrad and actual material-specific Radiative coefficient C. Manual states default C=0 for materials other than GaAs unless overridden; current active InGaN/GaN material/parameter setting remains unverified.
+- §34 pp.1040–1043: separate LED optical simulation can report spontaneous photon/power generation and escaped photon/power. Do not conflate radiative recombination with measured/extracted external light output.
+- Next: active pp cmd/par and material parameters → QW Rrad area-integration smoke → .plt e/h/displacement and injection sanity → same-J IQE workflow. Keep baseline unchanged until diagnosis. See Issue #7 2026-10-08.
+
+## 2026-10-08 — Claude half-domain/low-current review (PROPOSED)
+
+- Claude correctly flags very low provisional J near 4.71 V and recommends non-solver TDR/PLT diagnostics before further multi-day runs. This is a high-priority sanity check, NOT confirmed LED failure.
+- Half-domain conditionally promising; source-based contact/doping/domain symmetry, full-vs-half extraction, and mesh/solver equivalence must pass before production.
+- RHS L2 scaling by sqrt(2) is heuristic; do not change RhsMin in production without an explicit tolerance/equivalence study.
+- Also separate anode electron/hole/displacement currents and inspect integrated QW recombination before diagnosing injection physics. See LIVE LOG Issue #7, 2026-10-08 ChatGPT review.
+
+## 2026-10-08 — TCAD official guides registered for future coding
+
+- 작업자: 이택규
+- 상태: OBSERVED / REFERENCE INDEX UPDATED
+- Uploaded `TCAD_GUIDELINE.zip` inspected: five Synopsys Sentaurus T-2022.03 User Guides (Device, Structure Editor, Mesh, Process, Visual).
+- ZIP and PDF SHA-256 identifiers, page counts, workflow, licensing/access constraints recorded in `CMP/references/TCAD_REFERENCE_INDEX.md`.
+- Future code work must consult the relevant original guide and verify against active preprocessed files and actual log; do not assume PDF bytes are accessible from a new chat just because the index exists.
+- No TCAD source or baseline physics modified; no simulation result asserted.
+
 ## 2026-10-07 — Cross-account FAST_C1 input identity confirmed
 
 - 작업자: 이택규
@@ -1054,3 +1143,34 @@
 - publication gate: full vs half에서 I-V/Vf, current normalization, IQE, integrated SRH/Radiative/Auger, carrier/current maps, electric field를 비교. B에는 lateral Ec/Ev barrier도 추가 확인.
 - IQE ratio는 exact symmetry에서 유지되지만 absolute total current/recombination/power는 symmetry factor 및 2D normalization 확인 필요.
 - one-sided/asymmetric future study에는 half-domain 사용 불가.
+
+
+## 2026-10-08 — cmp216 계정 시뮬레이션 실행 상태 1차 조회
+
+- 작업자: 이택규
+- 상태: OBSERVED (사용자가 붙여넣은 터미널 출력) / UNRESOLVED (전체 서버 실행 상태)
+- 접속: `cmp216@ssudisu2`, 2026-10-08 약 15:51 KST 확인.
+- `cd /user/semi/semi437/tmp/myproject/GaN_PiN_Diode_FAST_C1` 실패: `No such file or directory`. 이 경로는 기존 `semi437` 계정 프로젝트 경로이므로 cmp216 프로젝트 경로로 검증되지 않음.
+- `ps -fu $USER | grep '[s]device'` 결과 없음: 해당 시점 `ssudisu2` 로컬 `cmp216` 사용자 아래에서 직접 실행 중인 sdevice 프로세스 확인되지 않음. 다른 실행 호스트/완료/실패는 미확인.
+- `ps -fu $USER | grep -E 'sdevice|216' | grep -v grep`에서 SWB GUI 프로세스(pid 75755)는 확인됨. 숫자 216은 현재 사용자 계정명 `cmp216`을 가리키며 Node 216을 뜻하지 않음.
+- 변경: 코드/시뮬레이션 실행 중단/재시작 없음.
+- 다음: `echo $HOME`, `ls -ld ~/tmp/myproject`, `find ~ -maxdepth 6 -type f \( -name 'n*_des.log' -o -name 'n*_des.out' \) -print 2>/dev/null | head -n 30`로 cmp216 프로젝트/로그 확인; 필요시 SWB 노드 상태와 원격 실행 호스트 조사.
+
+
+## 2026-10-08 — cmp216 작업 경로/셸 후속 확인
+- 작업자: 이택규
+- 상태: OBSERVED (사용자 터미널 출력) / UNRESOLVED (SDevice 실제 실행 상태)
+- `echo $HOME` → `/user2/cmp/cmp216`.
+- `ls -lh ~/tmp/myproject` → 해당 경로 없음. 따라서 이전 semi437의 `tmp/myproject` 경로 레이아웃을 cmp216에 적용할 수 없음.
+- `find ~ -maxdepth 6 -type f ... -print 2>/dev/null | head -n 30` → `Ambiguous output redirect.`. cmp216 로그인 셸이 `-csh`인 상황에서 Bourne-style stderr redirect `2>/dev/null`가 해석되지 않은 것으로 판정. **find 검색은 실행되지 않은 것으로 보고 파일 부재/실패를 단정하지 않음.**
+- 다음 확인: `ls -la ~`; `find ~ -maxdepth 6 -type f -name 'n*_des.log' -print |& head -n 30` (C-shell 호환); 필요 시 SWB GUI에서 열린 프로젝트 경로와 계산 호스트 확인.
+- 코드 수정, 실행 중지/재시작 없음.
+
+
+
+## 2026-10-08 cmp216 FAST_C1_ACCOUNT_TEST log check
+- OBSERVED (user terminal): directory FAST_C1_ACCOUNT_TEST exists in cmp216 home.
+- OBSERVED: n6_des.log found at FAST_C1_ACCOUNT_TEST/n6_des.log.
+- OBSERVED: no n*_des.tdr found with find from HOME to depth 6.
+- UNRESOLVED: node 6 run status; need tail of log and directory listing.
+- NEXT: ls -lhtr and tail -n 80 n6_des.log; do not restart yet.

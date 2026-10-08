@@ -1,3 +1,39 @@
+## 2026-10-08 — 주수빈 가속 Baseline 전략 수정: Half + selective mesh coarsening
+
+- **작업자:** 주수빈
+- **상태:** DECISION / SUPERSEDES PURE-HALF-ONLY PLAN
+- 목표를 순수 half-domain 효과 분리 실험이 아니라 **오늘 안에 최대한 빠르게 돌아가는 실용 accelerated Baseline 구축**으로 재정의.
+- 주수빈 branch도 독립적으로 **half-domain + selective mesh coarsening**을 동시에 적용.
+- centerline mirror half-domain, physical sidewall 1개 및 5 nm damaged region 유지, centerline에는 damage/trap/passivation 없음.
+- MQW, EBL, QW/barrier interfaces, 5 nm damage, depletion/high-field/contact-edge는 fine mesh 유지.
+- homogeneous remote n-GaN bulk와 numerical n-GaN base를 우선 coarsen.
+- 첫 후보: remote homogeneous n-GaN bulk 기존 spacing 대비 약 1.5~2x, numerical n-GaN base 약 2x. graded transition으로 급격한 mesh-size jump 방지.
+- physics/traps/materials/contacts/RHSMin=1e-3/Iterations=15 유지.
+- full reference 290,814 elements / 137,831 points 대비 mesh 감소와 runtime 측정.
+- short smoke equivalence 통과 후 C2 Increment=1.05 + true Save checkpoint 전략 결합.
+- publication/final adoption 전 full-vs-accelerated I/Vf/IQE/SRH/Rrad/RAuger/current-field equivalence 검증 필수.
+
+## 2026-10-08 — 주수빈 독립 Half-domain branch 병렬 검증 결정
+
+- **작업자:** 주수빈
+- **상태:** DECISION / PROPOSED IMPLEMENTATION
+- 이택규의 `FAST_HALF_BULK_R15`은 half-domain + remote bulk mesh relaxation(BulkFac=1.5)을 동시에 적용한 가속 branch.
+- 주수빈은 중복 구현 대신 **pure half-domain branch**를 별도로 만들어 half-domain 효과만 분리 검증하기로 결정.
+- 주수빈 branch 원칙:
+  - full FAST_C1 물리/contacts/traps/vertical epitaxy 유지
+  - centerline symmetry cut만 적용
+  - physical sidewall 1개 + 5 nm damage 유지
+  - centerline에는 damage/trap 없음
+  - MQW/EBL/heterointerface/sidewall mesh는 원본과 동일
+  - remote bulk mesh도 첫 비교에서는 원본 유지
+  - Iterations=15, RHSMin=1e-3 유지
+  - 첫 비교에서는 numerical sweep policy도 C1과 동일하게 유지하여 half-domain 효과를 격리
+- 비교 후:
+  - pure half vs full reference equivalence 확인
+  - 이택규 half+bulk-coarse branch와 runtime/accuracy 비교
+  - 필요 시 validated pure half에 C2 Increment=1.05/checkpoint strategy를 추가한 통합 후보 생성
+- 최종 baseline은 정확도와 runtime이 모두 우수한 branch 하나로 freeze.
+
 ## 2026-10-07 — Project A/B multi-day pre-run completeness audit
 
 - **작성자:** ChatGPT

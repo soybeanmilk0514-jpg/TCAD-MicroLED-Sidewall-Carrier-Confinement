@@ -1,3 +1,18 @@
+## 2026-10-08 — cmp216 Node6 terminal/runtime diagnosis (READ ONLY)
+
+1. Verify process on current host (`ps -ef | grep '[s]device'`) and inspect relevant login history (`last -n 10 cmp216`); if SWB spawned remotely check its host/job details separately.
+2. Inspect how the separate `FAST_C1_ACCOUNT_TEST` SDevice test was launched (`history | tail -n 25` where available) and logs for non-standard exit. Avoid asserting interruption cause without exit code/system evidence.
+3. Do not overwrite existing log/PLT; do not stop semi437 reference runs. Decide on detached batch run only after root cause/provenance analysis.
+
+## 2026-10-08 — 이택규 urgent optional half+bulk-coarse pilot (PROPOSED, parallel branch)
+
+1. Without disturbing full/fine FAST_C1 references, obtain exact active SDE source (or pp1_dvs.cmd) plus copied active SDevice source / pp6_des.cmd and pp6_des.par from Workbench. Public CURRENT source may be stale.
+2. Verify left/right symmetry of actual electrodes/doping/material/geometry and identify physical mesa center, full domain edge and DmgL/DmgR regions; do not guess the half-plane coordinate.
+3. Create separate half-domain SDE, retaining **one intact 5nm damaged edge** and placing symmetry plane at center. Change only far-remote homogeneous n-GaN bulk/numerical n-base mesh spacing moderately (~1.5–2x candidate) while preserving MQW/EBL/heterointerface/damaged 5nm refinement.
+4. SDE-only mesh + region/contact geometry check; compare current mesh element/point statistics (reference 290814 elements, 137831 points) and confirm all surviving SDevice region physics blocks are valid after removed-side region deletion.
+5. Use copied baseline physics and numerical tolerances (Iterations=15, RHSMin unmodified). Run preprocess-only then short low-bias smoke; compare I_half×2 against full I at identical bias using the same depth convention, plus representative QW and edge fields. Note that combined domain/mesh branch is an exploratory speed experiment, NOT a proven numerical/physical equivalence.
+6. Only if smoke is valid, run a longer pilot. Existing unresolved very-low-J and Save/Load/region-integration gates still must be resolved before publication-grade A/B production.
+
 ## 2026-10-07 — Before any Project A/B multi-day production run
 
 1. Finish/freeze the FAST_C1 Common Baseline reference evidence.

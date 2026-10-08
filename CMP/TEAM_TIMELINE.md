@@ -1,3 +1,25 @@
+## 2026-10-08 — Fast pilot direction: half-domain + relaxed remote bulk mesh
+
+- 작업자: 이택규; 상태: PROPOSED / NOT IMPLEMENTED.
+- Time-constrained request: run a **separate experimental branch** applying both half-domain symmetry and modest remote bulk/numerical n-GaN coarsening to investigate runtime, without stopping existing FAST_C1 or changing frozen physical baseline parameters.
+- Must verify exact active SDE contacts/doping/geometry symmetry and retained-side 5nm physical damage; preserve MQW, EBL, heterointerfaces and damage/edge refinement; avoid changing tolerance/traps/polarization simultaneously.
+- One combined pilot provides feasibility data, not independent attribution of speedup. Requires SDE mesh review + actual preprocessed region/physics scope review + short solver smoke before longer run.
+- Exact active SDE/SDevice code is not publicly synced, so implementation pending obtaining originals. No simulation result yet.
+
+## 2026-10-08 — First Node 6 QW local Probe observations (not emission validation complete)
+
+- 이택규 SVisual screenshots from `n6_inter_0004_des`: `Clean_QW1`–`Clean_QW4` are confirmed InGaN zones. Selected field is horizontally clipped (`...bination`); tentatively `RadiativeRecombination`, pending fully visible name confirmation.
+- Local values [cm^-3 s^-1 if radiative]: QW1 5.531972320698e12, QW2 9.346620224854e14, QW3 4.188264170176e13, QW4 6.069760269935e14.
+- Positive point values cannot prove total QW emission, normal LED operating current or IQE. Continue active-material radiative parameter + actual QW volume/area integration + e/h and terminal-current checks before accepting normal LED baseline.
+
+## 2026-10-08 — Half-domain / injection sanity review (not an approved baseline change)
+
+- 작업자: 이택규 / Claude proposal reviewed by ChatGPT; 상태: REVIEWED / PROPOSED.
+- Baseline Node6 at 4.7128 V has I=2.8954e-12 A/um; under nominal 4 um lateral area, J≈7.24e-5 A/cm2. Arithmetic matches SDevice T-2022.03 2D-current convention, but low injection and high-bias IV require physical sanity check; no assertion of LED failure until terminal current composition, live input/contacts and existing TDR band/current/recombination are verified.
+- Half-domain has conditional symmetry rationale and may reduce degrees of freedom, but is NOT yet implemented or validated; current full/fine FAST_C1 remains reference. Do not co-change mesh and domain without isolating effects.
+- RhsMin L2 sqrt(2) argument is a model-dependent hypothesis; changing convergence threshold needs separate validation, not automatic adoption.
+- Existing A/B GO/NO-GO gates remain. Reference: LIVE LOG Issue #7 review dated 2026-10-08.
+
 ## 2026-10-07 — Project A/B production pre-run GO/NO-GO audit
 
 - 작업자: 주수빈
