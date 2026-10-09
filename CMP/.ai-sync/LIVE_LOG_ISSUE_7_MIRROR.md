@@ -4081,3 +4081,472 @@ AI: ChatGPT
 
 
 ---
+
+## 2026-10-09T02:32:11Z — TaekGyu0801
+
+[2026-10-09 11:30 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED
+
+사용자가 주수빈이 전날 실행해 둔 JUSUBIN_FAST_HALF_SWB가 모두 완료되었다고 보고함.
+
+검증 수준:
+- 사용자 보고 기준 완료.
+- 이번 세션에서는 아직 n2_des.log/out/err 및 최종 산출물을 직접 확인하지 않았으므로 CONFIRMED는 아님.
+- final 0.3 V, normal termination, fatal/error 부재, total runtime, I-V/IQE 유효성은 후속 로그 확인 필요.
+
+다음:
+1) 완료 로그/산출물 검증
+2) runtime/I-V 추출
+3) 별도 QS Copy 결과 확인
+4) full FAST_C1 reference 대비 half+coarse 정합성 검증
+
+---
+
+## 2026-10-09T02:34:41Z — TaekGyu0801
+
+[2026-10-09 KST] 작업자 이택규 / RESULT / CONFIRMED (제공된 터미널 로그)
+JUSUBIN_FAST_HALF_SWB n2 SDevice: Curve trace finished; 최종 anode 0.300 V; 2026-10-09 01:39:13 KST Good Bye. wallclock 25019.43 s (6h 56m 59s), CPU 66132.73 s, peak memory 2.61 GB. n2_des.tdr 및 0.3V checkpoint 저장 완료 메시지 확인. 최종 total current 5.776E-15 (로그 출력 단위). I-V 타당성/IQE/reference 비교는 아직 미확인. 다음: 결과파일 존재 확인, n2_des.plt 및 err 점검.
+
+---
+
+## 2026-10-09T02:35:31Z — TaekGyu0801
+
+[2026-10-09 KST] 이택규 / RESULT / OBSERVED
+JUSUBIN_FAST_HALF_SWB n2 파일 검증: n2_des.plt 412K, n2_des.tdr 15M, n2_smoke_ckpt_0p3V_des.sav 3.1M, n2_des.err 12K (각각 생성됨). `grep -niE 'error|fatal|warning' n2_des.err` 빈 결과. PLT는 DF-ISE text xyplot이고 anode OuterVoltage 및 anode TotalCurrent datasets 포함. 정상 종료/0.3 V 완료는 이전 로그에서 확인. I-V curve의 형상, 부호, 크기, Full FAST C1 비교, IQE는 아직 검증 안 됨. 다음: SVisual에서 n2_des.plt 로드, anode OuterVoltage vs anode TotalCurrent 그래프 확인 및 캡처.
+
+---
+
+## 2026-10-09T02:37:37Z — TaekGyu0801
+
+[2026-10-09 KST] 이택규 / I-V VISUAL INSPECTION / OBSERVED, UNRESOLVED
+사용자 SVisual n2_des.plt 그래프에서 X=anode OuterVoltage (0–0.3 V), Y=anode TotalCurrent. 전류가 초반 이후 약 5.77e-15 부근에 거의 평탄한 형태. 앞선 n2 로그 0.3 V total current 5.776e-15와 부합. 소자 물리 타당성은 아직 확정 불가: 0.3V는 GaN LED turn-on 검증 범위가 아님. transient displacement current와 e/h current 성분을 분리 점검할 것. 다음: SVisual anode DisplacementCurrent/eCurrent/hCurrent를 동일 X 축에 오버레이하거나 n2_des.plt 데이터를 추출해 분석; 0.3 V에서의 절대 전류를 기준으로 baseline 채택 판단 금지.
+
+---
+
+## 2026-10-09T02:38:50Z — TaekGyu0801
+
+[2026-10-09 KST] 이택규 / I-V current component visual check / OBSERVED
+SVisual screenshot n2_des.plt anode OuterVoltage (0-0.3 V) vs TotalCurrent, DisplacementCurrent, eCurrent, hCurrent overlay: TotalCurrent red and hCurrent cyan coincide near 5.77e-15 in displayed axis; eCurrent blue and DisplacementCurrent green visually coincide near baseline. Exact component numbers cannot be determined from screenshot due axis resolution. Do not interpret 0.3 V as full LED turn-on validation. Next: extract component numerical values from PLT at 0.3 V, then discuss extension to appropriate forward bias only after checking physics/solver settings.
+
+---
+
+## 2026-10-09T02:39:30Z — TaekGyu0801
+
+[2026-10-09 KST] 이택규 / RESULT / OBSERVED
+JUSUBIN_FAST_HALF_SWB n2_des.plt 최종 데이터 t=0.06, anode 0.3 V에서 anode total=5.77608569901869e-15, hCurrent=5.77324849833141e-15, eCurrent=6.14017368170097e-45, displacement=2.83720068727879e-18. cathode total=-5.77608569901916e-15. 성분 합과 양 단자 전류 보존이 출력 정밀도 내에서 성립. 0.3 V low-bias smoke만 검증했으며 정상 LED 구동, IQE, full reference equivalence는 미검증. SVisual license expiration warning 22 days noted; not a run failure. Next: QS Copy 진행 현황 확인 및 이후 구동 전압 범위 연장 여부 논의.
+
+---
+
+## 2026-10-09T02:40:34Z — TaekGyu0801
+
+[2026-10-09 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / RESULT
+상태: OBSERVED / UNRESOLVED
+
+사용자가 JUSUBIN_FAST_HALF_SWB_Copy (별도 QS) `n2_des.log` 마지막 30줄 제공.
+- `Finished, because... Step-size less than MinStep (step-size = 8.3986e-07)`.
+- 그 후 Save n2_qs0p3_ckpt_des.sav, n2_qs0p3_ckpt_circuit_des.sav 및 Plot n2_des.tdr 저장 메시지.
+- 실행 종료 2026-10-09 00:28:10 KST, wallclock 18417.09 s (5:06:57), peak memory 2.96 GB, `Good Bye !`.
+- 목표 0.3 V 도달은 확인되지 않았으며 중도 스텝 실패가 명백. 저장과 Good Bye는 QS 목표 달성 증거가 아님.
+- 원본 JUSUBIN_FAST_HALF_SWB transient는 별도로 0.3 V 완료 확인, 25019.43 s (6:56:59).
+- QS가 더 빠르다는 주장은 금지: 종료 조건이 다름.
+
+다음: QS Copy n2_des.plt 마지막 record 또는 log의 최종 accepted anode bias, accepted/rejected steps, cutback/Newton 및 err 메시지 확인. Common Baseline 변경이나 MinStep 임의 조정 전에 정확한 실패 지점/원인 진단.
+
+---
+
+## 2026-10-09T02:44:37Z — TaekGyu0801
+
+[2026-10-09 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / RESULT
+상태: OBSERVED / UNRESOLVED
+
+사용자 제공 QS Copy n2_des.plt tail의 마지막 accepted record에서 t=0.0643487876313307, anode OuterVoltage=0.0193046362893992V 확인. 목표 0.3V의 약 6.435%만 계산함.
+마지막 로그에서 t=0.0643488->0.0643505 접근 후 `Step-size less than MinStep (step-size = 8.3986e-07)` 종료됨. 5h06m57s 소요했어도 목표 미달로 transient 0.3V 완료 시간과 속도 비교 불가.
+
+원인 미확정: 실패 구간 n2_des.log 6900~7010행 및 n2_des.err 확인 필요. Common Baseline과 SDevice 코드 변경은 진단까지 보류.
+
+변경: ERROR_LOG, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY 및 LeeTaekGyu/TEAM_TIMELINE 업데이트.
+
+---
+
+## 2026-10-09T02:47:12Z — TaekGyu0801
+
+[2026-10-09 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / RESULT / HANDOFF
+상태: OBSERVED (direct numerical failure mechanism), UNRESOLVED (underlying cause)
+
+사용자 제공 `JUSUBIN_FAST_HALF_SWB_Copy/n2_des.log` line 6900-6997과 `n2_des.err`에서:
+- QS t=0.0643488→0.0643505, step=1.6797e-6 (0.3V goal scaling 상 0.504 μV)
+- Coupled Poisson/electron/hole Bank/Rose Newton: factor 1.0, |Rhs|가 수렴하지 않고 1.26e8까지 커졌고 마지막 15번째에서 1.85e6; `#iterations larger than 15` after 208.16 sec.
+- `Newton didn't converge, trying again with smaller step...` 이후 retry step 8.3986e-7 < MinStep 1e-6 → 종료.
+- QS 최종 accepted anode voltage=0.0193046363 V, 목표 0.3V 미도달. 5h06m57s 시간은 완료된 원본 transient 0.3V 시간과 직접 속도비교 불가.
+- `.err` 반복 `vanOverstraetendeMan E0` isotropic/anisotropic warning은 확인되나 직접 원인 미확정.
+
+다음: QS Copy의 현재 `pp2_des.cmd`에서 실제 Math/Solve/RHSMin/Coupled/step controls 확인 및 transient deck와 비교. Common Baseline 및 실행 결과 파일 유지, 임의로 MinStep 조정해 재실행하지 않음.
+
+GitHub 저장: LeeTaekGyu TIMELINE, ERROR_LOG, NEXT_ACTIONS, CURRENT_STATUS, LIVE_STATE md/json, RELAY 업데이트 완료.
+
+---
+
+## 2026-10-09T02:49:00Z — TaekGyu0801
+
+[2026-10-09 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: RESULT / HANDOFF / 상태: OBSERVED; root cause UNRESOLVED
+
+현재 QS Copy `pp2_des.cmd` grep 결과 확인: line 589 Quasistationary, InitialStep=.03, MinStep=1e-6, MaxStep=.15, Math RHSMin=1e-3, QS inner Coupled Iterations=15. 앞부분 초기 Coupled에서 Iterations=500 + LineSearchDamping=1e-2 확인; 별도 초기 Coupled Iterations=100. 현재 QS Coupled line 601에는 damping 명시 없음 (grep 근거, 전체 Math/Solve 문맥 추가 확인 예정).
+
+앞선 로그 확인 사항: Newton 15회 후 미수렴 → half-step 8.3986e-7 < MinStep 종료, 마지막 수렴 anode bias 0.019304636V. Newton divergence의 근본 원인은 확정되지 않음. 원본 transient 성공 결과와 Common Baseline은 보존.
+
+다음: `sed -n '505,530p;565,610p' pp2_des.cmd`에서 실제 Math/Solve 전체 문맥 확인한 후에 numerical-only QS branch 수정 여부 결정. 기록: LeeTaekGyu/TIMELINE, ERROR_LOG, NEXT_ACTIONS, LIVE_STATE.md 갱신.
+
+---
+
+## 2026-10-09T02:51:24Z — TaekGyu0801
+
+[2026-10-09] 이택규 / ChatGPT / QS diagnostic / OBSERVED, cause UNRESOLVED
+QS Copy preprocessed settings: RHSMin=1e-3, ErrRef(e/h)=1e4, Blocked+ILS 22, 80-bit extended precision. Initial Poisson Coupled has 500 iterations and LineSearchDamping=1e-2, while sweep QS coupled has 15 iterations and no explicit damping. QS controls: InitialStep=.03, MinStep=1e-6, MaxStep=.15, Increment=1.5, Decrement=2, Goal anode=.3V.
+QS Newton stalled at about .019304636V and failed due to step reduction below MinStep. Not proven that damping was the cause. Save ran even after QS failure, so n2_qs0p3_ckpt is NOT validated as a .3V checkpoint. Next: compare original transient deck settings; no TCAD source changes.
+GitHub: TIMELINE, ERROR_LOG, NEXT_ACTIONS, CURRENT_STATUS, LIVE_STATE.md/json, RELAY updated.
+
+---
+
+## 2026-10-09T02:53:52Z — TaekGyu0801
+
+[2026-10-09 KST]
+작업자 이택규 / ChatGPT / QS vs Transient parameter check / OBSERVED
+
+User terminal: original `JUSUBIN_FAST_HALF_SWB/pp2_des.cmd` has ErrRef e/h=1e4, RHSMin=1e-3, CheckRhsAfterUpdate, initial Poisson Coupled Iterations=500 LineSearchDamping=1e-2, startup carrier Coupled Iterations=100, sweep Coupled Iterations=15; Transient InitialStep=1e-5 MinStep=1e-9 MaxStep=1e-3 Increment=1.2.
+
+QS Copy previously verified: same RHSMin/ErrRef and initialization/sweep iteration caps, QS InitialStep=.03 MinStep=1e-6 MaxStep=.15 Increment=1.5 Decrement=2.0 Goal=.3V. There is NO evidence QS uniquely lacks sweep-local damping: original transient has no explicitly listed local damping either. Sweep/time parameter semantics differ; direct step number comparisons invalid. QS stalled at 0.019304636V, original transient completed 0.3V. Root convergence cause remains unresolved. Original preprocessed header comments refer to 0-4/4-5V despite completed smoke at .3V; next action inspect actual original Goal from lines 583-615.
+
+GitHub files: LeeTaekGyu TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY updated. TCAD code unchanged.
+
+---
+
+## 2026-10-09T02:56:18Z — TaekGyu0801
+
+[2026-10-09 KST] 이택규 / ChatGPT / RESULT (OBSERVED) + NEXT
+Original `JUSUBIN_FAST_HALF_SWB/pp2_des.cmd` lines 580–615 provided by user confirmed n2 executable `Transient(InitialTime=0, FinalTime=0.06, InitialStep=1e-5, MinStep=1e-9, MaxStep=1e-3, Increment=1.2, Goal{anode Voltage=0.3})` with `Coupled(Iterations=15){Poisson Electron Hole}`, then Save n2_smoke_ckpt_0p3V. Hence this was correctly a 0.3V smoke. Header description of 0–4V and 4–5V is outdated for this n2 deck.
+Original transient finished 0.3V, QS Copy stopped 0.019304636V. Next proposed branch: preserve both, preflight separate high-bias Transient candidate for actual forward I-V and later IQE and full/fine comparison. No code edits/run launched.
+Synced: LeeTaekGyu TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.
+
+---
+
+## 2026-10-09T02:58:22Z — TaekGyu0801
+
+[2026-10-09 KST] 이택규 / ChatGPT / OBSERVED + PROPOSED
+Original `/user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_SWB` directory: sdevice_des.cmd 5.9K, sde_dvs.cmd 20K, pp2_des.cmd 5.8K, n1_msh.tdr 1.6M; total directory du=23M. User also observed earlier background SVisual ended (`Done`), which is not a simulation failure. This verifies file presence, not high-voltage physics or 5V readiness.
+Next proposed action (NOT yet confirmed executed): create guarded filesystem copy `JUSUBIN_FAST_HALF_5V_TEST`, verify SDevice source identical by cmp, then verify SWB project metadata/association before editing or launching high-bias transient. Original 0.3V smoke and QS Copy are to be preserved. Source code/physics unchanged. LeeTaekGyu/TIMELINE and NEXT_ACTIONS recorded.
+
+---
+
+## 2026-10-09T03:00:07Z — TaekGyu0801
+
+[2026-10-09 KST] 이택규 / ChatGPT / PROGRESS + HANDOFF / OBSERVED, SWB validation pending
+C-shell-like login shell rejected Bash `if [ ! -e ... ]; then` conditional (`if: Expression Syntax`), but user ran standalone `cp -a JUSUBIN_FAST_HALF_SWB JUSUBIN_FAST_HALF_5V_TEST`. Target directory existence confirmed by `ls -ld`; `cmp` of original and copied sdevice_des.cmd printed nothing, so the SDevice sources match. Whether copy is recognized/opened by SWB remains UNVERIFIED. Sentaurus Workbench User Guide describes `.project` file as identifying project folders. Next: compare hidden `.project` existence/content and `ls -la` original and copy; open copy in SWB Projects browser only after checking. No SDevice edits or 5V run started.
+Files updated: LeeTaekGyu TIMELINE, NEXT_ACTIONS, CURRENT_STATUS, LIVE_STATE.md/json, RELAY.
+
+---
+
+## 2026-10-09T03:01:41Z — TaekGyu0801
+
+[2026-10-09 KST]
+작업자: 이택규 / ChatGPT / PROGRESS / OBSERVED
+`ls -la` confirms both JUSUBIN_FAST_HALF_SWB/.project and JUSUBIN_FAST_HALF_5V_TEST/.project exist as zero-byte files with Oct 8 16:58 timestamp. Test copy's sdevice_des.cmd already matched source via cmp. SWB GUI project open not yet verified; no run or source modifications.
+NEXT: open copied project in SWB, verify workflow nodes and project path before changing 0.3V to 5V. Synced TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.
+
+---
+
+## 2026-10-09T03:04:35Z — TaekGyu0801
+
+[2026-10-09 KST] 이택규 / ChatGPT / PROGRESS / OBSERVED (user report)
+User reports JUSUBIN_FAST_HALF_5V_TEST has been created/opened from SWB command. Prior filesystem copy and .project marker checks passed. GUI screenshot confirming SDE/SDevice node flow and independent project path is still pending. Original 0.3V smoke and QS Copy preserved; no source edits, preprocessing or 5V run attempted. Next: inspect SWB GUI screenshot before code changes.
+
+---
+
+## 2026-10-09T03:06:19Z — TaekGyu0801
+
+[2026-10-09 KST] 이택규 / ChatGPT / SWB flow screenshot / OBSERVED
+SWB cropped screenshot displays SDE and SDEVICE tool columns, single scenario row with NtSide=0, and No Variables heading. SVisual not visible in crop. Project title/path not visible; current screenshot alone cannot verify whether it is the copied JUSUBIN_FAST_HALF_5V_TEST project (user previously reports opened). No new runs or SDevice code changes were evidenced.
+NEXT: read editable copied sdevice_des.cmd lines 565–620 and review actual bias ramp prior to any 5V edit/preprocess/launch. GitHub TIMELINE, NEXT_ACTIONS, LIVE_STATE.md/json updated.
+
+---
+
+## 2026-10-09T03:07:57Z — TaekGyu0801
+
+[2026-10-09] Worker 이택규 | ChatGPT | OBSERVED / PROPOSED
+User pasted editable JUSUBIN_FAST_HALF_5V_TEST/sdevice_des.cmd Solve block: still unchanged 0.3V Transient smoke (FinalTime=.06, Goal anode=.3V, InitialStep=1e-5, MinStep=1e-9, MaxStep=1e-3, Increment=1.2, sweep Coupled Iterations=15, Save n@node@_smoke_ckpt_0p3V). Initial Poisson Iterations=500 and damping=1e-2; carrier Coupled 100.
+Suggested *not yet applied*: preserve ramp ratio .3/.06=5 by changing FinalTime to 1.0 and Goal to 5.0 on copied test only, rename save suffix to 5V. Protect original and use source backup, SWB preprocess-only and pp2 verification before any launch. This proposed ramp does not guarantee convergence, a steady-state I-V, or validated 5V physics. No simulation started. Synced LeeTaekGyu TIMELINE, NEXT_ACTIONS, LIVE_STATE.md/json.
+
+---
+
+## 2026-10-09T03:10:19Z — TaekGyu0801
+
+[2026-10-09 KST] Worker 이택규 / ChatGPT / PROGRESS / OBSERVED; preprocess PENDING
+Remote copied project `JUSUBIN_FAST_HALF_5V_TEST`: user executed backup (`cp -p sdevice_des.cmd sdevice_des_0p3V_backup.cmd`) and three `sed -i` edits on copied sdevice_des.cmd. Terminal grep confirms FinalTime=1.0 at line 587, Goal anode Voltage=5.0 at line 597, Save prefix `n@node@_5V_ckpt` at line 608; initial 0 V electrode lines 38/43 unchanged. Old comment may still say 0.3V smoke. Original 0.3V project and separate QS Copy not modified. Full source remains on semi437, not committed to GitHub. New preprocess/run NOT confirmed.
+NEXT: select SDevice Node2 in copied SWB, Ctrl+P preprocess ONLY, inspect actual pp2_des.cmd for FinalTime 1.0/Goal5V/Save prefix and correct mesh/NtSide. No F7 until verified.
+Synced LeeTaekGyu TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.
+
+---
+
+## 2026-10-09T03:11:49Z — TaekGyu0801
+
+[2026-10-09 KST] 이택규 / ChatGPT / 5V copied SWB preprocess / OBSERVED
+User terminal `JUSUBIN_FAST_HALF_5V_TEST/pp2_des.cmd` grep: line585 Transient(, line587 FinalTime=1.0, line597 Voltage=5.0, line608 Save FilePrefix=`n2_5V_ckpt`; initial electrode Voltage=0.0 lines 38 and 43. These confirm changed 5V source settings propagated to preprocessed deck. No evidence of 5V SDevice run started yet. Before run verify Grid, active NtSide/traps, and preservation of copied prior n2 outputs; high-bias convergence not verified, Save can follow abnormal sweep stop. GitHub synced TIMELINE, NEXT_ACTIONS, CURRENT_STATUS, LIVE_STATE.md/json. Source full text remains remote, not committed.
+
+---
+
+## 2026-10-09T03:13:40Z — TaekGyu0801
+
+[2026-10-09 KST] 이택규 / ChatGPT / OBSERVED / 5V_TEST pre-run output preservation
+User `ls -lh` in JUSUBIN_FAST_HALF_5V_TEST: n1_msh.tdr 1.6M Oct 8 18:08, n2_des.log 1.1M Oct 9 01:39, n2_des.plt 412K Oct 9 01:39, n2_des.tdr 15M Oct 9 01:39. These are copied original 0.3V smoke outputs, not a 5V run. New F7 could overwrite them, so archive copied project before launch. The requested Grid/Parameter/Conc/RHSMin/Iterations grep was not supplied yet; need that verification. Next: make and check backup archive, inspect preprocess. No new 5V run started. Synced TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json.
+
+---
+
+## 2026-10-09T03:16:27Z — TaekGyu0801
+
+[2026-10-09 KST] 이택규 / ChatGPT / OBSERVED 5V pre-run checks
+Copied `JUSUBIN_FAST_HALF_5V_TEST` archived with tar -czf; user ls confirmed `JUSUBIN_FAST_HALF_5V_TEST_pre5V_20261009.tar.gz` 12M Oct9 11:25. Integrity not yet checked. Current pp2_des.cmd output: Grid n1_msh.tdr; twelve Conc=0 regions; RHSMin=1e-3; Coupled Iterations 500,100,15. Prior preprocessed Transient FinalTime=1.0 Goal 5.0V and Save prefix n2_5V_ckpt. No 5V run observed. Next verify archive readable then run copied project SDevice Node2 only (not SDE), review fresh n2 log for start. Original 0.3V and separate QS Copy protected. Sync: TIMELINE/TEAM_TIMELINE/CURRENT_STATUS/NEXT_ACTIONS/LIVE_STATE.md+json/RELAY.
+
+---
+
+## 2026-10-09T03:18:55Z — TaekGyu0801
+
+[2026-10-09 KST] 이택규 / ChatGPT / PROGRESS / CONFIRMED archive readable
+In JUSUBIN_FAST_HALF_5V_TEST, user executed `tar -tzf ../JUSUBIN_FAST_HALF_5V_TEST_pre5V_20261009.tar.gz > /dev/null`; C-shell `echo $status` returned 0. Thus tar archive can be listed/read, following prior confirmation of 12M archive. This is not a full restore test. Copied pp2 settings previously verified: Transient FinalTime=1.0, Goal anode=5.0V, n1_msh.tdr, all listed trap Conc=0, RHSMin=1e-3, sweep Coupled Iterations=15. Next: launch only copied SWB SDevice Node2, not SDE; request fresh View Output screenshot and verify new run log/timestamps. No evidence that 5V job is running or completed yet. Original 0.3V and QS Copy retained. Synced LeeTaekGyu/TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json.
+
+---
+
+## 2026-10-09T03:21:06Z — TaekGyu0801
+
+2026-10-09 | 이택규 | SWB 5V_TEST screenshot confirms correct project title, SDE/SDEVICE and NtSide=0. Active run not confirmed. Instructed no Clean Up Node or F7 until sdevice process and n2_des.log timestamps are checked. Awaiting terminal output.
+
+---
+
+## 2026-10-09T03:23:31Z — TaekGyu0801
+
+2026-10-09 KST | 이택규 | 5V_TEST Node2 process/log verification | OBSERVED
+ps on semi437 shows only two SDevice jobs: pp6_des.cmd PID 69457 (since Oct04), pp12_des.cmd PID 93915 (since Oct06), both 99% CPU. No pp2_des.cmd process. Copied project's n2_des.log mtime remains Oct9 01:39:13; tail shows completed ORIGINAL 0.3V smoke (wallclock 25019.43s, peak memory 2.61GB, Good Bye). Thus no evidence that 5V_TEST SDevice Node2 has started. SWB Cleanup not required. Copied pre5V tar archive tested readable and preprocessed deck set to Goal5V. NEXT: optionally launch 5V_TEST SDevice Node2 only (F7) if concurrent jobs allow; check fresh log/View Output. Never touch original, pp6 or pp12. Files synced: LeeTaekGyu TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.
+
+---
+
+## 2026-10-09T03:26:19Z — TaekGyu0801
+
+2026-10-09 KST / 이택규 / OBSERVED — SWB Project Log screenshot shows test project JUSUBIN_FAST_HALF_5V_TEST SDevice Node2 job submitted and status ready->pending->running. Job2 SDevice started at 11:33:14 Oct09 2026. Solver convergence, ongoing process and reaching 5V not yet verified. User directed not to Cleanup Node or press F7 again; next check ps and fresh n2_des.log mtime/tail. Synced TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.
+
+---
+
+## 2026-10-09T07:41:40Z — TaekGyu0801
+
+2026-10-09 16:40 KST | 이택규 / ChatGPT | INFERENCE runtime only, not actual run progress. 5V copied half/coarse Transient Node2 SWB launched Oct9 11:33. Existing 0.3V smoke took 6h56m59s with FinalTime 0.06 MaxStep .001. 5V setup FinalTime 1.0 same MaxStep .001 => minimum number of accepted transient steps scales ~16.7x (60 to >=1000), naive linear projection ~116h (4.9 days). Rough planning range 3–7+ days with high uncertainty or early failure due to nonlinear high injection, solver step cutback and concurrent pp6/pp12. Do not treat as ETA. Actual 5V progress/voltage must be checked via fresh n2_des.log. Saved estimate to LeeTaekGyu TIMELINE, NEXT_ACTIONS and LIVE_STATE.json.
+
+---
+
+## 2026-10-09T07:50:08Z — TaekGyu0801
+
+[2026-10-09] Worker 이택규 | CONCEPT REVIEW / no new TCAD results.
+User temporarily cannot work in TCAD, asks if reaching 5V suffices for reference device and if Project A Carbon is implantation. From CMP/PROJECT_AB_PRE_RUN_AUDIT: Half/coarse NtSide=0 5V completion is preliminary only; publication-grade Common Baseline still needs nominal damaged NtSide=1e18 and full-vs-half mesh/physics equivalence, same-current I-V, sidewall SRH, MQW Rrad/RSRH/RAuger/IQE, 2D current normalization. Project A Stage1 models GaN Cedge_L/R **inside** 5nm Dmg region in upper nGaN beneath MQW with region-specific carbon deep acceptor/compensation and explicit mesh + carbon-off control. NOT an SProcess carbon-implantation run. Physical implantation remains possible future fabrication path but introduces ion damage/profile/activation variables; neither fabricated nor simulated to date. Hypothesized sidewall-SRH suppression remains to be tested. Existing 5V_TEST live state not checked; do not presume stopped. Synced LeeTaekGyu TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, RELAY.
+
+---
+
+## 2026-10-09T08:16:37Z — TaekGyu0801
+
+2026-10-09 | 이택규 | Project A concepts: carbon Cedge is proposed in upper n-GaN just beneath MQW and immediately inside existing 5 nm sidewall Dmg, not inside MQW. Existing QW1-QW4 sidewall damage DmgL zones each have @NtSide@ trap definitions; pristine QW core is not modeled as uniformly damaged. NtSide=0 test has concentration zero, while NtSide=1e18 nominal damage activates traps. Carbon deep acceptor mechanism differs from baseline edge traps. No new simulation or code changes. GitHub NEXT_ACTIONS and LeeTaekGyu timeline recorded.
+
+---
+
+## 2026-10-09T08:24:45Z — TaekGyu0801
+
+[2026-10-09 14:29:52 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED (solver endpoint success; publication-grade validation UNRESOLVED)
+
+요약:
+- Half+Coarse `JUSUBIN_FAST_HALF_5V_TEST` / NtSide=0 / SWB SDevice Node2 **completed 5.000 V Transient normally**. Earlier status "running only" superseded by actual log.
+- Last anode row at 5 V: electron current 2.781E-13, hole 1.420E-11, total 1.448E-11 in printed output units (absolute current-density normalization unverified).
+- `Finished, because... Curve trace finished.`; final `Sentaurus Device simulation finished` and `Good Bye !` at Oct09 14:29:52 KST. Wallclock 10596.76 s (2h56m36.76s); peak memory 2.97 GB. TDR and Save outputs written.
+- `ps` shows no Node2 SDevice; only original pp6 PID69457 and pp12 PID93915 still active as observed.
+- This success establishes solver completion for the copied **NtSide=0** branch only. NOT final Common Baseline, NtSide=1e18 damage benchmark, validated IQE, area-normalized J, or A/B performance.
+
+근거:
+- User-provided Oct9 terminal: `cd .../JUSUBIN_FAST_HALF_5V_TEST`; `ps -fu semi437 | grep '[s]device'`; `tail -n 40 n2_des.log`.
+- Log writes: `n2_5V_ckpt_des.sav`, `n2_5V_ckpt_circuit_des.sav`, `n2_des.tdr`.
+
+변경:
+- No remote TCAD code modified in this review. GitHub: `LeeTaekGyu/TIMELINE.md`, `TEAM_TIMELINE.md`, `CURRENT_STATUS.md`, `NEXT_ACTIONS.md`, `.ai-sync/LIVE_STATE.md`, `.ai-sync/LIVE_STATE.json`, `.ai-sync/RELAY.md` updated.
+
+다음:
+- Preserve outputs; inspect `n2_des.plt` full I(V) and 2D units/AreaFactor; validate MQW Rrad/SRH/Auger, sidewall SRH, injection and matched-current IQE. Compare full/fine vs half/coarse NtSide=0 and controlled damaged NtSide=1e18 branch. Keep pp6/pp12 running. Existing A/B production gate unchanged (NO-GO). Earlier 116h estimate superseded by actual 10596.76 s; do not infer numerical equivalence/speedup without comparison.
+
+---
+
+## 2026-10-09T08:34:23Z — TaekGyu0801
+
+[2026-10-09 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / RESULT
+상태: OBSERVED (partial data gate PASS; electrical sanity still UNRESOLVED)
+
+요약:
+- Follow-up terminal confirms fresh copied Half+Coarse 5V Node2 outputs exist: n2_des.plt 412K mtime 14:29:52, n2_des.tdr 16M mtime 14:29:53, n2_5V_ckpt_des.sav 3.2M mtime 14:29:50 and n2_5V_ckpt_circuit_des.sav 306B mtime 14:29:50 KST. Consistent with observed SDevice 5V normal finish at 14:29:52.
+- head of n2_des.plt shows DF-ISE text, 17 dataset columns including time, anode/cathode OuterVoltage, e/h/TotalCurrent and DisplacementCurrent. No full row count/current curve analyzed yet.
+- grep 'AreaFactor' pp2_des.cmd pp2_des.par printed no pp2_des.cmd matches and reported pp2_des.par absent. The missing parameter file name does not prove the simulation lacks required parameters; inspect actual Parameters reference and other *.par files before converting 2D currents to A/cm².
+
+근거:
+- User Oct9 shell ls -lh --full-time, head -n30 n2_des.plt, grep -ni AreaFactor command results.
+
+변경:
+- GitHub LeeTaekGyu/TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, LIVE_STATE.md and LIVE_STATE.json updated. Remote SDevice/mesh/results untouched.
+
+다음:
+- Read-only parse 17-column DF-ISE Data rows for first/last anode V and current and complete 0–5V I-V; inspect pp2_des.cmd File Parameters and actual *.par files. After current sanity pass, analyze TDR MQW Rrad/SRH/Auger and 2D normalization. No cleanup or rerun of finished Node2; other Node6/Node12 jobs remain untouched.
+
+---
+
+## 2026-10-09T08:37:47Z — TaekGyu0801
+
+[2026-10-09 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED (I–V parser success; current normalization/emission UNRESOLVED)
+
+요약:
+- Read-only awk parsed `JUSUBIN_FAST_HALF_5V_TEST/n2_des.plt` at 17 fields/record: 1023 rows, REMAINDER=0, V from 0 to exactly 5V. Last anode TotalCurrent RAW 1.44801646079583E-11 (units/AreaFactor not yet verified).
+- Sample I(V) shows moderate very-low raw current to 4V and strong increase by 5V: V=4.003368865, I=3.50552134304176E-14; V=4.503368865, I=3.69335070901735E-13; V=5V, I=1.44801646079583E-11. No full-data monotonicity or physical-emission determination yet.
+- The `pp2_des.cmd` File block specifies `Parameters="FASTC1_pp6_des.par"`, `Grid="n1_msh.tdr"`, `Current="n2_des.plt"`, `Plot="n2_des.tdr"`, `Output="n2_des.log"`. `find` confirms `./FASTC1_pp6_des.par` exists. Earlier missing `pp2_des.par` was an incorrect expected filename, not evidence of missing active parameters.
+- Source header describes a staged run/checkpoints but header comments alone are not the executable solve; verify actual lines/log before claiming staged control.
+
+근거:
+- User-provided direct awk output and first 65 lines of pp2_des.cmd plus find *.par; prior normal endpoint completion log.
+
+변경:
+- GitHub LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, LIVE_STATE.md and LIVE_STATE.json updated. No TCAD code or results modified.
+
+다음:
+- Inspect FASTC1_pp6_des.par and active pp2 Physics/Plot/AreaFactor references read-only; verify radiative coefficient in GaN/InGaN physics and required MQW data, electron/hole vs displacement current and 2D contact/mesa normalization. Then evaluate n2_des.tdr Rrad/SRH/Auger/IQE extraction. Preserve output; A/B production remains NO-GO.
+
+---
+
+## 2026-10-09T08:47:41Z — TaekGyu0801
+
+[2026-10-09 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / RESULT
+상태: OBSERVED current components/model declarations; MQW emission UNRESOLVED
+
+요약:
+- User awk last PLT row: pseudo/Transient time=1, anode Voltage=5V, DisplacementCurrent(raw)=3.29132361382365E-18, eCurrent=2.78143237811134E-13, hCurrent=1.42020180788235E-11, TotalCurrent=1.44801646079583E-11. Hole current dominates **anode terminal**, displacement negligible. Does not establish carrier reaching MQW or device-wide steady-state.
+- `cat FASTC1_pp6_des.par`: LatticeParameters, Thermionic Formula=1, and GaN pMagnesiumActiveConcentration Ionization; no explicit radiative coefficient in this parameter file. Effective GaN/InGaN coefficients may originate from materials DB, so value (including whether nonzero) not established.
+- `grep` of `pp2_des.cmd` confirms Recombination(SRH(), Auger(), Radiative) and Plot fields SRHRecombination, RadiativeRecombination, AugerRecombination. Declared field/model ≠ verified nonzero MQW optical recombination. No AreaFactor match in active cmd/par; 2D normalization pending.
+- Existing project manual index and LeeTaekGyu Oct8 note flags need to verify radiative model coefficient against Sentaurus Device T-2022.03 User Guide §16 488–489 and runtime DB; cannot infer emission from output list.
+
+근거:
+- User direct terminal PLT awk, full FASTC1_pp6_des.par, grep outputs.
+
+변경:
+- GitHub LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, LIVE_STATE.md/json updated; no TCAD files edited.
+
+다음:
+- SVisual read-only open n2_des.tdr and inspect fully named RadiativeRecombination in Clean_QW1–Clean_QW4 at 5V (positive actual numeric values and spatial distribution), then SRH/Auger and carrier maps and integrated rates. Verify effective InGaN radiative coefficient; no rerun/cleanup. A/B production still NO-GO.
+
+---
+
+## 2026-10-09T08:53:54Z — TaekGyu0801
+
+[2026-10-09 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED (positive radiative spatial field), UNRESOLVED (specific MQW emission / IQE)
+
+요약:
+- Screenshot of Sentaurus Visual T-2022.03 for `JUSUBIN_FAST_HALF_5V_TEST` / `n2_des` with **RadiativeRecombination** scalar selected. Legend maximum is **7.483e19 cm^-3 s^-1** and minimum **-7.512e-34 cm^-3 s^-1** (numeric near-zero). The spatial field is thus not identically zero; multiple thin upper layers show higher radiative recombination, deep bulk near zero.
+- Bottom status reads Elements=138194 Points=65513, matching the half+coarse mesh.
+- **Caveat:** field maximum belongs to an unidentified position; screenshot does not name the individual Clean_QW1..4 regions or quantify their radiative rates. Do not claim observed total QW photons, IQE, EQE, or publication-grade baseline. Actual effective material radiative coefficient not yet audited.
+
+근거:
+- User-shared GUI screenshot (2026-10-09) displaying selected scalar and legend, rather than deck declaration alone.
+
+변경:
+- GitHub LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md and LIVE_STATE.json saved; LIVE_STATE.md write attempt was blocked, therefore that file is NOT reported updated. No remote TCAD input/result changed.
+
+다음:
+- SVisual Regions tab -> find Clean_QW1..4, zoom top region and probe numeric RadiativeRecombination per named QW. Then SRH/Auger and carrier density, per-QW integrals + effective material coefficient. Keep 5V results and current Node6/12 jobs untouched.
+
+
+---
+
+## 2026-10-09T08:58:29Z — TaekGyu0801
+
+[2026-10-09] 이택규 / ChatGPT / RESULT / OBSERVED
+User's SVisual Regions screenshot with widened Name column confirms region tags Clean_EBL, Clean_QW1, Clean_QW2, Clean_QW3, Clean_QW4, and Clean_nGaN. This establishes four named clean QW regions in displayed 5V_TEST model but not per-QW RadiativeRecombination numerical values, integrated emission, or IQE. NEXT: maintain RadiativeRecombination display, zoom upper active stack and Probe each Clean_QW region. No TCAD files altered. LeeTaekGyu/TIMELINE.md updated; CURRENT_STATUS.md write attempt blocked.
+
+---
+
+## 2026-10-09T09:00:18Z — TaekGyu0801
+
+[2026-10-09 KST] 이택규 / ChatGPT / OBSERVED: New zoomed SVisual screenshot of JUSUBIN_FAST_HALF_5V_TEST/n2_des RadiativeRecombination shows layered upper active stack with nonuniform colors and region list Clean_QW1 through Clean_QW4, plus EBL and nGaN. Clean_QW3 row highlighted, but no positional crosshair/point Probe or QW-attributed rate measured. Global colorbar max still 7.483e19 cm^-3 s^-1; this is not proof that each QW emits, nor an IQE. NEXT: use SVisual Probe at a thin layer and inspect Var Values RadiativeRecombination plus Cell Info region; repeat QW1..4 before integrating SRH/Auger. No TCAD changes. LeeTaekGyu/TIMELINE.md updated.
+
+---
+
+## 2026-10-09T09:05:14Z — TaekGyu0801
+
+[2026-10-09 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED local MQW radiative points; UNRESOLVED integrated emission, IQE, physical baseline validation
+
+요약:
+- User provided four direct SVisual Probe screenshots of JUSUBIN_FAST_HALF_5V_TEST/n2_des at the 5V result. Each confirms field name RadiativeRecombination and exact named zone Clean_QWn(InGaN).
+- QW1 x=0.169818746552 y=0.560459877538 -> Rrad=1.836010164996e13 cm^-3 s^-1.
+- QW2 x=0.194326754006 y=0.556958733616 -> Rrad=3.558921779790e12 cm^-3 s^-1.
+- QW3 x=0.22058533342 y=0.56571159342 -> Rrad=8.395713573050e14 cm^-3 s^-1.
+- QW4 x=0.245093340874 y=0.58321731303 -> Rrad=7.094266327897e18 cm^-3 s^-1.
+- All four QW probe points have positive radiative recombination. QW4 local probe is many orders higher, but **positions vary**, each is one local value rather than integrated QW emission or mean; do not claim QW4 dominates photons or that device IQE is proven.
+
+근거:
+- User direct SVisual screenshots; prior 5V endpoint normal finish and radiative colorbar screenshot. No new code/simulation performed.
+
+변경:
+- GitHub LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md and .ai-sync/LIVE_STATE.json updated. Remote simulation data preserved.
+
+다음:
+- Use SVisual to probe SRHRecombination and AugerRecombination at exactly the same QW4 location, then the other QWs, checking zone on each probe. Integrate three rate fields over QWs and validate IQE_rec and injection/current density with proper 2D normalization. Full/fine comparison and damaged NtSide=1e18 baseline still pending; A/B production NO-GO.
+
+---
+
+## 2026-10-09T09:10:28Z — TaekGyu0801
+
+2026-10-09 | 이택규 | OBSERVED: 5V_TEST SVisual Clean_QW4 local srhRecombination 1.681637512936e22 at x=0.244864017914, y=0.599783903626. Previous QW4 radiative point was at x=0.245093340874, y=0.58321731303, so direct pointwise comparison or IQE is invalid. Next: probe SRH and Auger at the exact radiative location, then validate full-QW integrals. LeeTaekGyu TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.json updated; no TCAD edits.
+
+---
+
+## 2026-10-09T09:13:37Z — TaekGyu0801
+
+2026-10-09 | 이택규 | SVisual Probe At UI precision limitation (user observed)
+User reports Probe At allows only about five decimal places, preventing exact re-entry of the former QW4 Radiative probe coordinates. No new simulation or scientific result. Read-only suggested workaround: in current QW4 Probe panel uncheck Show Only Active Field to test displaying Radiative/SRH/Auger at the SAME probe location (not yet tested). Fallback: re-probe all three fields at identical rounded coordinates x=0.24509,y=0.58322,z=0 and verify identical returned coords/zone Clean_QW4; do not mix prior high-precision Rrad with new SRH or calculate IQE from mismatched point values. LeeTaekGyu TIMELINE, NEXT_ACTIONS and LIVE_STATE.json updated.
+
+---
+
+## 2026-10-09T09:17:11Z — TaekGyu0801
+
+[2026-10-09] 이택규 SVisual 5V QW4 same-coordinate probe: Rrad=7.103e18, SRH=1.682e22, Auger=1.239e15, total=1.682e22 cm^-3 s^-1. Local radiative percentage 0.0422%, not device IQE. Follow-up: integrated QW recombination and material physics check. No TCAD code changes. Shared files updated.
+
+---

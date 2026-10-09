@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-08",
+  "updated": "2026-10-09",
   "primaryWorker": "주수빈",
   "phase": "Phase 0 — Common Baseline completion + Project A/B pre-run implementation gate",
   "task": "Complete mandatory A/B pre-run gates before any multi-day production sweep",
@@ -429,5 +429,503 @@
       "status": "CODE_STATIC_PASS_UNTESTED"
     },
     "next": "Stop only old half transient Node2 if switching, back up source/output, install QS deck, SWB preprocess, run 0.3V QS smoke, compare wallclock and I-V"
+  },
+  "qsCopyRun20261009": {
+    "worker": "이택규",
+    "project": "JUSUBIN_FAST_HALF_SWB_Copy",
+    "mode": "Quasistationary",
+    "status": "UNRESOLVED_MINSTEP_TERMINATION",
+    "observedLogEnd": "2026-10-09T00:28:10+09:00",
+    "stopReason": "Newton iterations exceeded 15 then cutback proposed 8.3986e-7 below MinStep=1e-6",
+    "attemptedStep": 8.3986e-7,
+    "wallclockSeconds": 18417.09,
+    "peakMemoryGB": 2.96,
+    "outputsSaved": true,
+    "goal0p3VReached": "NOT_VERIFIED",
+    "lastAcceptedVoltage": "PENDING_PLT_CHECK",
+    "comparison": "Do not infer QS speedup against original half transient 25019.43s, which reached 0.3V",
+    "next": "Compare QS Copy actual preprocessed numeric/physics settings to original transient pp2_des.cmd. Do not edit sources until that comparison.",
+    "lastAcceptedVoltageV": 0.0193046362893992,
+    "lastRecordedPseudoTime": 0.0643487876313307,
+    "goalVoltageV": 0.3,
+    "completionFraction": 0.0643487876313307,
+    "lastAttemptedStepSize": 8.3986e-7,
+    "diagnosticNext": "Inspect n2_des.log 6900-7010 and n2_des.err for convergence failure mechanism",
+    "reportedOutcome": "0.3 V QS goal NOT reached",
+    "newtonFailureObserved": true,
+    "newtonSolver": "Bank/Rose, Poisson+electron+hole Coupled",
+    "newtonMaxIterations": 15,
+    "finalFailedStepFromPseudoTime": 0.0643488,
+    "finalFailedStepToPseudoTime": 0.0643505,
+    "failedStepSize": 0.0000016797,
+    "finalObservedRhs": 1850000,
+    "maxObservedRhs": 126000000,
+    "fundamentalCause": "UNRESOLVED",
+    "physicsWarning": "vanOverstraetendeMan E0 isotropic/anisotropic mismatch; direct causality unverified",
+    "preprocessedSettingsVerified": {
+      "math": {
+        "RHSMin": 0.001,
+        "ErrRefElectron": 10000,
+        "ErrRefHole": 10000,
+        "CheckRhsAfterUpdate": true,
+        "Transient": "BE",
+        "ExtendedPrecision": 80,
+        "Method": "Blocked",
+        "SubMethod": "ILS(set=22)"
+      },
+      "initialPoissonCoupled": {
+        "Iterations": 500,
+        "LineSearchDamping": 0.01
+      },
+      "initialCarrierCoupled": {
+        "Iterations": 100
+      },
+      "qs": {
+        "InitialStep": 0.03,
+        "MinStep": 0.000001,
+        "MaxStep": 0.15,
+        "Increment": 1.5,
+        "Decrement": 2,
+        "GoalAnodeV": 0.3,
+        "Iterations": 15,
+        "explicitLineSearchDamping": false
+      }
+    },
+    "checkpoint0p3VLabelValid": false,
+    "checkpointStatus": "Save executed after QS failure around 0.019304636 V; not a verified 0.3V checkpoint",
+    "rootCause": "UNRESOLVED"
+  },
+  "halfTransientRun20261009": {
+    "project": "JUSUBIN_FAST_HALF_SWB",
+    "status": "CONFIRMED_0P3V_COMPLETE",
+    "wallclockSeconds": 25019.43,
+    "finalVoltageV": 0.3
+  },
+  "qsTransientComparison20261009": {
+    "worker": "이택규",
+    "status": "OBSERVED_ORIGINAL_GOAL_CONFIRMED",
+    "sharedControls": {
+      "ErrRefElectron": 10000,
+      "ErrRefHole": 10000,
+      "RHSMin": 0.001,
+      "initialPoissonIterations": 500,
+      "initialPoissonLineSearchDamping": 0.01,
+      "initialCarrierIterations": 100,
+      "sweepCoupledIterations": 15
+    },
+    "transient": {
+      "mode": "Transient",
+      "InitialStep": 0.00001,
+      "MinStep": 1e-9,
+      "MaxStep": 0.001,
+      "Increment": 1.2,
+      "confirmedCompletedGoalV": 0.3
+    },
+    "quasistationary": {
+      "mode": "Quasistationary",
+      "InitialStep": 0.03,
+      "MinStep": 0.000001,
+      "MaxStep": 0.15,
+      "Increment": 1.5,
+      "Decrement": 2,
+      "goalV": 0.3,
+      "lastAcceptedV": 0.0193046362893992
+    },
+    "conclusions": [
+      "No evidence that sweep-local damping is uniquely missing in QS: both Coupled blocks list Iterations=15 only",
+      "Step controls expressed in different virtual/physical parameterization are not directly comparable",
+      "Full physical model equivalence, precise original Goal block and Decrement not yet audited"
+    ],
+    "commentDiscrepancy": "RESOLVED",
+    "nextAction": "Read original transient pp2_des.cmd lines 583-615 and verify Goal and step configuration; no edits yet",
+    "originalTransientExecutableBlock": {
+      "InitialTime": 0,
+      "FinalTime": 0.06,
+      "InitialStep": 0.00001,
+      "MinStep": 1e-9,
+      "MaxStep": 0.001,
+      "Increment": 1.2,
+      "GoalAnodeV": 0.3,
+      "CoupledIterations": 15,
+      "postSolveSavePrefix": "n2_smoke_ckpt_0p3V"
+    },
+    "originalHeaderComments": "Stale for n2 smoke: header describes 0–4/4–5 V but actual executable Goal=0.3 V",
+    "recommendedNext": "Preserve original smoke/QS Copy; audit source and prepare separate forward-bias 3–5 V transient candidate with preflight and comparison gates, not automatic launch."
+  },
+  "half5VTestCopy20261009": {
+    "status": "OBSERVED_NODE2_COMPLETE_TO_5V",
+    "worker": "이택규",
+    "original": "/user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_SWB",
+    "copied": "/user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST",
+    "evidence": "User terminal cp -a, ls -ld target directory, cmp SDevice source no output",
+    "shellObservation": "Bash conditional if syntax rejected (C-shell-like command interpreter); standalone cp succeeded",
+    "swbRecognition": "PENDING_GUI_OPEN",
+    "next": "Preserve final 5V data. Audit QW4 local SRH dominance mechanism and integration/QW1-4; no new run or baseline edits until source and physics gate.",
+    "projectMarkers": {
+      "original": ".project present, 0 bytes, Oct 8 16:58",
+      "testCopy": ".project present, 0 bytes, Oct 8 16:58",
+      "evidence": "User terminal ls -la on both project marker files"
+    },
+    "swbScreenshot20261009": {
+      "status": "OBSERVED_CROPPED_VIEW",
+      "visibleTools": [
+        "SDE",
+        "SDEVICE"
+      ],
+      "parameterNtSide": 0,
+      "visibleVariableHeader": "No Variables",
+      "SVisualVisible": false,
+      "projectTitleVisible": false,
+      "sourceReadPending": true
+    },
+    "editableSourceReviewed": true,
+    "editableSourceGoalV": 0.3,
+    "editableSourceFinalTime": 0.06,
+    "editableSourceTransientControls": {
+      "InitialStep": 0.00001,
+      "MinStep": 1e-9,
+      "MaxStep": 0.001,
+      "Increment": 1.2,
+      "Iterations": 15
+    },
+    "proposed5VChanges": {
+      "status": "PROPOSED_NOT_APPLIED",
+      "GoalV": 5,
+      "FinalTime": 1,
+      "SaveFilePrefix": "n@node@_5V_ckpt",
+      "purpose": "Preserve old ramp voltage/time=5 in same Transient source"
+    },
+    "sourceEditedOnRemote": "OBSERVED_USER_TERMINAL_GREP",
+    "remoteSourcePath": "/user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST/sdevice_des.cmd",
+    "backupCommandExecuted": true,
+    "backupFilename": "sdevice_des_0p3V_backup.cmd",
+    "observedEditedParameters": {
+      "FinalTime": 1,
+      "GoalAnodeV": 5,
+      "SaveFilePrefix": "n@node@_5V_ckpt",
+      "InitialAnodeAndCathodeVoltage": 0
+    },
+    "sourceSyncedToGitHub": false,
+    "preprocessStatus": "OBSERVED_PP2_5V_SETTINGS",
+    "simulationRunStatus": "COMPLETED_20261009_142952_KST",
+    "preprocessedVerified": {
+      "SolveMode": "Transient",
+      "FinalTime": 1,
+      "GoalAnodeV": 5,
+      "SaveFilePrefix": "n2_5V_ckpt",
+      "initialContactVoltagesV": 0
+    },
+    "remainingPreRunChecks": [
+      "Verify Grid and parameter/trap substitutions",
+      "Preserve copied n2 output files from prior 0.3V run",
+      "Validate no stale/cross-project output pointers"
+    ],
+    "oldCopiedOutputsObserved": true,
+    "oldCopiedOutputSizes": {
+      "n1_msh_tdr": "1.6M",
+      "n2_des_log": "1.1M",
+      "n2_des_plt": "412K",
+      "n2_des_tdr": "15M"
+    },
+    "oldCopiedOutputTimestamps": {
+      "n2": "2026-10-09 01:39 KST",
+      "mesh": "2026-10-08 18:08 KST"
+    },
+    "fiveVNewResults": "OBSERVED_FINAL_5V_AND_FILES_WRITTEN",
+    "preRunBackupStatus": "CONFIRMED_TAR_READABLE",
+    "preprocessedGridTrapAudit": "OBSERVED_GREP_PASS",
+    "backupArchive": {
+      "path": "/user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST_pre5V_20261009.tar.gz",
+      "reportedSize": "12M",
+      "reportedTimestamp": "2026-10-09 11:25 KST",
+      "integrity": "PASS_tar_-tzf_status_0"
+    },
+    "preprocessedGrid": "n1_msh.tdr",
+    "observedConcAllZero": true,
+    "observedConcEntries": 12,
+    "preprocessedRHSMin": 0.001,
+    "preprocessedCoupledIterationLimits": [
+      500,
+      100,
+      15
+    ],
+    "runAuthorization": "SDEVICE_NODE2_ONLY_AFTER_USER_GUI_ACTION",
+    "swbProjectPathVisible": "/user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST",
+    "swbStatusScreenshot": "SDE/SDEVICE --; NO_UNAMBIGUOUS_JOB_RUNNING_INDICATOR",
+    "cleanupNode": "NOT_NEEDED",
+    "runEvidence20261009": {
+      "sdeviceProcessList": "only pp6_des.cmd PID 69457 since Oct04; pp12_des.cmd PID 93915 since Oct06",
+      "pp2Running": false,
+      "n2LogTimestamp": "2026-10-09 01:39:13 +0900",
+      "n2LogOrigin": "copied original 0.3V smoke completed",
+      "n2LogWallclockSeconds": 25019.43,
+      "n2LogPeakMemoryGiB": 2.61
+    },
+    "concurrencyConcern": "TWO_OTHER_RUNNING_PP6_PP12_JOBS_99PERCENT_CPU",
+    "runConvergence": "OBSERVED_CURVE_TRACE_FINISHED_AT_ANODE_5V",
+    "runtimeEstimate20261009": {
+      "kind": "INFERENCE_NOT_MEASURED",
+      "baseline0p3VWallclockHours": 6.95,
+      "baselineFinalTime": 0.06,
+      "trial5VFinalTime": 1,
+      "maxStep": 0.001,
+      "linearExtrapolationHours": 116,
+      "planningRange": "approximately 3-7 days or longer; early failure possible",
+      "launch": "2026-10-09 11:33:14 KST",
+      "observedActualProgress": "UNKNOWN_PENDING_n2_des_log",
+      "supersededByMeasuredResult": true,
+      "actualMeasuredWallclockSeconds": 10596.76,
+      "actualStatus": "OBSERVED_FINISHED_20261009_142952_KST",
+      "causeOfEstimateMismatch": "UNRESOLVED"
+    },
+    "completionEvidence20261009": {
+      "source": "User terminal output from /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST/n2_des.log",
+      "solverEnd": "2026-10-09T14:29:52+09:00",
+      "requestedAnodeGoalV": 5,
+      "observedFinalAnodeVoltageV": 5,
+      "finalAnodeElectronCurrentAsPrinted": 2.781e-13,
+      "finalAnodeHoleCurrentAsPrinted": 1.42e-11,
+      "finalAnodeTotalCurrentAsPrinted": 1.448e-11,
+      "currentOutputUnits": "UNVERIFIED_2D_CURRENT_NORMALIZATION_PENDING",
+      "finishReason": "Curve trace finished.",
+      "normalTermination": true,
+      "wallclockSeconds": 10596.76,
+      "totalCpuSeconds": 30641.23,
+      "peakMemoryGB": 2.97,
+      "saveWritten": [
+        "n2_5V_ckpt_des.sav",
+        "n2_5V_ckpt_circuit_des.sav"
+      ],
+      "finalTdrWritten": "n2_des.tdr",
+      "processCheck": "no pp2_des.cmd, only existing pp6 PID69457 and pp12 PID93915 running",
+      "trapCase": "NtSide=0 per preprocessed grep 12 Conc=0, not nominal damaged",
+      "limitations": [
+        "IQE and integrated MQW recombination not analyzed",
+        "2D current/AreaFactor unverified",
+        "half/coarse vs full/fine equivalence unverified",
+        "NtSide=1e18 damaged reference not run in this branch",
+        "A/B research outcome not demonstrated"
+      ]
+    },
+    "postRunArtifactCheck20261009": {
+      "status": "OBSERVED_FILES_AND_PLT_SCHEMA_PASS_CURRENT_NORMALIZATION_PENDING",
+      "files": [
+        {
+          "name": "n2_des.plt",
+          "reportedSize": "412K",
+          "timestamp": "2026-10-09T14:29:52+09:00"
+        },
+        {
+          "name": "n2_des.tdr",
+          "reportedSize": "16M",
+          "timestamp": "2026-10-09T14:29:53+09:00"
+        },
+        {
+          "name": "n2_5V_ckpt_des.sav",
+          "reportedSize": "3.2M",
+          "timestamp": "2026-10-09T14:29:50+09:00"
+        },
+        {
+          "name": "n2_5V_ckpt_circuit_des.sav",
+          "reportedSize": "306B",
+          "timestamp": "2026-10-09T14:29:50+09:00"
+        }
+      ],
+      "pltHeader": "DF-ISE text; 17 datasets incl time, anode/cathode OuterVoltage, eCurrent, hCurrent, TotalCurrent, DisplacementCurrent",
+      "pltRowsParsed": false,
+      "lastPltVoltageVerified": false,
+      "areaFactorSearch": "grep on pp2_des.cmd printed no matching AreaFactor; pp2_des.par file does not exist",
+      "currentNormalizationVerified": false,
+      "next": "Read-only parse n2_des.plt voltage/current rows and inspect actual Parameters reference/*.par before assigning A/cm2; protect files"
+    },
+    "postRunIVExtraction20261009": {
+      "status": "OBSERVED_1023_PLT_ROWS",
+      "rowCount": 1023,
+      "rowWidth": 17,
+      "remainder": 0,
+      "firstAnodeVoltageV": 0,
+      "lastAnodeVoltageV": 5,
+      "finalAnodeTotalCurrentRaw": 1.44801646079583e-11,
+      "sampledPairsRaw": [
+        [
+          0,
+          -9.34556980161972e-27
+        ],
+        [
+          0.503368864993221,
+          5.81275673304787e-15
+        ],
+        [
+          1.00336886499322,
+          6.13100514338505e-15
+        ],
+        [
+          1.50336886499322,
+          7.84214693612489e-15
+        ],
+        [
+          2.00336886499322,
+          1.31567117783539e-14
+        ],
+        [
+          2.50336886499322,
+          2.84645414227297e-14
+        ],
+        [
+          3.00336886499322,
+          3.17582117791696e-14
+        ],
+        [
+          3.50336886499322,
+          3.28516927136479e-14
+        ],
+        [
+          4.00336886499322,
+          3.50552134304176e-14
+        ],
+        [
+          4.50336886499322,
+          3.69335070901735e-13
+        ],
+        [
+          5,
+          1.44801646079583e-11
+        ]
+      ],
+      "fullSeriesMonotonicityChecked": false,
+      "currentUnitAndAreaFactorVerified": false,
+      "parameterReferenceFromPreprocessedCmd": "FASTC1_pp6_des.par",
+      "parameterFileFound": true,
+      "parameterContentsInspected": false,
+      "derivedConclusion": "Numerically complete sampled IV only; normal LED operation and IQE unverified",
+      "next": "Inspect active parameter contents and Physics/Plot settings; confirm radiative coefficient and 2D current semantics before physical inference."
+    },
+    "postRunPhysicalGate20261009": {
+      "status": "OBSERVED_CURRENTS_AND_RECOMBINATION_CODE_ONLY",
+      "lastPlt": {
+        "time": 1,
+        "anodeVoltageV": 5,
+        "anodeDisplacementCurrentRaw": 3.29132361382365e-18,
+        "anodeElectronCurrentRaw": 2.78143237811134e-13,
+        "anodeHoleCurrentRaw": 1.42020180788235e-11,
+        "anodeTotalCurrentRaw": 1.44801646079583e-11
+      },
+      "declaredRecombination": [
+        "SRH",
+        "Auger",
+        "Radiative"
+      ],
+      "declaredPlot": [
+        "SRHRecombination",
+        "RadiativeRecombination",
+        "AugerRecombination",
+        "TotalRecombination"
+      ],
+      "parameterFile": "FASTC1_pp6_des.par",
+      "parameterContents": "LatticeParameters; Thermionic Formula=1; GaN pMagnesiumActiveConcentration Ionization; no explicit Radiative coefficient",
+      "effectiveMaterialRadiativeCoeffVerified": false,
+      "actualQwRradMeasured": false,
+      "areaFactorCheckedInFiles": [
+        "pp2_des.cmd",
+        "FASTC1_pp6_des.par"
+      ],
+      "areaFactorMatchFound": false,
+      "interpretation": "Terminal displacement minor at endpoint, anode hole dominated; does not establish MQW carrier injection or emitted light; zero/default/override material radiative coefficient unresolved",
+      "next": "Inspect final n2_des.tdr RadiativeRecombination values in Clean_QW regions and actual effective GaN/InGaN radiative parameters. Preserve outputs."
+    },
+    "svisualRadiative20261009": {
+      "status": "OBSERVED_NONZERO_SPATIAL_FIELD_QW_INTEGRATION_PENDING",
+      "data": "n2_des",
+      "selectedScalar": "RadiativeRecombination",
+      "displayedMaxCmMinus3SMinus1": 74830000000000000000,
+      "displayedMinCmMinus3SMinus1": -7.512e-34,
+      "visualNote": "Upper thin layers have varied higher rates; deep bulk near zero; individual named QW regions cannot be identified from screenshot.",
+      "meshElements": 138194,
+      "meshPoints": 65513,
+      "cleanQw1ToQw4NumericValuesObserved": true,
+      "mqwIntegratedRadiativeObserved": false,
+      "iqeVerified": false,
+      "modelCoefficientVerified": false,
+      "next": "GUI test: uncheck Show Only Active Field in QW4 Probe and look for Rrad/SRH/Auger at same current point; fallback round x=0.24509 y=0.58322 and measure all fields anew with same returned coordinate and Clean_QW4 region",
+      "cleanQw1ToQw4RegionLabelsObserved": true,
+      "localQwProbes20261009": [
+        {
+          "region": "Clean_QW1(InGaN)",
+          "x": 0.169818746552,
+          "y": 0.560459877538,
+          "z": 0,
+          "RradiativePerCm3S": 18360101649960
+        },
+        {
+          "region": "Clean_QW2(InGaN)",
+          "x": 0.194326754006,
+          "y": 0.556958733616,
+          "z": 0,
+          "RradiativePerCm3S": 3558921779790
+        },
+        {
+          "region": "Clean_QW3(InGaN)",
+          "x": 0.22058533342,
+          "y": 0.56571159342,
+          "z": 0,
+          "RradiativePerCm3S": 839571357305000
+        },
+        {
+          "region": "Clean_QW4(InGaN)",
+          "x": 0.245093340874,
+          "y": 0.58321731303,
+          "z": 0,
+          "RradiativePerCm3S": 7094266327897000000
+        }
+      ],
+      "localSampleOnly": true,
+      "localQw4Srh20261009": {
+        "region": "Clean_QW4(InGaN)",
+        "field": "srhRecombination",
+        "x": 0.244864017914,
+        "y": 0.599783903626,
+        "z": 0,
+        "valuePerCm3S": 1.681637512936e+22,
+        "priorRadiativePoint": {
+          "x": 0.245093340874,
+          "y": 0.58321731303,
+          "valuePerCm3S": 7094266327897000000
+        },
+        "coLocated": false,
+        "ratioOrIQEValid": false,
+        "next": "Probe SRH at exact earlier QW4 radiative x/y, then Auger at same point."
+      },
+      "probeAtPrecisionLimit20261009": {
+        "status": "USER_REPORTED",
+        "decimalPlacesApproximately": 5,
+        "preferredWorkaround": "Test Show Only Active Field unchecked in Probe panel at same point",
+        "fallback": "Re-probe Radiative, SRH, Auger all at x=0.24509 y=0.58322 z=0 and verify identical actual position and Clean_QW4 zone",
+        "uiChangeTested": false
+      }
+    },
+    "qw4CoLocated20261009": {
+      "status": "OBSERVED_SAME_POINT",
+      "zone": "Clean_QW4(InGaN)",
+      "x": 0.244864017914,
+      "y": 0.651958341615,
+      "z": 0,
+      "units": "cm^-3 s^-1",
+      "radiative": 7103015017104000000,
+      "srh": 1.681575471039e+22,
+      "auger": 1238545872618000,
+      "total": 1.682285896396e+22,
+      "localRadiativeFractionPercentApprox": 0.0422,
+      "regionalIntegration": false,
+      "iqeDeviceVerified": false,
+      "interpretation": "SRH dominates locally at this point; cannot infer whole-QW or device IQE. NtSide=0 sets damage-region trap concentration zero, not global SRH physics off.",
+      "next": "Inspect SRH lifetimes and actual radiative coefficients, validate per-QW integrated Rrad/SRH/Auger, compare electrical injection/2D normalization and reference full/fine results."
+    }
+  },
+  "latestObservedEvent": {
+    "date": "2026-10-09",
+    "worker": "이택규",
+    "source": "3 user-shared SVisual Probe panels at same x/y Clean_QW4(InGaN) on completed 5V_TEST n2_des",
+    "status": "OBSERVED_QW4_COLOCATED_RAD_SRH_AUGER_LOCAL_SRH_DOMINANT",
+    "event": "QW4 same-point Rrad 7.103015017104e18, SRH 1.681575471039e22, Auger 1.238545872618e15, Total 1.682285896396e22 per cm3-second; pointwise radiative fraction about 0.0422%, not device IQE."
   }
 }

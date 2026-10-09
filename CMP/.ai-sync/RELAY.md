@@ -1,3 +1,114 @@
+## 2026-10-09 이택규 handoff: 5V_TEST at Clean_QW4 same (x,y)=(0.244864017914,0.651958341615): Rrad=7.103015017104e18, SRH=1.681575471039e22, Auger=1.238545872618e15 cm^-3 s^-1. Pointwise radiative share ~0.0422%, not device IQE. Check spatial integrated MQW rates and effective SRH/material parameters next. NtSide=0 does not disable all SRH. Preserve outputs; no solver edits.
+
+## 2026-10-09 — 5V copied Half+Coarse SDevice finished; postprocessing/validation now first (이택규 / ChatGPT)
+
+- OBSERVED: user terminal `JUSUBIN_FAST_HALF_5V_TEST/n2_des.log` shows final anode 5.000 V, total current 1.448E-11 in output units, `Curve trace finished`, `Sentaurus Device simulation finished`, `Good Bye !` 2026-10-09 14:29:52 KST. Wallclock 10596.76 s, peak memory 2.97 GB. `n2_5V_ckpt_des.sav`, circuit checkpoint, `n2_des.tdr` written. No active pp2 in `ps`; pp6/pp12 references still observed.
+- This resolves the uncertainty about whether copied NtSide=0 Half/Coarse Node2 reached 5V. It does not validate emission/IQE, current normalization, NtSide=1e18 damaged baseline or full/fine equivalence; treat 5V test only as solver endpoint success.
+- NEXT FIRST: preserve Node2 outputs/checkpoints; review full `n2_des.plt` 0–5V trajectory and units, physical current/recombination; compare Full vs Half at equivalent bias and same current. Evaluate baseline gates before launching NtSide=1e18; A/B production NO-GO.
+- Do not: cleanup/rerun successful Node2, interrupt pp6/pp12, conclude physical speedup from old estimated ETA (measured runtime supersedes it), modify baseline geometry/trap/physics without review.
+
+---
+## 2026-10-09 — User temporarily shifts from TCAD operations to conceptual Project A study (이택규)
+- User says interactive TCAD unavailable; asks if 5V Half/Coarse Test is Baseline and whether Project A Carbon is implanted. **Do not assume existing SWB Node2 5V process stopped**; no fresh log.
+- Answer: 5V completion necessary but not sufficient. NtSide=0 is pristine/trap-off control; nominal damaged baseline NtSide=1e18 required, plus full-vs-half/coarse equivalence, matched-current I-V/SRH/Rrad/RAuger/IQE/current-crowding, current normalization.
+- Verified protocol: CMP/PROJECT_AB_PRE_RUN_AUDIT.md section 4 defines `Cedge_L/R` GaN immediately inside 5nm damage, first location upper nGaN beneath MQW, with carbon deep acceptor/compensation and carbon-off null control. Stage1 is **device-level carbon mechanism screen**, not SProcess implantation. Physical C implantation is only potential later process path; may add damage and activation issues, not yet chosen. Hypothesized reduced sidewall recombination/IQE benefit remains unproven.
+- Next: explain mechanism and implantation/profile distinctions; when TCAD accessible, inspect live 5V Node2 log and preserve the running project.
+
+---
+
+## 2026-10-09 11:33 KST — Copied Half 5V Node2 submitted/running in SWB
+- OBSERVED SWB Project Log screenshot for `JUSUBIN_FAST_HALF_5V_TEST`: preprocess initialized; Node2 submitted for local execution; ready -> pending -> running; SDevice job 2 started 11:33:14 Oct9 2026. This confirms startup only, not solver convergence, ongoing process, or 5V reached.
+- Preflight copy+readable archive, pp2 Goal5.0V/FinalTime1.0 and Grid/NtSide=0 previously passed. Other pp6 and pp12 running concurrently on same account.
+- NEXT: in copied folder check `ps -fu semi437 | grep '[s]device'`, `ls -lh --full-time n2_des.log`, `tail -n 20 n2_des.log`; do NOT Clean Up Node, rerun F7, or disturb original/other jobs.
+
+---
+
+## 2026-10-09 — pp2 5V not running; other jobs active (이택규)
+- OBSERVED `ps` on semi437: PID 69457 pp6_des.cmd since Oct04, PID 93915 pp12_des.cmd since Oct06; no pp2_des.cmd. Copied 5V_TEST `n2_des.log` is original completed 0.3V smoke (mtime Oct9 01:39:13, wallclock 25019.43s, peak 2.61GB, Good Bye); **NOT** a 5V result.
+- SWB screenshot showed 5V_TEST open with SDE→SDEVICE, NtSide=0; no active node2 run in process evidence. Clean Up Node not needed, risks clearing inherited results. Tested pre5V tar archive readable and pp2 preprocessed FinalTime1.0 Goal5V Grid n1_msh NtSide0 verified.
+- NEXT: user may select copied project's SDevice Node2 only and F7 (if resource pressure from pp6/pp12 acceptable); inspect fresh `n2_des.log`, SWB View Output and convergence. No 5V launch confirmed as of last user terminal. Do not touch original SDE/other running jobs.
+
+---
+
+## 2026-10-09 — 5V Half SWB preflight done, archive integrity pending (이택규)
+- OBSERVED user terminal: copied `JUSUBIN_FAST_HALF_5V_TEST` 12M snapshot archive `../JUSUBIN_FAST_HALF_5V_TEST_pre5V_20261009.tar.gz` exists (Oct9 11:25); `tar -tzf` integrity test not yet run.
+- Executable pp2: `Grid=n1_msh.tdr`, 12 printed `Conc=0` entries, RHSMin=1e-3, Coupled iterations startup=500/100, sweep=15. Prior pp2 confirmed Transient FinalTime=1.0 Goal anode=5.0 Save=n2_5V_ckpt. No 5V run observed yet.
+- First next: `tar -tzf ../JUSUBIN_FAST_HALF_5V_TEST_pre5V_20261009.tar.gz > /dev/null` and C-shell `echo $status` expecting 0; launch only copied SWB SDevice Node2 after that; inspect fresh n2 log/error. Never claim completed simulation until 5V trace and physical outputs are checked.
+- Keep original 0.3V project/outputs and separate failed QS Copy unchanged. Do not use inherited copied n2 files as evidence for 5V.
+
+---
+
+## 2026-10-09 — 5V copied half SDevice source edited (이택규 / ChatGPT)
+- OBSERVED user terminal in `JUSUBIN_FAST_HALF_5V_TEST`: original source backup command executed, then sed replaced Transient FinalTime 0.06->1.0, Goal anode 0.3->5.0, Save prefix from smoke 0p3V to 5V. Grep returned edited lines 587, 597, 608 and untouched initial electrodes 0V at 38/43.
+- Actual changed source is on remote semi437, NOT uploaded as full GitHub source. New 5V run not started. Existing original 0.3V smoke and separate QS Copy remain protected.
+- NEXT: SWB copied project SDevice node 2 Ctrl+P preprocess ONLY, then verify `pp2_des.cmd` has FinalTime 1.0, Goal anode 5.0 and intended save; confirm correct grid/NtSide and no stale output. Do not F7 until reviewed. Original 0.3V smoke comment may still be in source.
+- WARNING: 5V at FinalTime 1.0 preserves previous voltage ramp ratio, not proof of high-voltage convergence or steady-state LED validity.
+
+---
+
+## 2026-10-09 — Half 5V test copy marker check passed (이택규 / ChatGPT)
+- OBSERVED `JUSUBIN_FAST_HALF_SWB/.project` and `JUSUBIN_FAST_HALF_5V_TEST/.project` both exist as zero-byte files (Oct 8 16:58) per user terminal. Copy's SDevice source previously matched original with `cmp`.
+- SWB GUI open, tool-flow nodes, and independent project path remain UNVERIFIED; marker alone is not full recognition proof.
+- NEXT: open `JUSUBIN_FAST_HALF_5V_TEST` from SWB Projects list or project open menu, check screenshot. No Run/F7 or code edits. Preserve original.
+
+---
+
+
+
+## 2026-10-09 — Filesystem copy exists; SWB open not yet checked
+- 이택규 executed `cp -a JUSUBIN_FAST_HALF_SWB JUSUBIN_FAST_HALF_5V_TEST`, subsequent ls confirmed target directory and `cmp` between original/copied SDevice source produced no differences.
+- Bash-style conditional produced `if: Expression Syntax.` in current C-shell-like terminal; standalone copy command worked.
+- Next verify original/copied hidden `.project` file and project directory content, then open copied project in SWB Projects browser; preserve original, do not run simulations or edit high-bias deck yet.
+## 2026-10-09 Original Transient endpoint verified
+- 이택규 verified executable original Node2 Transient: FinalTime 0.06, Goal anode 0.3V, Inner Coupled Iterations 15. Header 0–4/4–5 V comments are stale for the smoke.
+- Original Transient 0.3V smoke complete; QS Copy failed at 0.019304636V. Neither proves the 3–5V LED baseline or full/fine equivalence.
+- Preserve original, QS Copy and outputs. Next review separate higher-bias transient branch without changing Common Baseline. No SDevice sources were modified.
+
+---
+
+## 2026-10-09 — Transient versus QS settings checked (이택규 / ChatGPT)
+- OBSERVED original `JUSUBIN_FAST_HALF_SWB/pp2_des.cmd` and QS Copy pp2: both startup Poisson Coupled 500 with LineSearchDamping=1e-2, initial carriers Coupled 100, sweep inner Coupled Iterations=15; ErrRef e/h 1e4, RHSMin=1e-3. So lack of QS sweep damping is NOT a unique QS-vs-original difference.
+- Original Transient controls InitialStep 1e-5, MinStep 1e-9, MaxStep 1e-3, Increment 1.2; QS InitialStep .03, MinStep 1e-6, MaxStep .15, Increment 1.5, Decrement 2.0. Different time semantics; direct numerical comparison invalid.
+- QS stopped Newton nonconvergence near 0.019304636V; original transient completed 0.3V. No change applied to TCAD sources.
+- Noted discrepancy: header comments in original preprocessed deck mention 0–4.0V and 4.0–5.0V; actual completed smoke log was 0.3V. Inspect executable original Goal and full Solve in pp2 lines 583–615 instead of extrapolating from comments.
+- Underlying root cause still unresolved; preserve baseline and both branches. Next: verify original Goal/step block, then design an isolated QS stability test only if justified.
+
+---
+
+## 2026-10-09 — QS Copy actual Math/Solve controls inspected (이택규 / ChatGPT)
+- Exact preprocessed QS deck (user terminal): `ErrRef(e/h)=1e4, RHSMin=1e-3, CheckRhsAfterUpdate, Transient=BE, ExtendedPrecision(80), Blocked/ILS(set=22)`; initialization Poisson 500 iterations + `LineSearchDamping=1e-2`, startup carrier coupled 100 iterations; QS Goal 0.3V, `InitialStep=.03, MinStep=1e-6, MaxStep=.15, Increment=1.5, Decrement=2`, inner coupled Poisson/Electron/Hole `Iterations=15` (no explicit damping).
+- Observed failure: Newton 15 iter, nonconvergent RHS at 0.019304636V; step cutback below MinStep. Underlying root cause UNRESOLVED. Damping within QS is a **proposal**, not yet verified fix.
+- WARNING: `Save(n2_qs0p3_ckpt)` executed after QS failed, despite code comment saying only after 0.3V completed. This checkpoint must not be interpreted as verified 0.3V.
+- Next: inspect/compare original transient pp2_des.cmd Math/Solve numeric controls and physics; no code changed; preserve original full/common baseline and both results.
+
+---
+
+## 2026-10-09 — Final QS Copy convergence diagnostic (이택규 / ChatGPT)
+- Source log user provided `n2_des.log` 6900-6997: on t=0.0643488→0.0643505 (step 1.6797e-6), Poisson/electron/hole Bank/Rose Newton with factor 1.0 oscillates strongly, Rhs up to 1.26e8; after 15 iterations final Rhs 1.85e6 → `#iterations larger than 15`. Retry 8.3986e-7 violates MinStep 1e-6; sweep stops, last accepted V=0.0193046363 V of 0.3 V.
+- `.err`: repeated vanOverstraetendeMan E0 isotropic/anisotropic difference; direct link to failure not established. DOS mass interpolation is logged.
+- Already tried: actual QS Copy started and completed process but not bias sweep; separate original transient 0.3V completed.
+- Next: inspect actual QS pp2_des.cmd Math/Solve settings for controlled numerical-only remedy; preserve physical Common Baseline, both branches. Do not blindly lower MinStep or claim QS speedup.
+
+---
+
+## 2026-10-09 — QS Copy last voltage clarified (이택규 / ChatGPT)
+- OBSERVED: last saved `.plt` time 0.0643487876313307 and `anode OuterVoltage` 0.0193046362893992 V, only 6.435% of 0.3V goal.
+- UNRESOLVED blocker: SDevice QS reports `Step-size less than MinStep (8.3986e-07)` near t=0.06435; exact underlying solver issue unknown.
+- Read `sed -n '6900,7010p' n2_des.log` and `tail -n 40 n2_des.err` before editing or restarting.
+- Preserve original 0.3V transient and Common Baseline; QS elapsed time is not a fair speedup benchmark.
+
+---
+
+## 2026-10-09 — QS Copy MinStep blocker (Lee Taekgyu; ChatGPT)
+- Project: `/user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_SWB_Copy`; distinct from completed transient original.
+- User-shared `n2_des.log`: `Finished, because... Step-size less than MinStep (step-size = 8.3986e-07)`; SDevice final `Good Bye !`, save + plot written, 18417.09 s (5:06:57), max memory 2.96 GB.
+- Failure: QS goal 0.3 V NOT verified. Saved checkpoint is not convergence evidence.
+- Already tried: SWB Copy QS source and pp2 preprocess validated on Oct 8; QS SDevice actually ran. Original transient reached 0.3 V normally in 25019.43 s.
+- First next: extract final accepted anode bias from QS `n2_des.plt` tail, cutback/step attempts in `n2_des.log`, and relevant `.err`; diagnose before changing solver settings.
+- Preserve: Common Baseline geometry/physics/traps, original transient & full reference results. Do not blindly reduce MinStep or claim QS speed gain.
+
+---
+
 ## 2026-10-06 — 이택규 → 주수빈/다음 작업자 인수인계
 
 오늘은 FAST_C1 Node 6(NtSide=0)·Node 12(NtSide=1e18)가 실제로 멈춘 게 아니라 high-bias에서 timestep을 키웠다가 Newton 실패 → 약 1/2 cutback → 다시 수렴하는 패턴 때문에 매우 느리다는 것을 로그로 확인했다. D1에서 linear solver maxit 문제가 아니라 RHS가 1e-3 바로 위에서 정체되는 timestep-dependent nonlinear bottleneck임을 확인했고, D2에서 Node 6은 accepted Newton max=4였지만 Node 12는 13·15 iteration에서 실제 accepted된 step이 있어 Claude가 제안했던 공통 C2 Iterations=8/10은 폐기했다. 따라서 첫 공통 FAST_C2는 Iterations=15를 유지하고, high-bias Increment만 1.2→1.05로 낮추는 방향으로 간다. D3에서 live .plt로 I(V)를 뽑았고, provisional J는 아직 너무 낮아 '5 V 대신 current-density window에서 분석 종료' 결정은 보류했다. D6에서는 기존 n6_inter_0004_des.tdr을 Load해보았지만 'contains no SLP information'으로 실패해, 현재 C1 intermediate TDR로 restart하는 Option 3은 폐기했다. Node 6/12 기존 run은 reference로 계속 유지하는 것이 원칙이다.

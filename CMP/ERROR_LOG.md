@@ -474,3 +474,43 @@ Next diagnostic:
 4. 필요 시 SVisual2를 실제 output filename에 맞춤
 
 Do not change baseline physics parameters while diagnosing this.
+
+
+## 2026-10-09 — QS Copy sweep stopped below minimum step (UNRESOLVED)
+
+- Work session: 이택규, inspecting JuSubin's separate `JUSUBIN_FAST_HALF_SWB_Copy` QS smoke.
+- Evidence (`n2_des.log` tail, user-provided): `Finished, because... Step-size less than MinStep (step-size = 8.3986e-07)`.
+- SDevice wrote `n2_qs0p3_ckpt_des.sav`, circuit `.sav`, and `n2_des.tdr`, then `Good Bye !` at 2026-10-09 00:28:10 KST; wallclock 18417.09 s (5:06:57), peak 2.96 GB.
+- Interpretation: QS sweep did not complete normally at goal; `Good Bye` and saves are not proof of reaching 0.3 V. Last accepted voltage/underlying Newton or cutback failure is **not yet verified**.
+- Contrast: original half+coarse transient reached 0.3 V, wallclock 25019.43 s. Run durations are NOT a valid speed benchmark with different end conditions.
+- Next: inspect QS last accepted anode bias in final `n2_des.plt` record, repeated rejected steps in `n2_des.log`, and the full `.err` output. Preserve both branches and Common Baseline before proposing solver changes.
+
+
+## 2026-10-09 — QS Copy last accepted bias determined
+- 작업자: 이택규. OBSERVED from user-provided `JUSUBIN_FAST_HALF_SWB_Copy/n2_des.plt` tail and `n2_des.log` grep.
+- Last recorded QS pseudo-time: 6.43487876313307E-02; last anode OuterVoltage: 1.93046362893992E-02 V (0.0193046363 V; 19.3 mV, only ~6.435% of requested 0.3 V).
+- Last log attempts at t=0.0643488 to 0.0643505 then terminated `Step-size less than MinStep (step-size = 8.3986e-07)`.
+- QS runtime 18417.09 s but did NOT reach goal. Cannot compare as speedup to original transient that reached 0.3 V in 25019.43 s.
+- Root numerical/physics trigger not yet established. Next: inspect QS log around lines 6900-7000 and `n2_des.err`; no blind MinStep or baseline modification.
+
+
+### 2026-10-09 confirmed failure mechanism (OBSERVED) — QS Copy
+- Final failed QS step t=0.0643488 to 0.0643505 (1.6797e-6): Newton Bank/Rose `Coupled` Poisson+electron+hole factor=1, |Rhs| nonmonotonic (from 3.80e1, peaks to 1.26e8, last 1.85e6); `#iterations larger than 15` after 208.16 s (assembly 41.26, solve 161.58). Then half-step retry proposed at 8.3986e-7, smaller than MinStep 1e-6; QS stops.
+- `.err` contains `vanOverstraetendeMan` E0 isotropic 1 vs anisotropic 4e5 mismatch; only isotropic value used. No basis to attribute QS Newton failure to this warning. Also InGaN region DOS mass material interpolation lines.
+- CONFIRMED immediate cause: Newton not converged at iteration limit and next cutback below MinStep. UNRESOLVED root cause of poor conditioning/divergence. No evidence that blindly lowering MinStep fixes issue.
+
+
+## 2026-10-09 — QS Copy active preprocess settings checked
+- OBSERVED from semi437 `JUSUBIN_FAST_HALF_SWB_Copy/pp2_des.cmd` grep supplied by Lee Taekgyu: Quasistationary begins line 589 (InitialStep=0.03, MinStep=1e-6, MaxStep=0.15). QS Coupled has `Iterations=15` line 601; Math `RHSMin=1e-3` line 510. Earlier `Coupled(Iterations=500, LineSearchDamping=1e-2)` around 570-572 appears in initial solve, another initial Coupled Iterations=100 at line 578.
+- OBSERVED final QS failed Newton after 15 iterations and rejected halved step below MinStep; 0.0193046363 V last accepted. Specific nonlinear divergence trigger remains UNRESOLVED.
+- Need inspect full surrounding Math/Solve 505-610 before attributing nonconvergence to damping, iteration cap, or other solver options. Avoid changing frozen Common Baseline, preserved transient results, or rerunning blindly.
+
+
+## 2026-10-09 — QS Math/Solve complete context inspected
+- 작업자: 이택규; OBSERVED from `JUSUBIN_FAST_HALF_SWB_Copy/pp2_des.cmd` lines 505–530 and 565–610 supplied in chat.
+- Math: `ErrRef(electron/hole)=1e4`, `RHSMin=1e-3`, `CheckRhsAfterUpdate`, `Transient=BE`, `ExtendedPrecision(80)`, `TensorGridAniso(aniso)`, `ComputeDopingConcentration`, `Method=Blocked`, `SubMethod=ILS(set=22)`.
+- Solve initialization: Poisson `Coupled(Iterations=500 LineSearchDamping=1e-2)`; carrier-coupled zero-bias `Coupled(Iterations=100)`.
+- QS: `InitialStep=0.03 MinStep=1e-6 MaxStep=0.15 Increment=1.5 Decrement=2.0 Goal(anode)=0.3 V`, inner `Coupled(Iterations=15)` over Poisson/Electron/Hole with NO explicit LineSearchDamping.
+- The initial Poisson damping does not imply the QS inner Coupled has damping. Hypothesis to test: QS Newton stabilization numerics may improve convergence; no direct causal verification yet. Math `Transient=BE` does not replace QS Solve command.
+- IMPORTANT discrepancy: code comment says 0.3V checkpoint written only after sweep completed, but actual logs prove Save ran after QS `Step-size less than MinStep` termination at last accepted V=0.019304636 V. Thus `n2_qs0p3_ckpt` is NOT a verified 0.3V checkpoint; never use filename as endpoint evidence.
+- Next before code edits: compare numeric & physics control lines of original transient `JUSUBIN_FAST_HALF_SWB/pp2_des.cmd` with QS Copy actual deck. No solver setting modified yet.
