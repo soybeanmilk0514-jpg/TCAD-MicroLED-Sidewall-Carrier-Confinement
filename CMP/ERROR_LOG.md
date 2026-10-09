@@ -1,3 +1,7 @@
+## 2026-10-10 — Outdated SDevice comments falsely advertise numerical ramp/Save schedule (OBSERVED)
+
+- Source: private `CMP_BASELINE_1.2.0_CAL_AUDIT.tar.gz` inspection of successful 5V_TEST `sdevice_des.cmd` vs `pp2_des.cmd` and `n2_des.log`. Header claims 0–4V Increment1.2, 4–5V Increment1.05, Save at 4.0/4.5/4.8/5V; mid-Solve comment claims short 0–0.3V smoke. Actual executable has single 0–5V Transient Increment1.2 and Save at 5V only. Solver completed, so this is a **documentation/extraction/checkpoint-plan mismatch**, not a simulation failure. Intermediate 4–5V TDR coverage absent in active command. No source edited. Correct in a separate future CAL branch after preserving originals and verifying exact syntax.
+
 ## 2026-10-08 — cmp216 FAST_C1_ACCOUNT_TEST n6 logging stopped during new BE-step (OBSERVED / TERMINATION CAUSE UNRESOLVED)
 
 - OBSERVED incomplete log, **not a confirmed software error**: next BE-step printed iteration header but no iterations; subsequent grep found no `fatal`, `killed`, `aborted`, `signal`, `good bye`, or `simulation finished` report. Earlier grep `license` shows successful checkout Oct 7 16:22.
@@ -514,3 +518,14 @@ Do not change baseline physics parameters while diagnosing this.
 - The initial Poisson damping does not imply the QS inner Coupled has damping. Hypothesis to test: QS Newton stabilization numerics may improve convergence; no direct causal verification yet. Math `Transient=BE` does not replace QS Solve command.
 - IMPORTANT discrepancy: code comment says 0.3V checkpoint written only after sweep completed, but actual logs prove Save ran after QS `Step-size less than MinStep` termination at last accepted V=0.019304636 V. Thus `n2_qs0p3_ckpt` is NOT a verified 0.3V checkpoint; never use filename as endpoint evidence.
 - Next before code edits: compare numeric & physics control lines of original transient `JUSUBIN_FAST_HALF_SWB/pp2_des.cmd` with QS Copy actual deck. No solver setting modified yet.
+
+## 2026-10-09 — Correction: wrongly interpreted SVisual '+' group as combined QW bulk (GPT guidance error)
+
+- User screenshot of SVisual Field Integration `RadiativeRecombination` with `Clean_QW3` and `Clean_QW3+DmgL_QW3` highlighted displays output ONLY for `Regions of Dimension 2: Clean_QW3`, Integral 2.657110e+02 [s^-1 um^-1], Domain 5.985012e-03 [um^2].
+- GPT earlier incorrectly stated `Clean_QW3+DmgL_QW3` was guaranteed combined whole-QW ROI; current evidence does NOT support that and likely represents a boundary/interface label (exact '+' metadata unconfirmed). Do not claim total QW3 integral from this selection.
+- Safe fix (read-only): independently integrate `Clean_QW3` and *standalone* `DmgL_QW3` using SVisual's `Regions of Dimension 2` pane to verify each result and sum their integrals (avoid overlapping selections or confusing interface). No user computation or device source needs rerun, no data was deleted or changed.
+
+## 2026-10-09 — Shell syntax mistake in supplied MaterialDB inspection command (RESOLVED GUIDANCE)
+
+- Assistant provided Bash assignment `DB=/...` and Bash `for m in ...; do` while user's current shell reports C-shell-family errors (`Command not found`, `Undefined variable`). Read-only `sed -n '330,350p' n2_des.log` worked. No MaterialsDB parameter values were retrieved; no simulation/model/source error from this incident.
+- Corrected with one literal-path C-shell-compatible command `grep -niE 'SRH|Radiative|Auger|taun0|taup0|Scharfetter' /user/tools/synopsys/sentaurus/T-2022.03/tcad/current/lib/sdevice/MaterialDB/InGaN.par | head -n 70`. After output verify effective parameter selection/material DB and exact status of `Use Si parameters`. Do not rerun/modify TCAD.

@@ -1,3 +1,150 @@
+## 2026-10-10 — CAL 5V Run pressed by 이택규 (USER REPORTED)
+
+- Worker reports starting CMP_BASELINE_1.2.0_CAL NtSide0 5V SDevice in SWB. No new solver log or completion checked yet.
+- Relative to prior finished NtSide0 Half+Coarse 4-QW trial, new InGaN Scharfetter tau_max=100ns replaces 1ns. Same geometry/doping/Transient BE intended. Old SDevice 5V walltime ~2h56m, new duration uncertain; a 3-6h figure is a non-validated planning estimate only.
+- Next: read cloned n2_des.log progress/effective model and check SWB node status. Preserve prior results.
+
+## 2026-10-10 — 이택규 decides current CAL run before SWB-native parameter migration
+
+- User instruction: first run the present separate `CMP_BASELINE_1.2.0_CAL` as configured: cloned SDE and SDevice; `sdevice_des.cmd:22 Parameters="FASTC1_pp6_des.par"` and the saved cloned custom .par already has `Material="InGaN" Scharfetter taumax=1e-7,1e-7`. Do not change to standard `sdevice.par/@parameter@` for this device; adopt professor-facing copy/paste layout for **subsequent** newly created devices. The immediate priority is testing present candidate.
+- No CAL SDE/SDEVICE job or preprocess completed on record. Next: run SDE mesh, verify its success, preprocess SDevice and prove actual material parameter input and solver recognition, then user can launch current 5V NtSide0 Transient-BE and provide log/results. Preserve original completed 5V_TEST and Full reference. CAL 100ns is a sensitivity run, not experimental fit.
+
+---
+
+## 2026-10-10 — User requires professor reproducibility through SWB-native code+parameter editors
+
+이택규 live `grep` on cloned CAL SDEVICE: line22 `Parameters = "FASTC1_pp6_des.par"`, line68 `DefaultParametersFromFile`. This nonstandard direct filename means professors copying only SWB SDE/SDevice code would not necessarily have required GaN Mg and InGaN SRH overrides. Official Sentaurus SWB docs endorse common `sdevice.par` / `@parameter@` expansion with preprocessing. Plan **not yet executed**: first inspect any existing cloned `sdevice.par` (possibly default Silicon), then move actual custom blocks into it preserving originals and alter cloned SDevice File line to `Parameters="@parameter@"`; preprocess and verify `ppN_des.par` and effective log before any solver run. Presentation handoff requires three text inputs + NtSide and validation, not two files. Preserve finished reference, custom .par backup and parent result.
+
+---
+
+## 2026-10-10 — Separate CAL project cloned in SWB (OBSERVED / NOT RUN)
+
+Worker 이택규 provided screenshot showing `CMP_BASELINE_1.2.0_CAL` in SWB, SDE→SDEVICE and NtSide=0, with `--` tool results; parent project still listed separately. Actual new source and parameter contents remain unchecked. Next verify new project file inventory, then install private candidate .par only in new clone and preprocess/short smoke. Do not claim CAL simulation has run or lifetime override is active.
+
+---
+
+## 2026-10-10 — CAL SRH-only private input candidate ready (PROPOSED / NOT SENTARUS TESTED)
+
+Worker 이택규 supplied current server default InGaN Scharfetter/Radiative/Auger section. ChatGPT used confidential 9-file completed parent archive to build `CMP_BASELINE_1.2.0_CAL_INPUT_CANDIDATE.zip` privately; this is a ZIP of three source inputs and README, **not** a full SWB project. It preserves original SDE byte for byte; executable SDevice lines identical (only header/comments corrected); original custom LatticeParameters, Thermionic, GaN Mg block remain. Added InGaN-specific Scharfetter tau_max=1e-7 s for n/p, other default Scharfetter terms unchanged; GaN and AlGaN not changed. Private candidate par SHA256 adfe81ab03b8f0ca84b09b9a4373fdc8e71f7a5faa00ce01a7c0b82b7fb2f1ad. Zip static checks pass; **local T-2022.03 preprocess not performed**. Vendor central MaterialDB not edited.
+
+New branch to be created in SWB using `Project > Save As > Clean Project` from parent to `CMP_BASELINE_1.2.0_CAL`, then install candidate files only in clone. Source still does one full 0-to-5V Transient Increment=1.2 and Save at 5V, so make separate short 0-0.3V smoke before using source for long solve. Do not confuse 100ns literature sensitivity with experimental lifetime calibration or solved/correct IQE. Follow `CMP/reviews/BASELINE_1_2_0_CAL_AUDIT_20261010.md` and `CMP/PROJECT_NAMING_CONVENTION.md`. No code added to public GitHub, no new project/run yet.
+
+---
+
+## 2026-10-10 — Crucial CAL audit evidence and recommended experiment for Claude/next AI
+
+Actual privately uploaded successful JUSUBIN_FAST_HALF_5V_TEST 5V archive has been inspected. See public-safe `CMP/reviews/BASELINE_1_2_0_CAL_AUDIT_20261010.md` before suggesting any new code. Key computational evidence: eight 5V InGaN QW Clean/Dmg regions show exactly Rrad=Bnp with B=2e-10, Auger=A np(n+p) with A=1e-30, and SRH=np/[tau(n+p)] with tau=1ns, computed from HDF5 fields. The 0.10947% four-well model radiative share is not calibrated LED IQE. pGaN occupation*MgActive equals ionized -DopingConcentration (effective ~3e17 at some locations), so previous MgMinus raw field did NOT prove incomplete ionization inactive. Last 5V raw current 1.448e-11 with provisional J much lower than 0.1A/cm2; scaling unverified.
+
+Actual SDevice code has SINGLE 0–5V Transient Increment=1.2 and single 5V Save; header claims 4,4.5,4.8 saves and highbias Increment1.05 but source does not implement them. 5V save was written on server but omitted from private upload. Need fix code/header consistency and verify same-current spatial snapshot availability before long reruns.
+
+Proposed SRH material sensitivity is **NOT** a physically fitted baseline. Literature Baek et al Nat Comm 2023 DOI 10.1038/s41467-023-36773-w chose 100ns, B=1e-10, Auger=1e-31 in a DIFFERENT Silvaco six-well epitaxy. First read actual installed T-2022.03 InGaN.par Scharfetter section and official material override syntax, preserve GaN Mg/LatticeParameters/Thermionic. Then isolated copy `CMP_BASELINE_1.2.0_CAL` with SRH-only sensitivity, short Transient smoke -> 5V NtSide0 -> NtSide1e18 with same physics and current comparison. Full-vs-Half numerical equivalence + J normalization remain final gates. Do not claim Claude was contacted directly; use this handoff for any later AI. No new TCAD solver run or code modifications.
+
+---
+
+## 2026-10-09 — Canonical naming adopted and 5V_TEST file inventory verified (DECISION/OBSERVED)
+
+- Worker 이택규: new future Baseline candidate is **`CMP_BASELINE_1.2.0_CAL`**, not `CMP_BASELINE_CAL_V1`. Official policy `CMP/PROJECT_NAMING_CONVENTION.md`: `CMP_<TYPE>_<MAJOR.MINOR.PATCH>_<TAG>`, independent A/B lineages, NtSide is a run variable.
+- User server listing confirms 9 source/preprocessed/mesh/log/results file paths exist in `JUSUBIN_FAST_HALF_5V_TEST`, but the private bytes have not yet been provided for review. Next AI/Claude: review exact sources and effective material/current models before proposing edits. Preserve finished 5V_TEST, pre5V tar.gz and Full/Fine FAST_C1. No new solver work performed.
+
+---
+
+## 2026-10-09 — Claude / next AI review request: CMP_BASELINE_CAL_V1 proposal (PROPOSED, NOT SENT DIRECTLY)
+
+Worker 이택규 chose to keep `JUSUBIN_FAST_HALF_5V_TEST_pre5V_20261009.tar.gz` in place and prepare a separate near-final candidate `CMP_BASELINE_CAL_V1`. Existing 5V NtSide0 Half+Coarse transient result (138194 elements; modeled 4QW radiative fraction ~0.10947%; low provisional J) must be preserved and not treated as a calibrated IQE. Region-specific Mg IncompleteIonization runs with E0=0.2eV/g=4; local hDensity matched historical target, yet MgMinus interpretation unresolved. The installed MaterialDB InGaN recombination defaults are annotated GaAs-derived and require validation of effective alloy mixing/overrides. QS branch previously failed near 0.0193V; use proven Transient-BE for first candidate.
+
+For Claude or another AI reading this *later*: independently review actual private 5V_TEST input and log when made available, check applied InGaN SRH/Radiative/Auger, current units and injection, and recommend minimal literature-supported parameter-sensitivity tests with exact model precedence and reproducible comparisons. Do NOT claim direct Claude consultation, edit protected full baseline, change arbitrary values for a target efficiency, or run 5V production before private source review and short smoke. Full/Half+Coarse and same-current NtSide0/1e18 remain gates before final freeze.
+
+---
+
+## 2026-10-09 — Mg calibration source comment
+
+이택규 observed in actual 5V_TEST pp1_dvs.cmd: comment says N_Mg_p=9.59e18 was previously tuned for 300 K p-GaN hDensity near 3e17 with incomplete ionization. This is a historical comment, NOT present measured hole density. Next probe existing n2_des.tdr hDensity in Clean_pGaN using SVisual; do not change Mg input or rerun.
+
+---
+
+## 2026-10-09 — Active SDE 5V_TEST dopant numeric values; Mg concentration vs effective ionization (이택규)
+
+- OBSERVED `pp1_dvs.cmd` constants: `N_Mg_p=9.59e18`, `N_A_EBL=3e17`, `N_D_n=5e18`, `N_D_bar=1e15` [cm^-3]; `x_In=x_Al_EBL=0.15`. Actual species placements from prior 501–615 inspection pMg in Clean/DmgL pGaN, effective p EBL, n donor Clean/DmgL/base. All 12 NtSide0 trap Conc=0.
+- `CMP/COMMON_BASELINE.md` calls p-GaN **effective active acceptor≈3e17 cm^-3**, not explicitly a raw input Mg atom density. Don't incorrectly substitute 3e17 for current `N_Mg_p=9.59e18` which is fed into incomplete-ionization model. Whether ionized Mg density/mobile holes meet 3e17 benchmark remains UNRESOLVED (must inspect 5V `n2_des.tdr` `pMagnesiumMinusConcentration` and `hDensity` in Clean_pGaN). No proof physical Mg model calibrated or invalid based solely on input.
+- Prior JuSubin TIMELINE records Half+Coarse signed `DopingConcentration` color scale near -9.59e18 to +5e18 in mesh; supports gross sign/magnitude but NOT actual ionized/carrier concentrations, nor doping transition validation.
+- NEXT read-only `sed -n '105,128p' /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST/pp1_dvs.cmd` for inline rationale (then verify actual TDR carrier/ionized Mg data and spatial cutline). Baseline untouched.
+
+---
+
+## 2026-10-09 — Handoff: SWB missing sdevice.par dialog, safe GaN MaterialDB strategy, Subin validation gates (이택규 / ChatGPT)
+
+- OBSERVED screenshot original **JUSUBIN_FAST_HALF_SWB**, separate from successfully completed **JUSUBIN_FAST_HALF_5V_TEST**. In SWB SDevice `Tool > Edit Input > Parameter` prompts `Create Parameter File: sdevice.par does not exist` with `Silicon` default, `Choose Materials`, `Create Empty File`. This is an authoring step, NOT a solver result or evidence of a silicon LED simulation. User requested plan to build a physically credible GaN baseline and summarize JuSubin's October 8 handoff.
+- Confirmed from N-2017.09 Sentaurus Workbench UG pp65–68: `Choose Materials` copies material parameter files and includes them in new `sdevice.par`; common sdevice.par may differ from per-instance .par. GaN/InGaN/AlGaN/Nitride material names must be derived from SDE mesh; don't select only GaN; InN is alloy constituent for mixing but may not be a mesh material. Actual finished 5V_TEST had `ModelParameters=FASTC1_pp6_des.par` in n2_des.log and parsed InGaN.par/GaN.par DB through `DefaultParametersFromFile` (not necessarily SWB-generated sdevice.par). **First check active original `File { Parameters=... }` to determine whether generated sdevice.par would even be used.** Do not lose FASTC1 custom lattice/Thermionic/Mg definitions.
+- User screenshot original project current safest action: **Cancel**; work on an independent copied project based on finished 5V_TEST after backup, not original user project, and avoid blind selecting Silicon or writing parameter files in the live original.
+- From JuSubin TIMELINE 2026-10-08: Half+Coarse mesh built 138,194 elements, 65,513 points; Mg/n-GaN doping and Full/Half equivalence not verified; QS 0–0.3V probe proposal. On 2026-10-09 TaekGyu verified QS Copy fails at 0.019304636V (Newton 15 iterations then below MinStep). Finished off-trap NtSide0 Half 5V_TEST (5V SDevice 2h56m); *all 12* preprocessed Dmg Conc values in that result were previously observed zero; SVisual 4-QW recombination ratio 0.1094747566%, not physical final IQE; NtSide1e18 ON not yet run on this accelerated branch.
+- SCIENTIFIC BLOCKERS: InGaN.par GaAs-origin recombination values explicitly need calibration; effective material mixing and custom overrides unresolved, 2D current/J and hole/Mg/polarization injection unresolved; Transient 5V endpoint not independently steady-state-verified; Half+Coarse vs Full and same-current Nt0/Nt1e18 sidewall comparison pending. No basis to condemn Kou-based geometry or switch all physical models to GaN manually. P1 read-only source physics + material/parameters precedence + current/doping; P2 separate literature calibration parameters and short pilot; P3 matched-current off/on and full/half mesh; P4 freeze baseline only after gates; no broad A/B yet.
+- Do NOT edit TCAD files, create GUI par, or start jobs without user explicit action. No provenance of other JuSubin live work beyond GitHub and supplied conversations. Relevant files documented in CURRENT_STATUS/NEXT_ACTIONS/LIVE_STATE and Issue #7.
+
+---
+
+## 2026-10-09 — Baseline physics plausibility + literature rerun plan (이택규 / ChatGPT)
+
+- Latest log proves `DefaultParametersFromFile` loads InGaN.par/InN.par and active custom FASTC1_pp6_des.par; no standalone Lifetime file is normal, not proof of no SRH lifetime. Vendor InGaN.par GaAs-derived recombination warning: taumax 1ns, Radiative C 2e-10 cm3/s, Auger 1e-30 cm6/s. Numeric effective QW parameters/mixing unresolved. `Use Si parameters`, `Without incomplete ionization` in default-device block need scoped verification.
+- Peer papers: Kou 2019 DOI 10.1364/OE.27.00A643 numerical SRH lifetime 1e-7 (unit printed s^-1, inconsistent with lifetime) and Auger 1e-30; Baek Nature Communications 2023 DOI 10.1038/s41467-023-36773-w simulator SRH=100ns, Radiative=1e-10, Auger=1e-31, but 6-QW/different epitaxy. Neither is a unique fit to current 4-QW device.
+- 5V_TEST final 4-QW 2D IQE_rec ratio=0.1094747566% is a *modeled* recombination share only. 2D terminal current 1.448e-11 unverified units, 2um Half width inferred from 3nm QW ×0.006um²; conditional J≈7.24e-4 A/cm2 if A/um and no scale. Injection/polarization, material calibration, steady vs transient, and full/half equivalence unresolved.
+- DECISION: keep current sources/results intact; **no blind rerun** or geometry remake. Audit live pp2/global region physics, actual effective material and current normalization. Then, with team approval, separate literature-calibrated parameter sensitivity branch and short NtSide0 pilot, followed by matched-current NtSide1e18, full/fine & mesh convergence. Project A/B not approved until physically credible baseline.
+
+---
+
+## 2026-10-09 — InGaN.par actually uses GaAs-derived uncalibrated recombination model parameters (이택규)
+
+- **OBSERVED** live file line ~868 warning `Parameters for the recombination models below were taken from GaAs and require calibration for accurate simulations`. Scharfetter taumin=0, taumax=1e-9 s, Nref=1e16 cm^-3, gamma=1; Auger A=1e-30 cm6/s; Radiative C=2e-10 cm3/s. MaterialDB InGaN.par has been parsed according to earlier `n2_des.log`, but effective alloy parameters and overrides remain unverified.
+- 5V_TEST Half+Coarse NtSide0 four-QW `IQE_rec=0.1094747566%` from 2D integrals is not a validated InGaN LED physical IQE, and GaAs-borrowed coefficients are an explicit **physical calibration blocker**, not the established only root cause. SRH remains on, 2D current injection very low/unverified.
+- NEXT read-only `sed -n '945,970p' n2_des.log`, `sed -n '270,310p' n2_des.log`, audit alloy/material mixing/effective coefficients, J normalization, then literature calibration BEFORE any new physics branch. Protect baseline and outputs.
+
+---
+
+## 2026-10-09 — All four InGaN QW integrated Rrad/SRH/Auger complete (이택규)
+
+- Latest user SVisual Clean_QW1 (Rrad=857.9041, SRH=77658.39, Auger=252.5448) and DmgL_QW1 (Rrad=19.46374, SRH=496.6036, Auger=2.309115) [s^-1 um^-1] confirm last missing well. Derived QW1 total Rrad=877.36784, SRH=78154.9936, Auger=254.853915, well ratio=1.1065691%.
+- Sum all four wells Clean+DmgL at 5V NtSide0: Radiative=40072.8158452, SRH=36562944.9075, Auger=1599.706168587, total=36604617.4295138 [s^-1 um^-1], **MQW recombination radiative fraction=0.1094747566%**. QW4 provides ~96.94% of MQW integrated radiative. This is NOT experimentally validated LED IQE/EQE or final reference.
+- NEXT: inspect active effective SRH lifetimes and Radiative coefficients/material DB, 2D J-V normalization, carrier distribution/polarization, then full/fine and NtSide1e18 comparisons. Preserve files, no solver change.
+
+---
+
+## 2026-10-09 — QW2 recombination integrals complete / default-parameters audit ongoing (LeeTaekGyu)
+
+- 5V_TEST NtSide=0 Half, SVisual Clean_QW2 Rad=83.3149, SRH=54645.76, Auger=1.736316 [s^-1 um^-1]; DmgL_QW2 Rad=0.1672872, SRH=141.6049, Auger=0.003800247. Sum QW2 Rrad=83.4821872, SRH=54787.3649, Auger=1.740116247, QW-only recombination radiative fraction 0.1521382378%. QW1 still missing; QW3 0.0454256871% and QW4 0.1082525242% known.
+- Read-only grep live pp2_des.cmd and FASTC1_pp6_des.par finds DefaultParametersFromFile and SRH/Auger/Radiative model declarations, but no explicit lifetime/radiative material coefficients or AreaFactor in these two files; verify effective material database and current units, no cause assigned.
+- NEXT: QW1 6 independent Clean/DmgL 2D integrations, full 4-QW summation; inspect physical effective parameters. Do not edit/rerun TCAD or call QW-only numbers device IQE.
+
+---
+
+## 2026-10-09 — QW4 2D radiative/SRH/Auger integrals complete (이택규)
+
+- QW4 final 5V_TEST NtSide0 Half: independently integrated Clean (Rrad=38746.96, SRH=35617690, Auger=1327.983; area=0.005985012 um²) and DmgL (Rrad=98.768, SRH=226496.2, Auger=2.414354; area=0.00001500002 um²). SVisual integral units s^-1 um^-1.
+- Summed QW4 Rrad=38845.728, SRH=35844186.2, Auger=1330.397354, total 35884362.325354. Derived QW4-only recombination radiative fraction 0.1082525242%; QW3-only earlier 0.0454256871%. Device-wide IQE pending QW1/2, along with physics plausibility audit. No code changes.
+- NEXT: six standalone 2D region integrals each QW1 and QW2, then 4-QW IQE_rec from integrals, effective SRH/material/injection audit before baseline acceptance.
+
+---
+
+## 2026-10-09 — Full QW3 2D recombination integral completed; very low recombination share (이택규)
+
+- OBSERVED SVisual Clean_QW3 2D: SRH=5.841611e5, Auger=12.65704, earlier Radiative=265.711; DmgL_QW3 2D SRH=1655.249, Auger=0.05774334, Rad=0.526818; all s^-1 um^-1. Sum QW3 half-domain Rrad=266.237818; SRH=585816.349; Auger=12.71478334. Derived local-to-QW spatial-integrated recombination ratio Rrad/all = 0.0454256871% at 5V, NtSide=0. This is **QW3 only; device IQE unverified**.
+- Clean holds 99.717% of QW3 integrated SRH, so don't claim sidewall-specific trap caused low fraction; ordinary SRH physics is active and material parameter/current injection audit is pending.
+- NEXT: same verified 2D separate-region integrations for Clean/DmgL_QW1,2,4; verify materials radiative, SRH lifetimes and current unit. Keep baseline/code/results unchanged.
+
+---
+
+## 2026-10-09 — QW3 full radiative 2D integration gate passed
+
+- 이택규 5V_TEST SVisual: Clean_QW3 integral 265.711, DmgL_QW3 integral 0.526818, sum 266.237818 [s^-1 um^-1]; respective domains 0.005985012 and 0.00001500002 um², summed 0.00600001202 um². Both verified as separate dimension-2 regions.
+- This is not device IQE. Next integrate SRH and Auger over the same standalone regions, then all four QWs. Do not choose plus-named interface as union, modify code, or rerun.
+
+---
+
+## 2026-10-09 — Correction: '+' region labels in SVisual integration (이택규)
+
+- Observed screenshot output clean QW3-only radiative 2D integral 2.657110e+02 [s^-1 um^-1] and domain 5.985012e-03 um². Left `Clean_QW3+DmgL_QW3` selection did not show as separate 2D integrated region.
+- Prior GPT incorrectly claimed '+' is combined area: retract that assumption. Likely interface/boundary (not confirmed metadata). Safest exact follow-up: select standalone `DmgL_QW3` region only, Start Integration, verify Regions of Dimension 2, then add nonoverlapping Clean_QW3 + DmgL_QW3; do NOT infer full-well value from '+' selected row.
+- No remote source change or rerun; preserve data. Continue other QWs, SRH/Auger and IQE after region verification.
+
+---
 ## 2026-10-09 이택규 handoff: 5V_TEST at Clean_QW4 same (x,y)=(0.244864017914,0.651958341615): Rrad=7.103015017104e18, SRH=1.681575471039e22, Auger=1.238545872618e15 cm^-3 s^-1. Pointwise radiative share ~0.0422%, not device IQE. Check spatial integrated MQW rates and effective SRH/material parameters next. NtSide=0 does not disable all SRH. Preserve outputs; no solver edits.
 
 ## 2026-10-09 — 5V copied Half+Coarse SDevice finished; postprocessing/validation now first (이택규 / ChatGPT)

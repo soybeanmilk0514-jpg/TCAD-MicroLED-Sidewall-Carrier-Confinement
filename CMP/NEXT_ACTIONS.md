@@ -1,3 +1,46 @@
+## 2026-10-10 — User priority: run current CAL first; defer native SWB parameter portability
+
+- Decision by 이택규: **do not change** current CAL `Parameters="FASTC1_pp6_des.par"` to `@parameter@` yet. Perform this migration in the next new device/project for professor-facing copy/paste reproducibility. Keep already saved cloned InGaN Scharfetter 100ns custom .par.
+- Immediate execute gate: in `CMP_BASELINE_1.2.0_CAL` single NtSide0 SWB experiment, run SDE to build mesh first (clone currently showed -- for tools); inspect SDE mesh/geometry success. Preprocess SDEVICE and confirm correct custom .par / InGaN lifetime override. Then run existing successful-style 0–5V Transient-BE (not failed QS), monitor convergence and verify actual log model coefficients. Existing 5V clone source is a FULL run, not a short smoke. No CAL run confirmed yet.
+- Next model versions may use standard SWB SDEVICE `sdevice.par` and `@parameter@` after checking its contents. Keep current completed parent and results unchanged, check very low 2D current/J & QW recombination, eventually same-current sidewall/Full-Half validation.
+
+## 2026-10-10 — CAL parameter integration into standard SWB editors (PROPOSED)
+
+- For professor copy/paste reproducibility, migrate CAL cloned custom par into native `sdevice.par`, and cloned SDEVICE File entry to `Parameters="@parameter@"` only after inspecting any existing sdevice.par contents.
+- Keep all custom GaN Mg, Thermionic, lattice and InGaN SRH blocks. Verify SWB preprocess ppN_des.par and effective models before short smoke; leave finished 5V parent untouched.
+- Presentation handoff must contain SDE, SDEVICE, parameter inputs plus NtSide run conditions. Nothing migrated yet.
+
+## 2026-10-10 — Separate CAL candidate ZIP created; next SWB clone and smoke (ACTIVE)
+
+1. Download locally prepared private `CMP_BASELINE_1.2.0_CAL_INPUT_CANDIDATE.zip` via chat (only source + README; not on public GitHub). Static checked: SDE bytes identical to 5V_TEST parent; executable SDevice lines identical; GaN Mg/Lattice/Thermionic preserved; material InGaN Scharfetter tau_max electrons/holes changed to literature sensitivity 100ns. This zip is NOT an SWB importable project and is NOT Sentaurus-tested.
+2. On user's workstation/SWB, use `Project > Save As > Clean Project` from completed `JUSUBIN_FAST_HALF_5V_TEST` to new `CMP_BASELINE_1.2.0_CAL`. This retains source and tool flow without copying old node outputs; preserve original project. Confirm location and tool flow.
+3. Replace ONLY the new project's named `sde_dvs.cmd`, `sdevice_des.cmd`, `FASTC1_pp6_des.par` from ZIP. Check names, path, Fermi/Thermionic/Piezoelectric, NtSide=0 and param reference, SDE mesh. Do not generate `sdevice.par` from Silicon template and do not modify system MaterialDB.
+4. Preprocess and audit pp deck; verify model parameter inheritance/actual changed InGaN Scharfetter logged. Make separate 0-0.3V Transient-BE smoke input from copied SDevice, since ZIP's actual Solve Goal=5.0V. Do not launch full 5V until smoke passes.
+5. Then NtSide0 5V exploratory CAL sensitivity run, extract same-bias and eventually same-current charge/radiative/SRH/Auger/J; matched-condition NtSide1e18 follow-up only after its preprocess gate. Add validated intermediate spatial snapshots when going beyond the initial control.
+6. Full/Half+coarse error, material realism, low J/injection, 5V steady status remain publication gates.
+
+## 2026-10-10 — Actual 5V parent archive audit complete; CAL next experiment gate (ACTIVE)
+
+- New detailed evidence: `CMP/reviews/BASELINE_1_2_0_CAL_AUDIT_20261010.md`. 5V parent HDF5 shows effective InGaN recombination B=2e-10 cm3/s, Auger=1e-30 cm6/s, SRH tau=1ns, exactly; Mg incomplete ionization valid in DopingConcentration via occupation factor. Raw terminal J/Areal normalization, steady-state, Full/Half/mesh and physical calibration remain unresolved.
+- **FIRST read-only:** inspect local Sentaurus T-2022.03 MaterialDB `InGaN.par` recombination section and official SDevice material-specific parameter override syntax; preserve FASTC1 custom GaN Mg + lattice/thermionic definitions. Verify whether to override both Clean/DmgL InGaN regions in .par. Do not improvise syntax or mutate vendor MaterialDB.
+- Then prepare *separate* `CMP_BASELINE_1.2.0_CAL` branch, isolate SRH lifetime sensitivity (100ns vs old 1ns as literature candidate, not physical fit), hold geometry/doping/polarization/Radiative/Auger/numerics and NtSide0, perform preprocess+short Transient BE smoke, then 5V run only on PASS. Check source/header discrepancy: old header falsely claims staged increments and 4/4.5/4.8/5V Saves, whereas executed deck had single Increment1.2 ramp and only final Save. Add validated within-sweep TDR snapshots/Save as needed for matched-current extraction.
+- Finally make NtSide1e18 comparison at matched injected current, check current/J scaling and full/half numerical equivalence. No full A/B production before gates.
+
+## 2026-10-09 — Naming policy confirmed; use CMP_BASELINE_1.2.0_CAL (ACTIVE)
+
+- Naming standard: `CMP_<TYPE>_<MAJOR.MINOR.PATCH>_<TAG>`; `CMP/PROJECT_NAMING_CONVENTION.md`. Supersedes the earlier proposed `CMP_BASELINE_CAL_V1` candidate label; no SWB project renamed or created yet.
+- All nine required private 5V_TEST files confirmed present by user `ls -lh`; next user action is to archive/share those actual files privately for code review (do not upload vendor source to public GitHub).
+- Inspect effective InGaN recombination parameters, 2D current/AreaFactor/injection and physics before a new parameter-only branch; run short smoke before NtSide0/1e18 5V comparisons. Preserve Full/Half verification requirement and completed reference outputs.
+
+## 2026-10-09 — CMP_BASELINE_CAL_V1 near-final candidate preparation (이택규, PROPOSED)
+
+1. Do not delete or move the pre5V archive; user elected to retain it where it is. Preserve completed `JUSUBIN_FAST_HALF_5V_TEST` and full/fine FAST_C1 references.
+2. Obtain the actual `JUSUBIN_FAST_HALF_5V_TEST` private SDE/SDevice input, effective parameter files, preprocessed decks, completed `n2_des.log` and mesh using a private chat attachment (do not upload vendor decks to public GitHub). Verify filenames/existence before archiving.
+3. Read exact active physics/material mixing; verify effective InGaN SRH/Radiative/Auger parameters, current/AreaFactor convention, injection/QW carrier balance and 5V state. Continue MgMinus interpretation as an unresolved issue, not automatic proof of model failure.
+4. Design `CMP_BASELINE_CAL_V1` as a distinct branch, keeping the known 5V-convergent Half+Coarse geometry, existing Mg/EBL/nGaN and trap-off references; propose only evidence-backed minimum recombination/injection-related changes. Literature sensitivity results are not experimental calibration.
+5. Perform preprocess and short Transient-BE NtSide0 smoke, inspect current/recombination/numerical behavior, then run to 5V if passed. Repeat NtSide1e18 with identical calibrated physics and current conditions after trap-ON gate, maintaining same-current comparisons.
+6. Before publication-grade freeze, verify Full/Half+Coarse and mesh-convergence errors, 2D current normalization, extraction robustness and steady-state adequacy. Broad Project A/B production remains NO-GO until additional gates pass.
+
 ## 2026-10-08 — 주수빈 accelerated Baseline QS smoke (PROPOSED)
 
 1. Keep original full FAST_C1 reference runs untouched. For JUSUBIN_FAST_HALF_SWB, capture current n2 transient smoke output and if switching, stop **only** the old Node2 job in SWB.
@@ -1248,3 +1291,150 @@ Evidence: user's last-row DF-ISE awk and `cat FASTC1_pp6_des.par`, grep of execu
 2. Do not claim caused by sidewall traps: NtSide=0 disables defined damaged-edge traps but SRH() remains active. Inspect spatial QW and Dmg rates, actual lifetime/material physics, electron/hole density and any band/profile artifacts before parameter changes.
 3. Determine total and per-QW integrated Rrad/SRH/RAuger via validated SVisual integration, then recombination IQE, V(I), current normalization and half/full equivalence; QW1–QW3 local nonradiative probes may help establish spatial trends. Publication-ready baseline and Project A/B production still pending.
 4. Keep copies/reference Node6/12 processes and checkpoints untouched. See LeeTaekGyu/TIMELINE and Issue #7 for evidence.
+
+## 2026-10-09 — Project A fabrication route feasibility questions (PROPOSED; not selected)
+
+- Distinguish as-grown electrically active GaN:C compensation from *implant-damage-based* resistive isolation. Published As/F microLED implantation does NOT prove implanted C_N creates the same trap/compensation physics; old experimental reports show implanted-C electrical activity may be absent or damage dominated.
+- Examine two non-final routes against Stage1 Cedge upper-nGaN adjacent to mesa sidewall: (A) post-mesa selective nGaN sidewall C+ angled implantation requiring pGaN/MQW height-selective protection and low-thermal-budget damage handling; (B) pre-MQW patterned upper-nGaN carbon implantation or selective C-doped growth, followed by MQW epitaxy and later mesa alignment. Quantify shadowing, alignment, damage, profile and MQW thermal constraints before adoption.
+- Only after a grounded process choice: plan TCAD geometry/profile link (including C straggle, activation fraction and residual damage separately), appropriate mask-off / anneal-only / inert-ion controls, and verification by depth-profile/structural/electrical/optical experiments. Do not alter Common Baseline or launch Stage1 A/B production based on this exploratory discussion.
+
+## 2026-10-09 — SVisual region-integrated IQE gate prioritized over more point probes
+
+1. QW3 point in 5V_TEST: Clean_QW3(InGaN), x=0.219173763524, y=0.555622585194, Rrad=8.333611568957e14, srh=5.390114530106e19, Auger=5.79338765299e8 (per cm3 second). These are single-point diagnostics only.
+2. First verified operation: keep final `n2_des.tdr` open; choose RadiativeRecombination; SVisual Tools > Integrate (∫dr), Region/Material tab choose Clean_QW3 only, Full/Complete Domain, Start Integration; screenshot Integral AND Domain units. No code edit, cleanup or rerun.
+3. After confirming SVisual's exact 2D output and region selector, integrate `srhRecombination` and `AugerRecombination` in the same QW, then QW1..4 and associated `DmgL_QW*` portions as intended by full-QW physical region definition. Check sign convention and physical current normalization.
+4. Compute IQE_rec as sum of *integrals* of Rrad divided by sum of all three types of integrals; local point percentages, averaging local fractions and selecting only pristine Clean wells are not device IQE. Compare NtSide=0 and nominal damaged NtSide=1e18 at matched current after model validation.
+
+## 2026-10-09 — SVisual Field Integration QW region scope clarified (PROPOSED, pending output)
+
+- 이택규 screenshot shows choices `Clean_QW3` and `Clean_QW3+DmgL_QW3` in Field Integration selector. For full physical QW3 recombination accounting in current Half model, select `Clean_QW3+DmgL_QW3` as a single combined group, not both it and `Clean_QW3` (would double count).
+- `Clean_QW3` alone excludes the QW3 damaged sidewall; still useful later for separate core-vs-edge attribution. `NtSide=0` deactivates parameterized sidewall traps but the DmgL_QW3 geometric region still exists.
+- This is a selection decision, NOT an executed/verified integral. Next capture chosen field `RadiativeRecombination`, selected group, numerical Integral/Domain and actual 2D units; verify group region membership before claiming whole-well total. Repeat same group for SRH/Auger, and other QWs before IQE computation. Keep comparison scope consistent for full/fine and damaged NtSide=1e18 branches.
+
+## 2026-10-09 — Next after Clean_QW3 region integral and ROI '+ label' correction
+
+1. OBSERVED 5V_TEST SVisual `RadiativeRecombination` area integral Clean_QW3 alone = 2.657110e+02 [s^-1 um^-1], domain 5.985012e-03 [um^2]. This is not combined QW3.
+2. **Do NOT rely on `Clean_QW3+DmgL_QW3` as a combined 2D volume/area; likely a lower-dimensional interface label.** Locate independent `DmgL_QW3` row in Regions list, select only this, press Start Integration. Verify output lists `DmgL_QW3` under Regions of Dimension 2, capture Integral and Domain. Add independent integrals from Clean_QW3 and DmgL_QW3 after confirming nonoverlap, rather than double-counting or trusting selection highlight.
+3. For each QW1..4 integrate exact bulk Clean_QW + separate DmgL_QW (in full model add DmgR_QW), for Rrad, SRH, Auger, then compute IQE_rec from sums of like-normalized integrals. Record SVisual units per um depth; verify 2D thickness and current normalization for physical optical totals.
+4. No SDE/SDevice rerun or cleanup. Correct prior log saying '+' item represented combined region; label remains UNRESOLVED pending dimensional confirmation.
+
+## 2026-10-09 — After full QW3 Half-domain Radiative integral (OBSERVED)
+
+1. User verified standalone 2D `DmgL_QW3` Rrad Integral=0.526818 [s^-1 um^-1], domain 0.00001500002 um²; prior standalone `Clean_QW3`=265.711 [s^-1 um^-1], domain 0.005985012 um². **Sum full QW3 half-domain Rrad=266.237818 [s^-1 um^-1]**, area=0.00600001202 um². This is integrated radiative only, not IQE.
+2. Next read-only SVisual integration: field `srhRecombination`; integrate both *standalone* `Clean_QW3` and `DmgL_QW3` as two separate 2D regions, confirm each output line and Total Integral/Domain. Same process with `AugerRecombination`.
+3. Repeat all three rates for QW1/QW2/QW4 using standalone Clean and DmgL. Compute `IQE_rec = ΣRrad_integral/(ΣRrad+ΣRSRH+ΣRAuger)` from consistent 2D normalized integrals; do NOT average probe ratios. Then validate absolute out-of-plane normalization, NtSide=1e18 and full/fine comparison.
+4. Preserve finished Node2 results and original simulations. Avoid selecting plus-named interface instead of 2D Dmg region.
+
+## 2026-10-09 — QW3 5V SRH Dmg edge integral confirmed
+
+- New 2D SVisual `DmgL_QW3` SRH Integral=1.655249e3 [s^-1 um^-1], Domain=1.500002e-05 um²; compare same Dmg region Rrad=0.526818. NtSide=0 trap-off condition, generic SRH() active; no causal attribution. `Clean_QW3` SRH pending.
+- **Next**: Field `srhRecombination` standalone `Clean_QW3` and Start Integration; send Region of Dimension 2, Integral, Domain. Then Auger for same standalone Clean and DmgL and sum; verify normalized 2D ratio before broader 4-QW IQE. Keep current data intact.
+
+## 2026-10-09 — QW3 DmgL Auger spatial integral measured (OBSERVED)
+
+- 이택규 supplied direct SVisual Field Integration screenshot for completed `JUSUBIN_FAST_HALF_5V_TEST/n2_des`: `AugerRecombination` `Regions of Dimension 2: DmgL_QW3 (InGaN)`; `Integral=5.774334e-02 [s^-1*um^-1]`, `Domain=1.500002e-05 [um^2]`.
+- Prior directly observed same-region 2D Radiative `0.526818`, SRH `1655.249` [s^-1 um^-1] and same Domain. Therefore DmgL_QW3 has all 3 regional integrals and SRH dominates *this segment*. At `NtSide=0`, generic SRH remains active; do NOT attribute to parameterized edge traps or infer full QW/device IQE.
+- The earlier request was `Clean_QW3` SRH; user instead measured DmgL_QW3 Auger, which is useful and preserved. Still missing standalone `Clean_QW3` SRH and Auger for full QW3 radiative-vs-nonradiative integration. Clean_QW3 Radiative=265.711 [s^-1 um^-1]. NEXT: switch field `srhRecombination` + select only standalone `Clean_QW3` + Start Integration, screenshot. Then `AugerRecombination` + standalone `Clean_QW3`, repeat. No code edits or rerun.
+
+## 2026-10-09 — QW3 integrated recombination gate completed; next QW1/QW2/QW4
+
+1. OBSERVED via SVisual Clean_QW3 2D Integral SRH=584161.1, Auger=12.65704, Rad=265.711; DmgL_QW3 SRH=1655.249, Auger=0.05774334, Rad=0.526818, units s^-1 um^-1. Full QW3 = Rrad 266.237818, SRH 585816.349, Auger 12.71478334. `IQE_rec,QW3=0.0454256871%` from integrals only, **NOT whole-device IQE**.
+2. QW3 SRH Clean region ~99.717% of integrated QW3 SRH even at `NtSide=0`; do not attribute to sidewall traps without physical validation. Audit effective SRH lifetime parameters and radiative materials DB plus carrier profiles.
+3. Repeat six 2D region integrals per remaining QW: independently `Clean_QWn` and `DmgL_QWn` for Rrad/SRH/Auger, check right pane `Regions of Dimension 2` and physical domains. Avoid plus-named interfaces. After four wells, calculate device recombination-based `IQE_rec` as `ΣRrad/(ΣRrad+ΣRSRH+ΣRAuger)`; compare same-current damaged NtSide=1e18 and full/fine after pre-run gates.
+4. Keep completed `JUSUBIN_FAST_HALF_5V_TEST` result files/checkpoints and existing reference jobs unchanged. No numerical/physical-source edits until validation.
+
+## 2026-10-09 — Immediate model plausibility audit after QW3 0.0454% radiative fraction
+
+1. **Before labeling LED nonphysical or modifying parameters**: inspect LIVE active `JUSUBIN_FAST_HALF_5V_TEST/pp2_des.cmd` Physics, region traps, solve sections, `FASTC1_pp6_des.par` (seen no explicit radiative coefficients/lifetime), and `n2_des.log` for effective radiative/SRH lifetime/material DB values, warnings, convergence and any unit factors. Treat published default values as hypotheses until active parameters confirmed.
+2. Confirm electrical J(V) using 2D contact normalization, half-domain physical width and any AreaFactor; raw final terminal current 1.448e-11 in plot units may be very low. Verify QW e/h distributions at matched current (QW3 point eDensity ~1.386e14, hDensity ~4.508e11 cm^-3, NOT region representative). Check polarity, polarization, EBL/injection and existing thermionic solver.
+3. Continue separate 2D Rrad/SRH/Auger integrals for all 4 QWs (Clean+DmgL) then compute recombination-based full MQW IQE (do NOT treat QW3 0.0454257% as device IQE). Distinguish lateral mesa Dmg sidewall vs vertical QW/Barrier interface, and confirm if any real interface trap was configured before blaming boundary SRH.
+4. Only after physics and injection gates, compare NtSide0 vs nominal damage NtSide1e18 and full/half mesh at matched bias and same current; production A/B NO-GO until verified. No code change requested this turn.
+
+## 2026-10-09 — QW4 complete 2D Clean+DmgL integration result and follow-up
+
+- OBSERVED from 6 distinct 2D field-region values: Clean_QW4 Rad=38746.96, SRH=35617690, Auger=1327.983; DmgL_QW4 Rad=98.768, SRH=226496.2, Auger=2.414354 [s^-1 um^-1]. Combined QW4 Rad=38845.728, SRH=35844186.2, Auger=1330.397354, fraction IQE_rec,QW4=0.1082525242% **QW4 only**. QW3 previously 0.0454256871%.
+- NEXT: QW1 and QW2 six standalone-region (Clean and DmgL) 2D integrals each; then sum all 4 wells and calculate whole-MQW recombination ratio. Keep separate field Domain verification; do not use plus-named interfaces as 2D regions.
+- Critical before final Baseline: effective SRH/radiative parameters, current-density normalization, physical injection/transient state, half/coarse vs full/fine and nominal NtSide1e18 damaged sidewall comparison. Preserve existing SDevice files and results.
+
+## 2026-10-09 — After QW2 clean/edge full 2D integrations and pp2 model grep
+
+- QW2 full 2D Half-domain: Clean [Rad=83.3149, SRH=54645.76, Auger=1.736316] + DmgL [Rad=0.1672872, SRH=141.6049, Auger=0.003800247], [s^-1 um^-1]. QW2 sum: Rrad 83.4821872; SRH 54787.3649; Auger 1.740116247; `IQE_rec,QW2 = 0.1521382378%`. Together with QW3 0.0454256871%, QW4 0.1082525242% these are independent *QW-only* ratios; QW1 missing.
+- Immediate read-only next: SVisual `n2_des` standalone 2D `Clean_QW1` and `DmgL_QW1` Rrad, SRH, Auger integrals; record six values and Domains, then full four-well recombination-based IQE as ratio of summed integrals. Do not average QW efficiencies.
+- Active physics grep: pp2:68 DefaultParametersFromFile; pp2:80 SRH(), :82 Auger(), :84 Radiative; no explicit Tau/Lifetime/coeff/AreaFactor in pp2_des.cmd and FASTC1_pp6_des.par. Material database and effective parameter sources need checking; 2D terminal current normalization and injection must be verified *before* final baseline / IQE interpretation. No edit/restart needed.
+
+## 2026-10-09 — All four MQW area integrals complete; next validation is material physics/injection (no rerun)
+
+- QW1 Clean 2D Rrad=857.9041, SRH=77658.39, Auger=252.5448; DmgL Rrad=19.46374, SRH=496.6036, Auger=2.309115 [s^-1 um^-1], domains Clean=5.985012e-3, Dmg=1.500002e-5 um². Full QW1 Rrad=877.36784, SRH=78154.9936, Auger=254.853915; QW1-only ratio=1.1065691%.
+- Full four-well Half+Coarse NtSide=0 5V 2D sums: radiative=40072.8158452, SRH=36562944.9075, Auger=1599.706168587, total=36604617.4295138, MQW recombination-based radiative fraction **0.1094747566%**. QW4 provides ~96.93785% of summed radiative integral. Do not call this experimental IQE/EQE, or an accepted baseline.
+- NEXT read-only: inspect *effective* material parameters used by active `pp2_des.cmd` / `FASTC1_pp6_des.par` and SDevice log (Radiative coefficient, e/h SRH lifetimes, trap contributions in InGaN); verify 2D current normalization and J-V, carrier injection, QW electric fields and mesh dependence. Compare matched-current damaged NtSide=1e18 and full/fine only after current reference audit. Preserve output and running Node6/12 jobs. No source edit/relaunch.
+
+## 2026-10-09 — Literature-vs-model provenance and loaded material parameters audit
+
+- Paper/source division **confirmed in documentation**: Kou 2019 four In0.15 QWs × 3nm, five GaN barriers ×22nm, nGaN4um, EBL26nm, pGaN120nm; Wu 2023 5nm acceptor-like damaged-edge concept; Chen 2024 demonstrates actual 4x4um class microLED; JBD official 4um PIXEL PITCH, *not* known mesa width. 4um TCAD mesa and numerical n-base/nitride are **representative modeling choices**, not literal JBD geometry. No new live SDE measurement; actual Half+Coarse boundaries remain to be verified.
+- From active n2_des.log grep: SRH, Radiative, Auger and default-parameter loading confirmed; GaN.par and InGaN.par loaded. The values and interpolation behavior for SRH carrier lifetimes and Radiative coefficients remain unknown. `Use Si parameters` line cannot be assigned to InGaN without log context.
+- Immediate (READ-ONLY): `sed -n '264,355p' n2_des.log` and `sed -n '940,975p' n2_des.log`, plus inspecting SRH/Radiative/Auger in actual T-2022.03 MaterialDB/GaN.par / InGaN.par / InN.par. Verify live pp1_dvs.cmd actual layer thickness/mesa before claiming exact coded match. Do not edit code or accept Baseline until low SRH/IQE and current normalization are understood.
+
+## 2026-10-09 — Terminal shell mismatch during MaterialDB grep (OBSERVED / RESOLVED COMMAND SYNTAX)
+
+- Worker: 이택규, active `JUSUBIN_FAST_HALF_5V_TEST`. User ran requested read-only `sed -n '330,350p' n2_des.log` successfully, output includes `Without incomplete ionization`, `Use Si parameters`, `With SRH-Recombination` (without field/doping/temperature-dependent lifetimes), `With Auger-Recombination`, `With Radiative Recombination`, `Without Surface-Recombination`.
+- Earlier GPT incorrectly supplied a **bash-style** `DB=...; for m in ...; do ...; done` block while the terminal is very likely `csh/tcsh`: user output `DB=...: Command not found`, `for: Command not found`, `m: Undefined variable`, `DB: Undefined variable`. Thus none of the `InGaN.par`/GaN/InN grep lines executed. This is **shell syntax**, not a Sentaurus simulation/code failure. No file writes or device restart occurred.
+- Corrected next READ-ONLY single command without variables/loops: `grep -niE 'SRH|Radiative|Auger|taun0|taup0|Scharfetter' /user/tools/synopsys/sentaurus/T-2022.03/tcad/current/lib/sdevice/MaterialDB/InGaN.par | head -n 70`. Wait for actual output before interpreting default InGaN Radiative coefficient or SRH lifetimes. Check the log's `Use Si parameters` in correct surrounding device/region context rather than assume Si physics applies to InGaN. No TCAD source edits.
+
+## 2026-10-09 — Read-only InGaN.par recombination section located (OBSERVED, values not yet inspected)
+
+- Worker 이택규 ran csh/tcsh-compatible command in the 5V_TEST directory:
+  `grep -niE 'SRH|Radiative|Auger|taun0|taup0|Scharfetter' /user/tools/synopsys/sentaurus/T-2022.03/tcad/current/lib/sdevice/MaterialDB/InGaN.par | head -n 70`
+- Actual output:
+  `870:Scharfetter * relation and trap level for SRH recombination:`
+  `883:Auger * coefficients:`
+  `884:{ * R_Auger = ( C_n n + C_p p ) ( n p - ni_eff^2)`
+  `893:RadiativeRecombination * coefficients:`
+  `894:{ * R_Radiative = C (n p - ni_eff^2)`
+- This confirms only the **section/comment locations** in InGaN.par, **not** any numerical SRH lifetimes or Auger/Radiative coefficients. No effective QW parameter values or physical cause of low MQW radiative ratio established. Avoid claiming that parameters are absent, zero or correct merely from these comment matches.
+- NEXT READ-ONLY csh/tcsh-compatible command: `sed -n '855,925p' /user/tools/synopsys/sentaurus/T-2022.03/tcad/current/lib/sdevice/MaterialDB/InGaN.par`. Inspect comments, actual material coefficients, and presence of interpolation or inherited defaults. If material file is only a ternary placeholder, inspect InN.par and GaN.par plus effective SDevice log; compare bias/carrier injection before any correction. No code changes or rerun.
+
+## 2026-10-09 — Next check before any Baseline rerun (physics and literature validation)
+1. First read only actual active `pp2_des.cmd` global/region Physics, In composition, lifetime overrides and Solve; and `n2_des.log` material model loading context plus 2D current / AreaFactor. Terminal csh/tcsh: avoid Bash variables or for-loop syntax. Do not change DB files.
+2. Verify exact In0.15Ga0.85N effective SRH and Radiative parameters; InGaN.par GaAs-derived vendor defaults (taumax 1ns, rad C 2e-10) require calibration. Paper anchor Kou 2019 DOI 10.1364/OE.27.00A643 has numeric SRH 1e-7 (original inverse-seconds typo), Baek 2023 DOI 10.1038/s41467-023-36773-w uses 100ns, rad 1e-10, Auger 1e-31 but different device structure. Do not silently assume 100ns is exact actual lifetime.
+3. Normalize 5V NtSide0 I_2D 1.44801646079583e-11 using verified 2D units / Half mesa width from mesh (≈2um). Provisional J≈7.24e-4 A/cm2 under A/um no scaling, far from 0.1 A/cm2 literature comparator, NOT verified. Audit electron-hole injection, Mg incomplete ionization and effective polarization, and transient final vs steady.
+4. If needed after audit, separate literature-calibrated parameter branch (sensitivity 1/10/100ns as proposals) while preserving current 5V full-QW IQE_rec 0.1094747566% and original source. Short pilot first, then defect NtSide0/1e18 matched-current and Full/Half/mesh validation. Only then long runs and Project A/B.
+
+## 2026-10-09 — Next exact active-code inspection after live model grep
+
+- New OBSERVED pp2 lines 128/137 region `IncompleteIonization`, lines 141-361 `Traps`, `Transient=BE` at 515, `Transient(` at 585. Actual scope and numerical `Conc` unspecified; need extract before calling defect-OFF true or active Mg ionization confirmed. Plot xMolefraction at 486 is output-only until SDE composition is checked.
+- Immediate csh/tcsh compatible read-only commands: `sed -n '112,175p' pp2_des.cmd` then `sed -n '505,615p' pp2_des.cmd`. Inspect active concentration in all Dmg region traps (first + expanded rest when needed), material-ionization regions, transient goal/hold, terminal current scaling.
+- Preserve 5V_TEST and reference sources, audit MaterialDB effective InGaN lifetime and actual 2D current injection, then decide calibrated separate-branch short pilot; no new long-run until pre-run gates.
+
+## 2026-10-09 — SWB Material Parameter dialog handling and JuSubin handoff tasks
+
+- **HOLD current GUI**: SWB screenshot is `JUSUBIN_FAST_HALF_SWB` original, `Create Parameter File: sdevice.par does not exist`; `Silicon` is new-file template default. **Cancel**, do not create file or overwrite original. Completed baseline proof is separate `JUSUBIN_FAST_HALF_5V_TEST`; its live pp2 used `FASTC1_pp6_des.par` and loaded actual InGaN/GaN MaterialDB. No reason to say 5V simulation was silicon simply from this GUI.
+- Proposed NEW separate branch only after source backup: copy 5V_TEST under a distinct calibration name; compare `sdevice_des.cmd` File Parameters, `FASTC1_pp6_des.par`, preprocessed `pp2_des.cmd`/par and material defaults; then `Choose Materials` → GaN, InGaN, AlGaN, Nitride (include InN only if needed); inspect generated .par and merge needed preexisting custom physics; preprocess and diff, never launch full run before preflight.
+- From JuSubin Oct8: Mg/p-GaN & n-GaN doping profile unverified; half+coarse 138194/65513 built but full 290814 reference equivalence not proven; QS copy Oct9 later failed at ~0.0193 V before 0.3 V target; NtSide1e18 accelerated trap-on validation remains undone, while separate NtSide0 5V and QW1..4 integrated values now successful. C2 Save/Load reference work not proven.
+- Main physic gate: uncalibrated InGaN recombination materials originally borrowed from GaAs (1ns file tau max; Radiative C2e-10); published InGaN examples use alternate 100ns, yet effective parameter and electrode current normalization unknown. MatDB copy is not calibration; correct via hypothesis-controlled literature parameter branch after audit, preserve 5V_TEST reference. Dope/profile → material provenance and 2D J → Nt0 short stable pilot → Nt1e18 same-current → Half-Full mesh convergence → A/B no GO until validated.
+
+## 2026-10-09 — Immediate next after original FASTC1 custom .par contents verified
+
+- Original `JUSUBIN_FAST_HALF_SWB/FASTC1_pp6_des.par`: only lattice axes, Thermionic Formula 1, GaN pMagnesiumActiveConcentration Ionization E_0 .2eV, alpha 8e-9, g4, Xsec1e-14. No InGaN-specific SRH/Auger/Radiative custom values in this copy; default material database input has uncalibrated GaAs-derived rates. However check effective QW material mixing and any regional overrides separately; do not claim original and 5V_TEST par byte-identical yet.
+- NEXT user terminal (read only): `sed -n '112,175p' /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST/pp2_des.cmd`. Confirm Mg ionization Physics scope / actual trap concentration rather than assume activation. Keep original & completed 5V_TEST intact and proceed with independent calibration after doping/J checks. SWB popup Cancel and no new sdevice.par.
+
+## 2026-10-09 — 5V_TEST confirmed region-specific Mg and NtSide=0 trap excerpts
+
+이택규 directly inspected the active completed 5V_TEST `pp2_des.cmd` (lines 112–175): `Clean_pGaN` and `DmgL_pGaN` explicitly enable `IncompleteIonization(Dopants="pMagnesiumActiveConcentration")`; `DmgL_pGaN` and `DmgL_EBL` trap entries are `Acceptor Conc=0, EnergyMid=0.75 eV from valence, e/h cross-section=1e-15 cm²`. This verifies local Mg ionization *model declarations* and two explicit trap-OFF regions, NOT actual Mg free-carrier/donor doping profile. All other trap region concentrations require complete deck grep (prior audit indicated 12 zero). Global log 'Without incomplete ionization' cannot override observation of region-specific code without scoping analysis. No files altered, 5V results preserved. NEXT READ-ONLY `grep -nE 'Physics \(Region=|IncompleteIonization|Traps|Conc[[:space:]]*=' /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST/pp2_des.cmd`, then SDE doping profile and physics/current density calibration. Publication-grade baseline validation still pending.
+
+## 2026-10-09 — After 12/12 sidewall trap concentrations verified zero
+
+- OBSERVED in completed `JUSUBIN_FAST_HALF_5V_TEST/pp2_des.cmd`: all twelve DmgL trap `Conc=0` (pGaN, EBL, Barrier0..4, QW1..4, nGaN); model Mg `IncompleteIonization` enabled specifically in Clean_pGaN and DmgL_pGaN. **NtSide0 trap off verification COMPLETE**; do not repeat this gate. Still need corresponding NtSide1e18 trap active test and physical compare.
+- NEXT: check active `pp1_dvs.cmd` SDE doping declaration+placement for pMg and n donor. Suggested csh-safe read-only command `grep -niE 'define-constant-profile|define-analytical-profile|define-constant-profile-placement|define-constant-profile-region|pMagnesiumActiveConcentration|Doping|Donor|Phosphorus|SiliconActiveConcentration' /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST/pp1_dvs.cmd | tail -n 100` then inspect ranges with `sed` and SVisual actual n1_msh.tdr (SDE may need mesh in Plot).
+- Preserve working NtSide0 5V_TEST and source. Continue 2D J, InGaN effective recombination lifetime/rad calibration and transients before a separate pilot. No broad Project A/B production.
+
+## 2026-10-09 — Active 5V_TEST SDE numeric doping constants observed (NOT an error conclusion)
+
+- 이택규 ran `grep -nE -C 3 'N_Mg_p|N_A_EBL|N_D_n|x_Al_EBL' .../JUSUBIN_FAST_HALF_5V_TEST/pp1_dvs.cmd | head -n 100`. Live SDE shows `x_In=0.15` at line 100, `x_Al_EBL=0.15` at line 102, `N_Mg_p=9.59e18 cm^-3` at line 119, `N_A_EBL=3e17` at 121, `N_D_n=5e18` at 123, `N_D_bar=1e15` at 125. Prior lines 501-615 show these variables assigned to intended pGaN, EBL, nGaN/base regions.
+- **Critical semantic distinction**: `CMP/COMMON_BASELINE.md` documents `p-GaN effective active acceptor≈3e17 cm^-3`, while SDE assigns **raw `pMagnesiumActiveConcentration`=9.59e18 cm^-3**, with specific GaN `IncompleteIonization` and E0=0.2eV etc in SDevice. This is NOT automatically an error: Mg dopant density ≠ actual ionized Mg acceptor concentration, hole density, or effective active acceptor density. But the intended correspondence to documented 3e17 target is NOT YET CALIBRATED/VERIFIED; do not call 9.59e18 physically valid just from ionization declaration. Very high Mg input may present compensation/solubility concerns needing later literature physical validation.
+- `N_A_EBL=3e17, N_D_n=5e18, N_D_bar=1e15, x_In=0.15, x_Al_EBL=0.15` match nominal documented model values (subject to actual SDE material/profile assignment). No code or simulation errors in this grep, no need to rerun now.
+- JuSubin TIMELINE earlier records a Half+Coarse `DopingConcentration` SVisual screenshot color scale near -9.59e18 to +5e18, suggestive of signed *input/net dopant profile* representation but no pointwise verified ionized Mg/free-hole density or across-layer cutline. Do not equate `DopingConcentration` with p or ionized Mg.
+- NEXT read-only, csh-safe: `sed -n '105,128p' /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST/pp1_dvs.cmd` (inspect inline comments on rationale for 9.59e18); then probe existing n2_des.tdr for `pMagnesiumMinusConcentration`, `hDensity`, `DopingConcentration` in central Clean_pGaN away from contacts and verify 3e17 target only if this is the intended metric. Later calibration/low-current analysis separately. Preserve all sources/data; no new run.
+
+## 2026-10-09 — Verify carrier density after discovering prior Mg calibration comment
+
+Live `pp1_dvs.cmd` comment states N_Mg_p=9.59e18 was calibrated previously for pGaN `hDensity ~ 3e17 cm^-3` at 300K with incomplete ionization; this is a COMMENT, not current measured output. NEXT: in SVisual load the already completed 5V `n2_des.tdr`, select `hDensity` and probe representative Clean_pGaN region bulk coordinate; record units, bias 5V, then if possible `pMagnesiumMinusConcentration` and 0V equilibrium comparison. DO NOT change Mg input just because raw dopant 9.59e18 differs from effective target 3e17. Keep sources/results and no new solver run.

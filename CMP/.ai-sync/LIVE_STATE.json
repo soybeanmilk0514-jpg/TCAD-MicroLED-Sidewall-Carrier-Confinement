@@ -560,7 +560,7 @@
     "evidence": "User terminal cp -a, ls -ld target directory, cmp SDevice source no output",
     "shellObservation": "Bash conditional if syntax rejected (C-shell-like command interpreter); standalone cp succeeded",
     "swbRecognition": "PENDING_GUI_OPEN",
-    "next": "Preserve final 5V data. Audit QW4 local SRH dominance mechanism and integration/QW1-4; no new run or baseline edits until source and physics gate.",
+    "next": "Inspect SVisual n2_des.tdr hDensity in central Clean_pGaN at known final 5V, then pMagnesiumMinusConcentration/0V comparator for original 300K calibration; do not alter Mg input or rerun.",
     "projectMarkers": {
       "original": ".project present, 0 bytes, Oct 8 16:58",
       "testCopy": ".project present, 0 bytes, Oct 8 16:58",
@@ -919,13 +919,576 @@
       "iqeDeviceVerified": false,
       "interpretation": "SRH dominates locally at this point; cannot infer whole-QW or device IQE. NtSide=0 sets damage-region trap concentration zero, not global SRH physics off.",
       "next": "Inspect SRH lifetimes and actual radiative coefficients, validate per-QW integrated Rrad/SRH/Auger, compare electrical injection/2D normalization and reference full/fine results."
+    },
+    "qw3CoLocated20261009": {
+      "status": "OBSERVED_SAME_POINT_LOCAL_ONLY",
+      "zone": "Clean_QW3(InGaN)",
+      "x": 0.219173763524,
+      "y": 0.555622585194,
+      "z": 0,
+      "units": "cm^-3 s^-1",
+      "radiative": 833361156895700,
+      "srh": 53901145301060000000,
+      "auger": 579338765.299,
+      "notIntegrated": true,
+      "iqeDeviceVerified": false
+    },
+    "qwIntegration20261009": {
+      "status": "OBSERVED_ALL_QW3_RRAD_SRH_AUGER_2D_INTEGRALS",
+      "basis": "PROJECT_AB_PRE_RUN_AUDIT.md G5 and metric definition, older/newer Sentaurus Visual User Guide Field Integration",
+      "firstAction": "SVisual Tools > Integrate or right ∫dr icon, select RadiativeRecombination and Region/Material Clean_QW3 only, Complete Domain, Start Integration; screenshot integral and domain units",
+      "after": "integrate SRH, Auger for each QW and physical Dmg edge QW as needed, sum recombination integrals; 2D unit and area-factor validation mandatory",
+      "noIQEUntilIntegral": true,
+      "field": "RadiativeRecombination",
+      "measuredRegion": "Clean_QW3(InGaN)",
+      "integral": 265.711,
+      "integralUnit": "s^-1 um^-1",
+      "domain": 0.005985012,
+      "domainUnit": "um^2",
+      "dataDimension": 2,
+      "wholeQw3Integrated": false,
+      "screenshotSelectionWarning": "Both Clean_QW3 and Clean_QW3+DmgL_QW3 are highlighted, but right output shows only dimension-2 Clean_QW3. Plus item likely interface not combined area, exact region metadata not checked.",
+      "correctedPreviousAdvice": true,
+      "firstNextAction": "Select standalone DmgL_QW3, not plus-labeled interface, press Start Integration and confirm right 2D region and Integral/Domain. Then sum Clean and DmgL integrals.",
+      "cleanQw3Radiative": {
+        "region": "Clean_QW3(InGaN)",
+        "dimension": 2,
+        "integral": 265.711,
+        "domainUm2": 0.005985012
+      },
+      "dmgLQw3Radiative": {
+        "region": "DmgL_QW3(InGaN)",
+        "dimension": 2,
+        "integral": 0.526818,
+        "domainUm2": 0.00001500002
+      },
+      "fullQw3HalfRadiativeDerived": {
+        "integral": 266.237818,
+        "unit": "s^-1 um^-1",
+        "totalDomainUm2": 0.00600001202
+      },
+      "fullQw3SrhMeasured": false,
+      "fullQw3AugerMeasured": false,
+      "iqeVerified": false,
+      "next": "QW1 and QW2 independent Clean/DmgL 2D integral Rrad/SRH/Auger, then 4-QW summation; audit active SRH/radiative params and current injection.",
+      "dmgLQw3Auger": {
+        "region": "DmgL_QW3(InGaN)",
+        "dimension": 2,
+        "integral": 0.05774334,
+        "unit": "s^-1 um^-1",
+        "domainUm2": 0.00001500002
+      },
+      "cleanQw3SrhMeasured": true,
+      "cleanQw3AugerMeasured": true,
+      "cleanQw3Srh": {
+        "region": "Clean_QW3(InGaN)",
+        "integral": 584161.1,
+        "unit": "s^-1 um^-1",
+        "domainUm2": 0.005985012,
+        "dimension": 2
+      },
+      "cleanQw3Auger": {
+        "region": "Clean_QW3(InGaN)",
+        "integral": 12.65704,
+        "unit": "s^-1 um^-1",
+        "domainUm2": 0.005985012,
+        "dimension": 2
+      },
+      "fullQw3HalfSum": {
+        "radiative": 266.237818,
+        "srh": 585816.349,
+        "auger": 12.71478334,
+        "sum": 586095.30160134,
+        "unit": "s^-1 um^-1",
+        "radiativeSharePercent": 0.045425687131867516,
+        "srhSharePercent": 99.95240490743095,
+        "augerSharePercent": 0.0021694054371806846,
+        "cleanSrhSharePercent": 99.71744574851392,
+        "scope": "5 V, NtSide=0, QW3 Clean plus DmgL only; not whole MQW/device IQE"
+      },
+      "wholeQw3IqeVerified": "recombination-based integrated QW3 ratio only; physical model validation and full-device IQE still pending",
+      "fullDeviceIQEVerified": false
+    },
+    "physicalPlausibilityReview20261009": {
+      "status": "PENDING_CAUSAL_AUDIT",
+      "established": "At 5V NtSide0 half/coarse QW3-only recombination rate integral ratio 0.0454256871%; direct model shows positive local Rrad in all four QWs; no total-device IQE established.",
+      "cleanQw3IntegratedSrhSharePctApprox": 99.7174457,
+      "cleanQw3AreaSharePctApprox": 99.75,
+      "notDiagnosed": [
+        "low carrier injection/J normalization",
+        "QW hole/electron mismatch",
+        "effective GaN/InGaN SRH lifetime and radiative coefficient",
+        "polarization/QCSE and EBL confinement",
+        "transient versus steady-state",
+        "sidewall and vertical QW interface defects"
+      ],
+      "next": "Read actual pp2 SDevice Physics/Solve, material parameters, n2_des.log first; verify 2D current normalization, QW e/h distributions, then integrate all four wells. No source modifications."
+    },
+    "qw4Integrals20261009": {
+      "status": "OBSERVED_SIX_REGION_FIELD_INTEGRALS",
+      "unit": "s^-1 um^-1",
+      "condition": "5V, NtSide=0, Half+Coarse",
+      "clean": {
+        "domainUm2": 0.005985012,
+        "rad": 38746.96,
+        "srh": 35617690,
+        "auger": 1327.983
+      },
+      "dmgL": {
+        "domainUm2": 0.00001500002,
+        "rad": 98.768,
+        "srh": 226496.2,
+        "auger": 2.414354
+      },
+      "total": {
+        "rad": 38845.728,
+        "srh": 35844186.2,
+        "auger": 1330.397354,
+        "all": 35884362.325354,
+        "radiativeSharePercent": 0.10825252417138159,
+        "srhSharePercent": 99.88804001868633,
+        "augerSharePercent": 0.0037074571422995896
+      },
+      "note": "Only region-integrated QW4 recombination share, not whole-MQW IQE or EQE; physical injection/material audit still pending."
+    },
+    "qw2Integrals20261009": {
+      "clean": {
+        "rad": 83.3149,
+        "srh": 54645.76,
+        "auger": 1.736316,
+        "domainUm2": 0.005984982
+      },
+      "dmgL": {
+        "rad": 0.1672872,
+        "srh": 141.6049,
+        "auger": 0.003800247,
+        "domainUm2": 0.00001499994
+      },
+      "sum": {
+        "rad": 83.4821872,
+        "srh": 54787.3649,
+        "auger": 1.740116247,
+        "sharePct": 0.1521382378
+      },
+      "units": "s^-1 um^-1",
+      "status": "OBSERVED",
+      "next": "QW1 six standalone integrals, then four QW sum; inspect effective materials lifetimes and radiative coefficients."
+    },
+    "qw1Integrals20261009": {
+      "status": "OBSERVED_6_INDEPENDENT_2D_FIELD_REGION_INTEGRALS",
+      "condition": "5V, NtSide=0, Half+Coarse",
+      "units": "s^-1 um^-1",
+      "clean": {
+        "domainUm2": 0.005985012,
+        "rad": 857.9041,
+        "srh": 77658.39,
+        "auger": 252.5448
+      },
+      "dmgL": {
+        "domainUm2": 0.00001500002,
+        "rad": 19.46374,
+        "srh": 496.6036,
+        "auger": 2.309115
+      },
+      "sum": {
+        "rad": 877.36784,
+        "srh": 78154.9936,
+        "auger": 254.853915,
+        "total": 79287.215355,
+        "iqeRecPct": 1.1065691184533086
+      }
+    },
+    "fourQwRecombination20261009": {
+      "status": "DERIVED_FROM_OBSERVED_2D_INTEGRALS_ALL_FOUR_CLEAN_DMG_QWS",
+      "condition": "5V, NtSide=0, Half+Coarse",
+      "units": "s^-1 um^-1",
+      "qw1": {
+        "rad": 877.36784,
+        "srh": 78154.9936,
+        "auger": 254.853915,
+        "iqeRecPct": 1.1065691184533086
+      },
+      "qw2": {
+        "rad": 83.4821872,
+        "srh": 54787.3649,
+        "auger": 1.740116247,
+        "iqeRecPct": 0.1521382377879857
+      },
+      "qw3": {
+        "rad": 266.237818,
+        "srh": 585816.349,
+        "auger": 12.71478334,
+        "iqeRecPct": 0.045425687131867516
+      },
+      "qw4": {
+        "rad": 38845.728,
+        "srh": 35844186.2,
+        "auger": 1330.397354,
+        "iqeRecPct": 0.10825252417138159
+      },
+      "sum": {
+        "rad": 40072.8158452,
+        "srh": 36562944.9075,
+        "auger": 1599.706168587,
+        "total": 36604617.4295138,
+        "iqeRecPct": 0.10947475662698732,
+        "srhPct": 99.88615501283675,
+        "augerPct": 0.004370230536263382,
+        "qw4RadiativeContributionPct": 96.93785470444551
+      },
+      "physicalIqEValidated": false,
+      "experimentalEQE": false,
+      "halfVsFullValidated": false,
+      "next": "Audit effective InGaN SRH carrier lifetimes and Radiative coefficients actually loaded, 2D current normalization and J-V, carrier injection/polarization, and mesh/full comparison before baseline gate."
+    },
+    "materialDbLoadEvidence20261009": {
+      "status": "OBSERVED_LOG_FILE_PATHS_NO_EFFECTIVE_COEFFICIENTS",
+      "parsedMaterialDB": [
+        "GaN.par",
+        "InGaN.par",
+        "InN.par",
+        "Silicon.par"
+      ],
+      "activeRecombinationModels": [
+        "SRH",
+        "Auger",
+        "Radiative"
+      ],
+      "defaultParametersFromFile": true,
+      "note": "Log line Use Si parameters appears, but context not checked; do not infer active InGaN is using Si, nor that missing coefficients/lifetimes imply zero values.",
+      "next": "Read sed -n '264,355p' n2_des.log and inspect GaN.par/InGaN.par/InN.par effective SRH/Radiative/Auger section values, including any interpolation and overrides; additionally inspect live pp1_dvs.cmd real geometry."
+    },
+    "geometryPaperProvenance20261009": {
+      "source": "CMP/COMMON_BASELINE.md plus primary literature",
+      "kou2019": {
+        "doi": "10.1364/OE.27.00A643",
+        "inqw": 4,
+        "inFraction": 0.15,
+        "thicknessQwNm": 3,
+        "barriers": 5,
+        "barrierNm": 22,
+        "nganUm": 4,
+        "eblNm": 26,
+        "pGanNm": 120,
+        "reportedHeavilyDopedPContactNm": 20
+      },
+      "wu2023": {
+        "doi": "10.1016/j.micrna.2023.207542",
+        "sidewallDamageNm": 5,
+        "originalWuBarrierNm": 8,
+        "originalWuInFraction": 0.08
+      },
+      "chen2024": {
+        "doi": "10.1021/acsaelm.4c01540",
+        "reportedMesaUm": [
+          4,
+          4
+        ]
+      },
+      "JBD": {
+        "url": "https://www.jb-display.com/product_des/3.html",
+        "pixelPitchUm": 4,
+        "actualMesaWidthUnknown": true
+      },
+      "modelOnly": {
+        "representativeMesaUm": 4,
+        "domainUm": 5,
+        "nBaseUm": 0.3,
+        "nitrideUm": 0.1,
+        "calibrationTrapValues": true
+      },
+      "currentFiveVHalfCoarseGeometryVerifiedAgainstLivePp1": false,
+      "status": "DOCUMENTED_BASELINE_AND_PRIMARY_SOURCE_REVIEW_NOT_LIVE_CODE_AUDIT"
+    },
+    "inganParGrep20261009": {
+      "status": "OBSERVED_ONLY_COMMENT_OR_SECTION_LOCATIONS",
+      "file": "/user/tools/synopsys/sentaurus/T-2022.03/tcad/current/lib/sdevice/MaterialDB/InGaN.par",
+      "matches": [
+        "870 Scharfetter - relation and trap level for SRH recombination",
+        "883 Auger - coefficients",
+        "884 formula comment",
+        "893 RadiativeRecombination - coefficients",
+        "894 formula comment"
+      ],
+      "numericSrhLifetimeVerified": false,
+      "numericRadCoefficientVerified": false,
+      "numericAugerVerified": false,
+      "next": "sed -n '855,925p' /user/tools/synopsys/sentaurus/T-2022.03/tcad/current/lib/sdevice/MaterialDB/InGaN.par (read-only csh-safe); inspect effective interpolation/overrides if needed."
+    },
+    "inganMaterialParametersObserved20261009": {
+      "status": "OBSERVED_FILE_NUMERICAL_VALUES_NOT_VERIFIED_EFFECTIVE_IN_QWS",
+      "comment": "Vendor file says parameters for recombination models below came from GaAs and require calibration",
+      "srh": {
+        "tauminSeconds": 0,
+        "taumaxSeconds": 1e-9,
+        "NrefPerCm3": 10000000000000000,
+        "gamma": 1
+      },
+      "auger": {
+        "AelectronCm6PerS": 1e-30,
+        "AholeCm6PerS": 1e-30
+      },
+      "radiative": {
+        "Ccm3PerS": 2e-10
+      },
+      "QWEffectiveModelValidated": false,
+      "fourQwRecombinationRatioPercent": 0.10947475662698732,
+      "source": "Sentaurus MaterialDB/InGaN.par, directly displayed by user",
+      "next": "Confirm n2_des.log InGaN parameter loading/priority 945-970 and 270-310; effective material parameters/2D J injection; no physics edits."
+    },
+    "paperCalibrationReview20261009": {
+      "status": "REVIEWED_PROPOSED_REVALIDATION_NO_NEW_RUN",
+      "references": [
+        {
+          "doi": "10.1364/OE.27.00A643",
+          "claim": "Kou 2019 SRH lifetime numerical 1e-7 and Auger 1e-30, with printed lifetime unit s^-1 inconsistent; caution"
+        },
+        {
+          "doi": "10.1038/s41467-023-36773-w",
+          "claim": "Baek et al 2023 TCAD SRH 100ns, Radiative 1e-10 cm3/s, Auger 1e-31 cm6/s; different epi and polarization assumptions"
+        },
+        {
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8175512/",
+          "claim": "Lu et al 2021 SRH dominance at low J"
+        }
+      ],
+      "observedVendorFile": {
+        "InGaNParLoaded": true,
+        "provenance": "GaAs-derived; vendor says calibrate",
+        "taumaxSec": 1e-9,
+        "radiativeCcm3PerS": 2e-10,
+        "augerAcm6PerS": 1e-30,
+        "effectiveAlloyParametersVerified": false
+      },
+      "latestLog": {
+        "noSeparateLifetimeFile": true,
+        "modelParametersFile": "FASTC1_pp6_des.par",
+        "meshFile": "n1_msh.tdr",
+        "defaultParametersFromFileInGaN": true
+      },
+      "previousFourQwRecombRatioPct": 0.10947475662698732,
+      "conditionalCurrentDensityCheck": {
+        "rawAnodeCurrentPerUmAssumedA": 1.44801646079583e-11,
+        "halfWidthUmFromQwAreaApprox": 2,
+        "J_AperCm2_if2D_AperUm_and_no_AreaFactor": 0.000724008230397915,
+        "status": "DERIVED_CONDITIONAL_NOT_VERIFIED"
+      },
+      "scientificBlockers": [
+        "effective InGaN lifetime/B and region overrides not verified",
+        "I2D to J and very low injection not yet validated",
+        "pMg ionization/polarization/carrier balance unresolved",
+        "transient 5V final vs steady state not verified",
+        "No damaged NtSide1e18 matched-current comparison",
+        "full vs half/mesh no convergence check"
+      ],
+      "decision": "No original geometry rewrite; pause long production, read-only audit, then controlled calibrated short-run separate branch before final baseline.",
+      "next": "Read actual pp2 region/global Physics and log context; verify 2D units and In0.15 effective coefficients; short pilot only after physics audit. No solver/source edit today."
+    },
+    "livePp2PhysicsGrep20261009": {
+      "status": "OBSERVED_DECLARATIONS_PENDING_SCOPE_VALUES",
+      "incompleteIonizationLines": [
+        128,
+        137
+      ],
+      "trapRegionDeclarationStartLines": [
+        141,
+        161,
+        181,
+        201,
+        221,
+        241,
+        261,
+        281,
+        301,
+        321,
+        341,
+        361
+      ],
+      "transientBELine": 515,
+      "transientSolveLine": 585,
+      "areaFactorStringFound": false,
+      "quasistationaryStringFound": false,
+      "activeNtSide0TrapConcentrationVerified": false,
+      "incompleteIonizationRegionVerified": false,
+      "steadyState5VVerified": false,
+      "next": "Read sed -n '112,175p' pp2_des.cmd and sed -n '505,615p' pp2_des.cmd, then validate trap concentrations/all-region scope and bias ramp/hold. No code edits or rerun."
+    },
+    "sidewallTrapOffVerification20261009": {
+      "status": "VERIFIED_ALL_12_OFF_PREPROCESSED_DECK",
+      "file": "pp2_des.cmd",
+      "condition": "NtSide=0, 5V test",
+      "names": [
+        "DmgL_pGaN",
+        "DmgL_EBL",
+        "DmgL_Barrier0",
+        "DmgL_QW1",
+        "DmgL_Barrier1",
+        "DmgL_QW2",
+        "DmgL_Barrier2",
+        "DmgL_QW3",
+        "DmgL_Barrier3",
+        "DmgL_QW4",
+        "DmgL_Barrier4",
+        "DmgL_nGaN"
+      ],
+      "concValues": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "magnesiumIncompleteIonizationRegions": [
+        "Clean_pGaN",
+        "DmgL_pGaN"
+      ],
+      "dopingPlacementValidated": false,
+      "bulkSrhStillOn": true,
+      "damagedNtSide1e18RunVerified": false
+    },
+    "sdeNumericalDopingConstants20261009": {
+      "status": "OBSERVED_INPUT_VALUES_ONLY",
+      "source": "pp1_dvs.cmd lines 100-125",
+      "N_Mg_p_cm3": 9590000000000000000,
+      "N_A_EBL_cm3": 300000000000000000,
+      "N_D_n_cm3": 5000000000000000000,
+      "N_D_bar_cm3": 1000000000000000,
+      "x_In": 0.15,
+      "x_Al_EBL": 0.15,
+      "comparisonToDocumentedP": {
+        "documented": "effective active acceptor 3e17 cm^-3",
+        "input": "pMagnesiumActiveConcentration=9.59e18 cm^-3",
+        "samePhysicalQuantity": false,
+        "reason": "ionization and mobile holes differ from nominal Mg dopant input",
+        "measuredIonizedMg": false,
+        "measuredHoleDensity": false
+      },
+      "priorJuSubinMeshDopingScreen": "Signed DopingConcentration color approx -9.59e18..+5e18 cm^-3 (not a carrier density cutline)",
+      "next": "Read sed -n '105,128p' pp1_dvs.cmd for Mg concentration rationale; then probe Clean_pGaN hDensity and pMagnesiumMinusConcentration in n2_des.tdr."
+    },
+    "mgCalibrationSourceComment20261009": {
+      "status": "OBSERVED_SOURCE_COMMENT_NOT_REVERIFIED",
+      "comment": "Mg concentration calibrated previously in this project so that hDensity ~ 3e17 cm^-3 at 300 K with incomplete ionization",
+      "N_Mg_p_cm3": 9590000000000000000,
+      "intendedHoleDensityCm3": 300000000000000000,
+      "actualHoleDensityMeasured": false,
+      "exactHistoricalCalibrationBiasUnknown": true,
+      "next": "Use existing n2_des.tdr SVisual hDensity to probe Clean_pGaN away from interfaces, confirm bias/units and optional ionized Mg; for target equilibrium inspect 0V data if available."
     }
   },
   "latestObservedEvent": {
     "date": "2026-10-09",
     "worker": "이택규",
-    "source": "3 user-shared SVisual Probe panels at same x/y Clean_QW4(InGaN) on completed 5V_TEST n2_des",
-    "status": "OBSERVED_QW4_COLOCATED_RAD_SRH_AUGER_LOCAL_SRH_DOMINANT",
-    "event": "QW4 same-point Rrad 7.103015017104e18, SRH 1.681575471039e22, Auger 1.238545872618e15, Total 1.682285896396e22 per cm3-second; pointwise radiative fraction about 0.0422%, not device IQE."
+    "status": "OBSERVED_SDE_COMMENT_PRIOR_MG_CALIBRATION_TARGET_NOT_MEASURED",
+    "source": "user terminal sed pp1_dvs.cmd lines 105-128",
+    "event": "Actual SDE comment says Mg input N_Mg_p=9.59e18 was previously calibrated so hDensity~3e17 cm-3 at 300K with incomplete ionization; this is code comment rather than currently verified hole-density measurement."
+  },
+  "projectAFabricationFeasibility20261009": {
+    "status": "PROPOSED_RESEARCH_ROUTE_COMPARISON_NOT_APPROVED",
+    "worker": "이택규",
+    "goal": "Translate Stage1 Cedge in upper nGaN beside damaged mesa sidewall into a physically credible process; no fabrication or SProcess completed.",
+    "pathways": [
+      {
+        "route": "POST_MESA_ANGLED_C_ION_IMPLANT",
+        "concept": "Etch finished LED mesa, protect MQW/pGaN sidewall and other surfaces, implant C+ selectively into exposed upper nGaN sidewall, recover/passivate",
+        "gate": "Selective height mask and tilt shadowing, carbon activation versus irradiation damage, MQW thermal budget not validated."
+      },
+      {
+        "route": "PRE_MQW_MASKED_C_OR_GROWTH",
+        "concept": "Grow upper nGaN, mask future mesa ring and introduce carbon, recover/regrow MQW and top epi, then align mesa etch",
+        "gate": "Future mesa overlay alignment, implanted surface recovery, uniform high quality epitaxial regrowth and buried C profile unverified."
+      }
+    ],
+    "constraints": [
+      "Cannot automatically equate implanted C with electrically active C_N deep acceptor as-grown carbon-doped GaN",
+      "Prior As/F microLED ion implantation studies are mechanism analogs, not carbon validation",
+      "Keep original 5nm damaged strip and Stage1 Cedge position for baseline model; no process choice approved",
+      "Do not assume an exact rectangular C profile, lateral straggle and implantation damage matter",
+      "Investigate material-specific anneal thermal budget for InGaN MQW"
+    ],
+    "evidenceUrls": [
+      "https://doi.org/10.1016/j.nxnano.2024.100101",
+      "https://doi.org/10.1021/acsphotonics.5c02363",
+      "https://doi.org/10.1016/S0921-5107(97)00144-X",
+      "https://www.sandia.gov/research/publications/details/role-of-c-o-and-h-in-iii-v-nitrides-1995-12-01/",
+      "https://doi.org/10.1016/j.jallcom.2021.163519"
+    ],
+    "next": "Research choice of chemical compensation vs implantation-damage isolation; compare post-mesa and pre-MQW process masks/thermal risks, then process-profile and controls. No change to current Baseline validation priority."
+  },
+  "swbParameterDialog20261009": {
+    "status": "OBSERVED_GUI_NO_FILE_CREATED_BY_ASSISTANT",
+    "project": "JUSUBIN_FAST_HALF_SWB",
+    "distinctFromCompleted": "JUSUBIN_FAST_HALF_5V_TEST",
+    "missingFile": "sdevice.par",
+    "defaultRadio": "Silicon",
+    "options": [
+      "Silicon",
+      "Choose Materials",
+      "Create Empty File"
+    ],
+    "critical": "Silicon selected is only parameter template default, not demonstrated Si applied to finished 5V_TEST",
+    "documentation": "Sentaurus Workbench User Guide N-2017.09 pages 65-68",
+    "materialCandidatesForNewSeparateCopy": [
+      "GaN",
+      "InGaN",
+      "AlGaN",
+      "Nitride"
+    ],
+    "donot": "Do not click OK with Silicon in original SWB, do not modify running/reference baseline",
+    "workNeeded": "Determine source File Parameters, custom FASTC1_pp6_des.par, exact mesh material names, sdevice.par precedence; only then generate/merge chosen materials in independent clone."
+  },
+  "juSubinPendingValidationAsOf20261009": {
+    "source": "2026-10-08 JuSubin TIMELINE + 2026-10-09 TaekGyu subsequent runs",
+    "doping": "UNVERIFIED Mg p-GaN and n-GaN profiles",
+    "halfCoarse": {
+      "elements": 138194,
+      "points": 65513,
+      "fullReferenceElements": 290814,
+      "equivalence": "UNVERIFIED"
+    },
+    "qs0p3V": "FAILED_at_0.019304636V_on_2026-10-09",
+    "sidewallTrapOn": "NtSide1e18_UNVERIFIED_IN_HALF_COARSE",
+    "sidewallTrapOff": "NtSide0_5V_NORMAL_FINISH_AND_4QW_RECOMB_INTEGRALS_COMPLETED",
+    "C2SaveLoad": "PENDING_SMOKE_VALIDATION"
+  },
+  "nearFinalBaselineCandidate": {
+    "date": "2026-10-09",
+    "worker": "이택규",
+    "name": "CMP_BASELINE_1.2.0_CAL",
+    "status": "OFFLINE_INPUT_ZIP_PREPARED_NOT_SIMULATED",
+    "parent": "JUSUBIN_FAST_HALF_5V_TEST",
+    "preserve": [
+      "original 5V completed NtSide0 source and results",
+      "pre5V_20261009.tar.gz backup",
+      "full/fine FAST_C1 references"
+    ],
+    "firstAction": "Obtain and inspect actual private successful 5V SDE/SDevice/custom parameter/preprocessed deck/mesh/log files before editing",
+    "validationGates": [
+      "actual effective InGaN SRH/Radiative/Auger and interpolation",
+      "2D current density AreaFactor and injection",
+      "short Transient-BE smoke before 5V",
+      "same-physics NtSide0/NtSide1e18 comparison",
+      "full-half-coarse equivalence before final freeze"
+    ],
+    "claudeHandoff": "See CMP/.ai-sync/RELAY.md; no Claude direct chat contacted",
+    "noSolverRunYet": true,
+    "namingConvention": "CMP/PROJECT_NAMING_CONVENTION.md",
+    "namingConfirmedDate": "2026-10-09",
+    "fileInventory": "OBSERVED: all 9 candidate source/parameter/pp mesh/result files present in user shell; bytes not yet provided",
+    "sourceAudit": "CMP/reviews/BASELINE_1_2_0_CAL_AUDIT_20261010.md",
+    "recombinationFinding": "Effective 5V QW B=2e-10, Auger=1e-30, SRH lifetime=1ns validated from private TDR",
+    "mgFinding": "DopingConcentration tracks MgActive*occupation; numerical ionization verified",
+    "nextAction": "SWB Project > Save As > Clean Project to new name; install private zip files only in clone; preprocess and short smoke before any 5V",
+    "privateInputZip": "CMP_BASELINE_1.2.0_CAL_INPUT_CANDIDATE.zip (provided privately in conversation)",
+    "candidateParSha256": "adfe81ab03b8f0ca84b09b9a4373fdc8e71f7a5faa00ce01a7c0b82b7fb2f1ad",
+    "parentPhysicalChanges": "Proposed InGaN Scharfetter tau_max from 1ns to 100ns only; SDE unchanged, SDevice executable unchanged",
+    "newSolverRun": false
   }
 }
