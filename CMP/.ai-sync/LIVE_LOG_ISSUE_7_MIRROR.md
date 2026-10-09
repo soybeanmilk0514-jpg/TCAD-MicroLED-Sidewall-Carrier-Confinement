@@ -4912,3 +4912,9 @@ AI: ChatGPT
 2026-10-10 | 이택규 | DECISION / PROPOSED RUN (not yet launched). Worker asks to stop extended verification and proceed directly to a 5V CMP_BASELINE_1.2.0_CAL exploratory sensitivity calculation. Existing NtSide0 Half+Coarse parent already succeeded 5V; CAL SDE is user-reported done, original cloned SDevice references FASTC1_pp6_des.par, CAL cloned custom .par now contains InGaN Scharfetter taumax=1e-7s both carriers. Direct new SDEVICE Run in SWB is reasonable as trial, skipping separate short smoke by user preference; early log must confirm intended material parameters and diagnose any error. Do not call this publication-calibrated; 2D current/injection, Full/Half, and steady-state validation remain pending. Source/mesh of completed 5V_TEST protected. No new job has yet been observed running. LeeTaekGyu TIMELINE updated.
 
 ---
+
+## 2026-10-09T16:38:22Z — TaekGyu0801
+
+2026-10-10 | 이택규 | DECISION (shared team workflow). User ended today's session and explicitly requested future CMP project/file version rules apply to 주수빈 as well. Mandatory naming pattern CMP_<TYPE>_<MAJOR.MINOR.PATCH>_<TAG> for all new team projects and released bundles; do not rename Sentaurus native tool input/output files, and preserve legacy project names. Changes recorded in CMP/PROJECT_NAMING_CONVENTION.md, CMP/AGENTS.md, CMP/.ai-sync/RELAY.md, TEAM_TIMELINE and LeeTaekGyu/TIMELINE. This documents policy for other AIs to read; no messages were directly sent to 주수빈 and no SWB code/run was modified. Current CAL 5V Run was previously user-reported started, its log/completion still unchecked.
+
+---
