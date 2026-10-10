@@ -4918,3 +4918,34 @@ AI: ChatGPT
 2026-10-10 | 이택규 | DECISION (shared team workflow). User ended today's session and explicitly requested future CMP project/file version rules apply to 주수빈 as well. Mandatory naming pattern CMP_<TYPE>_<MAJOR.MINOR.PATCH>_<TAG> for all new team projects and released bundles; do not rename Sentaurus native tool input/output files, and preserve legacy project names. Changes recorded in CMP/PROJECT_NAMING_CONVENTION.md, CMP/AGENTS.md, CMP/.ai-sync/RELAY.md, TEAM_TIMELINE and LeeTaekGyu/TIMELINE. This documents policy for other AIs to read; no messages were directly sent to 주수빈 and no SWB code/run was modified. Current CAL 5V Run was previously user-reported started, its log/completion still unchecked.
 
 ---
+
+## 2026-10-10T03:11:21Z — TaekGyu0801
+
+[2026-10-10 12:09 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / BLOCKER
+상태: OBSERVED (SWB 상태에 대한 사용자 보고) / UNRESOLVED (실제 solver 진행·시작 날짜)
+
+요약:
+- 사용자는 별도 CAL 후보 CMP_BASELINE_1.2.0_CAL의 SDevice가 10월 10일 12:09 KST에도 SWB에서 여전히 실행 중이라고 보고.
+- "어제 새벽 1~2시"를 문자 그대로 해석하면 10월 9일 01~02시 시작(34h09m~35h09m 경과)이지만, CAL SDE meshing 완료 관찰시각이 10월 10일 00:11:50이므로 동일 CAL SDevice라면 시간상 모순. 10월 10일 01~02시 시작이면 10h09m~11h09m 경과. 실제 시작일/대상 작업은 미확인.
+- SWB running 표시로 완료/에러는 판정할 수 없으며 아직 n2_des.log 및 받아들여진 전압 단계, tau_max=1e-7 효과를 검증하지 못함.
+
+근거:
+- 연구원 채팅 직접 보고; 기존 GitHub 개인 타임라인의 SDE 2026-10-10 00:11:50 스크린샷 관찰 기록. 새로운 로그 제공 없음.
+
+변경:
+- GitHub 기록만 업데이트. 학교 서버 입력/계산에는 접근하거나 수정하지 않음.
+
+다음:
+- 계산을 중단하거나 소스 수정하지 말고, CAL n2_des.log 마지막 40줄과 SWB 실행시각/프로젝트 정체를 읽기 전용으로 확인.
+
+
+---
+
+## 2026-10-10T03:23:57Z — TaekGyu0801
+
+2026-10-10 이택규 OBSERVED: 사용자 제공 CAL n2_des.log에서 NtSide0 계산이 4.122V(t=0.824478s)까지 정상 수렴했음을 확인. 해당 단계 Newton RHS=7.30e-4<1e-3. 다음 단계는 5회 반복 시 RHS=1.10e-3로 로그가 끝나 수렴 여부 미확인. 5V 완료/100ns 적용/남은 시간은 아직 확인되지 않음. 실행 중단/코드 변경하지 않고 후속 로그를 비교할 예정.
+
+---
