@@ -5477,3 +5477,75 @@ AI: ChatGPT
 - Read-only parse of complete 17-value data records and identify nearest anode 4.0V time and total current; confirm TDR checkpoint coverage separately before any Stop/Abort.
 
 ---
+
+## 2026-10-10T13:35:06Z — soybeanmilk0514-jpg
+
+[2026-10-10 22:30 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED (4V IQE/TDR, baseline validity UNRESOLVED)
+
+요약:
+연구자가 수행 중인 별도 CMP_BASELINE_1.2.0_CAL (InGaN SRH lifetime=100ns) 2D SDevice n2_des.plt의 17-column DF-ISE numerical Data를 READ-ONLY Python으로 파싱. 실제 4V 근접 저장점: time=0.79993475s, anode OuterVoltage=3.99967374V, anode TotalCurrent=3.497895e-14 A/um (2D). 최신 파일 내 마지막 저장점: time=0.82993089s, voltage=4.14965446V, current=4.839436e-14 A/um. 이 값은 특정 시점의 마지막 기록이며 현시점 계산 진행 전압을 확정하는 것은 아님.
+4V transient I-V 데이터는 확보했으나 전류가 여전히 매우 작으며 기존 Gate0 low-J blocker 유지. 4V 전압까지의 I-V 진단은 가능하나 최종 MicroLED baseline/IQE 결정에는 4V TDR, 유효 주입전류(변위전류 여부), 전류밀도 및 발광 재결합 결과 등 추가 검증 필요. 현재 CAL 중단/변경 지시 없음.
+근거:
+- 2026-10-10 22:30 KST 사용자 터미널 스크린샷, python3 -c read-only parsed n2_des.plt 출력.
+변경:
+- JuSubin TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.md.
+- Server SWB/SDE/SDevice/CAL 실행/출력 변경 없음.
+다음:
+- CAL 4V 전압의 n2*.tdr 또는 *.sav 스냅샷이 저장되어 있는지 READ-ONLY 파일 조회 후 적절한 판단. 임의 Stop/Abort 금지.
+
+---
+
+## 2026-10-10T13:42:43Z — TaekGyu0801
+
+[2026-10-10 22:39 KST]
+작업자: 이택규 | AI: ChatGPT | 구분: RESEARCH / PLAN | 상태: PROPOSED
+
+Project A(Carbon-induced high-resistivity edge) 근거 논문과 구현 가능성 재검토. 기존 CMP/PROJECT_AB_TCAD_IMPLEMENTATION_PLAN.md 원래 참조 확인: Richter 2020 DOI 10.1002/crat.201900129, Ramdani 2012 DOI 10.1016/j.sse.2012.04.034, Cao 2023 DOI 10.1038/s41598-023-41678-1, Chang 2020 DOI 10.1186/s11671-020-03372-3, Taube 2015 DOI 10.1002/pssa.201431724. GaN:C growth-resistivity and carbon implantation damage-induced isolation are not interchangeable; localized MicroLED edge geometry not experimentally confirmed. Preserve Baseline 5nm Dmg, trial GaN Cedge in upper n-GaN below MQW; A-null same geometry/mesh and carbon-defect DOE suggested. No code/run changed; low-J Gate0 prevents publication-grade A/B production. Next: actual mesh/regions audit, null test and small pilot after gating. LeeTaekGyu timeline updated commit 961d8e5.
+
+---
+
+## 2026-10-10T13:46:10Z — TaekGyu0801
+
+[2026-10-10 ~22:39 KST]
+작업자: 이택규 | AI: ChatGPT | 구분: RESEARCH / LITERATURE CORRECTION | 상태: OBSERVED LITERATURE; PROJECT-A ADAPTATION PROPOSED
+
+Verified F- implantation microLED papers from publisher pages: (1) Pan et al., ACS Photonics 2026, DOI 10.1021/acsphotonics.5c02363: high-resistivity passivation ring in p-GaN edges, 6/8/10um blue MicroLED, injection steered away from sidewall defects; improved leakage/light output/efficiency/color purity in abstract. (2) Ye et al., Journal of Luminescence 2023, DOI 10.1016/j.jlumin.2023.119903: F- implanted p-GaN pixel isolation, energy/dose spatial-distribution engineering, 10um device demonstration. CORRECTION: Hsu et al., Next Nanotechnology 2025, DOI 10.1016/j.nxnano.2024.100101 implanted **As ions** after ICP etching, NOT F. F p-GaN ring is relevant analogue but different species and placement from CMP Project A C-doped upper n-GaN Cedge; no proof C implant has same effect. Project plan and LeeTaekGyu timeline appended; no TCAD execution/source modified. Low-J Gate0 remains unresolved.
+
+Next: if considering p-GaN edge instead of upper n-GaN for Project A, separately test with A-null and validated J/IQE, without altering baseline until approved.
+
+---
+
+## 2026-10-10T13:51:08Z — soybeanmilk0514-jpg
+
+[2026-10-10 22:38 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / BLOCKER / HANDOFF
+상태: OBSERVED (4V spatial TDR location/status UNRESOLVED)
+
+요약:
+주수빈 사용자 캡처에서 read-only `find /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL -maxdepth 1 -type f -name 'n2*' -printf '%f %k KB\n' | sort` 결과: n2_des.err(12KB), .job(4KB), .log(5120KB), .out(5376KB), .plt(1416KB), .sta(4KB), n2_local.err(0KB). 디렉터리 최상위에서 `n2*.tdr` 또는 `n2*.sav` 없음. 4V 부근 PLT 전류(3.99967374V, 3.497895e-14 A/um)는 이전에 기록 확인 완료. 4V 시점의 내부 물리량과 IQE 관련 공간 데이터는 아직 확인되지 않음. 하위 디렉터리 또는 다른 파일명의 snapshot은 미확인. 임의 Stop/Abort는 4V TDR을 보존하지 않을 수 있음.
+근거:
+- 2026-10-10 22:38 KST user MobaXterm screenshot of read-only find listing; prior read-only 4V n2_des.plt parsing.
+변경:
+- CMP/members/JuSubin/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, LIVE_STATE.md/json, RELAY.md recorded.
+- SWB/SDevice scripts, process, simulation output NOT changed.
+다음:
+- Read-only list of actual CAL command file(s) and inspection of `Plot`/`Save` schedule; optionally check alternate/nested output paths before planning 4V stop or separate snapshot run. Preserve existing active CAL and Gate0 low current blocker.
+
+---
+
+## 2026-10-10T13:57:42Z — TaekGyu0801
+
+[2026-10-10 KST]
+작업자: 이택규 | AI: ChatGPT | 구분: RESEARCH / HANDOFF | 상태: OBSERVED public sources / PROPOSED speed audit
+
+User requested external MicroLED/GaN TCAD full .cmd/.par files and speed optimization hints. Directly inspected public sources: closest Sentaurus case is training Chapter16.8 GaN p-i-n with SDE/SDevice, MaterialDB and Chapter16.6 ILS settings (https://ghzphy.github.io/Sentaurus_Training/sd/sd_16.html); Silvaco vendor LED slide includes Blue_GaN_uLED_10Acm-2 result but no verified downloadable deck; Silvaco ledex01 source is single-QW and ATLAS not Sentaurus; Baek 2023 Nature Communications microLED explicit code-not-public statement due proprietary Silvaco base code. Github fenning-research-group/sentaurus_ddd solar cells .cmd+.par, Alisama20/MOSFET-TCAD-Sentaurus .cmd+.par, ananthakrishnan754/sentaurus-tcad-pn-diode .cmd, sai1999gaurav PN sample were checked and NOT fully reproducing III-nitride 4QW MicroLED w sidewall defects. Public teammate repo source has only README, not independent calibration evidence. 
+
+Current slow CAL: latest 100ns SRH lifetime CAL recorded ~4.14965V; 5V complete only in separate low-J baseline parent; neither current solver state nor active parameter deck can be inferred from stale public CMD. Conditional numerical note: for 1s ramp if MaxStep=1e-3s then at least 1000 accepted steps before retries; high-bias nonlinear cutbacks likely burden, to verify read-only. DO NOT stop/modify CAL, baseline low-J Gate0 remains blocker. Full curated source/link/method note: CMP/reviews/EXTERNAL_GAN_MICROLED_TCAD_SOURCES_2026-10-10.md, LeeTaekGyu/TIMELINE.md updated. Next: read-only pp2_des.cmd/par Math/Solve and latest CAL log to isolate slowdown; evaluate T-2022.03-compatible alternatives only after inspection.
+
+---
