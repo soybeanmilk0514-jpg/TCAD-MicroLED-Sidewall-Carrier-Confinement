@@ -1,3 +1,289 @@
+## 2026-10-10 ~22:30 KST — CAL 100ns 4.0V and latest 4.14965V I–V rows extracted (OBSERVED terminal screenshot; derived interpretation; CAL run untouched)
+
+- Worker **주수빈** used read-only Python to parse 17-field `DF-ISE text` `CMP_BASELINE_1.2.0_CAL/n2_des.plt` and printed **actual near-4V record**: `time=0.79993475 s`, `anode OuterVoltage=3.99967374 V`, `anode TotalCurrent=3.497895e-14` (2D current-per-length A/um). This confirms usable transient I–V output near 4.0 V.
+- The **last recorded row in this snapshot**: `time=0.82993089 s`, `anode OuterVoltage=4.14965446 V`, `anode TotalCurrent=4.839436e-14 A/um`. The screenshot was taken ~22:30 KST, but this file's stored latest record does NOT prove that the running job is still exactly at this voltage at time of reading; last successfully written output may lag solver activity.
+- Consistent with 5V/1sec ramp; time ~0.8s corresponds 4V. **SRH tau=100ns** in InGaN is a physical recombination lifetime sensitivity parameter, not a simulation step length.
+- SCIENTIFIC DECISION: These I–V values allow a 4V read-only current comparison, but currents remain extremely small and old low-J Gate0 is unresolved; neither 4V data availability nor reducing endpoint to 4V establishes physically valid luminous baseline/IQE. Transient TotalCurrent may include displacement current and 2D geometry normalization; need to check components and steady-state comparability. To conclude at 4V and analyze spatial band/recombination, FIRST inspect whether any ~4V TDR/SAV output or Plot/Save snapshots exist. **Do not Abort/Stop the running CAL** without deciding whether needed output is saved. Compare tau 1ns and tau 100ns only at matched voltage/current-density if datasets permit.
+- NEXT **read-only**: `find /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL -maxdepth 1 -type f \\( -name 'n2*.tdr' -o -name 'n2*.sav' \\) -printf '%f %k KB\\n'` (actual shell escaping in user command needs only `\\(` escaped parens, not literal double slash). Review Save/Plot directives if no such snapshot. No SWB, source, mesh, running CAL or separate completed 5V_TEST changed.
+
+## 2026-10-10 ~22:25 KST — CAL n2_des.plt confirmed DF-ISE xyplot text with voltage and current datasets (OBSERVED screenshot; 4V record yet UNVERIFIED)
+
+- Worker 주수빈 ran read-only `head -n 30 /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/n2_des.plt` on live server. File starts `DF-ISE text`, `Info { version=1.0; type=xyplot; datasets=[...]; functions=[...]; }` followed by `Data {` with numeric rows. Dataset fields in written order: 1 `time`; 2–9 cathode OuterVoltage/InnerVoltage/QuasiFermiPotential/DisplacementCurrent/eCurrent/hCurrent/TotalCurrent/Charge; 10–17 anode OuterVoltage/InnerVoltage/QuasiFermiPotential/DisplacementCurrent/eCurrent/hCurrent/TotalCurrent/Charge. 17 numeric values per saved record (subject to file completion).
+- This **confirms CAL transient output stores time, anode applied voltage, electron/hole/total and displacement current**, and can potentially extract anode I(V) at/near 4V. A head sample only covers initial zero-bias rows: **neither 4V point, its value, saved TDR state, final CAL progress, nor 5V endpoint are confirmed by this screenshot**.
+- NEXT READ-ONLY: parse all available complete 17-field DF-ISE Data records with shell `python3 -c` and report nearest-4V and latest saved `time`, `anode OuterVoltage` (field index 9), `anode TotalCurrent` (index 15); note transient current includes displacement, cannot be treated blindly as steady-state J. Leave 100ns CAL running and separate baseline unchanged. If end record is being written, exclude incomplete record, do not interrupt.
+
+## 2026-10-10 ~22:21 KST — JuSubin confirms CAL n2_des.plt exists (1.4MB) (OBSERVED via live terminal screenshot)
+
+- Worker **주수빈** ran `ls -lh` for `/user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/n2_des.plt` (separate 100ns InGaN SRH-lifetime sensitivity CAL). **The intended file exists**: mode `-rw-r--r--`, user semi437, displayed size `1.4M`, modification time `Oct 10 21:30`. This is only a file-existence/mtime check; **contents, accepted 4V I-V history, complete 4V TDR/checkpoint, saved dataset completeness and current numerical status are NOT verified**.
+- Screenshot also shows a `No such file or directory` from `n2_des.pltls` caused by typing two commands together (extra suffix `ls`), not a missing correct `n2_des.plt`, not a TCAD solver failure.
+- Prior team live CAL log at ~22:11 KST accepted ~4.149V, not 5V, and reported severe high-bias step retries. File timestamp does not prove calculation progress to a newer accepted voltage; `n2_des.plt` can be updated during ongoing computation. Preserve running CAL and prior completed 5V_TEST parent, no Stop/Abort.
+- NEXT read-only command: `head -n 30 /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/n2_des.plt` to learn PLT format and dataset names; then inspect I(t)/V(t) at saved/accepted ~4V. Separately inspect `pp2_des.cmd` Save/Plot targets before any decision to shorten CAL. No SWB/source/job changes.
+
+## 2026-10-10 after 22:11 KST — JuSubin asks whether slow 100ns CAL can be evaluated only through 4V (PROPOSED SCIENTIFIC CRITERIA, no run change)
+
+- Worker **주수빈** raised same practical question as earlier 이택규 proposal: separate `CMP_BASELINE_1.2.0_CAL` (intended InGaN SRH tau 1ns→100ns, not a 100ns time step) becomes dramatically slow above 4V and asks whether 4V can substitute for 5V. No instruction to kill/change running job.
+- Latest **shared GitHub 22:11 KST actual CAL log** recorded an accepted 4.149V at transient t≈0.829862s, 2D anode total current 4.832e-14 A/um. Next BE attempt oscillatory/nonconverged in visible portion; 5V completion unknown, no accurate ETA. Nominal J under previously documented half-width convention ~2.416e-6 A/cm2 (caution: transient current/displacement and normalization must be checked). Separate 5V_TEST parent successful at 5V but low nominal J~7.24e-4 A/cm2 and QW radiative share~0.1095%; this is the major Gate0 blocker.
+- RESPONSE: 4V is acceptable **diagnostic or SRH sensitivity comparison at same voltage** and can support scientific A/B only if injection/current density, QW-recombination and IQE evaluated in physically relevant range at matched current density. 4V alone is not sufficient baseline acceptance, and voltage need not universally be 5V. At present low I/J, 4V termination is unlikely to resolve existing weak injection. To capture 4V, first inspect CAL `n2_des.plt` J–V history and actual `Plot/Save` coverage; **abort/stop cannot be assumed to leave a valid 4V TDR/IQE snapshot**, especially if Save only at 5V. Preserve ongoing CAL unless user explicitly decides after evidence; no new code, files, rerun or interruption.
+- NEXT read only: inspect CAL `pp2_des.cmd` Save/Plot, `n2_des.plt` existence and 4.0V current history (do not change run). Compare old 1ns/100ns at same bias/J if data available. Coordinarily align with 이택규 to avoid duplicate or premature action.
+
+## 2026-10-10 22:04 KST — JuSubin independently confirms 5V_TEST n2 terminal completion (OBSERVED from screenshot; old job ended 2026-10-09 14:29:52 KST)
+
+- Worker 주수빈 re-read existing `/user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST/n2_des.log` via grep/tail (two screenshots repeat identical output). Last accepted BE step: `0.999674 s -> 1.000000 s`. Terminal anode voltage `5.000E+00 V`; terminal electron current `2.781E-13`, hole current `1.420E-11`, total current `1.448E-11` in Sentaurus 2D current-per-length convention (A/um, not total measured 3D A). `Sentaurus Device simulation finished (Date: Fri Oct 9 14:29:52 2026 KST)` and `Good Bye!` show successful completion.
+- This closes uncertainty about **solver log reaching 5V**, but does not yet prove specific opened `n2_des.tdr` snapshot was written at the final 5V state. Document provenance/time/Plot directive if required. Independently reported raw I2D ~1.44801646e-11 A/um / nominal J~7.24e-4 A/cm2 under documented width normalization and MQW Rrad share~0.1095% remain LOW-J GATE0 blocker; successful solver convergence is not physical baseline validation.
+- A separate `n1_msh.tdr: Permission denied` arose because TDR binary/data file was typed as an executable in shell; **not a TCAD job failure**. Existing MgMinus ionization-field interpretation and EBL barrier causality also unresolved. CAL project status not updated and its running job must remain untouched.
+- NEXT: prioritize quantitative low-current/injection Gate0 from existing outputs, verify TDR time-bias linkage if necessary, no repeated reruns or unsolicited code edits.
+
+## 2026-10-10 — JuSubin pGaN energy probe
+- Observed Clean_pGaN X=0.05um,Y=1um: Ev=-5.130097037559eV and EFp=-4.999999973858eV. Local EFp minus Ev=0.130097063701eV. Compared with prior Clean_EBL X=0.13um local separation=0.252508468101eV; EBL minus pGaN=0.122411404400eV. Energy-gap difference is not EBL injection barrier. Next confirm actual nominal 5V endpoint, then review layer-wise band edge. No simulator edits.
+
+## 2026-10-10 ~21:51 KST — JuSubin Clean_EBL Ev versus EFp measured at same point (OBSERVED screen, derived difference; barrier cause UNRESOLVED)
+
+- Worker 주수빈. Completed `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr` NtSide=0 nominal 5V, SVisual Probe coordinates X=0.13um, Y=1.0um, Z=0, Zone `Clean_EBL(AlGaN)`. New screenshot directly shows `ValenceBandEnergy=-5.252508407140e+00 eV`. Previous directly observed at identical coordinates `hQuasiFermiEnergy=-4.999999939039e+00 eV` and `hQuasiFermiPotential=+4.999999939039 V`.
+- DERIVED local separation `EFp-Ev = +0.252508468101 eV` (about 9.77 kBT at 300 K), compatible with locally suppressed mobile hole density under nondegenerate `p ~ Nv exp((Ev-EFp)/kBT)`. Prior same-point hDensity=5.787900714824e15 cm^-3 while EBL Acceptor=3.0e17, Doping=-3.0e17, Donor=0.
+- CRITICAL: 0.2525 eV is **local Ev-to-EFp energy separation, NOT EBL hole-injection barrier height**, and by itself does not establish excessive barrier, net hole-current limitation or explain low device J. Need compare spatial Ev and EFp plus region boundaries, transport/current density and possibly EQ state before cause conclusion. pGaN MgMinus output interpretation remains separate unresolved concern.
+- NEXT READ-ONLY: use SVisual Probe on same finished TDR at verified `Clean_pGaN(GaN)` X=0.05um Y=1.0um for numerical `ValenceBandEnergy` and `hQuasiFermiEnergy`; then compare regional gaps, and align Ev/QF spatial profiles. No SWB input, TCAD run, or CAL changes.
+
+## 2026-10-10 ~21:48 KST — JuSubin Clean_EBL hole quasi-Fermi energy point probe (OBSERVED SVisual screenshot)
+
+- Worker 주수빈: finished `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr` (NtSide=0 nominal 5V), SVisual Probe at (X=0.13 um, Y=1.0 um, Z=0) in verified `Clean_EBL(AlGaN)`: `hQuasiFermiEnergy=-4.999999939039e+00 eV` and `hQuasiFermiPotential=+4.999999939039e+00 V` shown in Probe Var Values. These are opposite-sign representations; do not equate the absolute EFp value to hole barrier height.
+- Previous identical point: `AcceptorConcentration=3.000000e17 cm^-3`, `DonorConcentration=0`, `DopingConcentration=-3.000000e17 cm^-3`, `hDensity=5.787900714824e15 cm^-3`.
+- NEXT read-only: in same Probe coordinate and Clean_EBL Zone, scroll Var Values to `ValenceBandEnergy` and capture numerical eV value; then calculate `hQuasiFermiEnergy-ValenceBandEnergy` only as local energetic separation (not entire interfacial injection barrier). To evaluate EBL injection obstacle compare Ev and EFp across pGaN/EBL/MQW coordinates/cutline after alignment. No code, parameter, saved solver output, or CAL job changed.
+
+## 2026-10-10 ~21:43 KST — JuSubin hQuasiFermiEnergy C1 zoom to 0–0.4 um
+- OBSERVED SVisual saved JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr, NtSide0 5V, existing vertical interior C1 Y≈1um. Right 1D hQuasiFermiEnergy(C1(n2_des)) is now zoomed to X=0–0.4um. Visually approx -5eV flat to 0.14um, rises 0.15–0.18um, multiple abrupt steps around 0.19–0.25um, ~-2.6eV after 0.25um. These are screenshot estimates, not quantitative fit or proven barrier.
+- Prior 1D ValenceBandEnergy C1 shows sharp shifts near 0.12–0.26um. Coincident shifts merit same-coordinate Ev-vs-EFp quantitative comparison; barrier/depletion and low EBL hDensity cause remain UNRESOLVED. NEXT read-only SVisual Probe of ValenceBandEnergy and hQuasiFermiEnergy at existing confirmed Clean_EBL point X=0.13um,Y=1.0um, recording Zone and values, then spatial region-aware comparison. No model or CAL modifications.
+
+## 2026-10-10 ~21:37 KST — Upper 0–0.4um ValenceBandEnergy cutline zoom observed (OBSERVED SVisual screenshot / CAUSAL INFERENCE UNRESOLVED)
+
+- Worker **주수빈** displayed `ValenceBandEnergy(C1(n2_des))` in completed `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr` (NtSide0 5V) using same vertical interior C1 line at Y≈1.0 um. **Right 1D plot X axis now 0–0.4 um** (confirmed visually), with resolved sharp energy structure in upper pGaN/EBL/MQW layers.
+- Approximate visual band-edge features (not point-extracted): X=0–0.11um ~-5.1eV; pronounced downward feature around X≈0.12–0.15um to roughly -5.6eV; repeated abrupt peaks and dips around X≈0.17–0.26um; beyond ~0.28um ~-3.5eV plateau. Exact interfacial region mapping, magnitude of hole barrier, and peak origins are NOT verified by a color/curve screenshot; these are hypotheses for carrier barrier and band offsets, not validation of EBL injection-loss mechanism.
+- Previous same SVisual Probe: `Clean_EBL(AlGaN)` X=0.13um Y=1um, Acceptor=3e17, Donor=0, Doping=-3e17, `hDensity=5.787900714824e15 cm^-3`; cannot attribute low biased mobile holes solely to an EBL barrier yet.
+- NEXT read-only UI: retain reference Ev screenshot; click existing C1 dataset on right 1D Data Selection and select `hQuasiFermiEnergy` from lower field list; check legend changes and that 0–0.4um horizontal axis remains or reapply bound. Compare Ev vs hole quasi-Fermi for band-edge proximity and carrier transport. If both can be overlaid later, do so after verifying each alone. No TCAD source, model or running CAL change.
+
+## 2026-10-10 ~21:36 KST — 5V ValenceBandEnergy C1 cutline plotted, awaiting upper-layer zoom (OBSERVED SVisual Screenshot)
+
+- Worker: 주수빈. In saved completed NtSide=0 5V `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr`, created existing-type vertical C1 line at internal Y≈1 um and confirmed right 1D `Cutline_Y Plot` legend **`ValenceBandEnergy(C1(n2_des))`**. Full-depth 1D X axis spans ~0–4.5 um, while upper-stack Ev varies sharply near X<0.3 um. The broad plot is not sufficiently resolved for EBL injection barrier assignment.
+- NEXT read-only UI: right 1D plot X Axis Properties: Min=0 Fixed, Max=0.4 um Fixed, Log off; keep Energy/Y axis unchanged; capture pGaN/EBL/MQW resolved band edges, and then overlay/compare `hQuasiFermiEnergy` at same C1 to evaluate hole-transport barrier hypotheses. Do not infer barrier magnitude from screenshot before clear zoom and layer boundaries. Existing observation: EBL X=0.13 um/Y=1um 5V Acceptor=3e17, Donor=0, Net=-3e17, hDensity=5.787900714824e15 cm^-3; root cause remains UNRESOLVED.
+- No SWB/SDE/SDevice file changes or live CAL job actions.
+
+## 2026-10-10 ~21:33 KST — 5V ValenceBandEnergy 2D field visible; vertical cutline pending (OBSERVED SVisual screenshot)
+
+- Worker 주수빈 opened existing finished `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr` NtSide0 5V in SVisual, selected `ValenceBandEnergy` in Scalars and activated its 2D field. Color-bar range approximately -5.66219 to +0.421554 eV. The 2D cross-section contains near-top pGaN/EBL/MQW transitions, but this picture alone does **not** measure valence-band barrier height or establish cause of EBL hole deficit.
+- Prior exact Clean_EBL(AlGaN) Probe X=0.13um, Y=1um: Acceptor=3e17, Donor=0, Doping=-3e17, hDensity=5.787900714824e15 cm^-3 at 5V. Distinct pGaN Mg ionized-field semantics remain unresolved.
+- Next read-only GUI: create same center-interior vertical X-direction Cutline at Y=1.0um used previously, with `ValenceBandEnergy` field selected on C1 so 1D curve appears. Then X-axis range 0–0.4um and compare `hQuasiFermiEnergy` on same cutline. Need confirm band-edge peak, local coordinates and quasi-Fermi alignment before barrier physics interpretation. No TCAD code/results/jobs changed.
+
+## 2026-10-10 ~21:29 KST — JuSubin 5V Clean_EBL net doping and donor Probe confirmed (OBSERVED, PHYSICS CAUSE UNRESOLVED)
+
+- Worker 주수빈 provided SVisual Probe screenshot of saved, completed `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr`, NtSide=0, 5V endpoint. Coordinates `X=0.13 um,Y=1.0 um,Z=0`; Zone `Clean_EBL(AlGaN)`.
+- **New directly observed:** `DonorConcentration = 0.000000000000e+00 cm^-3`; `DopingConcentration = -3.000000000000e+17 cm^-3`. Prior screenshots **same point**: `AcceptorConcentration=3.000000000000e17 cm^-3`, `hDensity=5.787900714824e15 cm^-3`.
+- EBL effective acceptor input and signed net doping agree with nominal acceptor=3e17 / donor=0. The local 5V mobile hole density is ~51.8x lower than effective acceptor doping, so this is NOT evidence that SDE EBL dopant is missing/misassigned. It may reflect a space-charge/polarization/heterojunction/bias effect; **no single mechanism or bad EBL design is proven from one local point**. Kou literature nominal hole concentration is not interchangeable with 5V local electron/hole density.
+- Next **read-only** on same existing TDR: vertical cutline across pGaN/EBL/MQW (Y=1.0 um), inspect `ValenceBandEnergy` and `hQuasiFermiEnergy` plus local hole density to investigate effective hole-injection barrier. Start by checking availability of `ValenceBandEnergy` in Data Selection; no new solver jobs nor model changes. Existing MgMinus custom mapping versus effective net doping is a SEPARATE unresolved item.
+
+## 2026-10-10 ~21:26 KST — 5V Clean_EBL AcceptorConcentration matches nominal 3e17 (OBSERVED SVisual probe)
+- 작업자 주수빈: `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr` 완료된 NtSide=0, 5V 결과, Probe X=0.13 um, Y=1.0 um, Z=0; Zone `Clean_EBL(AlGaN)`; `AcceptorConcentration=3.000000000000e17 cm^-3` directly observed in latest screenshot.
+- Same coordinate previously observed `hDensity=5.787900714824e15 cm^-3` (~51.8 times lower), versus intended effective EBL acceptor input 3e17 and Kou paper nominal EBL hole concentration 3e17. The effective acceptor is correctly represented in TDR, but local biased free-carrier density differs. Do NOT conflate nominal dopant concentration and 5V hole density nor diagnose an injection barrier as proven from one point.
+- Next read-only: same SVisual Probe field `DopingConcentration` (and `DonorConcentration`) at X=0.13 um,Y=1.0 um; verify EBL charge/dopant bookkeeping. Then spatial/0V profile and valence-band / quasi-Fermi-barrier analysis if needed. All TCAD and CAL jobs unchanged.
+
+## 2026-10-10 ~21:22 KST — Clean_EBL hDensity probed at 5V
+- OBSERVED: 주수빈 SVisual completed `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr` (NtSide=0, 5V), Probe (X=0.13 µm, Y=1.0 µm, Z=0), Zone `Clean_EBL(AlGaN)`, `hDensity=5.787900714824e15 cm^-3` (screenshot readout). Prior 5V point `Clean_pGaN` X=0.05 µm gave hDensity≈3.00034279e17 cm^-3. EBL hole concentration is about 51.8x lower than the 3e17 cm^-3 nominal Kou EBL hole-density reference at this one 5V point.
+- INTERPRETATION: 5V local EBL carrier density is not necessarily equal to nominal 0V/equilibrium density or SDE acceptor input; heterojunction/polarization/hole injection effects may dominate. This single point does not establish wrong EBL doping. Need identify nominal EBL accepted and net doping with same-position Probe before judging baseline.
+- NEXT read-only: at identical Probe coordinates, scroll `Var Values` to `AcceptorConcentration`, `DopingConcentration`, `DonorConcentration` and capture magnitudes; optionally check hDensity at adjacent EBL points or equilibrium saved state later. MgMinus interpretation still unresolved. No file/source/simulation changes.
+
+## 2026-10-10 ~21:17 KST — Same-point n1 mesh vs 5V net doping directly compared (OBSERVED SVisual screenshots; ionization-field interpretation unresolved)
+
+- Worker 주수빈 opened `JUSUBIN_FAST_HALF_5V_TEST/n1_msh.tdr` and used SVisual Probe at X=0.05 um, Y=1.0 um, Z=0; Zone `Clean_pGaN(GaN)`.
+- **Direct initial mesh Probe**: `DopingConcentration = -9.590000000000e18 cm^-3`; `NDopantActiveConcentration = 0`; `PDopantActiveConcentration = 0` (Mg is a separate pMagnesium species). Two screenshots of identical panel provided; count as one observation.
+- **Existing previous finished 5V n2 Probe at same coordinates**: `DopingConcentration≈-3.000317924998e17 cm^-3`; `hDensity≈+3.000342790006e17 cm^-3`; `pMagnesiumActiveConcentration=9.59e18 cm^-3`; `pMagnesiumMinusConcentration=9.59e18 cm^-3`; `AcceptorConcentration=9.59e18 cm^-3`; `DonorConcentration=0`.
+- Initial nominal net doping and final effective net doping are demonstrably distinct, and SDevice log previously confirmed `IncompleteIonization` and explicit Nnet recomputation. The ratio |Nnet(final)|/|Nnet(mesh)|≈0.0313 is **NOT independently established as the Mg ionization fraction**, because exported MgMinus still equals MgActive while net doping is much lower. Actual species charge/output semantics need validation. Single-point target match is not spatial, EBL or 0V calibration.
+- No SDE/SDevice codes, numerical parameters, or CAL job modified. Suggested next step: check whether effective ionized acceptor field `AccepMinusConcentration` can be obtained or verify custom pMagnesiumMinus output behavior in same saved 5V run; preserve this as UNRESOLVED. Optionally proceed to EBL point-by-point hole-density checks once scope clarified.
+
+## 2026-10-10 ~21:15 KST — Initial mesh stores active Mg but not MgMinus (OBSERVED SVisual SCREENSHOT)
+
+- Worker 주수빈 opened `JUSUBIN_FAST_HALF_5V_TEST/n1_msh.tdr` in SVisual. Shown scalar dataset fields: `DopingConcentration`, `NDopantActiveConcentration`, `PDopantActiveConcentration`, `X`, `Y`, `pMagnesiumActiveConcentration`, `xMoleFraction`. **No `pMagnesiumMinusConcentration` exists in the initial mesh field list.** The active Mg plot range reaches `9.59e18 cm^-3`. Mesh elements=138194, points=65513.
+- This verifies nominal Mg input was propagated to initial mesh; one cannot calculate initial-to-final evolution of `MgMinus` because n1_msh does not contain that field. Absence of MgMinus on mesh does NOT itself indicate incomplete ionization disabled or incorrect.
+- More direct next read-only test: SVisual Probe `DopingConcentration` on `n1_msh.tdr` at Clean_pGaN X=0.05um,Y=1.0um, compare signed net doping with already observed final n2_des at same point (≈-3.0003179e17 cm^-3). This specifically tests numerical Nnet recalculation through SDevice; does not by itself validate MgMinus output mapping. Also compare initial pMagnesiumActive at this coordinate if useful.
+- Do not change TCAD source, mesh or running separate CAL model.
+
+## 2026-10-10 ~21:10 KST — Mg ionized species mapping directly found in datexcodes (OBSERVED screenshot; SEMANTIC INCONSISTENCY UNRESOLVED)
+
+- Worker 주수빈 obtained read-only datexcodes species configuration: `pMagnesiumConcentration, pMagnesiumChemicalConcentration` block contains `doping = acceptor( active = pMagnesiumActiveConcentration; ionized = pMagnesiumMinusConcentration )` (displayed near lines 13022–13034). `pMagnesiumMinusConcentration` label near 13037: “pMagnesium- concentration (incomplete ionization)”. Separate `pMagnesiumActiveConcentration` field label near 13011 says substitutional Mg concentration. Screenshot does not expose the filename header, so the exact searched file path/effective runtime mapping provenance is not yet individually established.
+- Earlier completed 5V NtSide0 `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr` Probe, Clean_pGaN X=0.05um,Y=1.0um: pMagnesiumActive=9.59e18, pMagnesiumMinus=9.59e18, AcceptorConcentration=9.59e18, DonorConcentration=0, DopingConcentration≈-3.0003179e17, hDensity≈3.0003428e17 cm^-3. These apparent mismatched magnitudes require explanation: `ionized` mapping identifies the intended field but alone cannot prove `pMagnesiumMinusConcentration` has been dynamically updated to the effective ionized-density value in exported 5V TDR. Cannot declare Mg 100% ionized, fraction 3.1%, or doping calibration confirmed.
+- Next read-only check: compare same Mg Minus field in initial `n1_msh.tdr` versus final `n2_des.tdr` at identical Clean_pGaN point, if both are exposed; check whether solver's `AccepMinusConcentration` is available. If still unresolved, document blocker and separately validate EBL (candidate X≈0.135um Y=1.0um, confirm region). Do not modify baseline nor running CAL.
+
+## 2026-10-10 ~21:09 KST — datexcodes check command shell mismatch
+- OBSERVED JuSubin terminal screenshot. Assistant's prior bash `for f in ...; do ...; done` was pasted directly into login shell that responds `for: Command not found`, `do: Command not found`, `f: Undefined variable`. This is consistent with csh/tcsh and NOT a TCAD SDevice or model failure. No datexcodes contents obtained; Mg species output interpretation still UNRESOLVED.
+- Assistant correction: re-run search via `bash -c 'for f in ...; do if [ -f "$f" ]; then echo "$f"; grep -n -B 12 -A 12 pMagnesiumActiveConcentration "$f"; fi; done'`. Follow up if no files/output. This is read-only and must not change existing 5V baseline or independent CAL run.
+
+## 2026-10-10 ~21:05 KST — Node2 runtime GaN Mg ionization species parameters observed (OBSERVED SCREENSHOT / CALIBRATION UNRESOLVED)
+
+- Worker: 주수빈. Actual read-only `sed -n '810,850p' JUSUBIN_FAST_HALF_5V_TEST/n2_des.log` screenshot shows `Reading parameters for material "GaN"`, `Species "pMagnesiumActiveConcentration"` `type = acceptor`, runtime values `E_0=0.2eV`, `alpha=8e-9 eV*cm`, `beta=0`, `gamma=1`, `g=4`, `Xsec=1e-14 cm^2`, `Xsec_formula=1`, `highdop_formula=1`, `b_Nref=6e18 cm^-3`, `b_pow=2`, `E_Nref=2e18 cm^-3`, `E_pow=2`. This is stronger than just pp2 file reference: SDevice reports the *effective runtime-read* parameters.
+- One-point 5V Clean_pGaN Probe X=0.05um Y=1.0um: `hDensity≈3.00034e17`, `DopingConcentration≈-3.00032e17`, `Acceptor=pMagnesiumActive=pMagnesiumMinus=9.59e18 cm^-3`. With `IncompleteIonization` ON and runtime `Nnet` recalculation confirmed, the equality of active and exported minus field to 9.59e18 remains a field-definition/ionization-output validation question, not proof of full ionization or successful physical calibration.
+- Sentaurus training about AlGaN incomplete ionization provides doping species `datexcodes.txt` mapping of `ionized = MagnesiumMinusConcentration`; **the current custom pMagnesium mapping must be checked on the actual installed runtime before asserting exact semantics**. Next READ ONLY: inspect `datexcodes.txt` selected by project/system and check whether `AccepMinusConcentration` was requested/exported, then make same-point verification. No code or running CAL job modified.
+
+## 2026-10-10 ~21:02 KST — Effective Node2 Mg ionization region scopes confirmed (OBSERVED)
+
+- Worker 주수빈 supplied terminal screenshot of `sed -n '115,145p;450,465p' JUSUBIN_FAST_HALF_5V_TEST/pp2_des.cmd`. Effective SDevice deck explicitly has `Physics(Region="Clean_pGaN"){ IncompleteIonization(Dopants="pMagnesiumActiveConcentration") }` and same for `Physics(Region="DmgL_pGaN")`; DmgL_pGaN `Traps((Acceptor Conc=0 ...))`. The Plot section includes `Doping`, `DonorConcentration`, `AcceptorConcentration`, `pMagnesiumActiveConcentration`, `pMagnesiumMinusConcentration`, `PE_Polarization/vector`, and `PE_Charge`.
+- Therefore Mg incomplete ionization is configured for two directly displayed half-device pGaN regions, and explicit DmgL trap is switched off (Conc=0) in this NtSide=0 reference. Nothing in this excerpt establishes ionization physics for EBL/MQW or confirms any DmgR region exists in this half mesh.
+- The empirical SVisual Clean_pGaN X=0.05,Y=1.0um hDensity≈3.00034e17 and Doping≈−3.00032e17 with MgActive=MgMinus=Acceptor≈9.59e18 still require ionized-output semantics reconciliation. Official SDevice guide says Plot `AccepMinusConcentration` shows ionized acceptor concentration, and custom species are defined by `datexcodes.txt`; exported `pMagnesiumMinusConcentration` alone is not proof of correct ionization fraction.
+- NEXT read-only: inspect runtime n2_des.log around species block (lines 810–850) and local/system `datexcodes.txt` if needed; then seek actual `AccepMinusConcentration` field if present. No input/source/solver/CAL changes.
+
+## 2026-10-10 — Node2 Mg parameter binding confirmed
+- OBSERVED by 주수빈: active `JUSUBIN_FAST_HALF_5V_TEST/pp2_des.cmd` line 22 has `Parameters = "FASTC1_pp6_des.par"`; line 68 DefaultParametersFromFile; lines 128 and 137 call Mg IncompleteIonization; 456/458 request Mg active/minus fields.
+- Existing linked FASTC1_pp6_des.par has GaN Mg Species Ionization E_0=0.2, alpha=8e-9, g=4.0, Xsec=1e-14. n2 log recognized Mg incomplete ionization and recalculated net doping. Exact MgMinus versus net-doping semantics remain unresolved; next inspect pp2 region scope and actual species output meaning. No simulation changes.
+
+## 2026-10-10 ~20:40 KST — 5V_TEST region scope and Nnet recalculation log context (OBSERVED)
+
+- 주수빈 terminal screenshot of read-only `sed -n '410,445p;2138,2160p' JUSUBIN_FAST_HALF_5V_TEST/n2_des.log` confirms region **DmgL_pGaN** `With incomplete ionization` selected `pMagnesiumActiveConcentration`; subsequent **DmgL_EBL** lists no incomplete-ionization. Previously inspected live pp2 Physics confirms `Clean_pGaN` also has region-specific incomplete ionization.
+- Log explicitly identifies three recognized species used in acceptor/donor concentrations: `NDopantActiveConcentration (donor)`, `PDopantActiveConcentration (acceptor)`, `pMagnesiumActiveConcentration (acceptor)`. `DopingConcentration` and `TotalConcentration` are recomputed, and `WARNING: Doping concentration (Nnet) will be recalculated because of incomplete ionization!` is printed. Thus this warning is not itself a fatal error.
+- The `With Bulk Traps` declaration lists acceptor trap Ev+0.75eV and electron/hole cross-sections 1e-15cm2; it **does not prove trap concentration >0**. Earlier preprocessed NtSide=0 deck independently verified all 12 sidewall traps `Conc=0`.
+- IMPORTANT UNRESOLVED: Clean_pGaN 5V Probe X=0.05,Y=1um: hDensity≈3.00034e17 and signed Doping≈−3.00032e17 vs MgActive=MgMinus=Acceptor≈9.59e18. Region activation and Nnet recalculation are observed but not an independent proof of correctly calibrated ionization fraction or semantics of exported MgMinus. Sentaurus device guide uses `AccepMinusConcentration` to visualize ionized acceptor density; verify whether output is available and investigate custom `datexcodes.txt` mapping/Plot before interpretation. No new TCAD run or code edit.
+- NEXT READ-ONLY: inspect effective GaN Ionization Species block in existing `FASTC1_pp6_des.par` and relevant `pp2_des.cmd` Plot fields, then reconcile field semantics; do not alter running CAL or finished baseline.
+
+## 2026-10-10 ~20:38 KST — 5V_TEST n2 log confirms Mg incomplete-ionization and Nnet recalc (OBSERVED)
+
+- Worker 주수빈 provided live read-only terminal output: `grep -niE 'incomplete ionization|recalculat|pMagnesium' /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST/n2_des.log | head -n 60`.
+- Observed: line 335 `Without incomplete ionization` for a distinct/global scope; line 422 `With incomplete ionization`, line 423 `Selected dopants: pMagnesiumActiveConcentration`; line 431/432 repeat; line 821 species `pMagnesiumActiveConcentration`; line 2143 `pMagnesiumActiveConcentration (acceptor)`; line 2148 `WARNING: Doping concentration (Nnet) will be recalculated because of incomplete ionization!`.
+- This confirms runtime recognized region-specific Mg incomplete-ionization and Nnet recalculation. It DOES NOT prove ionization coefficient/curve correctly calibrated or resolve why SVisual `pMagnesiumMinusConcentration=pMagnesiumActiveConcentration=9.59e18` while `DopingConcentration=-3.0003179e17` and `hDensity=3.00034279e17 cm^-3` at Clean_pGaN X=0.05um,Y=1um. These are different output quantities; no inference of Mg 100% ionization or a fraction from hDensity/nominal doping without direct verification.
+- NEXT read-only: inspect log surrounding line 410–440 (Physics scopes) and 2138–2160 (species/ionization and warning context), then inspect active GaN ionization parameter section as needed; avoid source edits or disrupting separate CAL job.
+
+## 2026-10-10 ~20:35 KST — JuSubin pGaN AcceptorConcentration 9.59e18 independently probed (OBSERVED 5V TCAD output; interpretation unresolved)
+
+- Worker 주수빈 supplied screenshot of completed `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr`, NtSide=0, SVisual Probe at (X=0.05, Y=1.0, Z=0) um, Zone `Clean_pGaN(GaN)`. This screenshot explicitly confirms `AcceptorConcentration=9.590000000000e18 cm^-3`.
+- Prior screenshots at identical point: `pMagnesiumActiveConcentration=9.59e18`, `pMagnesiumMinusConcentration=9.59e18`, `DonorConcentration=0`, `DopingConcentration≈-3.0003179e17`, `hDensity≈3.000342790006e17 cm^-3`. Kou-inspired free-hole target 3e17 is numerically attained at this one 5V sample location, but effective Mg ionization species interpretation and ionized-doping charge balance remain UNRESOLVED.
+- If exported Mg Minus truly represents ionized acceptor for the same state, its equality to total 9.59e18 alongside low signed net doping cannot be explained simply from donor=0. Need inspect exact T-2022.03 field semantics, effective custom parameter/species configuration and n2 runtime ionization/recalculated doping logs; don't declare physical calibration pass/failure based only on variable names.
+- Next read-only: inspect pp2_des.cmd region-scoped `IncompleteIonization`, actual `FASTC1_pp6_des.par` ionization block and `n2_des.log` run-time activation; examine `datexcodes` species field mapping if necessary. Keep completed original and ongoing CAL simulation untouched; no code change or rerun.
+
+## 2026-10-10 ~20:31 KST — Clean_pGaN donor and net doping measured at same probe point (OBSERVED)
+
+- 주수빈 SVisual completed 5V NtSide0 `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr`, Probe X=0.05 um, Y=1.0 um, Z=0, Zone `Clean_pGaN(GaN)`.
+- New screenshot direct Probe readout: `DonorConcentration=0 cm^-3`; `DopingConcentration=-3.000317924998e17 cm^-3` (screenshot readout approximated from displayed digits). Previous same-point `hDensity=3.000342790006e17 cm^-3`, `pMagnesiumActiveConcentration=pMagnesiumMinusConcentration=9.59e18 cm^-3`.
+- Net doping magnitude and hDensity agree closely at THIS single 5V point; consistent with approximately charge-neutral p-type local result, but other charge terms and ionization species mapping have not been fully evaluated. Strong warning: identical MgActive/MgMinus exported values are not reconciled with net doping ≈-3e17; do not infer a Mg ionization fraction or claim physically calibrated doping from the probe alone.
+- Next read-only: in same Probe Zone inspect `AcceptorConcentration` (and optionally `eDensity`) then audit actual Sentaurus T-2022.03 species output semantics and Mg incomplete ionization, followed by 0V and EBL carrier profile checks. No input source/run changed.
+
+## 2026-10-10 20:21 KST — p-GaN Mg Active and Mg Minus same values, physically unresolved (OBSERVED)
+
+- Worker: 주수빈. Completed 5V NtSide0 SVisual Probe from `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr`, coordinate X=0.05 um/Y=1.0 um/Z=0, Zone `Clean_pGaN(GaN)`.
+- **New observed:** `pMagnesiumActiveConcentration = 9.590000000000e18 cm^-3`; `pMagnesiumMinusConcentration = 9.590000000000e18 cm^-3`. Previous same-point `hDensity=3.000342790006e17 cm^-3` (5V transient).
+- Literature/source semantics: in Sentaurus Device the dopant species ionized field for acceptor is typically `MinusConcentration`. Therefore equality of Active and Minus does **not** demonstrate incomplete Mg ionization despite hDensity matching a target. Exact T-2022.03 custom species mapping/plot output and net doping charge, compensation or possible plot bookkeeping must be audited before physical explanation. It is incorrect to infer ionization fraction as hDensity/MgActive.
+- Next read-only GUI: at same 5V coordinate Probe `DopingConcentration`, `AcceptorConcentration`, `DonorConcentration` and if available `eDensity` to check consistency; later audit actual `datexcodes.txt` pMagnesium species mapping, effective GaN Ionization and SDevice region model & Plot. Not evidence the full p-GaN doping calibration is validated.
+- No source changes, rerun or CAL interruption.
+
+## 2026-10-10 ~20:10 KST — JuSubin clean p-GaN hDensity target confirmed at one 5V point (OBSERVED)
+
+- Worker **주수빈** supplied Sentaurus Visual **Probe** screenshot of completed `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr`, NtSide=0, nominal 5V transient endpoint.
+- **Direct readout**: Probe coordinates `X=0.05 um, Y=1.0 um, Z=0`; Zone `Clean_pGaN(GaN)`; `hDensity = 3.000342790006e+17 cm^-3`.
+- This matches the nominal Kou-based p-GaN hole-density target 3e17 cm^-3 **at one observed interior location**, not proof of global/equilibrium/0V carrier profile, actual chemical Mg density, effective ionized acceptor fraction, or full physical calibration. Historical SDE Mg input `N_Mg_p=9.59e18 cm^-3` is a *different quantity*.
+- **Next view-only**: keep same Probe coordinates and read `pMagnesiumActiveConcentration`, `pMagnesiumMinusConcentration` magnitudes, and optionally `DopingConcentration` to separate nominal Mg input, exported Mg− field, and free holes. Inspect EBL/near-QW hole density and polarization spikes only after confirming Zone of each sample. No SDE/SDevice edits; existing CAL run remains untouched.
+
+## 2026-10-10 ~20:09 KST — Probe pGaN position attempted, value not yet visible
+
+- 주수빈이 finished `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr` NtSide0 5V SVisual에서 Probe At X=0.05 um, Y=1.0 um, Z=0 수행 후 화면을 보냄. 주황색 상단 영역에 표식은 보이나 Probe result/Zone/Magnitude 패널이 스크린샷에는 없어 실제 hDensity 측정값이나 Clean_pGaN Zone은 아직 직접 확인되지 않음.
+- 다음 확인: Tools > Probe로 아래 Probe panel 다시 표시하고 X/Y/Z 및 Zone=Clean_pGaN(GaN), Var Values > hDensity magnitude를 함께 캡처. 데이터가 보이기 전 도핑 calibration 성공/실패 판정 금지.
+- No source, simulation, or running CAL changes.
+
+## 2026-10-10 — JuSubin SVisual Probe At dialog opened
+- OBSERVED: In finished 5V NtSide0 SVisual, Probe panel plus Probe At dialog opened. Current X=0.5 um, Y=1.0 um, Z=0; Zone=Clean_nGaN(GaN).
+- NEXT: set X=0.05 um for candidate Clean_pGaN, press Probe; verify Zone and hDensity before interpreting. No code changes.
+
+## 2026-10-10 ~19:58 KST — hDensity upper-stack peaks spatially resolved in cutline (OBSERVED / PHYSICAL INTERPRETATION PENDING)
+
+- Worker 주수빈, completed 5V NtSide0 `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr`: SVisual interior Cutline C1 at lateral Y≈1µm; `hDensity` plotted with linear X axis restricted 0–0.4µm.
+- Two sharp high `hDensity` peaks visually at growth-axis X≈0.12µm (above ~4e19cm^-3) and X≈0.245µm (about 5e19cm^-3). A smaller feature near X≈0.22µm. Region attribution and precise numeric magnitude cannot be established from screenshot. pGaN interior `hDensity` ~3e17cm^-3 cannot be resolved accurately due to linear vertical scale at ~5e19.
+- Do NOT declare incorrect doping, physical hole accumulation or source of QW recombination loss from the spikes. Model/Scharfetter/lattice polarization, junction/interface and numerical overconcentration remain hypotheses. This is a simulated 5V transient endpoint, not 0V equilibrium carrier density.
+- NEXT read-only: SVisual Probe on 2D `n2_des` at representative `Clean_pGaN` coordinate X≈0.05µm,Y≈1.0µm,z=0, record Zone, `hDensity`, MgActive/MgMinus and units; then probe peaks/EBL/QW points by region and check results. Keep running CAL and baseline files untouched.
+
+## 2026-10-10 ~19:56 KST — hDensity C1 Cutline first displayed (OBSERVED GUI / NOT PHYSICS-VALIDATED)
+
+- 작업자 주수빈이 완료된 `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr` (NtSide0, 5V transient)에서 기존 Clean 영역 vertical `C1(n2_des)` cutline의 variable을 `DopingConcentration`에서 **`hDensity`**로 변경했고, 우측 legend `hDensity(C1(n2_des))`가 직접 확인됨.
+- 오른쪽 graph X축은 변경 후 전체 약 0–4.5 µm로 돌아왔으며 Y축 선형에서는 상단 계면/QW 근처로 보이는 X≈0.1–0.25 µm에서 좁고 큰 hole-density spikes가 보임. Y축 4e19 cm^-3 tick 위로 올라가는 peak가 존재하나 **정확한 최대값/영역/물리적 원인은 미확인**. 넓은 n-GaN에서 정공이 작게 보이는 것은 이 선형축 스케일에서의 시각적 인상이며 0이라고 단정할 수 없음.
+- Kou의 nominal p-GaN free-hole 3e17 cm^-3 대비 p-GaN 내부 실제 hDensity는 이 화면만으로 정량 비교 불가. 급격한 spike를 Mg 고농도·물리 불량·QW accumulation으로 확정하지 말 것. 5V transient endpoint는 0V equilibrium calibration과 다름.
+- NEXT view-only: 오른쪽 1D plot X-axis Axis Properties에서 fixed Min=0 Max=0.4 µm로 확대; 필요하면 hDensity 양수 로그 Y축/정확한 Probe로 p-GaN interior vs EBL/MQW 각 region 분리, Rhs/field check. 그래프 변경은 visualization only; SDE/SDevice/별도 running CAL 수정 없음.
+
+## 2026-10-10 19:46 KST — SVisual cutline upper-layer net doping inspected
+
+- JuSubin 5V NtSide0 `JUSUBIN_FAST_HALF_5V_TEST` screenshot: `DopingConcentration` cutline X 0–0.4 um. Approx net profile upper p-side -3e17 cm^-3 until X ~0.10 um, approaches zero ~0.12 um, near-zero area over ~0.12–0.26 um, +5e18 cm^-3 from ~0.27 um into n-GaN. These are screen estimates; actual individual regions/point values unverified.
+- Cutline now displays normally after earlier fixed axis problem. Net doping is not raw Mg dose or mobile hole density; apparent transition is not proof of physical Mg diffusion.
+- Next inspect `hDensity` on same C1 cutline, then active Mg species if available. No TCAD code/run changed.
+
+## 2026-10-10 ~19:43 KST — SVisual Cutline signed net-doping graph successfully restored (OBSERVED screenshot)
+
+- 작업자 주수빈. 완료된 `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr` (NtSide=0, 5 V) `DopingConcentration` `Cutline_Y Plot`에서 Y-axis 수동 범위 설정 후 음·양 signed net-doping plot 전체가 다시 표시되는 것을 직접 확인.
+- Current screenshot: p-side upper region roughly −3e17 cm^-3; shallow stacked EBL/MQW region shows multiple transitions; long n-GaN body has near-constant +5e18 cm^-3. Values are approximate visual readings, not separately extracted exact layer-point quantities. Underlying constant-profile SDE model is consistent; do not extrapolate to measured SIMS/MOCVD dopant grading or claim free holes equal net doping.
+- **GUI issue resolved**: previous `Axis Properties` Y-Min/Max both Fixed at approx 1e-20 erroneously clipped curve; manually entered sensible linear signed Y-range (~−4e17 to +6e18), now displays step-like complete-depth plot. Only view settings changed, no TCAD code/data nor live CAL job affected.
+- Next: on the **right 1D graph X axis** double-click axis tick, Axis Properties Main set fixed Min=0 and Max=0.4 μm (Log Scale off), keep fixed linear Y bounds unchanged, share zoomed plot for pGaN/EBL/MQW doping interpretation; later compare `hDensity`, pMg species in identical cutline.
+
+## 2026-10-10 ~19:40 KST — SVisual 1D doping Y-axis not yet restored after auto-range advice (OBSERVED screenshot)
+
+- 주수빈이 `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr` 5V NtSide0 `Cutline_Y Plot`의 후속 screenshot을 제공. 왼쪽 2D full geometry와 Cut Y C1은 보이지만, 오른쪽 1D Y axis는 여전히 약 `9.995e-21`–`1.0005e-20`이며 실제 doping magnitude를 나타내지 못함.
+- 이전 화면에서 Axis Properties Min/Max Fixed가 잘못 설정된 것이 확인됨. 사용자가 체크 해제를 수행했는지 그 이후 축 자동 설정이 반영되었는지는 이 화면만으로 불확실. 후속 조치로 `Axis Properties > Main`에서 Y1 `Min=-4e17`, `Max=6e18`를 입력하고 각각 Fixed 체크(선형 Log Scale 해제 유지)하여 표시 범위를 수동 제어하는 방법을 제안함. 이는 VIEW ONLY, 실제 5V 시뮬레이션 입력/데이터의 변경 아님.
+- 실제 numeric axis restoration 미검증; 후속 화면 확인 필요. 그래도 실패 시 선택 축이 Y1인지, cutline 1D 실제 원자료가 있는지 확인하고 필요하면 Clean 영역 full-height cutline 재생성. 임의 재실행/소스 수정 금지.
+
+## 2026-10-10 ~19:37 KST — SVisual Y-axis fixed-range root cause confirmed (OBSERVED GUI; remedy not yet tested)
+
+- 작업자: 주수빈. 완료된 `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr`에서 `DopingConcentration` / `Cutline_Y Plot` 표시 이상을 조사.
+- 제공된 T-2022.03 SVisual `Axis Properties > Main` 직접 캡처에서 **Y축 Min = 9.9927e-21, Max = 1.00073e-20** 및 양쪽 **Fixed 체크**를 확인. `Log. Scale`은 해제되어 있음.
+- 확정된 GUI 원인: 잘못 저장된 극히 좁은 Y축 고정 범위가 10^17~10^18 cm^-3 수준 signed DopingConcentration 데이터를 가림. 이는 원래의 도핑 입력이나 TCAD 계산에 대한 오류 증거가 아님. 과거 'log axis 때문에 보이지 않는다' 해석은 이 최신 화면에 대해서는 정정됨.
+- 제안한 복구(아직 실행결과 미확인): `Axis Properties`의 Min/Max 양쪽 `Fixed` 해제, `Log. Scale` 해제 유지, 1D cutline 자동 축으로 복원되는지 확인 후 QW/EBL 인접 깊이 구간 분석.
+- 소스·파라미터·결과 파일·실행 중인 별도 CAL job 수정 없음. 후속 스크린샷으로 표시 복구 검증 필요.
+
+## 2026-10-10 ~19:16 KST — SVisual cutline Y-axis zoom-range issue clarified (OBSERVED UI)
+
+- 주수빈 screenshot: original 5V result `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr`, Cutline_Y Plot has Y ticks `9.995e-21`, `1e-20`, `1.0005e-20`; these are closely spaced **linear** numbers, not evidence of log scale. Prior assistant repeatedly identifying `1e-20` by itself as a logarithmic axis was incorrect.
+- The rendered curve is compressed/clipped near the far-left X edge, because the Y plot range is extremely narrow around ~1e-20, missing physical signed DopingConcentration ~-3e17 to +5e18. Existing full vertical C1 cutline continues to be displayed on 2D view. Do NOT infer absent data or failed simulation from this plot.
+- Read-only GUI next step: activate **right** Cutline_Y Plot first, then reset that plot's view/zoom (suggested Ctrl+Shift+F already used for 2D view) to restore full signed Y-axis; if unsuccessful check Axis Properties auto/fixed min/max. Keep Log Y off. No source/results/ongoing CAL job edited.
+
+## 2026-10-10 ~19:15 KST — SVisual full device restored; cutline plot Y log reenabled (OBSERVED screenshot)
+
+- 작업자 주수빈. 기존 완료된 `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr`에서 화면 복구 후 2D 소자 X 약 0–4.5 µm 전체 구조와 중앙 내측의 세로 Cut Y `C1`이 다시 표시됨. 138194 elements, 65513 points.
+- 1D `Cutline_Y Plot`에서는 Y축 눈금 `1e-20` 및 오른쪽 `log Y` 토글이 보이며, signed `DopingConcentration`의 음수 값을 표현하지 못하는 로그 스케일이 재활성화된 것으로 해석. 이전 스크린샷의 짧은 붉은 선분 문제를 도핑 프로파일 자체가 손상된 것으로 해석하면 안 됨.
+- 다음 읽기 전용 UI 단계: 오른쪽 1D 그래프 활성화 후 `log Y` 해제, 선형 Y축에서 음·양의 DopingConcentration 전체 깊이 프로파일을 확인. 이후 상단 p-GaN/EBL/MQW 구간 확대 및 `hDensity`/Mg species 분리 비교. TCAD 입력, 저장 결과, CAL 실행은 변경하지 않음.
+
+## 2026-10-10 ~19:13 KST — SVisual Cutline 재생성 후 1D 데이터 표시 축소 (OBSERVED GUI / CAUSE UNRESOLVED)
+
+- 주수빈은 기존 `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr`를 SVisual에서 다시 열고, 새 Cut Y를 만들고 로그 Y를 해제했다고 보고. 스크린샷에서 왼쪽 2D 소자는 상단 X≈0~1.2µm만 확대된 뷰이며, 오른쪽 `Cutline_Y Plot`에는 x≈0.15µm 근처 짧은 음수 DopingConcentration 선분만 표시됨. 소스/데이터 수정 또는 solver failure 증거 없음.
+- 가능한 UI 해석: cutline 추출이 2D 현재 보이는 영역으로 제한되었거나 XY 축 표시가 직전 확대 상태를 유지. 원인 확정 전 `DopingConcentration` 전체 구간 데이터가 사라졌다고 판단하지 않음.
+- 공식 Sentaurus Visual User Guide는 cutline output이 현재 표시된 2D 영역에 국한될 수 있으며 Reset Zoom으로 전체 데이터 접근 가능하다고 명시. 우선 왼쪽 2D plot 선택 후 View > Reset (Ctrl+Shift+F)으로 full device 표시를 복구하고, 필요시 기존 cutline 제거 후 full 2D 상태에서 Cut Y 재작성·1D linear Y 확인하도록 안내.
+- 수행된 것은 GUI 보기 조작뿐; CAL 실행과 저장된 5V 데이터를 변경하지 않음. NEXT: 리셋된 화면 확인 후 단계별 재추출.
+
+## 2026-10-10 ~18:33 KST — 주수빈 5V Baseline signed DopingConcentration vertical cutline linear-axis verified (OBSERVED UI)
+
+- 주수빈 provided Sentaurus Visual screenshot of completed `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr`, NtSide=0, after toggling Cutline_Y Plot from logarithmic to linear Y-axis. Existing vertical (growth-axis X) cutline at lateral Y≈1.0 μm passes clean semiconductor away from physical damaged sidewall.
+- Direct plotted `DopingConcentration` shows roughly −3×10^17 cm^-3 upper p-side, multiple narrow variations around EBL/MQW, and roughly +5×10^18 cm^-3 constant plateau in n-GaN. The graph shows a step-like nominal signed net-doping distribution along this cutline. Numerical transition boundary and dopant activation details are NOT precisely extracted at this zoom.
+- This is not a direct measurement of raw Mg input 9.59×10^18 cm^-3, `hDensity`, ionized Mg fraction, Mg diffusion, or actual physical SIMS depth profile. The loaded 5V output remains a Transient endpoint, not independently proven equilibrium or steady-state.
+- Next read-only GUI validation: zoom cutline X≈0–0.4 μm to distinguish p-GaN/EBL/MQW region steps, then show `hDensity` and optionally `pMagnesiumActiveConcentration` and `pMagnesiumMinusConcentration` where available. Preserve original saved results and ongoing separate CAL n2 job; no source changes.
+
+## 2026-10-10 ~18:27 KST — SVisual 5V NtSide0 vertical doping cutline created (OBSERVED UI / interpretation pending)
+
+- 작업자 주수빈은 완료된 `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr` (5V, NtSide=0)에서 `DopingConcentration`을 표시하고 `Cutline_Y Plot` 생성에 성공함. 사용자 SVisual screenshot: 138194 elements / 65513 points, x vertical 0 to ~4.5 um; cutline은 현재 Clean 영역 좌측 가까이 Y≈0.8 um 위치이며 영역 중앙 Y≈1.5 um에서 추후 재측정 권장.
+- 오른쪽 cutline 차트 y축에 1e+15, 1e+09, 1e+03, 1e-3 등이 보이는 일반 logarithmic scale이 적용됨. signed DopingConcentration의 **음수 p형 측은 이 축에서 정상 시각화되지 않으므로** 현재 선 그래프만으로 층별 p/n 도핑 분포를 해석하면 안 됨.
+- NEXT GUI: right cutline plot 선택 → 오른쪽 `log Y` 토글 해제해 선형 y축 확인 → 필요시 clean semiconductor 중앙 Y≈1.5 um cutline 다시 생성/이동 → 그래프 캡처하고 pGaN/EBL/nGaN 입력 도핑과 실제 hDensity/ionized Mg 분리 분석.
+- 실제 코드, 파라미터, 시뮬레이션 실행상태 변경 없음. CAL 별도 실행 보존.
+
+## 2026-10-10 — Kou 2019 nominal epitaxy doping vs CMP step-constant profiles reviewed (REVIEWED / NO SOLVER CHANGE)
+
+- 작업자: 주수빈. 사용자가 layer별 동일 도핑을 구현한 실제 CMP 모델의 문헌 타당성을 재질문. 실제 Kou et al., *Optics Express* 27 A643-A653 (2019) Section 2, DOI 10.1364/OE.27.00A643 확인.
+- **Direct paper:** n-GaN 4 μm Si doped 5e18 cm^-3; p-Al0.15Ga0.85N EBL 26nm and p-GaN cap 120nm each **hole concentration** 3e17 cm^-3 (Mg dopant concentration이라고 보고하지 않음); 20nm heavily doped p-GaN ohmic contact layer **also specified**. Paper does not specify SIMS-calibrated vertical concentration profile or graded Mg transition function. Therefore uniform-per-layer SDE doping is a defensible simplifying *interpretation*, NOT proved literal reproduction of growth profiles or proof authors applied exact constant doping commands.
+- **Existing CMP actual 2026-10-09 pp1 audit:** N_Mg_p=9.59e18 cm^-3 nominal Mg input in Clean/DmgL pGaN with incomplete-ionization SDevice physics; nominal p-GaN 3e17 target is hole density, not identical to Mg input. A single SVisual sample hDensity~3.001e17 was reported at one 5V result point and cannot establish unbiased whole-depth calibration. EBL nominal effective acceptor 3e17, n-GaN donors 5e18, barrier 1e15 (numerical assumption). Region-based constant input does not imply constant mobile electron/hole density under bias.
+- **Paper/model gap:** a separate 20nm highly doped p-GaN contact cap occurs in Kou; CMP COMMON_BASELINE vertical stack does not list that separate p+ region, though exact live SDE current geometry/contact doping must be checked before treating it as confirmed omission.
+- **Experimental context:** Gutt et al. PSS C (2011), DOI 10.1002/pssc.201001039 and Bakhtiary-Noodeh et al., Journal of Crystal Growth 602 (2023) 126962 DOI 10.1016/j.jcrysgro.2022.126962 support real Mg memory/back-diffusion/graded near-boundary profiles; no direct SIMS profile for the CMP representative device has been supplied. Avoid inventing gradient depth/concentrations.
+- **Decision PROPOSED, NOT RUN:** retain current original and CAL running job unchanged; perform read-only vertical SVisual cutline of nominal Mg species, ionized Mg/net doping, hDensity and EBL; verify p+ contact layer/source. If experiment needed, create separately versioned sensitivity branch with literature/SIMS-backed graded Mg interface and same mesh/physics, compare QW hole injection, I(V), SRH/Rrad/current at matched injection. No code, parameter, or SWB job modified.
+
+## 2026-10-10 ~18:08 KST — CAL SDevice Newton cutback 확인 (OBSERVED LOG SCREENSHOT)
+
+- 작업자 주수빈이 이택규가 기존 실행한 `CMP_BASELINE_1.2.0_CAL` NtSide=0의 터미널 `tail -n 40 n2_des.log`를 제공함. 새 실행/입력 수정 없음.
+- 계산이 4.138V 부근에서 진행 중. 로그에서 해당 BE 시도 15 Newton iterations 이후 마지막 `|Rhs|=1.21e-03` (RHSMin=1e-03 초과), `#iterations larger than 15`, `Newton didn't converge, trying again with smaller timestep...` 확인. 실패한 attempt wallclock 약 51.13초.
+- 다음 attempt는 `Computing BE-step from 0.827672 s to 0.827674 s (Stepsize: 2.8452e-06 s)`. 기존 0–5V 선형 ramp를 가정하면 0.827672×5≈4.13836V. 이 시도는 화면 마지막 부분에서 시작만 확인되며 accepted 여부는 미확인.
+- 이는 전체 job fatal 종료가 아니라 adaptive timestep cutback의 직접 증거. 고전압 수렴성/런타임 병목 현상 관찰, 남은 벽시계 시간 추정 불가. NtSide=0 CAL 5V 완료와 effective 100ns 모델 확인은 여전히 미완료.
+- NEXT: job·input 그대로 보존; 일정 시간 뒤 최신 `n2_des.log`의 accepted t/V 및 cutback 빈도와 mtime, 필요시 프로세스 생존을 read-only 재검증. 절대 이 로그만 보고 solver 또는 MinStep 임의 변경하지 않음.
+
+## 2026-10-10 ~18:07 KST — 주수빈 CAL 실행 상태 인수인계 화면 확인 (OBSERVED SCREENSHOT)
+
+- 작업자 주수빈이 `CMP_BASELINE_1.2.0_CAL` SWB SDevice node n2 Output 스크린샷 제공. 이 계산은 기존 이택규가 실행한 별도 NtSide=0 CAL 후보이며, 주수빈이 새로 실행한 작업은 아님.
+- 실제 `n2_des.out` 화면 직전 BE iteration에서 `Finished, because |RHS| less than 1.0000E-03` 후 contact anode `voltage=4.138E+00` 출력. 다음 시도 `Computing BE-step from 0.82766 s to 0.827663 s (Stepsize: 3.2930e-06 s)`가 이어짐. 다음 시도의 최종 수렴은 화면에 없음.
+- 기존 0–5 V ramp가 그대로라는 조건에서 약 4.138 V/5 V = 82.76%의 **전압 스윕** 도달(이전 4.122 V 로그 대비 약 0.016 V 추가 진전). Runtime/남은 시간 비율 아님.
+- 아래 `n2_des.err`의 vanOverstraetendeMan impact ionization isotropic/anisotropic E0 mismatch 메시지는 출력되어 있으나 이것만으로 fatal/중단 여부 확인 불가. 사진에서 5 V 완료, 실제 100 ns InGaN SRH 효과, 고전압 steady-state 검증 없음.
+- NEXT: 소스 변경/중단 없이 나중에 `tail -n 40 .../CMP_BASELINE_1.2.0_CAL/n2_des.log`와 날짜·progress를 읽기 전용 확인; 5 V 정상 종료 시 비교용 I(V)와 QW 재결합 검토.
+
 ## 2026-10-08 — Baseline uniform-layer doping physical validity review (PROPOSED VALIDATION)
 
 - 작업자: 주수빈; 사용자 제기: SVisual n1_msh screenshot에서 각 에피층의 DopingConcentration이 균일/step-like로 나타나 실제 MOCVD 성장 도핑 분포와 차이가 있는지 검증 필요.

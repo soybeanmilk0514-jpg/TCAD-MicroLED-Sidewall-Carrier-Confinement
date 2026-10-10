@@ -1,3 +1,292 @@
+## 2026-10-10 ~22:30 KST — CAL 100ns 4.0V and latest 4.14965V I–V rows extracted (OBSERVED terminal screenshot; derived interpretation; CAL run untouched)
+
+- Worker **주수빈** used read-only Python to parse 17-field `DF-ISE text` `CMP_BASELINE_1.2.0_CAL/n2_des.plt` and printed **actual near-4V record**: `time=0.79993475 s`, `anode OuterVoltage=3.99967374 V`, `anode TotalCurrent=3.497895e-14` (2D current-per-length A/um). This confirms usable transient I–V output near 4.0 V.
+- The **last recorded row in this snapshot**: `time=0.82993089 s`, `anode OuterVoltage=4.14965446 V`, `anode TotalCurrent=4.839436e-14 A/um`. The screenshot was taken ~22:30 KST, but this file's stored latest record does NOT prove that the running job is still exactly at this voltage at time of reading; last successfully written output may lag solver activity.
+- Consistent with 5V/1sec ramp; time ~0.8s corresponds 4V. **SRH tau=100ns** in InGaN is a physical recombination lifetime sensitivity parameter, not a simulation step length.
+- SCIENTIFIC DECISION: These I–V values allow a 4V read-only current comparison, but currents remain extremely small and old low-J Gate0 is unresolved; neither 4V data availability nor reducing endpoint to 4V establishes physically valid luminous baseline/IQE. Transient TotalCurrent may include displacement current and 2D geometry normalization; need to check components and steady-state comparability. To conclude at 4V and analyze spatial band/recombination, FIRST inspect whether any ~4V TDR/SAV output or Plot/Save snapshots exist. **Do not Abort/Stop the running CAL** without deciding whether needed output is saved. Compare tau 1ns and tau 100ns only at matched voltage/current-density if datasets permit.
+- NEXT **read-only**: `find /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL -maxdepth 1 -type f \\( -name 'n2*.tdr' -o -name 'n2*.sav' \\) -printf '%f %k KB\\n'` (actual shell escaping in user command needs only `\\(` escaped parens, not literal double slash). Review Save/Plot directives if no such snapshot. No SWB, source, mesh, running CAL or separate completed 5V_TEST changed.
+
+## 2026-10-10 ~22:25 KST — CAL n2_des.plt confirmed DF-ISE xyplot text with voltage and current datasets (OBSERVED screenshot; 4V record yet UNVERIFIED)
+
+- Worker 주수빈 ran read-only `head -n 30 /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/n2_des.plt` on live server. File starts `DF-ISE text`, `Info { version=1.0; type=xyplot; datasets=[...]; functions=[...]; }` followed by `Data {` with numeric rows. Dataset fields in written order: 1 `time`; 2–9 cathode OuterVoltage/InnerVoltage/QuasiFermiPotential/DisplacementCurrent/eCurrent/hCurrent/TotalCurrent/Charge; 10–17 anode OuterVoltage/InnerVoltage/QuasiFermiPotential/DisplacementCurrent/eCurrent/hCurrent/TotalCurrent/Charge. 17 numeric values per saved record (subject to file completion).
+- This **confirms CAL transient output stores time, anode applied voltage, electron/hole/total and displacement current**, and can potentially extract anode I(V) at/near 4V. A head sample only covers initial zero-bias rows: **neither 4V point, its value, saved TDR state, final CAL progress, nor 5V endpoint are confirmed by this screenshot**.
+- NEXT READ-ONLY: parse all available complete 17-field DF-ISE Data records with shell `python3 -c` and report nearest-4V and latest saved `time`, `anode OuterVoltage` (field index 9), `anode TotalCurrent` (index 15); note transient current includes displacement, cannot be treated blindly as steady-state J. Leave 100ns CAL running and separate baseline unchanged. If end record is being written, exclude incomplete record, do not interrupt.
+
+## 2026-10-10 ~22:21 KST — JuSubin confirms CAL n2_des.plt exists (1.4MB) (OBSERVED via live terminal screenshot)
+
+- Worker **주수빈** ran `ls -lh` for `/user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/n2_des.plt` (separate 100ns InGaN SRH-lifetime sensitivity CAL). **The intended file exists**: mode `-rw-r--r--`, user semi437, displayed size `1.4M`, modification time `Oct 10 21:30`. This is only a file-existence/mtime check; **contents, accepted 4V I-V history, complete 4V TDR/checkpoint, saved dataset completeness and current numerical status are NOT verified**.
+- Screenshot also shows a `No such file or directory` from `n2_des.pltls` caused by typing two commands together (extra suffix `ls`), not a missing correct `n2_des.plt`, not a TCAD solver failure.
+- Prior team live CAL log at ~22:11 KST accepted ~4.149V, not 5V, and reported severe high-bias step retries. File timestamp does not prove calculation progress to a newer accepted voltage; `n2_des.plt` can be updated during ongoing computation. Preserve running CAL and prior completed 5V_TEST parent, no Stop/Abort.
+- NEXT read-only command: `head -n 30 /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/n2_des.plt` to learn PLT format and dataset names; then inspect I(t)/V(t) at saved/accepted ~4V. Separately inspect `pp2_des.cmd` Save/Plot targets before any decision to shorten CAL. No SWB/source/job changes.
+
+## 2026-10-10 — 5 V is not mandatory for real blue InGaN/GaN microLED; operating J is criterion (LITERATURE + DERIVED, NO CAL STOP)
+
+- 이택규 질문: `굳이 5V까지 돌릴 필요 없다는 거지? 실제 LED에서는 5V 위에서 올라가?` Answer: blue µLED commonly exhibits injection/EL at lower bias (roughly 2.5–3.5V under many reported conditions), 5V is not a universal LED turn-on or nominal operating setpoint; at high current and/or series/contact resistance >5V may occur. **Source-based examples not direct matched device calibration**: Optics Express (2019) DOI 10.1364/OE.27.00A643 simulated InGaN blue microLEDs 3.23–3.48V at J=20A/cm²; Nature Communications 14,1386 (2023), DOI 10.1038/s41467-023-36773-w reports experimental operation and J-V variation around 2.2–3V, IQE/EQE current-domain performance as low as J=0.1A/cm². Journal paper [Investigation of Electrical Properties and Reliability of GaN-Based Micro-LEDs], Nanomaterials 10(4),689 (2020) demonstrates testing at 5V with high J dependent on pixel design. These sources DO NOT fix our operating-voltage cutoff or prove current data comparable without structure/normalization corrections.
+- Latest actual CAL 4.149V accepted log anode total current 4.832e-14 (2D current units assumed A/µm); if width=2µm and AreaFactor=1, nominal J roughly (4.832e-14/2)*1e8=2.416e-6 A/cm². This illustrative conditional current density is far below J~0.1–20 A/cm² references, and CAL is under separate 100ns SRH lifetime at 4.149V; do not compare directly with parent NtSide0 5V current as matched-bias sweep.
+- DECISION CRITERIA: 4V end point acceptable if credible J–V and active MQW radiative/total recombination, at least one physically representative J; A/B ultimately matched J with baseline controls. No fixed 5V baseline requirement, but STOP current CAL only once exact waveform history and reproducible TDR/checkpoint for 4V are verified, with user's explicit approval; stopping transient midrun could lose final spatial data. Existing CAL unchanged.
+
+## 2026-10-10 after 22:11 KST — JuSubin asks whether slow 100ns CAL can be evaluated only through 4V (PROPOSED SCIENTIFIC CRITERIA, no run change)
+
+- Worker **주수빈** raised same practical question as earlier 이택규 proposal: separate `CMP_BASELINE_1.2.0_CAL` (intended InGaN SRH tau 1ns→100ns, not a 100ns time step) becomes dramatically slow above 4V and asks whether 4V can substitute for 5V. No instruction to kill/change running job.
+- Latest **shared GitHub 22:11 KST actual CAL log** recorded an accepted 4.149V at transient t≈0.829862s, 2D anode total current 4.832e-14 A/um. Next BE attempt oscillatory/nonconverged in visible portion; 5V completion unknown, no accurate ETA. Nominal J under previously documented half-width convention ~2.416e-6 A/cm2 (caution: transient current/displacement and normalization must be checked). Separate 5V_TEST parent successful at 5V but low nominal J~7.24e-4 A/cm2 and QW radiative share~0.1095%; this is the major Gate0 blocker.
+- RESPONSE: 4V is acceptable **diagnostic or SRH sensitivity comparison at same voltage** and can support scientific A/B only if injection/current density, QW-recombination and IQE evaluated in physically relevant range at matched current density. 4V alone is not sufficient baseline acceptance, and voltage need not universally be 5V. At present low I/J, 4V termination is unlikely to resolve existing weak injection. To capture 4V, first inspect CAL `n2_des.plt` J–V history and actual `Plot/Save` coverage; **abort/stop cannot be assumed to leave a valid 4V TDR/IQE snapshot**, especially if Save only at 5V. Preserve ongoing CAL unless user explicitly decides after evidence; no new code, files, rerun or interruption.
+- NEXT read only: inspect CAL `pp2_des.cmd` Save/Plot, `n2_des.plt` existence and 4.0V current history (do not change run). Compare old 1ns/100ns at same bias/J if data available. Coordinarily align with 이택규 to avoid duplicate or premature action.
+
+## 2026-10-10 ~22:11 KST — CAL 4.149V accepted; next BE-step Newton oscillatory (OBSERVED server log, READ ONLY)
+
+- 이택규가 학교 서버 `CMP_BASELINE_1.2.0_CAL/n2_des.log` `tail -n 60` 실제 출력 제공. CAL n2 100ns sensitivity의 **accepted** 두 단계 확인: (1) 직전 접촉 anode=4.149E+00V, total current=4.831E-14 (로그 표시 단위, 2D normalization 주의); (2) `Computing BE-step from 0.829858 s to 0.829862 s (Stepsize 3.8830e-06 s)` 후 Newton iteration2 RHS=8.97e-04<1e-3, `Finished because |RHS| less than 1e-3`, anode 4.149E+00V, total current 4.832E-14. **4.149V는 이번 실제 로그에서 정상 수렴 확인됨**; 표시가 소수 셋째 자리로 반올림되어 정확한 몇 mV 변화인지는 이 로그로 계산 불가.
+- 다음 trial: `Computing BE-step from 0.829862 s to 0.829867 s (Stepsize:4.6596e-06s)`; Newton iteration2-9 RHS around 1.28e-3–1.34e-3 (criterion 1e-3), reported C-norm error alternating ~1.21e3 and 4.76e3. Tail 끝에 iteration9까지만 나타나서 **그 step 수렴 여부, 컷백 여부, 프로세스 현재 구동/최종 종료 상태는 이 스냅샷만으로 미확정**. `Step-size is too small`/Abort/Finished simulation 등 최종 실패 출력 없음.
+- 5V 목표 대비 4.149/5=82.98%은 **전압 스윕 비율, 연산 시간 비율 아님**. CAL 5V ETA 근거 부족; CAL이 현재도 CPU 소비 중이라는 것은 로그 스냅샷만으로 확정 못 함. 4V 기준점 과학적 채택 여부는 별도 J/IQE Gate0로 판단, 그냥 4V 도달했기 때문에 중단하면 안됨.
+- NEXT: 기존 CAL 그대로 보존, 필요 시 일정 시간 뒤 `tail -n 60 /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/n2_des.log` 재확인해 다음 step accepted/bias progression/step-cutbacks 확인. FAST_C1 실패와 혼동하지 말 것. Server code/CAL process user action 없음.
+
+## 2026-10-10 ~22:11 KST — CAL 100ns n2 accepted ~4.149V; next step Newton oscillatory (OBSERVED LOG)
+
+- **Evidence:** 이택규 실서버 `CMP_BASELINE_1.2.0_CAL/n2_des.log` latest 60 lines shared. BE from 0.829858 to 0.829862 s (stepsize 3.8830e-06s), iter2 `|Rhs|=8.97e-04 < RHSMin 1e-3`, `Finished, because... |RHS| less than 1.0000E-03`; anode=`4.149E+00 V`, total current=`4.832E-14` (2D A/um convention). **Thus 4.149 V was accepted**, not just being attempted. Next BE 0.829862→0.829867s (trial 4.6596e-06s), Newton iter2–9 oscillates RHS ~1.28–1.34e-03 (>1e-3), no eventual convergence/failure outcome in this truncated tail.
+- Voltage fraction 4.149/5≈82.98% is **bias sweep fraction, NOT runtime progress**. Step2 completed in 86.24s vs earlier 13.67s; no reliable 5V ETA. Note previous accepted iteration still reports `error=1.11e+03` alongside small RHS, so examine numerical convergence robustness before claiming high-accuracy physical solution.
+- Preliminary magnitude under parent-model width convention 2um: J~4.832e-14/2*1e8≈2.416e-6 A/cm² **conditional**; this is a transient total terminal current including possible displacement, not directly accepted as steady-state LED J. Cannot compare blindly against 5V_TEST parent's 5V result because voltage and SRH lifetime differ; low-current physical validation unresolved.
+- NEXT read-only: inspect later CAL log and retained PLT 4V+ sweep only as useful; do NOT abort/modify/restart CAL just because 4V was exceeded. 4V is not an automatic verified working baseline. Preserve old 5V parent, project A/B NO-GO.
+
+## 2026-10-10 — 4 V can be a valid MicroLED baseline point; 5 V is not a mandatory target (SCIENTIFIC DECISION CRITERIA / PROPOSED)
+
+- Worker 이택규 asked: Why must CAL reach 5V, could 4V suffice? Technical response: **Voltage alone is not the scientific acceptance criterion**. 4V or 5V can be characterized and reported, provided the device reaches meaningful injection/current-density regime and QW recombination/IQE, with A/B comparison at matched current density (or complete J–V / IQE–J curves). Published reference operating current or target J not yet selected; no arbitrary bias guarantee.
+- Existing completed 5V_TEST NtSide0 5.0V nominal J≈7.24e-4 A/cm2 and QW radiative share≈0.1095% are concerns. An otherwise monotonic forward I–V at 4V likely gives smaller J than 5V; stopping at 4V **does not fix underlying low-injection baseline validity**. CAL 100ns SRH sensitivity may still be analyzable below 5V, but cannot be called verified baseline without actual J/radiative accounting and effective parameter check.
+- CAL n2 user reports ~4.149V currently calculating (accepted step and 4V saved TDR not yet verified). Before any decision to stop at 4V, read only CAL n2_des.plt (J-V history) and n2_des.log to confirm accepted 4V values, output/checkpoint availability and intended study; never assume stopping running transient produces an at-4V saved TDR. Avoid interrupting CAL without explicit user approval and export/checkpoint plan. Candidate 4V baseline is PROPOSED, no study target changed or solver modified.
+
+
+## 2026-10-10 22:04 KST — JuSubin independently confirms 5V_TEST n2 terminal completion (OBSERVED from screenshot; old job ended 2026-10-09 14:29:52 KST)
+
+- Worker 주수빈 re-read existing `/user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST/n2_des.log` via grep/tail (two screenshots repeat identical output). Last accepted BE step: `0.999674 s -> 1.000000 s`. Terminal anode voltage `5.000E+00 V`; terminal electron current `2.781E-13`, hole current `1.420E-11`, total current `1.448E-11` in Sentaurus 2D current-per-length convention (A/um, not total measured 3D A). `Sentaurus Device simulation finished (Date: Fri Oct 9 14:29:52 2026 KST)` and `Good Bye!` show successful completion.
+- This closes uncertainty about **solver log reaching 5V**, but does not yet prove specific opened `n2_des.tdr` snapshot was written at the final 5V state. Document provenance/time/Plot directive if required. Independently reported raw I2D ~1.44801646e-11 A/um / nominal J~7.24e-4 A/cm2 under documented width normalization and MQW Rrad share~0.1095% remain LOW-J GATE0 blocker; successful solver convergence is not physical baseline validation.
+- A separate `n1_msh.tdr: Permission denied` arose because TDR binary/data file was typed as an executable in shell; **not a TCAD job failure**. Existing MgMinus ionization-field interpretation and EBL barrier causality also unresolved. CAL project status not updated and its running job must remain untouched.
+- NEXT: prioritize quantitative low-current/injection Gate0 from existing outputs, verify TDR time-bias linkage if necessary, no repeated reruns or unsolicited code edits.
+
+## 2026-10-10 — LeeTaekGyu decision: do not idle for CAL; parallel low-current baseline Gate0 using existing data (PROPOSED)
+
+- 작업자 이택규가 `그냥 CAL 돌아가기 전까지 기다리는 게 나을까?` 요청. 답: CAL 100ns sensitivity is independent of physical baseline validity. Continue current CAL unchanged and periodically review **accepted** BE time/bias and cutbacks; do not abort/reset or run FAST again merely by schedule. CAL user last reported attempting ~4.144V, last provided actual accepted n2 log ~4.142V; no newer status in current chat.
+- Existing completed 5V_TEST, model current ~1.448e-11 A/um, nominal J~7.24e-4 A/cm², MQW Rrad share ~0.1095%. EBL/transport injection and active operating-current range unresolved. More repetitive manual SVisual screenshots not needed; now prioritize quantitative assessment from already obtained band/quasi-Fermi and carrier density data before authorizing any new pilot or physics changes.
+- **IMPORTANT freshly read collaborator JuSubin records** (~2026-10-10 21:57 KST): at `Clean_pGaN` (X=.05um,Y=1um), Ev=-5.130097037559 eV, EFp=-4.999999973858 eV, hDensity=3.00034279e17 cm^-3, EFp-Ev=.13009706 eV. At `Clean_EBL` (X=.13um,Y=1um), Ev=-5.252508407140 eV, EFp=-4.999999939039 eV, hDensity=5.787900714824e15 cm^-3, EFp-Ev=.25250847 eV. Ratio of holes ~51.84, local gap difference ~.1224114eV. These are **two local-point observations**, NOT EBL barrier height nor proof low-J cause. Avoid duplicating JuSubin's probe work. Both probes nominal 5V_TEST TDR; current-state proof for exact TDR saved bias per snapshot remains a separate validation check even though archival 5V log shows successful 5V endpoint.
+- PROPOSED NEXT decision gate: cross-check archived n2 final bias/TDR state if needed, use existing Ev(x),EFp(x), carrier/current/polarization data to discriminate actual transport bottleneck. If existing data are insufficient, design a **separately cloned low-cost 1D or targeted pilot** with one physics variable at a time, user approval before Run and calibrated target J–V from literature. A/B full DOE remains NO-GO until physical operation established.
+- No code/server job change. GitHub planning update only.
+
+## 2026-10-10 — Confirm actual 5V endpoint before EBL conclusions
+- JuSubin pGaN/EBL Ev EFp point comparison: local EFp-Ev 0.130097eV vs 0.252508eV, respectively (observed + derived). Difference 0.122411eV is not injection barrier. Previous n2 log screenshot anode 4.139V mid-transient; verify file n2_des end bias/status instead of assuming the TDR is converged at 5.0V. Continue region-aware spatial band/transport check afterward, read-only. No TCAD/CAL changes.
+
+## 2026-10-10 — successful 5V_TEST Thermionic vs Piezo model log context inspected (OBSERVED; no physics bug proven)
+
+- 이택규가 성공한 `JUSUBIN_FAST_HALF_5V_TEST/n2_des.log` lines 345–425 실제 서버 출력을 제공. 셸 첫 입력이 두 `sed` 명령이 합쳐져 `.../n2_des.logsed` 파일 에러를 출력했으나 **뒤따른 동일 출력으로 필요한 본문을 정상 확보**, TCAD 자체 오류와 무관.
+- 실제 물리 모델 설명: `With Thermionic Emission at heterointerfaces for electrons and holes` 바로 아래 `Without Piezo`; 별도 항목 `Without polarization` (line373), `Piezoelectrice Activation = 1` (line379), `Piezoelectric polarization model: strain` (line416), `With default parameters from file`, 이어 `Clean_pGaN` region override `With incomplete ionization` (line425 onward). 또한 이전 grep line803 `ThermionicEmission: Formula = 1, instead of: 0 [1]`. **Formula1 인식/이종계면 thermionic 켜짐 확정.**
+- `Without Piezo`는 ThermionicEmission 하위 옵션 문맥에 있고, `Without polarization`는 strain piezo 모델 자체 상태와 구별해야 하는 별도 물리 설정 출력으로 보임. **근거만으로 실제 interface polarization charge 분포가 올바르거나 전역 piezo가 OFF라는 결론 불가**. No Piezo file도 model OFF 증거가 아님. 파라미터/분극 값을 수정하지 말 것.
+- 계산 성공한 5V_TEST의 low J (~7.24e-4 A/cm2 nominal) 물리 원인 remains UNRESOLVED. Alias Plot deprecation warnings nonfatal. Next rather than repetitive grep/screenshots, use existing band, quasi-Fermi & density observations to prioritize a targeted quantitative injection/transport audit (exact layer boundary/QF drops and effective polarization charge); new experiment only after validated causal hypothesis and user approval.
+- No server/TCAD code/CAL job changes.
+
+## 2026-10-10 — active model log clarifies Thermionic and leaves polarization scope pending (OBSERVED / READ-ONLY NEXT)
+
+- 5V_TEST `n2_des.log`에서 Thermionic emission for both carriers at heterointerfaces, ThermionicEmission Formula=1 출력이 실제 확인되어 'Formula1 인식 실패' 가설 우선순위 해제. 이를 반복 점검하지 말 것.
+- 다음 1회 읽기 전용 명령: `sed -n '345,425p' /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST/n2_des.log` 로 `Without Piezo`, `Without polarization`, activation1/strain model이 각각 소속된 범위를 파악. 그 후 5V low-current Gate0의 실질 transport/band bottleneck 여부를 평가. NtSide0 완료 parent와 CAL 운용 수정 금지.
+
+## 2026-10-10 ~21:51 KST — JuSubin Clean_EBL Ev versus EFp measured at same point (OBSERVED screen, derived difference; barrier cause UNRESOLVED)
+
+- Worker 주수빈. Completed `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr` NtSide=0 nominal 5V, SVisual Probe coordinates X=0.13um, Y=1.0um, Z=0, Zone `Clean_EBL(AlGaN)`. New screenshot directly shows `ValenceBandEnergy=-5.252508407140e+00 eV`. Previous directly observed at identical coordinates `hQuasiFermiEnergy=-4.999999939039e+00 eV` and `hQuasiFermiPotential=+4.999999939039 V`.
+- DERIVED local separation `EFp-Ev = +0.252508468101 eV` (about 9.77 kBT at 300 K), compatible with locally suppressed mobile hole density under nondegenerate `p ~ Nv exp((Ev-EFp)/kBT)`. Prior same-point hDensity=5.787900714824e15 cm^-3 while EBL Acceptor=3.0e17, Doping=-3.0e17, Donor=0.
+- CRITICAL: 0.2525 eV is **local Ev-to-EFp energy separation, NOT EBL hole-injection barrier height**, and by itself does not establish excessive barrier, net hole-current limitation or explain low device J. Need compare spatial Ev and EFp plus region boundaries, transport/current density and possibly EQ state before cause conclusion. pGaN MgMinus output interpretation remains separate unresolved concern.
+- NEXT READ-ONLY: use SVisual Probe on same finished TDR at verified `Clean_pGaN(GaN)` X=0.05um Y=1.0um for numerical `ValenceBandEnergy` and `hQuasiFermiEnergy`; then compare regional gaps, and align Ev/QF spatial profiles. No SWB input, TCAD run, or CAL changes.
+
+## 2026-10-10 ~21:48 KST — JuSubin Clean_EBL hole quasi-Fermi energy point probe (OBSERVED SVisual screenshot)
+
+- Worker 주수빈: finished `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr` (NtSide=0 nominal 5V), SVisual Probe at (X=0.13 um, Y=1.0 um, Z=0) in verified `Clean_EBL(AlGaN)`: `hQuasiFermiEnergy=-4.999999939039e+00 eV` and `hQuasiFermiPotential=+4.999999939039e+00 V` shown in Probe Var Values. These are opposite-sign representations; do not equate the absolute EFp value to hole barrier height.
+- Previous identical point: `AcceptorConcentration=3.000000e17 cm^-3`, `DonorConcentration=0`, `DopingConcentration=-3.000000e17 cm^-3`, `hDensity=5.787900714824e15 cm^-3`.
+- NEXT read-only: in same Probe coordinate and Clean_EBL Zone, scroll Var Values to `ValenceBandEnergy` and capture numerical eV value; then calculate `hQuasiFermiEnergy-ValenceBandEnergy` only as local energetic separation (not entire interfacial injection barrier). To evaluate EBL injection obstacle compare Ev and EFp across pGaN/EBL/MQW coordinates/cutline after alignment. No code, parameter, saved solver output, or CAL job changed.
+
+## 2026-10-10 — 5V reference SVisual qualitative band/carrier screening completed; stop repetitive GUI work (OBSERVED / DECISION)
+
+- Worker 이택규 submitted final SVisual screenshot of JUSUBIN_FAST_HALF_5V_TEST n2_des.tdr, existing C1 cutline at lateral Y≈2um, vertical X=0–0.4um. Two variables selected: eDensity and hDensity, simultaneously plotted log scale Y 1e6–1e20 cm^-3. p-side holes dominate (red), n-side electrons dominate (green), MQW multi-peak density profiles show both carriers in different narrow wells/regions. **Colors inferred from previously displayed hDensity, legend not visible; figures approximate.** These are expected general p/n trends and insufficient to identify injection bottleneck alone.
+- Previous GUI session also recorded Ec, Ev, eQuasiFermiEnergy, hQuasiFermiEnergy in same cutline at 5V. User requested stopping repeated screen tasks ('언제까지 해야해'); AI agreed SVisual qualitative screening is **complete for now**, no more incremental GUI screenshots requested. This is not a validated physical baseline, nor proof of cause behind exceptionally low nominal 5V current density.
+- Next decision work: summarize existing data, identify which exact numeric region/voltage-loss values would discriminate polarization/EBL/contact/MQW injection hypotheses; focus original 5V TDR and actual model. Avoid repetitive manual plotting, unnecessary long simulations, FAST rerun or CAL editing.
+
+## 2026-10-10 ~21:43 KST — EBL Ev and EFp same-point probe next
+- The saved 5V NtSide0 SVisual hQuasiFermiEnergy center C1 plot has been zoomed X=0–0.4um, multiple upper-stack energy steps OBSERVED. Next read-only: Tools→Probe on existing n2_des (not C1 curve), X=0.13um,Y=1.0um, verify Zone Clean_EBL(AlGaN), obtain exact hQuasiFermiEnergy and ValenceBandEnergy in Var Values at identical coordinates; then compare pGaN/EBL/MQW and model barrier, without equating local energy offset with transport activation energy. No source or CAL changes.
+
+## 2026-10-10 — JuSubin upper-stack Ev cutline completed
+- Observed 5V NtSide0 SVisual ValenceBandEnergy vertical C1 cutline zoomed to X=0–0.4 um; Ev is strongly nonuniform near Clean_EBL/MQW. Barrier magnitude and hole transport root cause are not yet established.
+- Next read-only: retain screenshot, select C1 then hQuasiFermiEnergy, verify legend and 0–0.4um axis, capture graph. No TCAD edits or CAL interruption.
+
+## 2026-10-10 ~21:36 KST — 5V ValenceBandEnergy C1 cutline plotted, awaiting upper-layer zoom (OBSERVED SVisual Screenshot)
+
+- Worker: 주수빈. In saved completed NtSide=0 5V `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr`, created existing-type vertical C1 line at internal Y≈1 um and confirmed right 1D `Cutline_Y Plot` legend **`ValenceBandEnergy(C1(n2_des))`**. Full-depth 1D X axis spans ~0–4.5 um, while upper-stack Ev varies sharply near X<0.3 um. The broad plot is not sufficiently resolved for EBL injection barrier assignment.
+- NEXT read-only UI: right 1D plot X Axis Properties: Min=0 Fixed, Max=0.4 um Fixed, Log off; keep Energy/Y axis unchanged; capture pGaN/EBL/MQW resolved band edges, and then overlay/compare `hQuasiFermiEnergy` at same C1 to evaluate hole-transport barrier hypotheses. Do not infer barrier magnitude from screenshot before clear zoom and layer boundaries. Existing observation: EBL X=0.13 um/Y=1um 5V Acceptor=3e17, Donor=0, Net=-3e17, hDensity=5.787900714824e15 cm^-3; root cause remains UNRESOLVED.
+- No SWB/SDE/SDevice file changes or live CAL job actions.
+
+## 2026-10-10 ~21:33 KST — 5V ValenceBandEnergy 2D field visible; vertical cutline pending (OBSERVED SVisual screenshot)
+
+- Worker 주수빈 opened existing finished `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr` NtSide0 5V in SVisual, selected `ValenceBandEnergy` in Scalars and activated its 2D field. Color-bar range approximately -5.66219 to +0.421554 eV. The 2D cross-section contains near-top pGaN/EBL/MQW transitions, but this picture alone does **not** measure valence-band barrier height or establish cause of EBL hole deficit.
+- Prior exact Clean_EBL(AlGaN) Probe X=0.13um, Y=1um: Acceptor=3e17, Donor=0, Doping=-3e17, hDensity=5.787900714824e15 cm^-3 at 5V. Distinct pGaN Mg ionized-field semantics remain unresolved.
+- Next read-only GUI: create same center-interior vertical X-direction Cutline at Y=1.0um used previously, with `ValenceBandEnergy` field selected on C1 so 1D curve appears. Then X-axis range 0–0.4um and compare `hQuasiFermiEnergy` on same cutline. Need confirm band-edge peak, local coordinates and quasi-Fermi alignment before barrier physics interpretation. No TCAD code/results/jobs changed.
+
+## 2026-10-10 ~21:29 KST — JuSubin 5V Clean_EBL net doping and donor Probe confirmed (OBSERVED, PHYSICS CAUSE UNRESOLVED)
+
+- Worker 주수빈 provided SVisual Probe screenshot of saved, completed `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr`, NtSide=0, 5V endpoint. Coordinates `X=0.13 um,Y=1.0 um,Z=0`; Zone `Clean_EBL(AlGaN)`.
+- **New directly observed:** `DonorConcentration = 0.000000000000e+00 cm^-3`; `DopingConcentration = -3.000000000000e+17 cm^-3`. Prior screenshots **same point**: `AcceptorConcentration=3.000000000000e17 cm^-3`, `hDensity=5.787900714824e15 cm^-3`.
+- EBL effective acceptor input and signed net doping agree with nominal acceptor=3e17 / donor=0. The local 5V mobile hole density is ~51.8x lower than effective acceptor doping, so this is NOT evidence that SDE EBL dopant is missing/misassigned. It may reflect a space-charge/polarization/heterojunction/bias effect; **no single mechanism or bad EBL design is proven from one local point**. Kou literature nominal hole concentration is not interchangeable with 5V local electron/hole density.
+- Next **read-only** on same existing TDR: vertical cutline across pGaN/EBL/MQW (Y=1.0 um), inspect `ValenceBandEnergy` and `hQuasiFermiEnergy` plus local hole density to investigate effective hole-injection barrier. Start by checking availability of `ValenceBandEnergy` in Data Selection; no new solver jobs nor model changes. Existing MgMinus custom mapping versus effective net doping is a SEPARATE unresolved item.
+
+## 2026-10-10 — EBL acceptor present, next check net doping
+- Read-only next: on JuSubin 5V_TEST SVisual Clean_EBL X=0.13,Y=1.0um (Acceptor=3e17, hDensity≈5.7879e15), probe DopingConcentration and DonorConcentration. Do not change baseline or running CAL. Later 0V/band profile to assess hole injection.
+
+## 2026-10-10 ~21:22 KST — JuSubin EBL dopant versus free-hole check
+- Clean_EBL 5V SVisual Probe at X=0.13 µm Y=1.0 µm yielded hDensity 5.787900714824e15 cm^-3 (OBSERVED), about 52x under nominal literature reference 3e17. Before attributing to incorrect input doping, read `AcceptorConcentration`, `DopingConcentration`, `DonorConcentration` at same EBL position in existing 5V TDR; then inspect additional EBL points and band edge/polarization if needed. Preserve original and separate running CAL job.
+
+## 2026-10-10 ~21:17 KST — Same-point n1 mesh vs 5V net doping directly compared (OBSERVED SVisual screenshots; ionization-field interpretation unresolved)
+
+- Worker 주수빈 opened `JUSUBIN_FAST_HALF_5V_TEST/n1_msh.tdr` and used SVisual Probe at X=0.05 um, Y=1.0 um, Z=0; Zone `Clean_pGaN(GaN)`.
+- **Direct initial mesh Probe**: `DopingConcentration = -9.590000000000e18 cm^-3`; `NDopantActiveConcentration = 0`; `PDopantActiveConcentration = 0` (Mg is a separate pMagnesium species). Two screenshots of identical panel provided; count as one observation.
+- **Existing previous finished 5V n2 Probe at same coordinates**: `DopingConcentration≈-3.000317924998e17 cm^-3`; `hDensity≈+3.000342790006e17 cm^-3`; `pMagnesiumActiveConcentration=9.59e18 cm^-3`; `pMagnesiumMinusConcentration=9.59e18 cm^-3`; `AcceptorConcentration=9.59e18 cm^-3`; `DonorConcentration=0`.
+- Initial nominal net doping and final effective net doping are demonstrably distinct, and SDevice log previously confirmed `IncompleteIonization` and explicit Nnet recomputation. The ratio |Nnet(final)|/|Nnet(mesh)|≈0.0313 is **NOT independently established as the Mg ionization fraction**, because exported MgMinus still equals MgActive while net doping is much lower. Actual species charge/output semantics need validation. Single-point target match is not spatial, EBL or 0V calibration.
+- No SDE/SDevice codes, numerical parameters, or CAL job modified. Suggested next step: check whether effective ionized acceptor field `AccepMinusConcentration` can be obtained or verify custom pMagnesiumMinus output behavior in same saved 5V run; preserve this as UNRESOLVED. Optionally proceed to EBL point-by-point hole-density checks once scope clarified.
+
+## 2026-10-10 ~21:15 KST — Initial mesh stores active Mg but not MgMinus (OBSERVED SVisual SCREENSHOT)
+
+- Worker 주수빈 opened `JUSUBIN_FAST_HALF_5V_TEST/n1_msh.tdr` in SVisual. Shown scalar dataset fields: `DopingConcentration`, `NDopantActiveConcentration`, `PDopantActiveConcentration`, `X`, `Y`, `pMagnesiumActiveConcentration`, `xMoleFraction`. **No `pMagnesiumMinusConcentration` exists in the initial mesh field list.** The active Mg plot range reaches `9.59e18 cm^-3`. Mesh elements=138194, points=65513.
+- This verifies nominal Mg input was propagated to initial mesh; one cannot calculate initial-to-final evolution of `MgMinus` because n1_msh does not contain that field. Absence of MgMinus on mesh does NOT itself indicate incomplete ionization disabled or incorrect.
+- More direct next read-only test: SVisual Probe `DopingConcentration` on `n1_msh.tdr` at Clean_pGaN X=0.05um,Y=1.0um, compare signed net doping with already observed final n2_des at same point (≈-3.0003179e17 cm^-3). This specifically tests numerical Nnet recalculation through SDevice; does not by itself validate MgMinus output mapping. Also compare initial pMagnesiumActive at this coordinate if useful.
+- Do not change TCAD source, mesh or running separate CAL model.
+
+## 2026-10-10 ~21:10 KST — Mg ionized species mapping directly found in datexcodes (OBSERVED screenshot; SEMANTIC INCONSISTENCY UNRESOLVED)
+
+- Worker 주수빈 obtained read-only datexcodes species configuration: `pMagnesiumConcentration, pMagnesiumChemicalConcentration` block contains `doping = acceptor( active = pMagnesiumActiveConcentration; ionized = pMagnesiumMinusConcentration )` (displayed near lines 13022–13034). `pMagnesiumMinusConcentration` label near 13037: “pMagnesium- concentration (incomplete ionization)”. Separate `pMagnesiumActiveConcentration` field label near 13011 says substitutional Mg concentration. Screenshot does not expose the filename header, so the exact searched file path/effective runtime mapping provenance is not yet individually established.
+- Earlier completed 5V NtSide0 `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr` Probe, Clean_pGaN X=0.05um,Y=1.0um: pMagnesiumActive=9.59e18, pMagnesiumMinus=9.59e18, AcceptorConcentration=9.59e18, DonorConcentration=0, DopingConcentration≈-3.0003179e17, hDensity≈3.0003428e17 cm^-3. These apparent mismatched magnitudes require explanation: `ionized` mapping identifies the intended field but alone cannot prove `pMagnesiumMinusConcentration` has been dynamically updated to the effective ionized-density value in exported 5V TDR. Cannot declare Mg 100% ionized, fraction 3.1%, or doping calibration confirmed.
+- Next read-only check: compare same Mg Minus field in initial `n1_msh.tdr` versus final `n2_des.tdr` at identical Clean_pGaN point, if both are exposed; check whether solver's `AccepMinusConcentration` is available. If still unresolved, document blocker and separately validate EBL (candidate X≈0.135um Y=1.0um, confirm region). Do not modify baseline nor running CAL.
+
+## 2026-10-10 ~21:09 KST — datexcodes check command shell mismatch
+- JuSubin login shell rejects bash for-loop syntax (`for: Command not found`, `f: Undefined variable`). Re-run custom pMagnesium datexcodes search via single-line `bash -c '...'` wrapper to obtain actual file mappings. If blank, locate effective datexcodes file before any ionization interpretation. Do not modify SDevice inputs or the ongoing CAL job.
+
+## 2026-10-10 — Mg ionized field mapping check
+- Observed 5V_TEST n2 runtime Mg parameters (E_0=0.2 alpha=8e-9 g4 Xsec1e-14). Next read-only check project and system datexcodes mapping for pMagnesiumActive/Minus, and whether AccepMinusConcentration output exists. MgMinus interpretation unresolved. Do not change inputs or rerun.
+
+## 2026-10-10 ~21:02 KST — Mg ionization region scopes verified, species semantics next
+- OBSERVED: pp2_des.cmd confirms `IncompleteIonization` for `Clean_pGaN` and `DmgL_pGaN` with species `pMagnesiumActiveConcentration`; DmgL trap `Conc=0`; Plot explicitly requests pMagnesiumActive/Minus. Still unresolved: why exported MgMinus=9.59e18 but net doping/hDensity≈3e17 at single 5V pGaN point.
+- NEXT READ ONLY: `sed -n '810,850p' /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST/n2_des.log` to inspect species block, then inspect actual custom species mapping and potential `AccepMinusConcentration` output; no rerun or source edit.
+
+## 2026-10-10 ~20:59 KST — n2 effective parameter file binding confirmed from pp2_des.cmd (OBSERVED TERMINAL SCREENSHOT)
+
+- 작업자: 주수빈. Actual read-only grep of `JUSUBIN_FAST_HALF_5V_TEST/pp2_des.cmd` showed line 22 `Parameters = "FASTC1_pp6_des.par"`, line 68 `DefaultParametersFromFile`, lines 128-129 and 137-138 `IncompleteIonization( Dopants="pMagnesiumActiveConcentration" )`, and Plot lines 456/458 `pMagnesiumActiveConcentration` and `pMagnesiumMinusConcentration`.
+- The previously inspected named `FASTC1_pp6_des.par` in the same working directory has a GaN Ionization Species pMagnesiumActiveConcentration block with `E_0=0.2`, `alpha=8e-9`, `g=4.0`, `Xsec=1e-14`. The effective Node2 SDevice input explicitly REFERENCES this file despite pp6 in the filename; runtime n2 log confirms Mg incomplete ionization is enabled and net doping is recalculated. File reference established; precise resolved parameter semantics/ionized-species output remain to be validated.
+- Previously Clean_pGaN 5V Probe at X=0.05/Y=1um yielded hDensity≈3.00034e17, DopingConcentration≈-3.00032e17, Acceptor=MgActive=MgMinus=9.59e18, Donor=0 cm^-3. These values are not proof of correctly calibrated ionization physics; exported MgMinus and recalculated net-doping relation remains unresolved.
+- NEXT read-only: inspect `sed -n '115,145p;450,465p' .../JUSUBIN_FAST_HALF_5V_TEST/pp2_des.cmd` for region-specific Mg ionization scope and Plot fields, then if needed cross-check T-2022.03 species mapping/ionized acceptor fields. Do not change current TCAD decks nor running separate CAL simulation.
+
+## 2026-10-10 ~20:38 KST — Runtime Mg incomplete ionization confirmed; inspect effective log scope next
+
+- In `JUSUBIN_FAST_HALF_5V_TEST/n2_des.log`, region selected pMagnesium with incomplete ionization (422–432), Mg acceptor species (2143), Nnet recalc warning (2148) observed. The active model is confirmed but why MgMinus=MgActive=9.59e18 while net doping and holes ~3e17 at one clean pGaN point remains unclear.
+- Next read-only: `sed -n '410,445p;2138,2160p' /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST/n2_des.log`. Then inspect active parameter/species mapping if required; do not modify running CAL nor existing parent.
+
+## 2026-10-10 ~20:35 KST — Read-only audit of Mg species output meaning
+- The completed NtSide0 5V pGaN Probe now has Acceptor=MgActive=MgMinus=9.59e18, Donor=0, net doping≈-3.00032e17, hDensity≈+3.00034e17 cm^-3 at Clean_pGaN X=0.05um,Y=1.0um. Target local hole density matches, but Mg incomplete ionization interpretation remains unresolved. NEXT: inspect `JUSUBIN_FAST_HALF_5V_TEST/pp2_des.cmd` effective region scope and parameter linkage, `FASTC1_pp6_des.par` Mg ionization block, `n2_des.log` activation and net doping recalculation; preserve model. Later verify pGaN spatial and 0V concentrations, EBL separately.
+
+## 2026-10-10 — Claude v2 independent CMP audit submitted; low-current Gate 0 prioritized (DOCUMENT-BASED REVIEW / PROPOSED)
+
+- 작업자 이택규가 Claude 작성 `CMP MicroLED TCAD — 독립 중간 기술감사 및 연구계획 재수립 (v2)` 전문을 채팅 업로드함. **Claude의 독립 감사 의견이며 이번 메시지는 새 실험/로그가 아님.** Claude는 GitHub 기록과 구 FAST 입력은 보았으나 5V_TEST/CAL 현재 실제 pp/log/TDR을 직접 읽지 못했다고 보고함.
+- Claude의 핵심 의견: JUSUBIN_FAST_HALF_5V_TEST NtSide0 5V transient 성공(~10596.76s)에도 raw I2D=1.44801646e-11 A/um, half mesa width≈2um, assumed AreaFactor1이면 nominal J≈7.24e-4 A/cm²; QW Rrad share≈0.1095%. 충분한 구동 전류·주입·IQE 검증이 **Baseline freeze 이전 Gate 0**이 되어야 함. 수치는 기존 GitHub 감사 기반이며 새 측정 아님. `not turned on` 결론은 비교대상 J–V/전류 정규화 검증 전에는 물리 가설로 남김.
+- 수용 가능한 점: 5V_TEST 계산 플랫폼 보존, high-bias FAST_C1 n6 ~4.801V step-size failure는 재실행 보류, CAL n2 100ns sensitivity current reported ~4.144V accepted unverified로 관찰·중단 사용자 승인 필수; A/B 동일 J·null controls, τ sensitivity, QW와 Cedge 총 비방사, transient trap DC check, stripe vs 3D 형상 한계 분리.
+- 별도 검증 필수: Claude가 제시한 활성층 외 `2.9V drop`은 단일 QW n,p, ni 가정 기반 추정이지 밴드/준페르미 지도에서 측정된 전압 분배 아님. 분극 activation/thermionic/EBL를 저전류 확정 원인으로 판단 금지. FAST half/full ~1% 동일은 4.798 vs 4.801V 단일 단자전류의 근사 보정이므로 메쉬 수렴·공간발광 정확도는 미증명. 2D stripe perimeter/area가 4um square보다 2배 작은 기하학적 사실에서 실제 SRH 2배 과소평가를 단정할 수 없음. 1D pilot 분 단위/10월23일 초록 데드라인/수치 PASS 기준은 Claude의 제안이며 별도 확인 필요.
+- 우선순위 제안: **S0 원본 5V_TEST 결과의 구동 전류/J 및 potential/band/quasi-Fermi 분포 점검(기존 TDR)** → **S1 EBL doping/polarization/thermionic interpretation 및 재결합 영역별 전류 회계** → 원인 가설이 분리되면 기존 소자 보존한 별도 소형 1D/pilot 설정 검토(사용자 승인 전 미실행) → NtSide0/1e18 동일 J → A/B. CAL은 보고서의 임의 시간·전압 임계치만으로 중단 결정하지 않음.
+- 서버/SWB/코드/CAL 변화 없음. Claude에게 직접 메시지 보내지 않음.
+
+## 2026-10-10 20:21 KST — Inspect pGaN Mg-minus exported species before declaring calibration
+
+- At Clean_pGaN X=0.05,Y=1.0 um, Probe `hDensity=3.000342790006e17` whereas `pMagnesiumActiveConcentration=pMagnesiumMinusConcentration=9.59e18 cm^-3`. The one-point hole match is observed; physical incomplete Mg ionization is NOT verified by this match.
+- Next READ ONLY: SVisual Probe same point for `DopingConcentration`, `AcceptorConcentration`, `DonorConcentration` and `eDensity` if present; inspect pMagnesium mapping in effective datexcodes and SDevice pp2 parameter/Physics output to resolve exported Minus field semantics. No code changes or rerun.
+
+## 2026-10-10 — CAL n2 ~4.144 V calculating (USER-REPORTED / ACCEPTANCE UNVERIFIED)
+
+- 작업자 이택규 직접 보고: `CMP_BASELINE_1.2.0_CAL`이 현재 약 **4.144 V 계산 중**. 직전 실제 공유 n2 로그에서 확인된 accepted 전압은 4.142 V; 이번 보고는 이전보다 약 0.002 V 높은 시도/진행으로 보이지만 **새 n2_des.log 스텝 수렴 결과는 제출되지 않아 4.144 V accepted라고 확정할 수 없음**. 5V/100ns effective 적용 모두 미확인.
+- 시간당 속도, 최종 종료 예상, 근본적인 고전압 수렴 문제의 동일성은 아직 판단 불가. 현재/목표 전압 비율은 ≈82.88% *스윕 구간*일 뿐 시간 진행률 아님.
+- NEXT: 기존 CAL 작업 그대로 보존, 현재/이후 `n2_des.log`의 accepted t/V, Newton 컷백, timestep, 최소 간격 경고 비교하는 읽기 전용 감시. CAL 임의 Abort·Reset·파라미터 수정하지 않음. 최근 FAST_C1 4.801 V MinStep 실패는 별도 사례.
+
+## 2026-10-10 — Claude independent audit before CAL/FAST rerun decisions (PROPOSED)
+
+- 이택규가 세 소자의 런타임·수렴성 차이에 대한 독립 감사와 중간 연구 로드맵 검토를 Claude에 요청할 프롬프트를 받아보려 함. Claude에 직접 보낸 것이 아니며, 사용자가 복사하여 전달할 예정.
+- Claude 검토 범위: 성공한 5V_TEST(parent, 1ns), FAST_C1 n6(Failed 4.801V MinStep and Iterations15), CAL n2(100ns candidate unverified effective, last accepted ~4.142V), exact pp inputs and mesh/physics/contacts differences, GaN Mg ionization, 2D J / QW IQE physical realism, A/B prep gates.
+- NEXT: audit verdict and user-supplied read-only exact active pp data reconcile first. No premature CAL Abort, FAST immediate rerun, code changes, or final physical calibration claims.
+
+## 2026-10-10 — CAL 4V+ 수렴 불안정 우려에 따른 판단 보류 및 감시 계획 (PROPOSED)
+
+- 작업자 이택규가 FAST_C1 n6의 약 4.801V 실패와 CAL n2의 약 4.142V 부근 반복 Newton 문제를 비교하면서 CAL 실패 위험에 대한 우려를 표시. 이후 즉시 contact 좌표 확인을 멈추고 CAL 리스크를 우선 재평가하기로 대화 방향 변경. **CAL 중단(Abort)은 요청·실행되지 않음.**
+- 실제 확인: FAST_C1은 Iterations15, MinStep1e-9 하에서 Step-size too small로 실패; CAL은 최근 accepted anode 약 4.142V까지 전진했으며 후속 RHS 1.03e-3~1.09e-3 근방에서 수렴 기준 1e-3 위로 반복한 구간 관측. 이 두 계산의 근본 원인 동일 여부·CAL 최종 실패 여부·100ns 유효 적용 여부 불명.
+- NEXT READ ONLY: CAL n2 실제 상태를 서로 시간 간격을 둔 두 로그로 비교. `anode` 마지막 accepted 전압뿐 아니라 BE pseudo-time, step size/retry 추세, log 수정 시각 및 solver running 여부 확인. 전진하면 유지, 정체 + 극소 스텝 반복이면 중단/짧은 pilot 분기 여부를 연구자가 결정. 5V parent를 별도 보존, FAST_C1 즉시 재실행 금지. TDR은 검증된 restart 체크포인트가 아님.
+
+## 2026-10-10 — Half+Coarse completed 5V reference top/bottom contact placement logic verified from live pp1 (OBSERVED; actual mesh edge IDs pending)
+- 작업자 이택규가 원본 `JUSUBIN_FAST_HALF_5V_TEST/pp1_dvs.cmd` lines 420–500을 실서버 출력으로 제공. SDE는 `sdegeo:define-contact-set "anode"` 및 `"cathode"`를 정의.
+- Anode `sdegeo:set-contact`는 x=`x0`에서 y=`(yL+yDL)/2` 및 y=`(yDL+yC)/2`의 **두 top edge ID**를 동일 `"anode"`로 등록함. 소스 주석에 Half top consists of DmgL + Clean이라고 명시. Cathode는 x=`xb`, y=`yC/2`인 bottom n-GaN numerical/contact base edge를 `"cathode"`로 등록.
+- 이 근거는 Half-device에도 양 전극이 남아 있고 top/bottom 전류 경로를 의도했음을 확인함. 하지만 `x0,xb,yL,yDL,yC` 실제 정의/수치, 접촉 edge 선택의 유효성, 기하학적 중앙대칭/측벽 위치, 최종 mesh/전류밀도 정규화는 **미검증**. 코드의 주석이나 `find-edge-id` 선언만으로 실제 경계검증 완료 주장 금지.
+- 다음: `grep -nE 'define (x0|xb|yL|yDL|yC)' /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST/pp1_dvs.cmd`의 실제 좌표 확인, SVisual 메쉬에서 contact 위치 확인. 시뮬레이션/입력 수정 없음.
+
+## 2026-10-10 (user terminal capture, exact time unspecified) — Confirmed completed 5V half-device TDR exists (OBSERVED / READ-ONLY)
+
+- 작업자 이택규가 실제 학교 서버에서 `ls -lh /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr` 실행. 출력: `-rw-r--r--. 1 semi437 semi437 16M Oct 9 14:29 .../JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr`. 완료된 NtSide=0 5V Half+Coarse baseline parent의 postprocessing 결과 파일 존재와 대략적인 크기/수정일만 **실제 확인**.
+- 별도 과거 `n2_des.log`와 PLT 분석에서 해당 부모 5V Transient 종료까지 확인되었으나, **이번 ls 명령만으로 TDR 내부 데이터 완전성, electrode mesh, centerline symmetry, 5V steady state, 공정/물리 모델 타당성은 증명되지 않음**.
+- NEXT (READ ONLY): 부모 `pp1_dvs.cmd`의 `sdegeo:*contact*`, `anode/cathode`, `pp2_des.cmd`의 Electrode 설정과 실제 `n1_msh.tdr`를 대조해 Half에서 양 전극 및 한쪽 sidewall과 중앙 대칭면이 존재하는지 검증. 이후 QW Rrad/RSRH/RAuger 전체 적분과 2D current normalization. 완료 parent TDR, FAST_C1 실패 로그, 실행 중 CAL 모두 원형 보존.
+- GitHub 기록만 업데이트. 서버 코드 및 실행 변경 없음.
+
+## 2026-10-10 — 이택규 Baseline-first / A·B stage-gated execution roadmap (PROPOSED; team approval pending)
+
+- 작업자 요청: FAST_C1 실패·CAL 지연과 별도 완료된 5V Half+Coarse를 바탕으로 향후 연구 실행 계획 작성. **사용자 승인 전 계획안(PROPOSED)** 이며 소스/solver 변경 또는 연구 결론 확정 아님.
+- P0 (즉시, 읽기 전용): `JUSUBIN_FAST_HALF_5V_TEST` 5V NtSide0 완성 파일/로그/원시 입력·해시/백업 보존. `GaN_PiN_Diode_FAST_C1` n6은 4.801V에서 15 Newton 회수·MinStep=1e-9로 실패: 재실행 보류, 기존 중간 TDR 활용/원인 비교. CAL n2는 마지막 실측 4.142V accepted, NtSide0 InGaN 100ns 후보: 원본 보존, 현재 상태·effective par·accepted step 추적.
+- P1 (장시간 계산 전): Half-도메인 실제 anode/cathode/대칭면 및 측벽 메쉬 검토, 2D current→J 정규화, Mg/EBL 도핑과 hDensity 구분, 5V steady-state/초기입력, 극단적 낮은 전류 및 1ns QW SRH·B·C와 polarization 모델 물리성 점검. 기존 5V TDR에서 전체 QW별 Rrad/SRH/Auger와 sidewall SRH를 동일 도메인/단위로 적분해 IQE_rec workflow 입증.
+- P2 (기준 소자 확정): 동일한 freeze physics+mesh에 NtSide=0 vs 1e18 defect ON/OFF 모델, 전류 인가·광재결합/전류 밀도 영향 비교; Full/Fine vs Half/Coarse 및 mesh/convergence/일반동작 확인. 100ns CAL은 자료기반의 **분리된 민감도 시험**이고 baseline 과학 검증을 대신하지 못함. 특성이 맞지 않으면 calibration gate NO-GO 유지.
+- P3 (A/B): Common Baseline 동결 후 A carbon compensation edge 모델과 B localized lateral AlGaN heterobarrier를 분리 버전으로 설계. 두 프로젝트 각각 null control → SDE mesh → SDevice preprocess → short smoke/Save-Load → representative high-bias pilot → selective DOE. B vertical span/QW replacement과 2D geometry contact, A trap/compensation 정의 사전 확정. 전류밀도 동일 조건의 sidewall SRH, QW Rrad/SRH/Auger, injection/leakage, IQE_rec, Vf penalty 비교. A/B 후보를 baseline 확정 전 생산 스윕하지 않는다.
+- P4: 검증을 통과한 후보만 full/fine 재검증 후 PPT/논문, 출처/수치·오류·한계·재현성 SWB-native SDE/SDevice/Parameter 입력 정리.
+- 이택규 제안 역할: 수치 수렴·CAL 및 full/half 동등성/재현성, 주수빈 제안 역할: SVisual 도핑/재결합 적분과 출력 검증. **실제 분담 미확정**. 시간은 smoke/pilot wallclock 측정 이전 예측하지 않음.
+- 근거: 사용자 제공 실제 pp6_des.cmd, n6 종료 로그, CAL n2 4.142V 로그; CMP/PROJECT_AB_PRE_RUN_AUDIT.md G1~G5 및 Modes 0~4, Issues #1~#6. 변경 사항: GitHub 계획 제안 기록뿐.
+
+## 2026-10-10 (latest terminal result; exact capture time not given) — FAST_C1 n6 active MinStep/Iterations/RHSMin confirmed (OBSERVED)
+
+- 이택규가 서버의 **실제 전처리 입력** `/user/semi/semi437/tmp/myproject/GaN_PiN_Diode_FAST_C1/pp6_des.cmd`에서 `grep -nE 'MinStep|Iterations|RHSMin'` 출력 제공. Line 766 `RHSMin=1e-3`, line 828 `Iterations=500`, line 839 `Iterations=100`, line 856 `MinStep=1e-9`, line 875 `Iterations=15`. Iterations=500/100은 별도 Solve 블록에 있으나 전체 문맥은 이번 grep만으로 직접 확인 불가. Transient BE step Newton 반복은 실제 실패 로그에서 15회 초과 후 cutback.
+- FAST_C1 n6의 최종 시도 `Stepsize: 1.2174e-09 s`에 대해 Newton 실패 후 기존 로그 패턴상 0.5× cutback은 `6.087e-10 s`이며, 이는 확인된 `MinStep=1e-9 s`보다 작음. 따라서 `Step-size is too small` **수치 종료 조건은 확인됨**. 단 Newton 불안정의 근본 원인이 물성, 메쉬, Mg, 파라미터, 경계 조건 중 무엇인지는 여전히 UNRESOLVED.
+- 종료 전 마지막 표기 anode=4.801E+00 V, target 5V 미도달, 2026-10-10 17:39:07 process exit. `n6_des.tdr` 생성됨에도 정상 목표 달성/재시작 checkpoint 아님. 이미 완료된 `JUSUBIN_FAST_HALF_5V_TEST` 별도 소자와 혼동 금지. CAL n2 최신 직접 기록 약 4.142V, 후속 결과 미확인.
+- 다음: READ ONLY `sed -n '815,885p' /user/semi/semi437/tmp/myproject/GaN_PiN_Diode_FAST_C1/pp6_des.cmd`로 실제 Solve의 MinStep/Increment/Decrement/Iterations/Goal/Save를 정확히 구분하고, 후보 수정이나 재실행 이전에 전처리 입력과 실패 위치를 점검. 기존 FAST 및 CAL 계산파일 보존. 서버 변경 없음.
+
+## 2026-10-10 (last log time unspecified) — FAST_C1 n6 tiny BE-steps oscillate near 4.801V; final minimum step failure (OBSERVED)
+
+- Worker 이택규 supplied filtered **actual** `GaN_PiN_Diode_FAST_C1/n6_des.log` tail. Pseudo-time printed `0.960247 s` on successive BE attempts (6 decimal digits only), corresponding to ~4.801235 V at unchanged 0→5V ramp. Last repeated anode printed `4.801E+00V`, not proof exact zero time advancement.
+- Seen rejected timestep trials: `9.0176e-08, 4.5088e-08, 2.2544e-08` s; some intervening **accepted** attempts printed with anode current (e.g. following `1.1272e-08, 6.7632e-09, 1.0145e-09` s). Newton alternated failures and very small accepted progress. Last rejected attempt `1.2174e-09 s` immediately followed by `Step-size is too small.`
+- If the previously documented `MinStep=1e-9 s` is indeed active in **this actual pp6 deck**, next 0.5× cutback = `6.087e-10s`, explaining stopping threshold. This must be verified against `GaN_PiN_Diode_FAST_C1/pp6_des.cmd` (not yet shown).
+- Earlier detailed n6 Newton tail alternated electron C-norm errors ~0.966 and ~74.4 at adjacent x=0.119–0.120um, y=2.617188um; Poisson and hole errors small there. **Electron-equation instability seen, underlying physics/material/mesh root cause unproven**; cannot blame Mg/traps without regional/model checks.
+- Prior process end: 2026-10-10 17:39:07 KST after 525152.85s wallclock, n6_des.tdr written at failure. No successful 5V. Last 4.801V/5V≈96.02% *voltage* sweep only.
+- CAL n2 separate: latest direct observed ~4.142 V accepted, 5V/100ns override unresolved; no new CAL evidence in this turn. Preserve active CAL and prior completed 5V_TEST parent.
+- NEXT READ-ONLY: inspect exact preprocessed FAST_C1 pp6 `MinStep`, `Iterations`, `RHSMin`, and solving block; save logs/tdr; do not merely lower MinStep, rerun 145h or claim saved TDR is restart checkpoint. No school-server changes.
+
+## 2026-10-10 (after ~19:02 KST, exact capture time unknown) — FAST_C1 n6 last printed V 4.801, MinStep failure before 5V (OBSERVED)
+
+- 작업자 이택규 제공 `grep -n 'anode ' /user/semi/semi437/tmp/myproject/GaN_PiN_Diode_FAST_C1/n6_des.log | tail -n 5` 실제 로그: lines 239133, 239222, 239344, 239400, 239532 모두 `anode 4.801E+00`, electron 4.594E-14, hole 5.318E-12, total 5.364E-12 (raw SDevice output units). 로그는 3-decimal V이므로 마지막 다섯 로그 행의 정확한 t/V 동일성은 미증명.
+- 앞서 캡처한 동일 n6 전체 종료 로그: 15 Newton iterations exceeded → `Newton didn't converge, trying again with smaller timestep` → `Step-size is too small` → wrote n6_des.tdr, process exited 2026-10-10 17:39:07, wallclock=525152.85s. `simulation finished / Good Bye`는 성공 의미 아님.
+- 마지막 **표시 전압** 4.801V / 목표 5V = 96.02% of sweep, 0.199V remaining; NOT runtime completion, and last exact accepted BE step/time, checkpoint validity and fundamental divergence cause unresolved. No confirmed 5V in this FAST_C1 node. Do not infer 4.801 V is exact last converged to >3 decimals from grep alone.
+- Separate CAL n2 latest user log ~4.142V accepted; no new CAL observation in this turn. Completed JUSUBIN_FAST_HALF_5V_TEST parent preserved.
+- NEXT READ ONLY: `grep -E 'Computing BE-step|Finished, because|Step-size is too small|Newton didn.t converge|anode ' /user/semi/semi437/tmp/myproject/GaN_PiN_Diode_FAST_C1/n6_des.log | tail -n 35` to see last BE transitions/timestep/rejections/accepted contact; optional `n6_des.sta`. Preserve current TDR/log, do not rerun nor change MinStep/iterations yet. Current chat made no simulator changes.
+
+## 2026-10-10 — FAST_C1 min-step failure and CAL slow accepted steps (NEXT READ-ONLY)
+
+- 작업자 이택규가 학교 서버 실제 터미널 로그 두 개 제공. FAST_C1 `GaN_PiN_Diode_FAST_C1/n6_des.log` (NtSide=0)는 반복 Newton 15회 초과 후 `Newton didn't converge, trying again with smaller timestep...` 그리고 `Finished, because... Step-size is too small.`가 나타남. 2026-10-10 17:39:07 KST 정상 프로그램 종료 메시지 `simulation finished`, `Good Bye !`, `n6_des.tdr` 쓰기 및 라이선스 반환이 있더라도 5V 목표 달성/물리적 성공이 아니라 **수치적 최소 time-step 실패**. Wallclock 525152.85s ≈145h52m32s, peak mem 5.94GB. 마지막 accepted voltage는 제공된 50줄에 없어 UNRESOLVED; 깊은 원인(물성/mesh/수치 설정) 역시 확정 불가.
+- 별개 프로젝트 `CMP_BASELINE_1.2.0_CAL/n2_des.log`에서 t=0.828339→0.828343s BE step은 Newton 2회 후 `|RHS| less than 1e-3`로 accepted, 표기 anode=4.142E+00 V, total current=4.678E-14 raw. 기존 4.138V보다 약 0.004V 진전(4.142/5≈82.84% 전압 구간이지 walltime 아님). 후속 t=0.828343→0.828348s attempt은 Iteration 11까지 `RHS≈1.09e-03 >1e-03`; 스크린샷/로그가 중간에 끝나 아직 accepted/failure 미확인. 5V 완료·tau_max=100ns 실제 유효성·ETA 미확인.
+- 변경: GitHub 진단 기록뿐. 학교 서버 소스, SWB, 실행 중 CAL, 완료된 `JUSUBIN_FAST_HALF_5V_TEST` 결과는 건드리지 않음.
+- NEXT READ-ONLY: `grep -n 'anode ' /user/semi/semi437/tmp/myproject/GaN_PiN_Diode_FAST_C1/n6_des.log | tail -n 5` 로 FAST 마지막 성공 전압을 확인하고 n6_des.sta/err 및 버전 비교. CAL은 시간 경과 뒤 tail로 accepted t/V, `Newton didn't converge`, step-size, fatal/Good Bye 여부 확인. FAST n6 즉시 재실행 또는 MinStep/Iterations 임의 완화 금지.
+
+## 2026-10-10 ~19:02 KST — 이택규 FAST_C1 n6 / CAL n2 로그 분리 진단 (READ ONLY)
+
+1. 학교 서버에서 `tail -n 50 /user/semi/semi437/tmp/myproject/GaN_PiN_Diode_FAST_C1/n6_des.log`를 확인하고, failed 원인 판단이 부족하면 `n6_des.err`, `n6_des.sta`, SWB node output/exit status 확인. '빨강=failed' UI와 실제 solver fatal cause는 구분.
+2. 별도로 `tail -n 50 /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/n2_des.log`로 accepted t/V, cutback, job exit, Good Bye 확인. CAL status는 별도 프로젝트를 선택해 확인.
+3. 로그 확보 전 두 프로젝트에서 Abort/Run/Reset/Preprocess/입력 수정 금지. 완료된 5V_TEST 기준 결과와 현재 실행 기록 보존. 이후 원인에 맞춰 하나씩 조치.
+
+## 2026-10-10 ~18:08 KST — 주수빈 CAL n2 high-bias cutback 추적 (OBSERVED)
+
+- 4.138V 부근 BE attempt에서 Newton 15회 후 RHS=1.21e-3>1e-3, `Newton didn't converge` 및 step cutback 확인. 새 시도 t=0.827672→0.827674 s, dt=2.8452e-6 s 시작만 확인; 전체 job failure 아님.
+- PRIORITY: running source/solver/job 보존. 일정 시간 간격으로 `tail -n 40 .../CMP_BASELINE_1.2.0_CAL/n2_des.log` 비교하고 accepted t/V가 늘어나는지, reject 반복/MinStep/fatal/Good Bye 여부 확인. 출력 timestamp 및 process로 실행/정지 구분.
+- 전압 82.8%가 곧 wallclock 82.8%라는 해석 금지. ETA 단정 금지, 100ns effective 적용 아직 입증 안 됨.
+
+## 2026-10-10 ~18:07 KST — 주수빈 CAL 4.138 V 진행 인수인계 (OBSERVED)
+
+- 최신 SWB n2 Output 화면에서 직전 accepted step 결과 anode 4.138 V(5 V 대비 전압 스윕 약 82.76%) 및 다음 BE attempt t=0.82766→0.827663 s 시작 확인. 5 V 완료 또는 다음 시도의 수렴은 미확인.
+- 최우선: 진행 중 소자/설정 손대지 말고 `tail -n 40 /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/n2_des.log`를 나중에 다시 확인해 accepted V·retry·fatal/Good Bye 및 종료 여부 기록.
+- CAL 종료 후만: 100ns InGaN override 실제 적용증거 검증, 기준 1ns와 같은 조건 I(V)/QW SRH/Rrad/Auger 비교; 원본 및 CAL 소스 보존. 전압 진행률로 ETA 산출 금지.
+
 ## 2026-10-10 — 이택규 CAL SDevice log confirms 4.122V (OBSERVED)
 
 - Live CAL `n2_des.log`: accepted BE step to t=0.824478s, V=4.122V, Newton RHS=7.30e-4 under threshold 1e-3, raw anode current 4.344e-14. Next BE attempt t=0.824487s only observed through iteration 5 (RHS=1.10e-3), not yet confirmed accepted. No 5V completion or actual InGaN 100ns model proof.

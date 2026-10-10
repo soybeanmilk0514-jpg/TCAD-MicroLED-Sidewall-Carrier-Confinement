@@ -1,3 +1,99 @@
+## 2026-10-10 22:30 KST — JuSubin extracts real 100ns CAL 4V I–V record
+- OBSERVED read-only parsing of live `CMP_BASELINE_1.2.0_CAL/n2_des.plt`: near-4V saved record time=0.79993475s, anode=3.99967374V, 2D TotalCurrent=3.497895e-14 A/um. Last PLT row in screenshot time=0.82993089s, anode=4.14965446V, TotalCurrent=4.839436e-14 A/um. Values directly displayed, not estimated. LAST PLT ROW does not prove currently running solver is still at the same point; no 5V completion.
+- 4V transient current history obtainable without changing running CAL. But 4V point is low-current, not an established LED baseline or sufficient IQE test; verify displacement current / geometry normalisation and region-specific 4V TDR / save checkpoints before changing endpoint. Low-J Gate0 remains UNRESOLVED. 
+- NEXT read-only `find` saved n2*.tdr/n2*.sav and inspect Plot/Save coverage. No TCAD code/process/source/CAL change.
+
+## 2026-10-10 22:25 KST — CAL PLT data schema verified; 4V value not extracted yet
+- OBSERVED read-only screenshot from JuSubin on `CMP_BASELINE_1.2.0_CAL/n2_des.plt`: `DF-ISE text`, `type=xyplot`, 17 stored datasets: time, 8 cathode fields, 8 anode fields including `anode OuterVoltage`, `anode TotalCurrent`, `anode DisplacementCurrent`. Numeric `Data {` present. Enables retrospective 4V I–V retrieval without stopping calculation, but the displayed first 30 lines alone do NOT verify an actual 4V datapoint nor TDR at 4V. Next read-only parse numerical rows; keep CAL running and Gate0 unresolved.
+
+## 2026-10-10 22:21 KST — JuSubin confirms live CAL PLT exists (OBSERVED)
+- Separate `CMP_BASELINE_1.2.0_CAL/n2_des.plt` confirmed by `ls -lh` at ~22:21 KST: 1.4M, mtime Oct10 21:30. The reported missing file was typo `n2_des.pltls`; correct file is present. Still no direct confirmation of 4V current data contents or 4V TDR snapshot/checkpoint. The last *accepted* CAL voltage in documented 22:11 log remains ~4.149V; mtime alone does not prove progress. Keep CAL running; next read-only `head -n 30 .../n2_des.plt` and check Save/Plot config. No SWB/TCAD files edited.
+
+## 2026-10-10 ~22:11 KST — CAL 4.149V accepted; next BE-step Newton oscillatory (OBSERVED server log, READ ONLY)
+
+- 이택규가 학교 서버 `CMP_BASELINE_1.2.0_CAL/n2_des.log` `tail -n 60` 실제 출력 제공. CAL n2 100ns sensitivity의 **accepted** 두 단계 확인: (1) 직전 접촉 anode=4.149E+00V, total current=4.831E-14 (로그 표시 단위, 2D normalization 주의); (2) `Computing BE-step from 0.829858 s to 0.829862 s (Stepsize 3.8830e-06 s)` 후 Newton iteration2 RHS=8.97e-04<1e-3, `Finished because |RHS| less than 1e-3`, anode 4.149E+00V, total current 4.832E-14. **4.149V는 이번 실제 로그에서 정상 수렴 확인됨**; 표시가 소수 셋째 자리로 반올림되어 정확한 몇 mV 변화인지는 이 로그로 계산 불가.
+- 다음 trial: `Computing BE-step from 0.829862 s to 0.829867 s (Stepsize:4.6596e-06s)`; Newton iteration2-9 RHS around 1.28e-3–1.34e-3 (criterion 1e-3), reported C-norm error alternating ~1.21e3 and 4.76e3. Tail 끝에 iteration9까지만 나타나서 **그 step 수렴 여부, 컷백 여부, 프로세스 현재 구동/최종 종료 상태는 이 스냅샷만으로 미확정**. `Step-size is too small`/Abort/Finished simulation 등 최종 실패 출력 없음.
+- 5V 목표 대비 4.149/5=82.98%은 **전압 스윕 비율, 연산 시간 비율 아님**. CAL 5V ETA 근거 부족; CAL이 현재도 CPU 소비 중이라는 것은 로그 스냅샷만으로 확정 못 함. 4V 기준점 과학적 채택 여부는 별도 J/IQE Gate0로 판단, 그냥 4V 도달했기 때문에 중단하면 안됨.
+- NEXT: 기존 CAL 그대로 보존, 필요 시 일정 시간 뒤 `tail -n 60 /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/n2_des.log` 재확인해 다음 step accepted/bias progression/step-cutbacks 확인. FAST_C1 실패와 혼동하지 말 것. Server code/CAL process user action 없음.
+
+## 2026-10-10 ~22:11 KST — CAL 100ns n2 accepted ~4.149V; next step Newton oscillatory (OBSERVED LOG)
+
+- **Evidence:** 이택규 실서버 `CMP_BASELINE_1.2.0_CAL/n2_des.log` latest 60 lines shared. BE from 0.829858 to 0.829862 s (stepsize 3.8830e-06s), iter2 `|Rhs|=8.97e-04 < RHSMin 1e-3`, `Finished, because... |RHS| less than 1.0000E-03`; anode=`4.149E+00 V`, total current=`4.832E-14` (2D A/um convention). **Thus 4.149 V was accepted**, not just being attempted. Next BE 0.829862→0.829867s (trial 4.6596e-06s), Newton iter2–9 oscillates RHS ~1.28–1.34e-03 (>1e-3), no eventual convergence/failure outcome in this truncated tail.
+- Voltage fraction 4.149/5≈82.98% is **bias sweep fraction, NOT runtime progress**. Step2 completed in 86.24s vs earlier 13.67s; no reliable 5V ETA. Note previous accepted iteration still reports `error=1.11e+03` alongside small RHS, so examine numerical convergence robustness before claiming high-accuracy physical solution.
+- Preliminary magnitude under parent-model width convention 2um: J~4.832e-14/2*1e8≈2.416e-6 A/cm² **conditional**; this is a transient total terminal current including possible displacement, not directly accepted as steady-state LED J. Cannot compare blindly against 5V_TEST parent's 5V result because voltage and SRH lifetime differ; low-current physical validation unresolved.
+- NEXT read-only: inspect later CAL log and retained PLT 4V+ sweep only as useful; do NOT abort/modify/restart CAL just because 4V was exceeded. 4V is not an automatic verified working baseline. Preserve old 5V parent, project A/B NO-GO.
+
+## 2026-10-10 — JuSubin independently confirms original 5V_TEST n2 finished log
+- OBSERVED user-provided grep/tail of existing `JUSUBIN_FAST_HALF_5V_TEST/n2_des.log`: final BE step to t=1.0s, anode=5.000V, 2D total current=1.448e-11 A/um, `Sentaurus Device simulation finished` + `Good Bye!` on Oct 9 14:29:52 KST. Repeat screenshots are same observation. This confirms last accepted solver state reached 5V; still verify `n2_des.tdr` time/bias provenance if interpreting visualized point data as final 5V.
+- Existing baseline low-J Gate0 remains blocker, J nominal ~7.24e-4 A/cm². `n1_msh.tdr: Permission denied` was attempted execution of data file, not TCAD crash. NEXT use existing data to diagnose low injected current without touching separate CAL or Baseline.
+
+## 2026-10-10 — JuSubin pGaN vs EBL Ev/EFp probe
+- OBSERVED same existing 5V_TEST n2_des SVisual: Clean_pGaN X=0.05,Y=1um Ev=-5.130097037559eV, EFp=-4.999999973858eV -> local 0.130097063701eV. Prior Clean_EBL X=0.13,Y=1um Ev=-5.252508407140eV, EFp=-4.999999939039eV -> 0.252508468101eV. Delta 0.1224114044eV. These are local energy separations NOT cross-interface barrier. Need confirm actual 5.0V recorded endpoint: an earlier n2_des.log screenshot showed anode 4.139V mid-ramp. Read-only check first. No TCAD/CAL changes.
+
+## 2026-10-10 — EBL same-point energy difference
+- OBSERVED (주수빈) 5V_TEST completed NtSide0 Clean_EBL at X=0.13um,Y=1.0um: Ev=-5.252508407140eV, EFp=-4.999999939039eV; EFp-Ev=0.252508468101eV. Previous hDensity=5.7879e15, acceptor=3e17, signed net doping=-3e17 cm^-3. Local EFp-Ev difference is not injection barrier height. Next read pGaN same-position values and compare regions. No code or CAL changes.
+
+## 2026-10-10 21:43 KST — JuSubin upper-stack hole quasi-Fermi cutline now zoomed (OBSERVED)
+- Completed NtSide0 5V n2_des: C1(Y≈1um) `hQuasiFermiEnergy` graph is displayed over X=0–0.4um. Plateau near -5eV in top segment and several marked steps X≈0.15–0.25um; approximate screenshot reading only, not energy barrier measurement. Previous Ev cutline also showed strong upper-stack structure. EBL low biased free-hole density cause remains unresolved.
+- NEXT read-only: same-coordinate Probe Clean_EBL X=0.13um,Y=1.0um for Ev and hole quasi-Fermi, then layer-aligned band/transport check. Gate0 low-current and CAL prior status unchanged.
+
+## 2026-10-10 21:29 KST — JuSubin Clean_EBL doping input correct; 5V holes remain low (OBSERVED)
+
+- Completed `JUSUBIN_FAST_HALF_5V_TEST` NtSide0 5V SVisual Probe at X=0.13 µm/Y=1.0 µm (Clean_EBL, AlGaN): `AcceptorConcentration=3.000000e17`, `DonorConcentration=0`, `DopingConcentration=-3.000000e17`, `hDensity=5.787900714824e15 cm^-3`. Input effective acceptor and signed net doping agree; one-point free holes ~52 times smaller than acceptor under 5V. Potential hole-injection barrier/depletion/polarization cause NOT CONFIRMED.
+- Next JuSubin step: use existing 5V TDR to inspect vertical `ValenceBandEnergy` and `hQuasiFermiEnergy` cutline around pGaN/EBL/MQW, without editing/rerunning. Separate MgMinus field semantics remain unresolved. Other team's low-J Gate0 and CAL watch remain ongoing/unmodified.
+
+## 2026-10-10 — Claude v2 independent CMP audit submitted; low-current Gate 0 prioritized (DOCUMENT-BASED REVIEW / PROPOSED)
+
+- 작업자 이택규가 Claude 작성 `CMP MicroLED TCAD — 독립 중간 기술감사 및 연구계획 재수립 (v2)` 전문을 채팅 업로드함. **Claude의 독립 감사 의견이며 이번 메시지는 새 실험/로그가 아님.** Claude는 GitHub 기록과 구 FAST 입력은 보았으나 5V_TEST/CAL 현재 실제 pp/log/TDR을 직접 읽지 못했다고 보고함.
+- Claude의 핵심 의견: JUSUBIN_FAST_HALF_5V_TEST NtSide0 5V transient 성공(~10596.76s)에도 raw I2D=1.44801646e-11 A/um, half mesa width≈2um, assumed AreaFactor1이면 nominal J≈7.24e-4 A/cm²; QW Rrad share≈0.1095%. 충분한 구동 전류·주입·IQE 검증이 **Baseline freeze 이전 Gate 0**이 되어야 함. 수치는 기존 GitHub 감사 기반이며 새 측정 아님. `not turned on` 결론은 비교대상 J–V/전류 정규화 검증 전에는 물리 가설로 남김.
+- 수용 가능한 점: 5V_TEST 계산 플랫폼 보존, high-bias FAST_C1 n6 ~4.801V step-size failure는 재실행 보류, CAL n2 100ns sensitivity current reported ~4.144V accepted unverified로 관찰·중단 사용자 승인 필수; A/B 동일 J·null controls, τ sensitivity, QW와 Cedge 총 비방사, transient trap DC check, stripe vs 3D 형상 한계 분리.
+- 별도 검증 필수: Claude가 제시한 활성층 외 `2.9V drop`은 단일 QW n,p, ni 가정 기반 추정이지 밴드/준페르미 지도에서 측정된 전압 분배 아님. 분극 activation/thermionic/EBL를 저전류 확정 원인으로 판단 금지. FAST half/full ~1% 동일은 4.798 vs 4.801V 단일 단자전류의 근사 보정이므로 메쉬 수렴·공간발광 정확도는 미증명. 2D stripe perimeter/area가 4um square보다 2배 작은 기하학적 사실에서 실제 SRH 2배 과소평가를 단정할 수 없음. 1D pilot 분 단위/10월23일 초록 데드라인/수치 PASS 기준은 Claude의 제안이며 별도 확인 필요.
+- 우선순위 제안: **S0 원본 5V_TEST 결과의 구동 전류/J 및 potential/band/quasi-Fermi 분포 점검(기존 TDR)** → **S1 EBL doping/polarization/thermionic interpretation 및 재결합 영역별 전류 회계** → 원인 가설이 분리되면 기존 소자 보존한 별도 소형 1D/pilot 설정 검토(사용자 승인 전 미실행) → NtSide0/1e18 동일 J → A/B. CAL은 보고서의 임의 시간·전압 임계치만으로 중단 결정하지 않음.
+- 서버/SWB/코드/CAL 변화 없음. Claude에게 직접 메시지 보내지 않음.
+
+## 2026-10-10 — CAL n2 ~4.144 V calculating (USER-REPORTED / ACCEPTANCE UNVERIFIED)
+
+- 작업자 이택규 직접 보고: `CMP_BASELINE_1.2.0_CAL`이 현재 약 **4.144 V 계산 중**. 직전 실제 공유 n2 로그에서 확인된 accepted 전압은 4.142 V; 이번 보고는 이전보다 약 0.002 V 높은 시도/진행으로 보이지만 **새 n2_des.log 스텝 수렴 결과는 제출되지 않아 4.144 V accepted라고 확정할 수 없음**. 5V/100ns effective 적용 모두 미확인.
+- 시간당 속도, 최종 종료 예상, 근본적인 고전압 수렴 문제의 동일성은 아직 판단 불가. 현재/목표 전압 비율은 ≈82.88% *스윕 구간*일 뿐 시간 진행률 아님.
+- NEXT: 기존 CAL 작업 그대로 보존, 현재/이후 `n2_des.log`의 accepted t/V, Newton 컷백, timestep, 최소 간격 경고 비교하는 읽기 전용 감시. CAL 임의 Abort·Reset·파라미터 수정하지 않음. 최근 FAST_C1 4.801 V MinStep 실패는 별도 사례.
+
+## 2026-10-10 (last log time unspecified) — FAST_C1 n6 tiny BE-steps oscillate near 4.801V; final minimum step failure (OBSERVED)
+
+- Worker 이택규 supplied filtered **actual** `GaN_PiN_Diode_FAST_C1/n6_des.log` tail. Pseudo-time printed `0.960247 s` on successive BE attempts (6 decimal digits only), corresponding to ~4.801235 V at unchanged 0→5V ramp. Last repeated anode printed `4.801E+00V`, not proof exact zero time advancement.
+- Seen rejected timestep trials: `9.0176e-08, 4.5088e-08, 2.2544e-08` s; some intervening **accepted** attempts printed with anode current (e.g. following `1.1272e-08, 6.7632e-09, 1.0145e-09` s). Newton alternated failures and very small accepted progress. Last rejected attempt `1.2174e-09 s` immediately followed by `Step-size is too small.`
+- If the previously documented `MinStep=1e-9 s` is indeed active in **this actual pp6 deck**, next 0.5× cutback = `6.087e-10s`, explaining stopping threshold. This must be verified against `GaN_PiN_Diode_FAST_C1/pp6_des.cmd` (not yet shown).
+- Earlier detailed n6 Newton tail alternated electron C-norm errors ~0.966 and ~74.4 at adjacent x=0.119–0.120um, y=2.617188um; Poisson and hole errors small there. **Electron-equation instability seen, underlying physics/material/mesh root cause unproven**; cannot blame Mg/traps without regional/model checks.
+- Prior process end: 2026-10-10 17:39:07 KST after 525152.85s wallclock, n6_des.tdr written at failure. No successful 5V. Last 4.801V/5V≈96.02% *voltage* sweep only.
+- CAL n2 separate: latest direct observed ~4.142 V accepted, 5V/100ns override unresolved; no new CAL evidence in this turn. Preserve active CAL and prior completed 5V_TEST parent.
+- NEXT READ-ONLY: inspect exact preprocessed FAST_C1 pp6 `MinStep`, `Iterations`, `RHSMin`, and solving block; save logs/tdr; do not merely lower MinStep, rerun 145h or claim saved TDR is restart checkpoint. No school-server changes.
+
+## 2026-10-10 (after ~19:02 KST, exact capture time unknown) — FAST_C1 n6 last printed V 4.801, MinStep failure before 5V (OBSERVED)
+
+- 작업자 이택규 제공 `grep -n 'anode ' /user/semi/semi437/tmp/myproject/GaN_PiN_Diode_FAST_C1/n6_des.log | tail -n 5` 실제 로그: lines 239133, 239222, 239344, 239400, 239532 모두 `anode 4.801E+00`, electron 4.594E-14, hole 5.318E-12, total 5.364E-12 (raw SDevice output units). 로그는 3-decimal V이므로 마지막 다섯 로그 행의 정확한 t/V 동일성은 미증명.
+- 앞서 캡처한 동일 n6 전체 종료 로그: 15 Newton iterations exceeded → `Newton didn't converge, trying again with smaller timestep` → `Step-size is too small` → wrote n6_des.tdr, process exited 2026-10-10 17:39:07, wallclock=525152.85s. `simulation finished / Good Bye`는 성공 의미 아님.
+- 마지막 **표시 전압** 4.801V / 목표 5V = 96.02% of sweep, 0.199V remaining; NOT runtime completion, and last exact accepted BE step/time, checkpoint validity and fundamental divergence cause unresolved. No confirmed 5V in this FAST_C1 node. Do not infer 4.801 V is exact last converged to >3 decimals from grep alone.
+- Separate CAL n2 latest user log ~4.142V accepted; no new CAL observation in this turn. Completed JUSUBIN_FAST_HALF_5V_TEST parent preserved.
+- NEXT READ ONLY: `grep -E 'Computing BE-step|Finished, because|Step-size is too small|Newton didn.t converge|anode ' /user/semi/semi437/tmp/myproject/GaN_PiN_Diode_FAST_C1/n6_des.log | tail -n 35` to see last BE transitions/timestep/rejections/accepted contact; optional `n6_des.sta`. Preserve current TDR/log, do not rerun nor change MinStep/iterations yet. Current chat made no simulator changes.
+
+## 2026-10-10 after 19:02 KST — FAST_C1 n6 MinStep failure confirmed; CAL n2 advances to ~4.142 V (OBSERVED LOG)
+
+- 작업자 이택규가 학교 서버 실제 터미널 로그 두 개 제공. FAST_C1 `GaN_PiN_Diode_FAST_C1/n6_des.log` (NtSide=0)는 반복 Newton 15회 초과 후 `Newton didn't converge, trying again with smaller timestep...` 그리고 `Finished, because... Step-size is too small.`가 나타남. 2026-10-10 17:39:07 KST 정상 프로그램 종료 메시지 `simulation finished`, `Good Bye !`, `n6_des.tdr` 쓰기 및 라이선스 반환이 있더라도 5V 목표 달성/물리적 성공이 아니라 **수치적 최소 time-step 실패**. Wallclock 525152.85s ≈145h52m32s, peak mem 5.94GB. 마지막 accepted voltage는 제공된 50줄에 없어 UNRESOLVED; 깊은 원인(물성/mesh/수치 설정) 역시 확정 불가.
+- 별개 프로젝트 `CMP_BASELINE_1.2.0_CAL/n2_des.log`에서 t=0.828339→0.828343s BE step은 Newton 2회 후 `|RHS| less than 1e-3`로 accepted, 표기 anode=4.142E+00 V, total current=4.678E-14 raw. 기존 4.138V보다 약 0.004V 진전(4.142/5≈82.84% 전압 구간이지 walltime 아님). 후속 t=0.828343→0.828348s attempt은 Iteration 11까지 `RHS≈1.09e-03 >1e-03`; 스크린샷/로그가 중간에 끝나 아직 accepted/failure 미확인. 5V 완료·tau_max=100ns 실제 유효성·ETA 미확인.
+- 변경: GitHub 진단 기록뿐. 학교 서버 소스, SWB, 실행 중 CAL, 완료된 `JUSUBIN_FAST_HALF_5V_TEST` 결과는 건드리지 않음.
+- NEXT READ-ONLY: `grep -n 'anode ' /user/semi/semi437/tmp/myproject/GaN_PiN_Diode_FAST_C1/n6_des.log | tail -n 5` 로 FAST 마지막 성공 전압을 확인하고 n6_des.sta/err 및 버전 비교. CAL은 시간 경과 뒤 tail로 accepted t/V, `Newton didn't converge`, step-size, fatal/Good Bye 여부 확인. FAST n6 즉시 재실행 또는 MinStep/Iterations 임의 완화 금지.
+
+## 2026-10-10 ~19:02 KST — FAST_C1 NtSide0 n6 red failed UI; CAL 5V unverified (OBSERVED / UNRESOLVED)
+
+- 이택규 SWB 캡처 선택 프로젝트 `GaN_PiN_Diode_FAST_C1`: `NtSide=0` SDevice n6 red (SWB default failed), n12 pale blue (default running), n1 yellow (default done). No n6 stderr/log or failure mechanism shown; cannot conflate this with another FAST test or CAL.
+- `CMP_BASELINE_1.2.0_CAL` is listed but not selected; worker reports no finish. Latest actual CAL n2 evidence from 주수빈 at ~18:08 KST: ~4.138 V, Newton max iterations / timestep cutback. 5V, 100ns physical effect, CAL walltime ETA unresolved.
+- NEXT READ ONLY: review `GaN_PiN_Diode_FAST_C1/n6_des.log` (+err/sta if needed), and `CMP_BASELINE_1.2.0_CAL/n2_des.log`; preserve jobs, no rerun/reset/edit until diagnosis. Existing JUSUBIN_FAST_HALF_5V_TEST 5V done result remains separate.
+
+## 2026-10-10 ~18:07 KST — JuSubin screenshot CAL n2 progressed to ~4.138 V (OBSERVED / NOT FINISHED)
+
+- 주수빈 SWB screen for `CMP_BASELINE_1.2.0_CAL/n2_des.out`: previous BE step shows `Finished, because |RHS| less than 1.0000E-03`, then contact anode `4.138E+00 V`. The next attempt `0.82766→0.827663 s` begins but acceptance is not shown. Prior observed 4.122 V is superseded as latest confirmed voltage.
+- For an unchanged 0→5 V ramp, ≈82.76% of **voltage range** reached, NOT 82.76% of total runtime. 5 V finish and InGaN Scharfetter 100ns effective application NOT established. Visible vanOverstraetendeMan E0 isotropic/anisotropic mismatch output is a warning, not a confirmed fatal cause.
+- Preserve the user's ongoing job and prior completed 5V reference. NEXT READ ONLY: compare future n2_des.log accepted t/V, cutbacks, Good Bye; inspect effective CAL .par only without editing. Worker 주수빈 observed/handed over 이택규's job; did not start or modify solver.
+
 ## 2026-10-10 (after 12:09 KST; exact log capture time not given) — CAL NtSide0 SDevice actually advancing to 4.122 V (OBSERVED LOG, NOT FINISHED)
 
 - Worker 이택규 supplied live command output from `tail -n 40 /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/n2_des.log`.
