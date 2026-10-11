@@ -5549,3 +5549,209 @@ User requested external MicroLED/GaN TCAD full .cmd/.par files and speed optimiz
 Current slow CAL: latest 100ns SRH lifetime CAL recorded ~4.14965V; 5V complete only in separate low-J baseline parent; neither current solver state nor active parameter deck can be inferred from stale public CMD. Conditional numerical note: for 1s ramp if MaxStep=1e-3s then at least 1000 accepted steps before retries; high-bias nonlinear cutbacks likely burden, to verify read-only. DO NOT stop/modify CAL, baseline low-J Gate0 remains blocker. Full curated source/link/method note: CMP/reviews/EXTERNAL_GAN_MICROLED_TCAD_SOURCES_2026-10-10.md, LeeTaekGyu/TIMELINE.md updated. Next: read-only pp2_des.cmd/par Math/Solve and latest CAL log to isolate slowdown; evaluate T-2022.03-compatible alternatives only after inspection.
 
 ---
+
+## 2026-10-11T07:42:55Z — soybeanmilk0514-jpg
+
+[2026-10-11 16:41 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / HANDOFF
+상태: OBSERVED (100ns CAL accepted ~4.179V; next step unresolved)
+
+요약:
+주수빈이 제공한 실제 MobaXterm `CMP_BASELINE_1.2.0_CAL/n2_des.out` 화면에서 100 ns InGaN SRH lifetime sensitivity n2의 BE-step 0.835804→0.835806 s 수렴 확인 (Newton iteration2 |RHS|=7.30e-04 <1e-3). 직후 anode 4.179E+00 V, 2D TotalCurrent 5.555E-14 A/um. 5V 목표 기준 83.58%는 전압 범위 비율이며 계산 완료 시간 비율이 아님. 이전 10월10일 4.14965446V PLT 기록 대비 약 0.029V 진전.
+다음 trial 0.835806→0.835808 s, step 2.2972e-06s의 iteration 2~6 RHS ~1.03e-3~1.09e-3로 수렴 기준 위. 화면이 이 반복 도중 끝나므로 최종 수렴/컷백/실패 여부 미확정. CAL 5V 계산 완료 아님. Gate0 저전류 blocker 지속.
+
+근거:
+- 2026-10-11 16:41 KST 주수빈 사용자 제공 n2_des.out 실제 화면.
+
+변경:
+- 연구 로그 기록만. 서버 SWB/SDevice/프로세스 건드리지 않음.
+
+다음:
+- CAL 보존; 추후 read-only out/log 확인. 약 4V spatial TDR 존재 및 실제 Plot/Save 지시문 확인 후 중단 여부 결정. Baseline freeze/A-B 생산 시뮬레이션 보류.
+
+---
+
+## 2026-10-11T07:47:13Z — soybeanmilk0514-jpg
+
+[2026-10-11 16:45 KST]
+작업자: 주수빈 | AI: ChatGPT
+구분: RESULT / HANDOFF | 상태: OBSERVED (Plot/Save still UNRESOLVED)
+
+요약:
+CAL 폴더의 실제 `ls -lh *des.cmd` 출력에서 `FASTC1_pp6_des.cmd`, `pp2_des.cmd`, `sdevice_des.cmd` 세 파일 존재 확인. `pp2_des.cmd` 약 5.8KB (Oct10 00:40), 노드 2 전처리 입력 검사 대상. 이번 출력에는 실제 Plot/Save 지시문 또는 4V TDR 저장 증거는 없음. 이전 실로그 확인 accepted ~4.179V 외 새 전압 진행 증거 없음.
+
+변경: GitHub 팀/개인 진행 기록과 후속 계획만 갱신. 서버 계산/SWB/코드 수정 없음.
+다음: `grep -nEi -C 4 'Plot|Save|CurrentPlot|Time[[:space:]]*=' /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/pp2_des.cmd | tail -n 120`를 읽기 전용 실행하여 중간 공간 TDR 생성 여부와 4V 분석 가능성을 판별. CAL 중단 금지, 저전류 Gate0 미해결.
+
+---
+
+## 2026-10-11T07:49:24Z — soybeanmilk0514-jpg
+
+[2026-10-11 16:46 KST]
+작업자: 주수빈 | AI: ChatGPT | 구분: RESULT / BLOCKER / HANDOFF | 상태: OBSERVED (4V spatial TDR UNRESOLVED)
+
+요약:
+주수빈이 학교 서버에서 실제 `CMP_BASELINE_1.2.0_CAL/pp2_des.cmd`의 Plot/Save 지시문을 READ-ONLY grep 한 화면 제공. File 블록: `Grid=n1_msh.tdr`, `Parameters=FASTC1_pp6_des.par`, `Plot=n2_des.tdr`, `Current=n2_des.plt`, `Output=n2_des.log`. Plot 필드 선언 구간은 lines379-582, Transient lines585-605 (InitialTime=0, FinalTime=1, MinStep=1e-9, MaxStep=1e-3), `Save(FilePrefix="n2_5V_ckpt")`는 Transient 종료 *후* lines607-609. grep 출력에는 약 4V용 중간 `Plot(Time=...)` 또는 `Save(Time=...)` 지시가 보이지 않음. I-V PLT는 존재하지만 4V 공간 TDR은 미확보/미확인. 무작정 CAL 중단하면 최종 Save 실행을 보장하지 못함.
+
+주의:
+line584 주석 `Short syntax/mesh/physics smoke: 0 -> 0.3 V only`는 실제 accepted ~4.179V과 불일치하여 주석 오류일 가능성; Goal 본문이 캡처에 없으므로 직접 확인 필요. 물리적 `100ns` 적용도 실제 FASTC1_pp6_des.par/log를 확인해야 확정. 저전류 Gate0 유지.
+
+변경: GitHub 연구 로그·현재 상태·다음 단계 기록만. 서버 CAL/SDevice/SWB 수정이나 중단 없음.
+다음: READ-ONLY `sed -n '580,612p' /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/pp2_des.cmd`로 실제 Goal과 Solve 구조 확인, 다른 디렉터리 TDR/SAV 존재 여부 확인. 사용자 승인 없이 Stop/Abort 금지.
+
+---
+
+## 2026-10-11T07:54:15Z — soybeanmilk0514-jpg
+
+[2026-10-11 KST]
+작업자: 주수빈 | AI: ChatGPT | 구분: DECISION / HANDOFF | 상태: PROPOSED (not implemented)
+
+요약:
+주수빈이 긴 CAL 계산 시간 때문에 다음 실험의 최종 전압을 5V가 아닌 4V로 바꿀 수 있는지 질문. CMP/COMMON_BASELINE.md에는 초기 forward 0→5V로 기록됐으나 5V가 필수 발광 작동전압이라는 물리적 근거는 별도 명시되지 않음. 4V는 별도 진단용 파일럿 cutoff로 타당할 수 있으나 물리적으로 검증된 BASELINE으로 확정 불가. NtSide0 기존 5V_TEST의 nominal J ~7.24e-4 A/cm², CAL 100ns의 실제 PLT near-4V I2D 3.497895e-14 A/um (half 폭 2um 가정 nominal J~1.75e-6 A/cm²)로 낮은 주입 Gate0 지속. 2D normalization/displacement current/동작상태 확인 필요.
+
+현 CAL은 이미 accepted 약 4.179V이므로 지금 종료 전압을 4V로 바꿔도 과거 4V 공간 TDR이 생성되지는 않음. Preprocessed pp2_des.cmd의 Save는 Transient 뒤에 있고 중간 ~4V Plot/Save는 보이지 않음. 기존 0→5V Common Baseline 기준 및 CAL 실행은 그대로 보존하고 신규 4V 진단 파일럿을 고려할 때 동일 ramp 조건과 4V 내부-state output을 명시적으로 설계해야 함. 사용자가 아직 중단/코드 수정 실행을 승인한 것은 아니며, 서버 코드는 변경하지 않음.
+
+다음:
+- READ ONLY `sed -n '580,612p' .../CMP_BASELINE_1.2.0_CAL/pp2_des.cmd`로 실제 Goal과 ramp 확인
+- CAL 실제 τ=100ns effective 파라미터 확인
+- 4V diagnostic pilot 제작 여부 및 CAL 중단/보존 여부 사용자 결정 후 수행
+- 저전류 Gate0 해결 전 baseline freeze/Project A/B 생산 금지.
+
+---
+
+## 2026-10-11T07:58:31Z — soybeanmilk0514-jpg
+
+[2026-10-11 KST]
+작업자: 주수빈 | AI: ChatGPT
+구분: DECISION / HANDOFF | 상태: PROPOSED — NOT FINAL BASELINE
+
+요약:
+주수빈이 느린 `CMP_BASELINE_1.2.0_CAL` 대신 기존 5V 수렴에 성공한 `JUSUBIN_FAST_HALF_5V_TEST`를 baseline으로 활용할 수 있는지 검토 요청. 검토 결과 5V_TEST NtSide=0 SDevice는 2026-10-09 14:29:52 KST 5.000V까지 완료하여 '수치 계산/분석용 working reference'로 재사용 가능. 단 물리적으로 검증된 최종 Common Baseline freeze나 Project A/B 논문용 비교 baseline 확정은 불가.
+
+근거:
+- 완료된 5V_TEST의 raw terminal 2D I2D ~1.44801646e-11 A/um, 2um half-width 가정 시 잠정 J~7.24e-4 A/cm². 2D 정규화, AreaFactor, displacement/steady-state, injection transport 검증되지 않음.
+- 과거 QW radiative recombination share ~0.1095%는 verified IQE가 아님. 전류/발광 Gate0 저전류 blocker 지속.
+- NtSide=0 trap OFF 확인, NtSide=1e18 Trap ON 수렴/동등 비교 및 Half+Coarse vs Full/Fine mesh equivalence 미완료.
+- CAL은 100ns SRH lifetime 민감도 검토로 별개이며 마지막 accepted 약 4.179V; 5V 미완료. CAL 완료 대기를 기존 데이터 물리 감사의 선행조건으로 두지 않음.
+
+변경:
+- PROPOSED 연구 판단 및 인수인계 문서 기록. 학교 서버 소스/SWB/실행 중 CAL 변경 없음. COMMON_BASELINE 본문을 frozen으로 바꾸지 않음.
+
+다음:
+- `JUSUBIN_FAST_HALF_5V_TEST` 원본 보존 → 저장된 n2_des.plt/TDR와 pp2/par의 current scaling 및 QW injection/lifetime/region별 재결합 READ-ONLY 검증
+- 원인 분리 뒤 새 버전 복제 pilot (사용자 승인 후) → Trap ON NtSide1e18 및 J/IQE matched comparison → mesh & independent reproduction
+- 물리 Gate0 통과 전에 최종 BASELINE freeze/A/B production 금지.
+
+---
+
+## 2026-10-11T08:03:53Z — soybeanmilk0514-jpg
+
+[2026-10-11 KST]
+작업자: 주수빈 | AI: ChatGPT
+구분: CORRECTION / DECISION / HANDOFF
+상태: CONFIRMED prior analysis and edited input; CAL physical effect UNRESOLVED
+
+주수빈 정정이 옳음: 이택규는 이미 2026-10-09 기존 JUSUBIN_FAST_HALF_5V_TEST 5V 결과에서 QW1~4 전체 Rrad=40072.8158452, SRH=36562944.9075, Auger=1599.706168587 (2D 적분 단위), Rrad fraction 약0.10947%를 확인했으며 InGaN.par 기본 Scharfetter taumax=1e-9s (1ns)를 조사했음. 과도한 SRH의 원인 후보로 짧은 lifetime을 식별하고 참고 문헌의 100ns를 근거로 민감도 시험을 설계함. 2026-10-10 CAL 복제본 FASTC1_pp6_des.par에 InGaN Scharfetter taumax=1e-7s (전자/정공)를 추가한 실제 서버 파일 tail로 확인 완료. 기존 분석·코드 수정 사실을 다시 미검증이라고 취급한 앞선 설명을 정정함.
+
+다만 1ns가 저전류 유일 원인으로 증명된 것 또는 CAL의 100ns가 전류/IQE를 개선했다고 입증된 것은 아님. 실제 부모 near-4V 4.003368865V I2D=3.505521343e-14 A/um, CAL 3.99967374V I2D=3.497895e-14 A/um의 raw 차이는 약 0.22% (비동일 전압)이므로 이 구간에서 뚜렷한 전류 개선 증거 없음. CAL 4V 공간 TDR, 100ns 실제 유효수명, IQE 개선, 5V 완료 미확인. 기존 low-J 주입 및 2D 정규화 Gate0와 SRH 재결합 문제를 구분할 것.
+
+다음: 완료된 이택규 원인 후보 분석을 반복하지 말고, CAL과 부모의 전류 및 SRH/Rrad를 가능한 같은 J/V에서 평가, transport/normalization 미해결 부분만 추가 검증. 학교 서버 소스/실행 중 CAL는 수정·중단하지 않음.
+
+---
+
+## 2026-10-11T08:15:50Z — soybeanmilk0514-jpg
+
+[2026-10-11 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / HANDOFF
+상태: DECISION OBSERVED (NtSide=1e18 RUN NOT YET OBSERVED)
+
+요약:
+주수빈이 장시간 지연된 CAL 100ns 완주를 더 기다리지 않고, 2026-10-09 5V SDevice 성공한 `JUSUBIN_FAST_HALF_5V_TEST` NtSide=0 소자를 실무용 비교 기준으로 채택하고 `NtSide=1e18` SWB split 추가 계산을 진행하겠다고 명시. 이 결정은 최종 물리적 Common Baseline freeze가 아니라 다음 단계 실험 방향 결정. 새로운 NtSide1e18 계산이 실제로 시작/성공했다는 로그는 아직 없음.
+
+근거와 주의:
+- NtSide0 원본 5V 로그·PLT·TDR/입력 보존 필수, 별도 CAL 작업 임의 중단 금지.
+- 과거 9월 Node12 Trap-ON 초기화 실패 이력과 Node6/Node12 .par source revision 불일치가 있었음. 금번은 원본 `5V_TEST`의 정확히 같은 SDE/SDevice/custom `FASTC1_pp6_des.par`를 유지하고 NtSide만 0→1e18 변경되었는지 전처리 후 비교해야 공정하게 평가 가능.
+- 장시간 Run 전 SWB 새 노드 Preprocess, `ppN_des.cmd` Trap Conc 영역 및 Physics/Math/Solve, 5V Goal 검증. CAL 100ns .par를 섞지 말 것.
+- 기존 모델 저전류 Gate0/방사재결합 비율~0.10947%는 미해결이며 A/B 논문용 baseline 확정 전 물리 검증 필요.
+
+변경:
+- GitHub 개인 TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY 기록. 학교 서버 코드/SWB 실행 직접 변경한 일 없음.
+
+다음:
+- 사용자 SWB NtSide 분기 화면 또는 새 노드 ppN_des.cmd/상태 확인 → 전처리 일치하면 Trap-ON SDevice Run → 초기 로그 수렴 및 5V 완료 모니터링.
+
+---
+
+## 2026-10-11T08:19:30Z — soybeanmilk0514-jpg
+
+[2026-10-11 KST]
+작업자: 주수빈 | AI: ChatGPT | 구분: DECISION / CODE PLAN / HANDOFF | 상태: PROPOSED (학교 서버 수정/Run 미실행)
+
+결정: 오늘 기존 5V 성공 JUSUBIN_FAST_HALF_5V_TEST 기반 NtSide=1e18 split 준비와 별개로, InGaN 100ns CAL을 최종 4V에서 종료하고 4V TDR 및 체크포인트를 저장하는 신규 분기를 돌리고 싶다고 요청. 기존 실행 중 `CMP_BASELINE_1.2.0_CAL`은 약 4.179V까지 진행되어 4V로 소급 편집/저장할 수 없으므로 원본 보존, 신규 SWB clone 후보 `CMP_BASELINE_1.3.0_CAL4V` (서버 이름 중복 확인 후 확정) 제안.
+
+수정안: Clone `sdevice_des.cmd` Solve 안에서 Transient FinalTime 1.0→0.8, Goal anode Voltage 5.0→4.0을 함께 바꾸어 dV/dt=5V/s 유지. 기존 100ns InGaN Scharfetter .par, NtSide=0, geometry/mesh/physics/math/solver 그대로. Transient 정상 종료 직후 `Plot(FilePrefix="n@node@_4V_final")` + `Save(FilePrefix="n@node@_4V_ckpt")`를 두어 공간 QW TDR 및 restart checkpoint 확보 계획. Preprocessed `pp2_des.cmd` 직접 수정 금지. 현재 5V CAL와 5V_TEST parent의 기존 파일/작업 및 NtSide split에는 영향 주지 않음.
+
+다음: READ-ONLY `sed -n '580,612p' /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/pp2_des.cmd`와 원본 SDevice Solve 끝부분 실제 확인 → SWB clone source에 정확한 edit → Preprocess only 후 유효 Goal/time/Plot/Save/100ns 확인 → 4V CAL SDevice RUN 및 초기 로그/종료 TDR 확인. 아직 새 계산 시작/성공이나 실제 코드 저장을 주장하지 않음. 저전류 Gate0 미해결, 4V 진단은 논문용 최종 baseline 인정과 별개.
+
+---
+
+## 2026-10-11T08:24:16Z — soybeanmilk0514-jpg
+
+[2026-10-11 17:20 KST] 주수빈 | OBSERVED source / PROPOSED 4V clone patch (NOT RUN)
+원본 CAL 실제 sdevice_des.cmd tail screenshot: Transient 0→1s, Goal anode=5V, InitialStep1e-5 MinStep1e-9 MaxStep1e-3 Increment1.2, Coupled(Iterations15){Poisson Electron Hole}; Transient 후 Save n@node@_5V_ckpt. 이전 0→0.3V 주석은 실행과 불일치.
+최종 편집안은 활성 CAL 원본이 아니라 별도 복제 project에만 적용: FinalTime=0.8, Goal anode=4V (기존 5V/s ramp 유지), t=0.76 (~3.8V) Plot(-Loadable)/Save 중간 보존, Transient 정상 종료 뒤 4V Plot와 Save. InGaN SRH 100ns 및 NtSide0/mesh/physics/math/iterations 유지. 원본 CAL, 5V_TEST 변형/중단 없음. 다음: 복제→sdevice_des.cmd 수정→Preprocess source/parameter 검증→SDevice Run, 실제 결과 후 업데이트. Low-J baseline Gate0 미해결.
+
+---
+
+## 2026-10-11T08:34:55Z — soybeanmilk0514-jpg
+
+[2026-10-11 17:28 KST] 주수빈 | OBSERVED shell input, NOT verified file edit
+사용자 스크린샷상 `python3 - <<'PY'` 형태의 multi-line paste 입력 도중 반복 `?` continuation 프롬프트 및 종료 선언 `? PY`가 표시되지만 일반 프롬프트 / SUCCESS / STOP 출력은 미표시. 따라서 `CMP_BASELINE_1.3.0_CAL4V/sdevice_des.cmd` 수정 성공 및 새 Run을 주장하지 않음. 사용자에게 Enter를 한 번 누르도록 안내, 계속 `?`이면 Ctrl+C 후 bash 셸을 명시적으로 실행한 뒤 이전 코드를 재입력하고 읽기 전용 grep으로 FinalTime0.8/Goal4.0/중간3.8V·최종4V PlotSave/backup 검증하도록 안내. 원본 5V CAL·완료된 5V_TEST 수정/중단을 지시하지 않음. 다음: 실제 터미널 출력 확인 후 Preprocess→Run.
+
+---
+
+## 2026-10-11T08:39:19Z — soybeanmilk0514-jpg
+
+[2026-10-11 17:36 KST] 주수빈 | OBSERVED
+MobaXterm 새 SSH 세션에서 정상 `$` 프롬프트 복귀 확인. READ-ONLY `ls -l`에서 신규 CAL4V 복제 프로젝트 `CMP_BASELINE_1.3.0_CAL4V/sdevice_des.cmd` 파일 존재(5981 bytes, mtime Oct9 23:35) 확인. 이전 Python heredoc 터미널에는 SUCCESS/STOP 없음. 아직 `Voltage=4.0`, `FinalTime=0.8`, 중간 3.8V Plot/Save 수정 적용 여부 및 신규 Run 미검증. 다음: read-only grep 설정 확인 후 짧은 단일 명령 편집과 백업 → Preprocess 검증. 기존 실행 중 5V CAL 파일/작업은 그대로 보호.
+
+---
+
+## 2026-10-11T08:43:20Z — soybeanmilk0514-jpg
+
+[2026-10-11 17:39 KST]
+작업자: 주수빈 | AI: ChatGPT | 구분: OBSERVED / CODE INSTRUCTION / HANDOFF
+실서버 새 프로젝트 `CMP_BASELINE_1.3.0_CAL4V/sdevice_des.cmd`의 read-only grep 화면에서 FinalTime=1.0(line587), Voltage=5.0(line597), n@node@_5V_ckpt(line608) 확인. 기존 Python heredoc 시도는 실제 수정되지 않았음. 정상 터미널 프롬프트 사용 가능.
+원본 실행 중인 5V CAL 대신 복제본에서만 `cp -pn` 백업 후 짧은 GNU sed 명령들로 FinalTime1→0.8, Goal Voltage5→4, 5V_ckpt→4V_ckpt, 종료 후 Plot(FilePrefix=n@node@_4V_final) 삽입 안내. 초기 Electrode Voltage0은 그대로 유지. 3.8V 중간 스냅샷은 아직 해당 짧은 명령에 포함되지 않았고 추후 코드 구조 확인 후 선택적 추가 예정. CAL4V의 custom InGaN 100ns par 실제 포함 여부는 새 폴더에서 별도 확인 필수.
+상태: 코드를 실행하도록 사용자에게 명령 제공했을 뿐 실제 학교 서버 source edit, SWB Preprocess, Run은 아직 확인되지 않음. 기존 CAL5V·완료 5V_TEST 보존. 다음: tail -n40 sdevice_des.cmd / .par 확인 후 Preprocess.
+
+---
+
+## 2026-10-11T08:46:32Z — soybeanmilk0514-jpg
+
+[2026-10-11 ~17:4x KST] 주수빈 | OBSERVED actual CAL4V source edit, PREPROCESS/RUN pending
+사용자 터미널 화면에서 새 분기 `CMP_BASELINE_1.3.0_CAL4V/sdevice_des.cmd`에 Goal anode Voltage=4.0, 기존 InitialStep1e-5/MinStep1e-9/MaxStep1e-3/Increment1.2, Coupled Iterations15, Transient 정상 종료 후 Plot(FilePrefix=n@node@_4V_final) 및 Save(FilePrefix=n@node@_4V_ckpt)가 실제 존재함을 확인. 별도 `FASTC1_pp6_des.par` 직접 grep 화면에서 Material InGaN Scharfetter taumax=1.0e-7 양 캐리어 확인. 따라서 **복제본 소스 수정 및 설정 파일 100ns 유지 확인**(소재 실제 유효 수명/성능 개선 증명 아님).
+스크린샷 상단이 잘려 `FinalTime=0.8`은 아직 미확인. 중간 3.8V Plot/Save도 현재 소스에는 없지만 빠른 4V 실행 시 필수 아님. 후속: read-only grep FinalTime/Goal/Save → 신규 SWB SDevice 노드 Preprocess만 실시해 ppN_des.cmd/par의 Goal4/FinalTime.8/Plot/Save 확인 → 정상일 때 Run. 기존 5V CAL과 JUSUBIN_FAST_HALF_5V_TEST 유지. 아직 실제 4V CAL preprocess/Run 시작/성공/TDR 확인 안 됨.
+
+---
+
+## 2026-10-11T08:49:24Z — soybeanmilk0514-jpg
+
+[2026-10-11 KST]
+작업자: 주수빈 | AI: ChatGPT
+구분: PROGRESS / HANDOFF | 상태: USER-REPORTED RUN CLICKED, 실제 SOLVER/FINISH 미확인
+
+주수빈이 새 SWB CAL4V 복제본 `CMP_BASELINE_1.3.0_CAL4V` 소스의 `FinalTime=0.8`을 직접 확인하고 **Run 실행 버튼을 눌렀다**고 보고함. 직전 스크린샷에서 복제본 SDevice source의 Goal anode 4.0V, post-transient Plot(FilePrefix=n@node@_4V_final), Save(FilePrefix=n@node@_4V_ckpt), InGaN Scharfetter custom .par taumax=1e-7s 양 캐리어 설정 직접 확인됨. 이는 이전 CAL 0→5V/1s와 같은 5V/s 전압 상승속도를 유지한 0→4V/0.8s 진단 계산.
+
+단, PREPROCESS 성공, 실제 sdevice process 시작, 첫 Newton 수렴, 4V 도달, TDR/SAV 생성은 새 로그 미제공으로 미검증. 새 Run/완료를 혼동하지 않음. 실행 중 기존 `CMP_BASELINE_1.2.0_CAL` 5V/100ns와 완료된 `JUSUBIN_FAST_HALF_5V_TEST` 보존, NtSide=1e18 Split 실제 실행도 아직 미확인.
+
+NEXT READ-ONLY:
+`cd /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.3.0_CAL4V`
+`ls -lt n*_des.log n*_des.err n*_des.out 2>/dev/null | head -n 12`
+실제 node ID를 확인해 `tail -n 35 nN_des.log`, `grep -nE 'FinalTime|Voltage|4V_final|4V_ckpt|Parameters' ppN_des.cmd`로 전처리 및 Run 상태 검증. 고비용 장시간 시뮬레이션 전 문법/초기 실패 즉시 식별. Low-J 물리 Gate0 여전히 미해결. ChatGPT가 서버에서 직접 Run/수정했다는 주장은 없음.
+
+---

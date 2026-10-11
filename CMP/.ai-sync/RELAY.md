@@ -1,3 +1,65 @@
+## 2026-10-11 — CAL4V Run clicked (USER-REPORTED, actual solver status pending)
+- 주수빈 confirmed cloned CAL4V source `FinalTime=0.8` and clicked SWB **Run** for `CMP_BASELINE_1.3.0_CAL4V`. Previous actual screenshot independently showed `Goal anode Voltage=4.0`, final Plot `n@node@_4V_final`, Save `n@node@_4V_ckpt`, cloned custom InGaN Scharfetter electron/hole `taumax=1e-7s`. Keeps 5V/s ramp.
+- Status **RUN REQUESTED by researcher**, not yet independently OBSERVED SDevice process/preprocessed deck/accepted BE-step and certainly NOT completion. Current 4V TDR/SAV absent/unconfirmed. Do not interrupt running original 5V CAL or preserve-solved 5V_TEST parent. NtSide1e18 split run still unverified.
+- NEXT read-only in new CAL4V folder: `ls -lt n*_des.log n*_des.err n*_des.out 2>/dev/null | head -n 12`, then actual nN_des.log tail, preprocessed ppN Goal/FinalTime/Plot/Save/Parameter. Check SWB SDevice node state. Initial failure/syntax errors before overnight run are high priority; do not claim CAL4V will finish today. Physical low-J Gate0 persists.
+
+## 2026-10-11 17:39 KST — CAL4V clone is still original 5V source
+- OBSERVED grep of newly cloned `CMP_BASELINE_1.3.0_CAL4V/sdevice_des.cmd`: `FinalTime=1.0`, `Voltage=5.0`, `FilePrefix=n@node@_5V_ckpt`; previous multiline script did not apply.
+- Gave JuSubin short terminal commands `cd` to clone, `cp -pn sdevice_des.cmd sdevice_des.cmd.bak_5V`, `sed -i -E` changing FinalTime1→0.8, Goal Voltage5→4, 5V_ckpt→4V_ckpt, then GNU sed insert post-transient `Plot(FilePrefix="n@node@_4V_final")` immediately before end Save. Await user execution: NOT yet confirmed applied.
+- Original active CAL5V and completed parent must not be touched. Next inspect `tail -n 40 sdevice_des.cmd` and `grep ... InGaN .../FASTC1_pp6_des.par` for 100ns, optional intermediate t0.76 Plot/Save after file structure confirmation; SWB Preprocess before Run. Low-J Gate0 persists.
+
+## 2026-10-11 17:28 KST — JuSubin 4V CAL Python heredoc still in terminal continuation (OBSERVED)
+- MobaXterm screenshot displays `?` continuation prompt for pasted Python code and closing `? PY`, but **no SUCCESS/STOP or normal prompt**. The clone source edit is unverified; this is an interactive-shell input state, not SDevice solver failure. Advise one Enter on closing PY; if `?` persists Ctrl+C, explicitly enter bash and retry script. Read-only `grep -nE 'FinalTime|Voltage|3p8V|4V_final|4V_ckpt' .../CMP_BASELINE_1.3.0_CAL4V/sdevice_des.cmd` plus backup listing before SWB Preprocess/Run. Active 5V CAL and parent 5V_TEST unchanged as far as evidence shows.
+
+## 2026-10-11 17:20 KST — JuSubin 4V CAL source-tail screenshot
+- Original running CAL source observed: anode Goal5V, FinalTime1.0, Increment1.2, InitialStep1e-5, MinStep1e-9, MaxStep1e-3, coupled15; one 5V Save after transient. Stale comment 0.3V ignored.
+- Copy/paste change proposed for NEW clone only: FinalTime0.8, Goal4.0, intermediate Plot/Save at t0.76, final Plot+Save 4V, preserve 100ns InGaN .par. No running jobs or source changed yet. Next SWB Clone→edit→Preprocess verify→Run. Record run only on user proof.
+
+## 2026-10-11 — JuSubin: separate 100ns CAL 4V clone requested; NOT RUN
+- DECISION: clone live `CMP_BASELINE_1.2.0_CAL` to versioned project (candidate `CMP_BASELINE_1.3.0_CAL4V`, check name uniqueness), keep active CAL as-is. User plans a 4V run with 100ns InGaN SRH and NtSide0, besides separate 5V_TEST NtSide1e18 split.
+- Draft source changes only in cloned `sdevice_des.cmd`: Transient Goal anode 5V→4V and FinalTime1→0.8 to keep ramp 5V/s, add post-ramp 4V Plot TDR + Save checkpoint. Need actual source Solve tail and pp2 lines 580–612 before final exact patch; never edit generated pp2. Preprocess validate then Run.
+- No server code edit/job start/abort has been observed; physical low-current baseline Gate0 unresolved. Preserve original results and active jobs.
+
+## 2026-10-11 — JuSubin DECISION: 5V_TEST parent NtSide0 → NtSide1e18 split now (RUN UNVERIFIED)
+- Due to very slow 100ns CAL, researcher chooses prior completed `JUSUBIN_FAST_HALF_5V_TEST` NtSide0 5V as **working numerical comparison parent** and NtSide=1e18 SDevice split; this does NOT certify physical common baseline or indicate new run already launched. CAL ongoing/unchanged, parent 5V outputs must stay preserved.
+- Sep26 trap-on Node12 fail involved stale/nonidentical source or parameter revision, so only clean same-input `ppN_des.cmd/par` NtSide-only comparison passes the pre-run gate. First preserve n2 5V logs/PLT/TDR, add NtSide=1e18 parameter case with original 0 case intact; preprocess before costly RUN; verify all damaged-region Conc, no other Physics/Math/Solve/custom .par change, intended 5V Goal and no stale cached 0-case. Run trap-on only after checks. No new server actions confirmed yet.
+- Gate0 physical low J and 0.10947% QW radiative fraction not resolved; Project A/B paper-grade baseline still not frozen. NEXT screenshot SWB split tree or ppN_des.cmd to validate then run.
+
+## 2026-10-11 — Prior low-J audit already performed by LeeTaekGyu (HANDOFF CORRECTION)
+- User JuSubin correctly pointed out historical sequence: Oct9 parent 5V_TEST 4QW regional Rrad/SRH/Auger integrals and actual InGaN.par Scharfetter 1ns maximum lifetime were inspected by LeeTaekGyu; excessive SRH from overly short lifetime became a **hypothesis**.
+- Oct10 clone CAL custom .par **actually updated** to InGaN Scharfetter taumax=1e-7s (100ns both carriers) and saved on server (confirmed by tail; change should not be repeatedly questioned as though never made). Same geometry and numerics parent remained a numerical reference. 100ns max is not uniform effective lifetime or proof it fixes terminal low-J.
+- At approx 4.0V, prior 5V_TEST I2D 3.505521343e-14 A/um at 4.003369V and CAL I2D 3.497895e-14 A/um at 3.999674V (~0.22% raw difference at slightly different bias), no observed improvement in electrical current at that comparison point. No CAL ~4V spatial QW IQE TDR yet; 5V CAL incomplete.
+- Stop proposing to redo the **already completed** prior baseline SRH / MaterialDB investigation. Next question is whether 100ns affects recombination/IQE at matched injection, while isolating distinct carrier transport/current density normalization concern (Gate0). Preserve CAL and finished parent, no code/job action.
+
+## 2026-10-11 — 주수빈: 5V_TEST working baseline proposal
+- Proposed, not adopted/frozen: use completed NtSide=0 JUSUBIN_FAST_HALF_5V_TEST as numerical reference rather than waiting for CAL. SDevice finished 5V Oct9; preserve both jobs/decks.
+- Blocker: 5V nominal J ~7.24e-4 A/cm2 conditional, very low QW radiative share; 2D normalization, effective recombination, NtSide1e18, Half vs Full unvalidated. No server input edits.
+- Next: audit saved 5V_TEST terminal currents and TDR injection physics read-only, then plan a controlled separate short calibration trial only upon approval. Project A/B production not ready.
+
+## 2026-10-11 — 주수빈 4V diagnostic cutoff requested (PROPOSED, not adopted)
+- User worries 100ns CAL 5V ramp costs too much time; asks whether 4V endpoint is acceptable and why 5V was originally chosen. GitHub `COMMON_BASELINE.md` documents initial forward sweep 0→5V but does not identify 5V as a mandatory physical turn-on or operating voltage.
+- 4V can bound a **separate diagnostic pilot**, but 4V alone cannot validate the baseline while 5V_TEST low-J Gate0 remains unresolved. Current CAL PLT near 4V raw I2D 3.497895e-14 A/um (conditional J ~1.75e-6 A/cm² for 2um width, 2D normalization and displacement not validated). Existing nominal 5V_TEST J ~7.24e-4 A/cm² is already low under documented convention.
+- Old 0→5V reference and running CAL protected; current CAL already accepted ~4.179V and post-transient `Save` cannot retrospectively yield a 4V TDR. Any new shortened run needs versioned copy, maintained comparison conditions, explicit 4V spatial `Plot/Save` and controlled validation. No server edits.
+- NEXT read-only `sed -n '580,612p' /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/pp2_des.cmd` for goal/ramp; check effective 100ns par before claiming calibration, discuss user decision about new 4V pilot vs running CAL. NOT confirmed baseline freeze.
+
+## 2026-10-11 16:46 KST — 주수빈 CAL Save placement confirmed
+- OBSERVED in live node2 `pp2_des.cmd` screenshot: `Save(FilePrefix="n2_5V_ckpt")` is after the transient block; no intermediate time-specific Plot/Save lines in grep. `Plot="n2_des.tdr"` declares an output file, not a 4V snapshot. 4V PLT terminal I-V is available; 4V TDR unknown.
+- File points to `FASTC1_pp6_des.par`. Comment claims 0–0.3V smoke but actual run accepted ~4.179V. Actual Goal is in unseen code lines.
+- Blocker: no confirmed spatial ~4V IQE map and very low-J Gate0; 5V CAL status pending. No code or active job modifications. Protect common baseline.
+- Next read-only: `sed -n '580,612p' /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/pp2_des.cmd`; then inspect existing spatial output locations and effective 100ns override. Do not abort active CAL.
+
+## 2026-10-11 ~16:45 KST — JuSubin locates CAL pp2_des.cmd (OBSERVED)
+- READ-ONLY `ls -lh .../CMP_BASELINE_1.2.0_CAL/*des.cmd` screenshot verifies three files: `FASTC1_pp6_des.cmd`, `pp2_des.cmd`, `sdevice_des.cmd`. Node2 `pp2_des.cmd` present (~5.8 KB, Oct10 00:40). No file body/Plot/Save schedule was printed yet; no proof of a 4V spatial TDR.
+- Previous accepted 100ns CAL state ~4.179 V; screenshot shows old log only and cannot establish further progress. Existing low-J baseline Gate0 unresolved.
+- NEXT read-only inspect `grep -nEi -C 4 'Plot|Save|CurrentPlot|Time[[:space:]]*=' /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/pp2_des.cmd | tail -n 120` and, if appropriate, alternate TDR locations. No changes to CAL process, solver or source.
+
+## 2026-10-11 ~16:41 KST — 주수빈 CAL 100ns 4.179V read-only handoff (OBSERVED)
+- Worker 주수빈 / ChatGPT. Source: current MobaXterm `CMP_BASELINE_1.2.0_CAL/n2_des.out` screenshot. Accepted BE 0.835804→0.835806s with RHS 7.30e-4 (<RHSMin 1e-3); accepted anode 4.179E+00 V, TotalCurrent 5.555E-14 A/um (2D convention). Voltage sweep to 5V ~83.58%, not wallclock percentage; increment from previous CAL 4.14965446V PLT ~0.029V.
+- Next trial 0.835806→0.835808s, Newton RHS iter2–6 1.03e-3–1.09e-3; screen ends mid-step, later success/cutback/failure unknown. Do not confuse with separate completed `JUSUBIN_FAST_HALF_5V_TEST` or earlier failed FAST_C1.
+- Blockers unchanged: low-current Gate0, 100ns CAL 5V not yet verified, no confirmed CAL ~4V saved spatial TDR and thus IQE/QW maps not extractable solely from PLT.
+- Already tried: read-only CAL PLT at ~4V, top-level n2 file listing (no n2*.tdr/sav), tail log observation. No failed new remedy; no code changes. Baseline-protected 4um mesa, 5nm damage, common A/B contacts/physics must remain unchanged.
+- NEXT: do not stop/abort active CAL without user decision. Read-only inspect current `n2_des.log`/`n2_des.out` and actual existing command file (`ls .../*des.cmd`), Plot/Save schedule, and potential nested/alternate TDR output before discussing early termination. No user/server action taken in this turn beyond screenshot review.
+
 ## 2026-10-10 ~22:38 KST — JuSubin CAL 100ns 4V spatial checkpoint handoff
 - WORKER 주수빈 / AI ChatGPT. OBSERVED on user's shell screenshot: read-only `find .../CMP_BASELINE_1.2.0_CAL -maxdepth 1 -type f -name 'n2*' ...` prints `n2_des.err 12KB`, `n2_des.job 4KB`, `n2_des.log 5120KB`, `n2_des.out 5376KB`, `n2_des.plt 1416KB`, `n2_des.sta 4KB`, `n2_local.err 0KB`; no top-level n2 TDR or SAV. Previously confirmed near-4V PLT row V=3.99967374V, time=.79993475s, terminal 2D I=3.497895e-14 A/um. The PLT only gives terminal transient data, not volumetric QW recombination maps; 4V TDR availability currently UNRESOLVED.
 - No solver/control/source file changes have been made, **do not Stop/Abort running CAL**. NEXT READ-ONLY find actual command file and inspect Plot/Save schedule (e.g. `ls .../*des.cmd`; `grep -nEi -C 3 'Plot|Save|CurrentPlot|FinalTime|Time[[:space:]]*=' .../n2_des.cmd`). Check for TDR in nested/other-named files if needed. Keep Gate0 low-injection unresolved, no baseline freeze/A-B production.

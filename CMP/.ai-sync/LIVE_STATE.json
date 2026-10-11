@@ -1,8 +1,8 @@
 {
-  "updated": "2026-10-10",
-  "primaryWorker": "이택규",
-  "phase": "Phase 0 — low-current / injection validity Gate 0 before Baseline freeze and Project A/B",
-  "task": "Read-only physics audit of existing completed 5V half device; CAL risk monitoring; triage Claude independent review",
+  "updated": "2026-10-11",
+  "primaryWorker": "주수빈",
+  "phase": "Phase 0 — working 5V reference NtSide 0/1e18 comparison; physical Gate0 low-J still unresolved",
+  "task": "User-reported CAL4V 100ns Run initiated; confirm preprocess, initial SDevice log and 4V outcome. NtSide1e18 original 5V_TEST split separately planned.",
   "status": "BASELINE_5V_SOLVE_COMPLETE_LOW_J_UNVALIDATED_AB_PRODUCTION_NO_GO",
   "blocker": "Nominal half-device J at 5V ~7.24e-4 A/cm2 under documented 2D normalization; radiative/QW recombination share ~0.1095%; physically meaningful operating region and injection barriers not yet established. Separate CAL latest direct log accepted ~4.149V and next BE Newton RHS oscillates above 1e-3; 5V convergence and physical J validation unresolved.",
   "parallelWork": {
@@ -1786,5 +1786,187 @@
     "nextReadOnly": "check device command Plot/Save directives, and alternate paths/names before modifying runtime",
     "userAuthorizedStop": false,
     "solverCodeOrProcessChanged": false
+  },
+  "latestCALObservation": {
+    "timeKST": "2026-10-11 16:41",
+    "source": "user screenshot of CMP_BASELINE_1.2.0_CAL/n2_des.out",
+    "status": "OBSERVED",
+    "case": "InGaN SRH lifetime 100ns sensitivity, NtSide=0",
+    "lastAcceptedPseudoTimeS": 0.835806,
+    "lastAcceptedVoltageApproxV": 4.179,
+    "lastAcceptedAnodeTotalCurrent_A_per_um": 5.555e-14,
+    "lastAcceptedRHS": 0.00073,
+    "targetVoltageV": 5,
+    "voltageSweepPctApprox": 83.58,
+    "nextTrial": "0.835806→0.835808 s, Newton iter2-6 RHS ~1.03e-3 to 1.09e-3 >1e-3; later outcome not visible",
+    "wallclockETA": "unknown",
+    "gate0": "UNRESOLVED_LOW_CURRENT",
+    "spatial4VTDR": "UNRESOLVED",
+    "next": "Read-only inspect full Transient Goal and existing TDR/Save paths; preserve running CAL"
+  },
+  "latestCALCommandFilesObservation": {
+    "timeKST": "2026-10-11 16:45",
+    "status": "OBSERVED",
+    "source": "user screenshot of read-only ls -lh for CMP_BASELINE_1.2.0_CAL/*des.cmd",
+    "files": [
+      "FASTC1_pp6_des.cmd",
+      "pp2_des.cmd",
+      "sdevice_des.cmd"
+    ],
+    "node2PreprocessedCmd": "CMP_BASELINE_1.2.0_CAL/pp2_des.cmd",
+    "plotSaveSchedule": "UNRESOLVED; file content not yet read",
+    "nextReadOnlyCommand": "grep -nEi -C 4 'Plot|Save|CurrentPlot|Time[[:space:]]*=' /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/pp2_des.cmd | tail -n 120",
+    "simulationModified": false
+  },
+  "latestCALPlotSaveAudit": {
+    "timeKST": "2026-10-11 16:46",
+    "worker": "주수빈",
+    "status": "OBSERVED input excerpt, spatial4VTDR UNRESOLVED",
+    "source": "user screenshot of grep on CMP_BASELINE_1.2.0_CAL/pp2_des.cmd",
+    "filePlot": "n2_des.tdr",
+    "fileCurrent": "n2_des.plt",
+    "fileOutput": "n2_des.log",
+    "fileParameters": "FASTC1_pp6_des.par",
+    "transient": {
+      "initialTime": 0,
+      "finalTime": 1,
+      "initialStep": 0.00001,
+      "minStep": 1e-9,
+      "maxStep": 0.001
+    },
+    "save": "After Transient close, FilePrefix=n2_5V_ckpt (lines 607-609)",
+    "intermediatePlotSave": "No mid-transient Plot(Time) or Save(Time) in grep output",
+    "warning": "No guaranteed ~4V spatial TDR; never assume abort yields saved 4V state",
+    "commentDiscrepancy": "line584 says 0→0.3V smoke, inconsistent with actual accepted ~4.179V; check actual Goal",
+    "nextReadOnlyCommand": "sed -n '580,612p' /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/pp2_des.cmd",
+    "otherAudit": "Verify effective 100ns physical lifetime in FASTC1_pp6_des.par and log before calibration claim",
+    "jobChanged": false
+  },
+  "latestVoltageLimitProposal": {
+    "date": "2026-10-11",
+    "worker": "주수빈",
+    "status": "PROPOSED_ONLY",
+    "proposedDiagnosticMaxVoltageV": 4,
+    "baselineDocumentOriginalSweep": "0→5V, unchanged",
+    "motivation": "CAL takes extremely long beyond 4V; 5V is an initial I-V scan limit and not confirmed mandatory operating point",
+    "caveats": [
+      "At ~4V current density still very low, Gate0 physical injection validity unresolved",
+      "Near-4V CAL 100ns I2D=3.497895e-14 A/um, conditional J~1.75e-6 A/cm² assuming 2um width and 2D units; transient/displacement effects unresolved",
+      "Current live CAL has already accepted ~4.179V; changing its endpoint cannot retroactively create 4V spatial TDR",
+      "New 4V diagnostic pilot requires separate clone and explicit snapshot output; original 5V common baseline preserved"
+    ],
+    "nextAction": "READ ONLY inspect pp2_des.cmd lines580–612 actual Goal, output data, effective 100ns parameter; request decision before any new run or stopping active CAL",
+    "serverJobChanged": false
+  },
+  "latestBaselineReuseProposal": {
+    "date": "2026-10-11",
+    "worker": "주수빈",
+    "status": "PROPOSED_ONLY_NOT_FROZEN",
+    "candidate": "JUSUBIN_FAST_HALF_5V_TEST",
+    "confirmed": "NtSide=0 reached 5.0V and SDevice completed 2026-10-09 14:29:52 KST",
+    "recommendedRole": "working numerical/solver reference, not qualified publication baseline",
+    "gate0": "low physical injection/current density unresolved; conditional J~7.24e-4 A/cm² at 5V and QW radiative share~0.1095% not accepted as IQE",
+    "missing": [
+      "verify 2D current and AreaFactor/steady state",
+      "audit band/injection QW rates and lifetime",
+      "NtSide 1e18 convergence",
+      "half/full mesh equivalence and clean account reproducibility"
+    ],
+    "calStatus": "Current CAL 100ns sensitivity independent; last accepted ~4.179V, no current run modification",
+    "next": "Read-only audit archived 5V_TEST n2_des.plt/TDR and effective model; no A/B production baseline freeze until gates met",
+    "statusChangeApproved": false
+  },
+  "latestPriorWorkCorrection": {
+    "date": "2026-10-11",
+    "worker": "주수빈",
+    "status": "CONFIRMED_HISTORICAL_RECORDS",
+    "summary": "이택규 already analysed 5V_TEST low MQW radiative fraction and 1ns default InGaN SRH lifetime, and intentionally saved CAL custom InGaN Scharfetter taumax=100ns; don't restart or deny this completed work",
+    "parent5VTestIntegrated4QW_Rrad": 40072.8158452,
+    "parent5VTestIntegrated4QW_SRH": 36562944.9075,
+    "parent5VTestIntegrated4QW_Auger": 1599.706168587,
+    "radiativeFractionPct": 0.1094747566,
+    "hypothesis": "short 1ns SRH lifetime may explain high SRH, not proven cause of low terminal current",
+    "actualCALParameterChange": "FASTC1_pp6_des.par InGaN Scharfetter taumax 1e-7s (electron/hole) saved; old 5V parent protected",
+    "approx4VComparison": "Old parent 4.003368865V I2D=3.505521343e-14 A/um vs CAL 3.99967374V I2D=3.497895e-14 A/um, raw difference ~0.22% at nonidentical biases, no clear low-current improvement",
+    "unresolved": "Runtime effective SRH sensitivity / 4V QW spatial TDR, injection and current normalization, low-J Gate0",
+    "next": "Skip previously completed audit; assess comparative output and remaining transport/normalization physical issue",
+    "simulatorChangeThisTurn": false
+  },
+  "latestNtSideSplitDecision": {
+    "date": "2026-10-11",
+    "worker": "주수빈",
+    "classification": "DECISION; RUN_NOT_YET_VERIFIED",
+    "parent": "JUSUBIN_FAST_HALF_5V_TEST",
+    "originalNtSide0": "COMPLETED_TO_5V_2026-10-09_14:29:52_KST",
+    "newNtSide1e18": "USER_PLANS_SPLIT; NO_LOG_OF_START_OR_SUCCESS",
+    "comparisonValidity": "must verify exact SDE/SDEVICE+custom par same source, 0 vs 1e18 only NtSide trap Conc",
+    "preflight": [
+      "preserve completed NtSide0 n2_des.log/plt/tdr and inputs",
+      "select NtSide1e18 in SWB without touching original reference",
+      "preprocess new SDevice node and check preprocessed effective trap Conc and input parity vs pp2_des.cmd",
+      "start SDevice only after quick checks"
+    ],
+    "precedent": "Sep26 another Node12 NtSide1e18 initialization failure with mismatched/stale node6/node12 .par; do not assume recurrence or automatic fix",
+    "CAL": "Separate 100ns sensitivity experiment; no stopping authorized",
+    "baselineFreeze": "NOT_FROZEN; low-J Gate0 and IQE validity unresolved",
+    "userSchoolServerAction": "NOT_YET_OBSERVED"
+  },
+  "latestCAL4VPlan": {
+    "date": "2026-10-11",
+    "classification": "DECISION_AND_CODE_DRAFT_NOT_APPLIED",
+    "worker": "주수빈",
+    "goal": "Launch separate InGaN 100ns CAL 4V endpoint run today without waiting for original 5V CAL",
+    "candidateProjectName": "CMP_BASELINE_1.3.0_CAL4V (verify name unused)",
+    "origin": "CMP_BASELINE_1.2.0_CAL",
+    "changes": "CLONE sdevice_des.cmd: FinalTime 1.0→0.8; Goal anode 5.0V→4.0V to preserve slope 5V/s; explicit post-transient Plot n@node@_4V_final and Save n@node@_4V_ckpt",
+    "preserve": [
+      "active original 5V CAL",
+      "finished JUSUBIN_FAST_HALF_5V_TEST NtSide0",
+      "separate NtSide1e18 split plan",
+      "custom 100ns InGaN Scharfetter par"
+    ],
+    "needReadOnly": "sed -n '580,612p' /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.2.0_CAL/pp2_des.cmd; check source sdevice_des.cmd Solve tail",
+    "currentStatus": "No school-server source edits or new node run verified",
+    "scientificCaution": "4V pilot is not physically validated final baseline; low-current Gate0 outstanding"
+  },
+  "latestCAL4VVerifiedCode": {
+    "date": "2026-10-11 17:20 KST",
+    "worker": "주수빈",
+    "status": "SOURCE_CONFIRMED_PATCH_NOT_APPLIED",
+    "original": "5V Goal at FinalTime1s, 5V Save after Transient",
+    "proposed": "Clone: 4V Goal at FinalTime0.8s, optional 3.8V intermediate Plot/Save, final 4V Plot/Save; retain 100ns CAL model",
+    "next": "SWB clone/edit/preprocess then RUN; do not edit active original"
+  },
+  "latestCAL4VTerminalAttempt": {
+    "date": "2026-10-11 17:28 KST",
+    "worker": "주수빈",
+    "status": "INPUT_STILL_IN_MULTILINE_SHELL_PROMPT; NOT_CONFIRMED_APPLIED",
+    "evidence": "MobaXterm screenshot ? continuation prompt and ? PY no SUCCESS output",
+    "next": "Press Enter once; if ? persists Ctrl+C then enter bash and paste code; read-only grep 4V config and backup existence before Preprocess/Run",
+    "originalCALTouched": "NOT_OBSERVED"
+  },
+  "latestCAL4VRun": {
+    "date": "2026-10-11",
+    "worker": "주수빈",
+    "status": "SWB_RUN_CLICKED_USER_REPORTED_SOLVER_START_UNVERIFIED",
+    "project": "CMP_BASELINE_1.3.0_CAL4V",
+    "finalTime": 0.8,
+    "finalTimeEvidence": "USER_CONFIRMED",
+    "anodeGoalVoltageV": 4,
+    "goalEvidence": "OBSERVED SOURCE SCREENSHOT",
+    "rampRateVPerS": 5,
+    "materialInput": "InGaN Scharfetter taumax=1e-7s electrons and holes CONFIRMED ON CLONED PAR",
+    "postTransientPlot": "n@node@_4V_final",
+    "postTransientSave": "n@node@_4V_ckpt",
+    "nodeID": "UNCONFIRMED",
+    "preprocessStatus": "UNVERIFIED",
+    "solverProcessStatus": "UNVERIFIED",
+    "firstAcceptedStep": "UNVERIFIED",
+    "completion": "NOT_OBSERVED",
+    "nextReadOnly": "In CAL4V: ls -lt n*_des.log n*_des.err n*_des.out 2>/dev/null | head -n 12; inspect new ppN_des.cmd and actual nN_des.log once created",
+    "original5VCAL": "PRESERVED; do not Stop/Abort",
+    "baseline5VTEST": "PRESERVED",
+    "NtSide1e18Split": "PLANNED_USER; RUN_UNVERIFIED",
+    "physicalBaselineGate0": "LOW_CURRENT_UNRESOLVED"
   }
 }
