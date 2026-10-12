@@ -5755,3 +5755,222 @@ NEXT READ-ONLY:
 실제 node ID를 확인해 `tail -n 35 nN_des.log`, `grep -nE 'FinalTime|Voltage|4V_final|4V_ckpt|Parameters' ppN_des.cmd`로 전처리 및 Run 상태 검증. 고비용 장시간 시뮬레이션 전 문법/초기 실패 즉시 식별. Low-J 물리 Gate0 여전히 미해결. ChatGPT가 서버에서 직접 Run/수정했다는 주장은 없음.
 
 ---
+
+## 2026-10-12T03:24:49Z — TaekGyu0801
+
+[2026-10-12 KST]
+작업자: 이택규 (완료 제보자) / 주수빈 (해당 계산 실행자로 보고)
+AI: ChatGPT
+구분: PROGRESS / HANDOFF
+상태: USER-REPORTED COMPLETION / 로그 검증 UNRESOLVED
+
+요약:
+- 이택규가 '수빈이가 돌리고 간 두개다 돌아갔어'라고 보고.
+- 직전 주수빈 인수인계상 두 작업은 (1) `JUSUBIN_FAST_HALF_5V_TEST` 기반 NtSide=1e18 split, (2) `CMP_BASELINE_1.3.0_CAL4V` (100ns, 4V)로 **잠정 식별**. 구체적인 SWB 프로젝트/node ID가 아직 직접 검증되지 않았으므로 두 프로젝트를 확정 매칭하지 않음.
+- 실제 SDevice 완료 표식, 목표 전압 도달, 새 PLT/TDR/SAV, run에 적용된 physics/parameter 파일은 아직 미제공. USER-REPORTED 완료를 SOLVER-VERIFIED로 승격하지 않음.
+- 기존 5V_TEST NtSide0 완료본과 기존 5V CAL 소스/실행자료는 보호; 기존 Low-J Gate0 및 QW Rrad/SRH 문제는 미해결.
+
+근거:
+- 2026-10-12 현재 이택규 채팅 메시지와 2026-10-11 주수빈 CAL4V Run 보고/두 작업 계획.
+
+변경:
+- GitHub TIMELINE(이택규·주수빈), TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY 기록만 업데이트. TCAD 소스/실행자료 수정 없음.
+
+다음:
+- 두 SWB 노드와 `n*_des.log` 마지막 행, `pp*_des.cmd` Goal/Trap/FinalTime/par, 실제 출력 PLT/TDR/SAV 확인.
+- NtSide ON/OFF는 동등 조건 비교; CAL4V 100ns vs 1ns는 같은 전압/주입 조건에서 전류와 QW SRH/Rrad/Auger를 분석.
+- Common Baseline 및 Project A/B 논문용 결과 확정은 Gate0 해소 전까지 보류.
+
+---
+
+## 2026-10-12T03:30:57Z — TaekGyu0801
+
+[2026-10-12 KST]
+작업자: 이택규 (현 세션 확인자) / 주수빈 (CAL4V 계산 실행자)
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED / CONFIRMED NORMAL SDEVICE FINISH; ENDPOINT CURRENT/IQE UNRESOLVED
+
+요약:
+- 공유된 SWB Node2 Explorer 실제 `CMP_BASELINE_1.3.0_CAL4V/n2_des.out` 마지막 화면에서 `Curve trace finished`, `Sentaurus Device simulation finished`, `Good Bye !` 확인.
+- 종료: 2026-10-12 01:12:13 KST. Wallclock 29706.72 s (~8 h 15 m 6.72 s), total CPU 84070.27 s, peak memory 4.05 GB.
+- Plot `n2_4V_final_des.tdr`, Save `n2_4V_ckpt_des.sav` 및 circuit save, `n2_des.tdr` 모두 writing done. 따라서 100ns CAL4V n2 실제 정상 종료와 최종 상태 저장 확인.
+- 단, 캡처에는 anode의 최종 V 숫자/전류/4QW Rrad-SRH-Auger가 없음. 소스 Goal 4V/FinalTime 0.8은 이전 확인 기반이며 실제 끝점 수치/pp2 활성 입력은 재검증해야 함. 이것은 물리적 Baseline 성공이나 IQE 개선을 증명하지 않음.
+- 앞서 완료 보고된 별도 NtSide1e18 split은 자기 자신의 log/TDR를 아직 미검증.
+
+근거: 이택규가 제공한 2026-10-12 SWB n2_des.out 마지막 화면.
+변경: CMP TIMELINE/CURRENT_STATUS/NEXT_ACTIONS/LIVE_STATE.md+json/RELAY 작성. 학교 서버 입력 파일/실행 자료 변경 없음.
+다음: CAL4V 실제 마지막 V/I (n2_des.log 또는 .plt)와 n2_4V_final_des.tdr 4QW integral 분석, 별도 NtSide=1e18 pp/log 완료 및 모델 동일성 검증. 기존 5V_TEST와 CAL 원본 보호; Low-J Gate0 유지.
+
+---
+
+## 2026-10-12T03:35:40Z — TaekGyu0801
+
+[2026-10-12 KST]
+작업자: 이택규 (CAL4V final log 확인자) / 주수빈 (해당 모델 실행자)
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED / CONFIRMED NUMERICAL ENDPOINT, PHYSICAL BASELINE UNRESOLVED
+
+요약:
+- 이택규 제공 실제 `CMP_BASELINE_1.3.0_CAL4V/n2_des.log` 출력에서 마지막 accepted endpoint: `Computing BE-step from 0.799739 s to 0.8 s`, 마지막 `anode 4.000E+00 5.270E-20 3.498E-14 3.498E-14`.
+- 100ns CAL4V Node2는 time 0.800 s, anode 4.000 V에 정상 도달했음. 앞서 동일 Node2 log/out 종료부의 `Curve trace finished`, `Sentaurus Device simulation finished`, `Good Bye`와 final TDR/Save 쓰기 완료도 검증됨.
+- anode 줄의 마지막 전류 열 원시값 3.498e-14. 해석 관례상 2D 단자 전류(A/um)로 보고 있었으나 해당 단위/AreaFactor/변위전류 및 DC steady-state는 추가 확인 필요.
+- 역사적 parent 1ns 5V_TEST의 4.003369 V 측정 raw 3.505521343e-14 대비 비슷하나 측정 bias가 동일하지 않으므로 100ns CAL IQE 개선/무효를 단정할 수 없음.
+- Low-J Gate0, 4QW regional Rrad/SRH/Auger, NtSide1e18 별도 완료 검증 미해결.
+
+근거:
+- 2026-10-12 이택규가 직접 공유한 CAL4V n2_des.log BE-step 및 anode 끝 30행.
+- 이전 공유된 n2_des.log 정상종료 및 TDR/SAV 저장기록.
+
+변경: CURRENT_STATUS, NEXT_ACTIONS, 팀/개인 TIMELINE, LIVE_STATE.md/json, RELAY 기록. 소자 코드/서버 작업 무변경.
+다음: saved `n2_4V_final_des.tdr`에서 MQW별 방사/SRH/Auger 적분 추출 및 기존 1ns와 동일 조건 비교. 별도 NtSide1e18 split의 log, PP/Trap, TDR 완료 확인.
+
+---
+
+## 2026-10-12T03:39:43Z — TaekGyu0801
+
+[2026-10-12 KST]
+작업자: 이택규 / 실행 원본: 주수빈 / AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED (SVisual scalar fields), not integrated or calibrated
+
+CAL4V Node2의 4V 최종 TDR `n2_4V_final_des`를 SVisual에서 연 화면 두 장 확인. `RadiativeRecombination` 표시 범위의 최대값 7.00132e13, `srhRecombination`의 최대값 2.98898e18 (cm^-3 s^-1). 앞선 화면에서 `AugerRecombination` 필드도 목록에 존재. 현재 메쉬 138194 elements / 65513 points. 최대값은 서로 다른 위치/영역일 수 있으므로 그 비율을 IQE라고 해석하면 안 됨. 4QW 각 영역별 Rrad/SRH/Auger 적분은 아직 미완료.
+
+다음: SVisual Regions 탭에서 Clean 및 damaged QW1..4의 실제 region 이름 확인; 3 재결합률 동일 영역에서 각각 적분; 적분 값으로 radiative fraction 계산. 1ns reference와 bias/current 비교 및 2D 단위 확인. 기존 low-J 문제는 여전히 미해결. TCAD 명령, 파라미터, 실행 데이터 변경 없음.
+
+---
+
+## 2026-10-12T03:45:35Z — TaekGyu0801
+
+[2026-10-12 KST]
+작업자: 이택규 / 원 시뮬레이션 수행: 주수빈 / AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED (SVisual 2D integration), QW 전체 IQE 미확정
+
+CAL4V `n2_4V_final_des` SVisual Field Integration 화면 3장(4V 100ns 모델)에 대해 정확히 **Clean_QW1 2D 영역만** 선택되었음을 확인. 영역 면적 5.985012e-03 um2. 적분 단위 s^-1 um^-1: Radiative 5.674131e-04, SRH 4.940556, Auger 2.045051e-04. 세 항 총합 4.9413279182, Radiative fraction 0.0114830084%, SRH 99.9843783%. 이 계산은 QW1 Clean 부분의 국소 적분비에 한정됨. 전체 QW1-4/손상 측벽 포함 MQW IQE 또는 1ns 대비 개선 여부를 주장하지 않음.
+
+NEXT: Region/Material 탭에서 Clean_QW1..4와 DmgL_QW1..4 여덟 개 **Dimension 2** 영역만 선택(plus 표기된 interface 행 제외), Radiative/SRH/Auger 각 적분의 total과 domain 추출. Model/source 변경 없음. NtSide1e18 split 결과는 별도 로그 검증 필요.
+
+
+---
+
+## 2026-10-12T03:49:35Z — TaekGyu0801
+
+[2026-10-12 KST]
+작업자: 이택규 (결과 확인) / 주수빈 (CAL4V 계산 수행)
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED (SVisual field integration), full MQW UNRESOLVED
+
+CAL4V n2 4.000V / 100ns final TDR의 SVisual 3개 적분 화면 공유. 선택 영역은 `Clean_QW1, Clean_QW2, Clean_QW3, Clean_QW4` (모두 Dimension 2)만이며 DmgL QW는 아직 제외. 4 Clean QWs total domain 2.394002e-2 um2. 적분 단위 s^-1 um^-1; Radiative per QW: 5.674131e-4, 7.202020e-6, 4.579290e-7, 8.117469e-10 (Total 5.750738e-4). SRH: 4.940556, 0.1246185, 0.04882792, 5.108214e-5 (Total 5.114054). Auger: 2.045051e-4, 1.234635e-7, 1.495005e-8, 8.907546e-11 (Total 2.046436e-4).
+
+Clean-only 4QW radiative fraction=5.750738e-4 / (5.750738e-4+5.114054+2.046436e-4)×100 ≈ 0.01124326%, QW1 accounts for ≈98.67% of Clean QW Rrad. SRH dominates, but this is NOT all QWs including damaged sidewall, not device-level IQE/EQE, and not valid comparison to earlier 1ns 5V all MQW data at different bias.
+
+NEXT: Select DmgL_QW1..4 true 2D region rows in addition to 4 Clean QWs (NOT rows with '+' interface), integrate each of three recombination fields over identical eight regions, verify area/units, compare only matched bias/current. Low-J Gate0 still unresolved. No code or server run edited.
+
+---
+
+## 2026-10-12T03:54:08Z — TaekGyu0801
+
+[2026-10-12 KST]
+작업자: 이택규 (결과 검증) / 실행 소스: 주수빈
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED all 8 spatial QW region integrations; physical baseline gate UNRESOLVED
+
+요약:
+- 4.000 V `CMP_BASELINE_1.3.0_CAL4V` / `n2_4V_final_des` (100ns candidate): SVisual screenshots independently verify all **8 2D QW regions** `Clean_QW1..4` + `DmgL_QW1..4` were selected for ALL three recombination fields. Total Domain=2.400002e-02 µm² for each.
+- Total integrals [s^-1 µm^-1]: Radiative=6.286680e-04, SRH=5.134239, Auger=2.127778e-04; sum=5.1350804458.
+- Computed MQW integrated radiative fraction: (6.286680e-04 / 5.1350804458)*100 = 0.01224261249%. SRH=99.98361378%, Auger=0.00414361%. QW1 Clean+DmgL accounts for ≈98.78% of QW radiative integral.
+- IMPORTANT: fraction is the three-channel radiative share *within selected modeled MQW*, not calibrated experimental/device IQE or EQE. Earlier 1ns NtSide0 parent 5V four-QW ratio was ≈0.10947476%; bias differs (4V vs 5V), so NOT a controlled lifetime comparison and NO conclusions about 100ns improving/worsening IQE. Low-J Gate0 unresolved.
+- No new simulation was initiated; no code or original saved results changed.
+
+근거:
+- 이택규 SVisual `Field Integration` screen captures of Radiative/SRH/Auger with 8 QW region IDs and totals.
+
+다음:
+- Verify separately user-reported NtSide=1e18 split's SDevice completion, pp file values, TDR outputs.
+- Obtain/validate 1ns reference four-QW regional recombination at matched 4V or matched current, and physical current normalization/injection validity before baseline freeze or Project A/B causal conclusion.
+
+
+---
+
+## 2026-10-12T03:57:54Z — TaekGyu0801
+
+[2026-10-12 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: REVIEW / DECISION SUPPORT
+상태: REVIEWED / PHYSICAL CAUSALITY UNRESOLVED
+
+질문: CAL4V 100ns의 전체 MQW 3채널 방사재결합 비율 0.0122426%가 microLED에서 원래 정상인지?
+검토 결과:
+1. 낮은 주입에서 SRH 지배는 정상적인 물리 가능성이 있으나, 0.01224%를 일반 4µm 청색 microLED의 대표 효율로 인정할 근거 없음. 이 값은 EQE가 아니라 8개 2D QW 영역에서 Radiative/(Radiative+SRH+Auger) 적분 비율임.
+2. 실제 제작 논문 Nature Communications 2023 DOI 10.1038/s41467-023-43472-z: 3.5x3.5µm NBE 청색 microLED EQE 최고 37.5% (~3A/cm2) 및 0.01A/cm2에서 최고 대비 약 26% 감소. DOI 10.1038/s41467-023-36773-w: 10x10µm 청색 microLED는 0.1A/cm2에서 EQE 3.00%. EQE와 TCAD MQW 내부 재결합 비율 직접 비교 금지.
+3. CAL4V의 4V raw terminal current 마지막 열 3.498e-14, 2D A/µm이고 half width 2µm라고 조건부 가정하면 J=(3.498e-14/2)*1e8=1.749e-6 A/cm², 해당 연구의 저전류 0.01A/cm2 대비 5718배 작음. 단위, AreaFactor, steady/transient/displacement current 및 실제 주입 경로 미검증.
+4. 1ns parent 5V MQW 방사비율 0.10947%와 CAL100ns 4V 0.01224%는 전압과 주입 조건 불일치. lifetime 영향 결론 금지.
+5. 기존 NtSide0 12개 DmgL trap 0인 상태에서도 SRH 지배가 발생했음. 측벽 NtSide trap 때문이라는 단정 금지. 100ns 유효 custom parameter, pGaN/EBL 정공 주입, 분극, QW carrier/hole density/수송, 실제 2D current normalization을 우선 read-only 점검. 새 장시간 런이나 파라미터 튜닝은 후속 원인 가설 전 보류.
+
+GitHub 전 단계 문서와 동기화, TCAD 소자나 소스는 수정하지 않음.
+
+---
+
+## 2026-10-12T04:02:25Z — TaekGyu0801
+
+[2026-10-12 KST]
+작업자: 이택규 (실행 결과 검증) / 주수빈 (기존 split 실행자)
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED COMPLETED SIMULATION; NtSide MODEL IDENTITY UNRESOLVED
+
+요약:
+- 2026-10-12 사용자 제공 SWB Node4 Explorer의 실서버 `JUSUBIN_FAST_HALF_5V_TEST/n4_des.out` 최종 화면에서 anode Voltage=5.000 V; electron current=7.534e-14, hole current=6.975e-12, total current=7.050e-12 (단위/2D AreaFactor 검증 전 raw 값). `Curve trace finished`, `Sentaurus Device simulation finished`, `Good Bye`.
+- checkpoint `n4_5V_ckpt_des.sav` 및 `n4_des.tdr` 생성 확인. Mon 2026-10-12 00:12:02 KST, wallclock 29806.55s (~8h16m46.55s), CPU 80172.55s, peak memory 3.11GB.
+- 따라서 기존 5V_TEST Node4는 SDevice **정상 계산 완료**. 이 노드가 원래 계획한 `NtSide=1e18`인지 GUI 노드 구성/실제 `pp4_des.cmd`의 12개 damaged-region `Conc` 및 .par를 확인하기 전까지 확정하지 않음. 조건부로 기존 완료 NtSide0 n2 5V raw terminal current 1.4480164608e-11 대비 Node4는 약 48.69%의 전류. 원인/동일입력 여부 미확정.
+- COMMON_BASELINE.md와 원 기준 논문 Kou et al Optics Express 2019 DOI 10.1364/OE.27.00A643 근거로 우리 모델은 In0.15Ga0.85N 4QW **청색** LED(설계 목표 ~445nm), 적색 아님. 실제 스펙트럼 피크는 미측정/미검증.
+- 사용자 문의 효율 `0.1`은 단위 불분명: fractional IQE=0.1이면 10%, 0.1%면 fractional 0.001; 측정된 0.1 A/cm²라면 전류밀도. 기존 100ns CAL4V 4V MQW 적분 방사비율 0.0122426%와 관련성이 있는지 특정 논문/그래프의 정의 필요. 문헌 EQE와 모델 내부 MQW 방사비율 직접 비교 금지.
+- 기존 CAL4V n2 4V 데이터와 n4 5V 결과 서로 다른 전압/branch/Trap 설정이므로 직접 IQE 개선 비교 불가. Low-J/AreaFactor/EBL/정공 주입/유효 수명 physical Gate0 지속.
+
+근거:
+- 이택규가 제출한 5V_TEST n4_des.out 스크린샷.
+- 저장소 CMP/COMMON_BASELINE.md; Kou Opt Express 2019, DOI 10.1364/OE.27.00A643; 현 CAL 4V 결과.
+
+변경: TIMELINE(이택규/주수빈/팀), CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY 업데이트. TCAD 소스 및 학교 서버 결과 파일 변경 없음.
+
+NEXT READ-ONLY:
+`grep -nE 'Traps|Conc[[:space:]]*=' /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST/pp4_des.cmd | head -n 36`
+특히 12개 DmgL trap 농도와 기존 NtSide0 pp2/par 물성/mesh/Solve 동등성 검증 후 SVisual n4/n2 5V 4QW 통합재결합률 비교.
+
+---
+
+## 2026-10-12T04:05:48Z — TaekGyu0801
+
+[2026-10-12 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / RESEARCH IDEAS
+상태: PROPOSED (unverified hypotheses, no adoption)
+
+요약:
+저효율 원인 후보 네 가지를 이택규가 공유하여 추후 검증 가설로 기록함.
+1) 측벽 surface-recombination velocity (SRV) 및 surface/interface trap 농도 과다.
+2) InGaN/GaN polarization / QCSE 적용과 scale 가정 (0.3–0.5 제안값은 독립 검증 전 미채택).
+3) Auger 계수, SRH tau / 실제 주입 전류밀도 조건.
+4) 4QW/측벽 mesh 부족 및 Half+Coarse-대-Full 수렴 차이.
+
+검증 수준/기존 근거:
+- 이 가설들은 참고 제안으로, 각 항목의 실제 모델 결함/원인은 아직 검증되지 않음.
+- 완료 NtSide=0 5V_TEST에는 명시적 DmgL 12개 trap Conc=0이 검증되어 있음. 이 항목으로 기존 NtSide0 SRH 우세를 설명할 수 없으며 다른 SRV/interface 모델이 있는지는 별도 확인해야 함.
+- CAL4V 100ns/4V의 8개 MQW 적분 결과에서는 SRH 약 99.9836%, Auger 약 0.00414%, Rrad 약 0.01224%이므로 Auger가 관측된 저효율의 주된 재결합 채널은 아님.
+- polarization Scale 0.3–0.5, sidewall SRV 10³–10⁴ cm/s, 일반적인 0.1–10 A/cm² 구동 범위는 해당 특정 구조에 대한 검증된 교정값으로 취급하지 않음.
+- Full vs Half+Coarse, 2D J 정규화, 활성 모델 물성, QW injection 여전히 미검증.
+
+변경:
+- LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md에 검증 전 아이디어로 기록.
+- 서버 소자 코드/파라미터/결과 및 현재 우선순위 변경 없음.
+
+다음:
+이택규가 전달할 `JUSUBIN_FAST_HALF_5V_TEST/pp4_des.cmd` 실제 NtSide trap Conc 출력 확인; Node2/4 동일 입력 검증 후, 필요한 원인을 순서대로 read-only 진단.
+
+---

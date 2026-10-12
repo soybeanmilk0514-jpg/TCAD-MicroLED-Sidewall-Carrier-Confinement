@@ -1,8 +1,8 @@
 {
-  "updated": "2026-10-11",
-  "primaryWorker": "주수빈",
+  "updated": "2026-10-12",
+  "primaryWorker": "이택규",
   "phase": "Phase 0 — working 5V reference NtSide 0/1e18 comparison; physical Gate0 low-J still unresolved",
-  "task": "User-reported CAL4V 100ns Run initiated; confirm preprocess, initial SDevice log and 4V outcome. NtSide1e18 original 5V_TEST split separately planned.",
+  "task": "Both reported jobs numerical finished: CAL4V n2 at 4V and 5V_TEST n4 at 5V. Need verify n4 actual NtSide trap concentration and deck parity, 2D current density, and physical baseline Gate0.",
   "status": "BASELINE_5V_SOLVE_COMPLETE_LOW_J_UNVALIDATED_AB_PRODUCTION_NO_GO",
   "blocker": "Nominal half-device J at 5V ~7.24e-4 A/cm2 under documented 2D normalization; radiative/QW recombination share ~0.1095%; physically meaningful operating region and injection barriers not yet established. Separate CAL latest direct log accepted ~4.149V and next BE Newton RHS oscillates above 1e-3; 5V convergence and physical J validation unresolved.",
   "parallelWork": {
@@ -1968,5 +1968,210 @@
     "baseline5VTEST": "PRESERVED",
     "NtSide1e18Split": "PLANNED_USER; RUN_UNVERIFIED",
     "physicalBaselineGate0": "LOW_CURRENT_UNRESOLVED"
+  },
+  "reportedTwoRunsFinished20261012": {
+    "reporter": "이택규",
+    "originatingResearcher": "주수빈",
+    "evidence": "direct user statement 2026-10-12 that both runs left by JuSubin finished",
+    "status": "USER_REPORTED_COMPLETION_NOT_LOG_VERIFIED",
+    "tentativeRunIdentities": [
+      "5V_TEST-derived NtSide1e18 split",
+      "CMP_BASELINE_1.3.0_CAL4V (100ns 4V)"
+    ],
+    "projectAndNodeMappingConfirmed": false,
+    "finishedSDeviceLogsVerified": false,
+    "finalVoltageVerified": false,
+    "outputTDRorSAVVerified": false,
+    "next": "Read last nN_des.log, ppN_des.cmd and inspect PLT/TDR/SAV for both. Avoid baseline freeze until physical Gate0 current and recombination validation.",
+    "CAL4VNode2ActualLogVerified": true,
+    "CAL4VNode2OutputFilesVerified": true,
+    "NtSide1e18SplitLogVerified": false,
+    "FiveVTestNode4ActualLogVerified": true,
+    "FiveVTestNode4EndVVerified": true,
+    "Note": "n4 finished 5V, NtSide=1e18 identity not yet proven in pp4"
+  },
+  "cal4vCompletion20261012": {
+    "project": "CMP_BASELINE_1.3.0_CAL4V",
+    "node": "n2",
+    "status": "OBSERVED_NORMAL_FINISH",
+    "evidence": "2026-10-12 user-supplied screenshot of n2_des.out tail",
+    "finishedAtKST": "2026-10-12 01:12:13",
+    "wallclockSeconds": 29706.72,
+    "cpuSeconds": 84070.27,
+    "peakMemoryGB": 4.05,
+    "curveTraceFinished": true,
+    "deviceSimulationFinished": true,
+    "goodBye": true,
+    "outputTDR": [
+      "n2_4V_final_des.tdr",
+      "n2_des.tdr"
+    ],
+    "saveDevice": "n2_4V_ckpt_des.sav",
+    "saveCircuit": "n2_4V_ckpt_circuit_des.sav",
+    "finalVoltageValueInScreenshot": true,
+    "finalCurrentValueInScreenshot": false,
+    "physicsCalibrationValidated": false,
+    "nextAction": "SVisual/SDevice read-only extraction of QW1–QW4 radiative, SRH, Auger from n2_4V_final_des.tdr and matched-bias 1ns data; verify NtSide 1e18 run separately.",
+    "finalVoltageV": 4,
+    "finalTimeS": 0.8,
+    "finalCurrentLastColumnRaw": 3.498e-14,
+    "finalCurrentUnitIndependentlyVerified": false,
+    "finalCurrentDCSteadyStateVerified": false,
+    "finalPointEvidence": "2026-10-12 user-pasted n2_des.log grep final anode line following 0.799739 -> 0.8s BE step",
+    "previousAtNear4VParentVoltageV": 4.003369,
+    "previousAtNear4VParentRawCurrent": 3.505521343e-14,
+    "matchedBiasExactly": false,
+    "IQECompared": false
+  },
+  "cal4vQW1Integration20261012": {
+    "dataset": "n2_4V_final_des",
+    "biasV": 4,
+    "region": "Clean_QW1",
+    "dimension": 2,
+    "domainUm2": 0.005985012,
+    "integralUnits": "s^-1 um^-1",
+    "radiative": 0.0005674131,
+    "srh": 4.940556,
+    "auger": 0.0002045051,
+    "sum": 4.9413279182,
+    "radiativeFractionPercent": 0.0114830084,
+    "srhFractionPercent": 99.9843783248,
+    "source": "2026-10-12 screenshot of 3 SVisual field integrations",
+    "important": "Only Clean_QW1, NOT all QWs nor overall IQE",
+    "next": "Confirm dimension-2 QW1-4 Clean and damaged segments, exclude interface/plus rows, integrate all 3 fields on same eight 2D regions."
+  },
+  "cal4vClean4QWIntegration20261012": {
+    "status": "OBSERVED_SCREENSHOTS",
+    "biasV": 4,
+    "dataset": "n2_4V_final_des",
+    "regions": [
+      "Clean_QW1",
+      "Clean_QW2",
+      "Clean_QW3",
+      "Clean_QW4"
+    ],
+    "rateUnits": "s^-1 um^-1",
+    "qws": [
+      {
+        "name": "Clean_QW1",
+        "radiative": 0.0005674131,
+        "srh": 4.940556,
+        "auger": 0.0002045051
+      },
+      {
+        "name": "Clean_QW2",
+        "radiative": 0.00000720202,
+        "srh": 0.1246185,
+        "auger": 1.234635e-7
+      },
+      {
+        "name": "Clean_QW3",
+        "radiative": 4.57929e-7,
+        "srh": 0.04882792,
+        "auger": 1.495005e-8
+      },
+      {
+        "name": "Clean_QW4",
+        "radiative": 8.117469e-10,
+        "srh": 0.00005108214,
+        "auger": 8.907546e-11
+      }
+    ],
+    "displayedTotals": {
+      "radiative": 0.0005750738,
+      "srh": 5.114054,
+      "auger": 0.0002046436,
+      "areaUm2": 0.02394002
+    },
+    "radiativeFractionPercent": 0.01124326,
+    "QW1RadiativeSharePercent": 98.667865,
+    "interpretation": "Clean region only, not complete MQW / not validated EQE or IQE",
+    "next": "Add DmgL_QW1-4 2D regions to same integral and recalculate; preserve all eight region selection for all 3 fields."
+  },
+  "cal4vMQWAllEightRegions20261012": {
+    "status": "OBSERVED_REGION_INTEGRATIONS",
+    "source": "three user-supplied 2026-10-12 SVisual screenshots",
+    "dataset": "n2_4V_final_des",
+    "biasV": 4,
+    "model": "CAL4V InGaN 100ns Scharfetter taumax candidate",
+    "regionCount": 8,
+    "regions": [
+      "Clean_QW1",
+      "Clean_QW2",
+      "Clean_QW3",
+      "Clean_QW4",
+      "DmgL_QW1",
+      "DmgL_QW2",
+      "DmgL_QW3",
+      "DmgL_QW4"
+    ],
+    "areaUm2": 0.02400002,
+    "unit": "s^-1 um^-1",
+    "integralRadiative": 0.000628668,
+    "integralSRH": 5.134239,
+    "integralAuger": 0.0002127778,
+    "integralSum": 5.1350804458,
+    "radiativeFractionPercent": 0.012242612489434118,
+    "srhFractionPercent": 99.98361377569678,
+    "augerFractionPercent": 0.004143611813794109,
+    "QW1RadiativeSharePercent": 98.77877989654318,
+    "evidenceLimitations": "Three-channel recombination fraction for 2D MQW only. Not experimental/calibrated device IQE. Not comparable as a controlled lifetime test to 1ns parent's 5V total (bias differs). Low J persists.",
+    "next": "Verify NtSide1e18 own SDevice log and TDR, model input equivalence. For lifetime causal comparison find matched-bias or matched-current 1ns 4V QW spatial data, check 2D normalization."
+  },
+  "cal4vLowJLiteratureReview20261012": {
+    "status": "REVIEWED_HYPOTHESIS_NOT_CAUSALLY_VALIDATED",
+    "mqwRadiativeFractionPercent": 0.01224261249,
+    "raw4VTerminalCurrent": 3.498e-14,
+    "conditionalJIfAperUmAndHalfWidth2Um_AperCm2": 0.000001749,
+    "unitAndAreaFactorValidated": false,
+    "literature": [
+      {
+        "doi": "10.1038/s41467-023-43472-z",
+        "example": "3.5um NBE blue microLED peak EQE 37.5% at around 3 A/cm2; EQE low-J 0.01 A/cm2 relative droop 26%"
+      },
+      {
+        "doi": "10.1038/s41467-023-36773-w",
+        "example": "10x10um blue MicroLED achieved 3.00% EQE at 0.1 A/cm2"
+      }
+    ],
+    "criticalComparisonCaveat": "Published external QE with different epitaxy/processing/injection cannot be directly compared to modeled MQW radiative fraction; historical 1ns parent at 5V and 100ns CAL at 4V are not matched bias.",
+    "nextSteps": [
+      "verify 2D current units/AreaFactor and actual working J",
+      "verify CAL active InGaN 100ns override effective values",
+      "check carrier densities and pGaN/EBL transport and polarization at QWs",
+      "compare at same bias/current with appropriate archived spatial data",
+      "preserve parent; defer expensive runs until hypothesis targeted"
+    ]
+  },
+  "node4FiveVTestFinish20261012": {
+    "status": "OBSERVED_SDEVICE_NORMAL_FINISH",
+    "project": "JUSUBIN_FAST_HALF_5V_TEST",
+    "node": "n4",
+    "screenshot": "n4_des.out tail shared by 이택규",
+    "finalAnodeVoltageV": 5,
+    "electronCurrentRaw": 7.534e-14,
+    "holeCurrentRaw": 6.975e-12,
+    "totalCurrentRaw": 7.05e-12,
+    "finishTimeKST": "2026-10-12 00:12:02",
+    "wallclockSeconds": 29806.55,
+    "totalCpuSeconds": 80172.55,
+    "peakMemoryGB": 3.11,
+    "checkpointSaved": "n4_5V_ckpt_des.sav",
+    "tdrSaved": "n4_des.tdr",
+    "IntendedNtSide": 1000000000000000000,
+    "NtSideActuallyVerifiedInPreprocessedN4": false,
+    "terminalCurrentUnitsAndAreaFactorVerified": false,
+    "priorN2NtSide0At5VRawTotalCurrent": 1.44801646079583e-11,
+    "rawN4ToN2CurrentRatio": 0.4868729182902603,
+    "causalityTrapOnlyVerified": false,
+    "next": "READ ONLY pp4_des.cmd trap Conc audit; compare pp2/pp4 effective .cmd/.par and current normalization; then MQW region-rate integrations of n4 vs n2 same 5V."
+  },
+  "ledColorVerification20261012": {
+    "confirmedDesign": "Blue InGaN/GaN 4-QW microLED",
+    "source": "CMP/COMMON_BASELINE.md; Kou et al Opt Express 2019 10.1364/OE.27.00A643",
+    "xIn": 0.15,
+    "nominalWavelengthNm": 445,
+    "measuredOrSimulatedELPeakVerified": false,
+    "efficiencyPointOneAmbiguous": "0.1 as fraction =10%; 0.1% =0.001 as fraction; 0.1 A/cm2 is current density, not efficiency"
   }
 }
