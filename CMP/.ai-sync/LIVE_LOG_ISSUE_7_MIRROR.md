@@ -5974,3 +5974,556 @@ AI: ChatGPT
 이택규가 전달할 `JUSUBIN_FAST_HALF_5V_TEST/pp4_des.cmd` 실제 NtSide trap Conc 출력 확인; Node2/4 동일 입력 검증 후, 필요한 원인을 순서대로 read-only 진단.
 
 ---
+
+## 2026-10-12T08:07:29Z — TaekGyu0801
+
+[2026-10-12 ~17:03 KST]
+작업자: 이택규 / 협업 대상: 주수빈
+AI: ChatGPT
+구분: HANDOFF / NEXT ACTION
+상태: PROPOSED (주수빈 수락은 아직 확인되지 않음)
+
+사용자가 두 사람이 같은 시간에 CMP를 연구하며 중복 작업을 피하고 싶다고 요청함. 병렬 역할 분담 제안:
+- 이택규: 별도 `CMP_BASELINE_1.3.0_CAL4V` 프로젝트 (4V 100ns) 전용. CAL4V의 저전류/비정상적으로 낮은 4QW 방사비율 원인 read-only 검증: pp2 current unit/AreaFactor, Scharfetter 100ns effective model, EBL/QW hole injection and polarization. 기존 소스와 완료 데이터 보존. 새 run 금지.
+- 주수빈: `JUSUBIN_FAST_HALF_5V_TEST` (5V NtSide split) 전용. n2 (NtSide0)와 n4 (NtSide1e18)의 pp2/pp4 and par/mesh/Physics/Math/Solve 입력 동일성 확인한 후, 5V full QW Radiative/SRH/Auger 적분과 전류 차 분석. 기존 결과 보존. 새 run 금지.
+- 현재 실제 증거: `pp4_des.cmd`의 12개 traps가 모두 `Conc=1e18`, n4 5V 정상 종료 및 raw total current 7.050e-12. 단 pp2/pp4 Trap 외 동일성 미검증, trap-only causal interpretation 보류.
+- 공유 연구원에게 AI가 별도 채팅 메시지를 직접 보낸 것은 아님. 주수빈은 이 GitHub 인수인계를 확인한 뒤 수락/변경 가능.
+
+연구 상태 및 계획 파일만 갱신. 서버 소스/시뮬레이션 미변경.
+
+
+---
+
+## 2026-10-12T08:12:41Z — TaekGyu0801
+
+[2026-10-12 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: PROGRESS / READ-ONLY CHECK
+상태: OBSERVED, baseline physics UNRESOLVED
+
+이택규 CAL4V 분담 작업에서 실제 `CMP_BASELINE_1.3.0_CAL4V/pp2_des.cmd` grep 결과:
+- `Grid = "n1_msh.tdr"` (line 20)
+- `Parameters = "FASTC1_pp6_des.par"` (line 22)
+- `Current = "n2_des.plt"` (line 26)
+- `Thermionic` (line 60)
+- `Piezoelectric_Polarization(strain)` (line 64)
+- `PE_Polarization/vector` (line 462), `PiezoCharge` (line 466)
+- 해당 정규식에서 AreaFactor 일치 항목 없음. 이는 명시적인 pp2 AreaFactor가 보이지 않는다는 뜻이지 단자 전류의 실제 A/µm normalization이나 편광 전하 크기를 확인했다는 뜻은 아님.
+
+다음: `sed -n '14,90p' .../CMP_BASELINE_1.3.0_CAL4V/pp2_des.cmd`로 File/Electrode/Physics 문맥 확인 후 custom par 및 로그 확인. 두 사람의 협업 트랙 분리 유지: 이택규 CAL4V 저효율/정규화 원인 분석, 주수빈 5V_TEST Trap-on/off 5V 비교 제안.
+변경: GitHub 개인 Timeline, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY만. 실제 TCAD 소스나 서버 계산물 변경 없음.
+
+---
+
+## 2026-10-12T08:18:31Z — TaekGyu0801
+
+[2026-10-12 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: READ-ONLY MODEL AUDIT
+상태: OBSERVED; 저전류/저방사비율 원인은 아직 미확정
+
+사용자 제공 실제 `CMP_BASELINE_1.3.0_CAL4V/pp2_des.cmd` 14–90행:
+File: Grid=`n1_msh.tdr`, Parameters=`FASTC1_pp6_des.par`, Plot=`n2_des.tdr`, Current=`n2_des.plt`, Output=`n2_des.log`.
+Electrode anode와 cathode 초기 Voltage=0.
+Global Physics: Temperature=300.0, Fermi, Thermionic, Piezoelectric_Polarization(strain), DefaultParametersFromFile, EffectiveIntrinsicDensity(NoBandgapNarrowing), Recombination(SRH(), Auger(), Radiative).
+이 선언으로 세 재결합 메커니즘이 활성화됐다는 사실은 확인됨. 하지만 실제 InGaN custom Scharfetter tau=100ns가 effective parameter로 적용됐는지, 국소 Physics override가 없는지, 실제 편광 전하, surface recombination 및 2D Current/AreaFactor 해석은 미검증. 직전 pp2 전체 grep에 AreaFactor 항목은 발견되지 않았지만 그 자체로 J를 확정할 수 없음.
+
+NEXT: 동일 CAL4V 폴더의 `FASTC1_pp6_des.par`을 읽기 전용으로 검사하여 material별 Scharfetter/taumax/taumin 및 관련 physics 설정 확인하고 그다음 2D J normalization 검증. 주수빈의 별도 5V_TEST n2/n4 trap parity 작업과 중복하지 않음. 서버 소스/시뮬레이션 변경 없음.
+
+---
+
+## 2026-10-12T08:19:34Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT
+상태: OBSERVED
+
+사용자 터미널 스크린샷에서 JUSUBIN_FAST_HALF_5V_TEST/pp2_des.cmd 와 pp4_des.cmd 비교 결과 확인. Trap `Conc = 0` vs `Conc = 1e18` 이외의 차이로 표시된 것은 Plot n2_des.tdr/n4_des.tdr, Current n2_des.plt/n4_des.plt, Output n2_des.log/n4_des.log, FilePrefix n2_5V_ckpt/n4_5V_ckpt뿐이며 모두 출력 파일명 차이임. 화면에 표시된 필터 결과 기준으로 기타 command-level 물리/solver 설정 차이는 발견되지 않음. 단, .par 및 mesh 동일성 미확인.
+
+다음: pp2/pp4의 Grid 및 Parameters 참조 확인, 실제 .par 내용과 mesh 파일 비교. 기존 시뮬레이션 보존.
+
+---
+
+## 2026-10-12T08:21:28Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED
+
+요약:
+- 터미널 화면에서 JUSUBIN_FAST_HALF_5V_TEST pp2_des.cmd / pp4_des.cmd의 File 블록을 비교함.
+- 양쪽 pp2_des.cmd와 pp4_des.cmd 모두 Grid=n1_msh.tdr, Parameters=FASTC1_pp6_des.par.
+- 직전 diff 결과에서 trap Conc (0 vs 1e18) 및 Plot/Current/Output/FilePrefix의 노드별 출력명 차이만 확인함.
+- 동일 mesh / parameter 파일 경로를 참조하는 것은 OBSERVED. 실제 실행 당시 버전 동일성, 전류 정규화, 모델 물리적 타당성은 미검증.
+
+근거: 주수빈 제공 MobaXterm 화면, grep 결과 line20 Grid와 line22 Parameters 동일.
+변경: TCAD 파일 수정 없음.
+다음: n2_des.tdr/n4_des.tdr 존재 확인, SVisual 5V 전체 QW Radiative/SRH/Auger 각각 적분. 동일 V 비교와 동일 J 비교 구분.
+
+---
+
+## 2026-10-12T08:24:57Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS
+상태: OBSERVED
+
+사용자가 JUSUBIN_FAST_HALF_5V_TEST 디렉터리에서 `svisual n2_des.tdr n4_des.tdr &` 실행한 터미널 화면 제시. 백그라운드 job [1] PID 129157 리턴. 메시지 'Enabling MESA because GLX was not detected' 및 'AVX support detected. Using MESA with AVX support.' 보임. 이는 그래픽 렌더링 지원 안내이며 해당 화면에서 명시적 실패 오류는 없음. GUI 창 실제 생성 및 두 데이터셋 로드는 아직 확인되지 않음. No TCAD source or results modified. Next: SVisual GUI screenshot 확인, 미표시 시 `ps -p 129157 -o pid,stat,etime,cmd`로 프로세스 확인, 이후 4QW 세 채널 적분.
+
+---
+
+## 2026-10-12T08:27:32Z — TaekGyu0801
+
+[2026-10-12 KST] 작업자 이택규 / OBSERVED CAL4V read-only pp2_des.cmd grep: global Physics line50; Piezoelectric_Polarization(strain) line64; SRH() line80. Physics(Region=Clean_pGaN) line126 and 12 Physics(Region=DmgL_...) blocks at 135,159,179,199,219,239,259,279,299,319,339,359. Literal Recombination/SRH other than global and SurfaceRecombination/SurfaceTrap/Interface= were not found by this regex; output field SRHRecombination at 398+ is Plot variable. Crucial caveat: search omitted Traps so region trap concentrations remain unverified, and absence of those exact keywords does not prove SRV=0. Next inspect CAL4V pp2 Traps/Conc directly (read-only); preserve no-new-run, unchanged model, separate 주수빈 5V_TEST ownership. Low-J root cause unverified.
+
+---
+
+## 2026-10-12T08:27:46Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS
+상태: OBSERVED
+
+SVisual T-2022.03 실제 화면에서 `JUSUBIN_FAST_HALF_5V_TEST/n2_des.tdr`와 `n4_des.tdr`이 좌우 각각 `n2_des`, `n4_des` 플롯으로 동시에 로드된 것 확인. 현재 시각화된 scalar는 DopingConcentration. Scalars 목록에서 RadiativeRecombination 및 AugerRecombination 필드 존재 확인. 상태표시줄에 Elements=138194, Points=65513 표시. 두 데이터셋에서 5V 결과인지 GUI 화면 자체로 재검증하거나 적분한 것은 아직 아님.
+
+변경: TCAD 소스/결과 파일 수정 없음.
+다음: RadiativeRecombination 표시 후, 각 QW의 Clean_QW1..4 / DmgL_QW1..4 영역 적분값 수집; SRH/Auger도 같은 ROI로 별도 적분. 'Clean_QW3+DmgL_QW3' 같은 경계 그룹을 전체 QW 영역이라고 추정하지 않기.
+
+---
+
+## 2026-10-12T08:30:19Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / RESULT
+상태: OBSERVED
+
+사용자가 Sentaurus Visual 화면에서 n2_des와 n4_des의 RadiativeRecombination scalar 시각화 성공한 스크린샷 제공. 각각 별도 자동 스케일 범례에서 n2의 표시 최댓값 7.48345e19 cm^-3 s^-1, n4는 약 2.499e19 cm^-3 s^-1. 최댓값은 국소값이며 4QW 전영역 적분 또는 IQE가 아니고, n2/n4의 5V terminal current가 서로 달라 동일 J 비교 아님. 스크린샷의 색감이나 범례만으로 Trap 인과효과/IQE 개선 악화를 확정하지 않음.
+
+다음: SVisual의 Field Integration 메뉴에서 Clean_QW1..4, DmgL_QW1..4 2D 영역의 radiative 적분; SRH/Auger도 동일 영역 적분. '+'로 결합된 경계 이름을 전체 QW ROI로 오해하지 않기. 기존 TCAD 입력/결과 수정 없음.
+
+---
+
+## 2026-10-12T08:32:53Z — TaekGyu0801
+
+[2026-10-12 이택규 / OBSERVED] CAL4V pp2_des.cmd 실제 grep: 12개 Traps 블록 (lines 141-365)의 Conc가 모두 0. CAL4V 4V NtSide trap OFF 확인. 그런데 8-QW 적분 SRH 비율 ~99.984%, 방사재결합 비율 ~0.01224%. 따라서 이 명시적 NtSide sidewall trap 자체가 SRH 우세의 원인은 아님. 다른 벌크 SRH, 별도 interface SRV, 주입 전류 및 편광 영향은 계속 미확정. 다음 기존 final TDR에서 electron/hole density를 같은 QW 영역에서 검사. TCAD 코드·시뮬레이션 변경 없음.
+
+---
+
+## 2026-10-12T08:56:29Z — soybeanmilk0514-jpg
+
+[2026-10-12] JuSubin OBSERVED: SVisual radiative integral for eight 4QW regions. n2=40072.82, n4=7056.261 (per second per micrometer); n4 is 82.3914% lower at 5V. n2 clean=39953.89, damaged=118.9258452; n4 clean=7033.27165, damaged=22.98885541. Current differs between nodes; NOT IQE. Next integrate SRH and Auger on matching eight regions. Work recorded in JuSubin TIMELINE and shared status files; no TCAD source changes.
+
+---
+
+## 2026-10-12T09:32:24Z — TaekGyu0801
+
+[2026-10-12 18:23 KST] 이택규 / Claude independent CAL4V low-J diagnosis skeptically reviewed by ChatGPT. Classification: REVIEW/PROPOSED; new simulator evidence none.
+
+Terminal 4V Transient total 3.498e-14 A/um ramp 5V/s: 98% displacement is NOT proven. Must read anode DisplacementCurrent and TotalCurrent from existing n2_des.plt before subtracting. Assuming whole current is displacement, C'=6.996e-15 F/um and epsr=9.5 over 2um² gives teq~24nm; matching EBL thickness 26nm is NOT proof most voltage drops across EBL.
+
+Under ideal homogeneous SRH and Bnp with B=2e-10 and tau=100ns, total MQW Rrad/SRH implies effective n+p~6.12e12 cm^-3, a COND. CALCULATION not directly measured density or proof holes blocked. Scharfetter tau doping dependent; 8QW integrals not single homogeneous QW.
+
+EBL hole-blocking and polarization plausibly matter, but contact/EBL active hole doping, spatial Ec/Ev/quasi-Fermi, carrier densities, actual terminal 2D current scaling still unverified. Apparent n~0.97 from tiny anode minority electron current cannot establish diode ideality or EBL barrier.
+
+Literature VERIFIED: Lu et al NRL 2021 DOI 10.1186/s11671-021-03557-4 models 50% polarization and 100ns SRH; Yin et al Front Optoelectron 2024 DOI 10.1007/s12200-024-00111-9 models 50% polarization on distinct MIS-sidewall microLED; Baek et al Nat Commun 2023 DOI 10.1038/s41467-023-36773-w is QB/EBL injection evidence, NOT cited proof of 50% factor; Rahman et al JAP 2022 DOI 10.1063/5.0125684 about composition fluctuation and failure of simplified 1D interface models, NOT proof of one NLM tunneling patch.
+
+PROPOSAL REJECTED AS IMMEDIATE EDIT: Physics e/hBarrierTunneling and Math NonLocal Barrier(Clean_EBL,DmgL_EBL) Length=4e-6 cannot be copied blindly; Sentaurus Barrier(...) nonlocal meshes mainly for direct insulating barriers, whereas AlGaN EBL is semiconductor. Need T2022.03 specific manual, physics, region geometry, tunneling masses and controlled testing. Polarization OFF at only AlGaN/GaN misses InGaN/GaN QW QCSE. 0% is diagnostic, 50% is literature sensitivity, not calibrated baseline.
+
+NEXT existing n2_des.plt check DisplacementCurrent vs TotalCurrent at 4V; saved n2_4V_final_des.tdr center vertical cutline Ec/Ev h/e quasi Fermi n/p PiezoCharge and current-density across EBL/QWs; only then optional controlled 1D vertical model (not equivalent sidewalls, previous QS issues), then new 2D half branch. No source edits or new run. JuSubin 5V_TEST track untouched.
+
+---
+
+## 2026-10-12T09:48:26Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / NEXT ACTION
+상태: OBSERVED
+
+실제 Sentaurus Visual Field Integration 원문: dataset n2_des, field srhRecombination, 8개의 2D QW 영역 Clean_QW1..4 및 DmgL_QW1..4만 적분. Total=3.656294e7 s^-1 um^-1, domain=2.400002e-2 um^2. Clean subtotal from rounded values=3.633415525e7, DmgL subtotal=2.287896575e5. QW4 is ~98.0342% of full QW SRH integral. Previously 8-QW Radiative total=4.007282e4. Rad/(Rad+SRH)=0.10947957% WITHOUT Auger; NOT final IQE, and n4 remains to be integrated.
+
+다음: n4_des srhRecombination on same eight 2D QW regions; then AugerRecombination for n2 and n4. 2D current density normalization and equal-current effects not yet validated. No TCAD code/simulation modification.
+
+---
+
+## 2026-10-12T09:57:46Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / NEXT ACTION
+상태: OBSERVED
+
+Actual user-provided Sentaurus Visual integration, n4_des srhRecombination on Clean_QW1-4 and DmgL_QW1-4 (8 separate 2D regions), total = 1.441170e+07 s^-1 um^-1, domain 0.02400002 um^2. Clean subtotal from rounded outputs 14,319,161.96; damaged subtotal 92,534.28866. n2 same-region SRH total 3.656294e+07, hence n4 SRH -60.5839%. Radiative integration n2=40072.82, n4=7056.261, hence n4 radiative -82.3914% at nominal 5V. Preliminary two-channel fraction Radiative/(Radiative+SRH): n2=0.1094796%, n4=0.0489381%. NOT IQE: Auger pending, injection/current differs and model physical validation unfinished.
+
+Changed: CMP JuSubin timeline, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md and LIVE_STATE.json updated. No TCAD source or run modifications.
+Next: AugerRecombination integral n2 and n4 same eight QW regions; confirm sign and compute 3-channel fraction; matched-current comparison separately.
+
+---
+
+## 2026-10-12T10:05:13Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST]
+Worker: JuSubin
+AI: ChatGPT
+Type: RESULT / HANDOFF
+Status: OBSERVED
+
+Actual user supplied SVisual field integration on n2_des AugerRecombination over Clean_QW1-4 and DmgL_QW1-4 eight distinct 2D QW regions: Total = 1599.707 per second per micrometer; total domain = 0.02400002 square micrometers. Clean subtotal = 1594.921156, DmgL subtotal = 4.785012587 from rounded region outputs.
+
+Previously measured on exactly same n2 QW regions: Radiative 40072.82, SRH 36562940. Three-channel internal radiative share = 0.10947478 percent; SRH = 99.88615498 percent; Auger = 0.00437023 percent. NOT EQE and not an accepted calibrated device IQE. n4 Auger is still unmeasured; n2 and n4 at 5V differ in total injected terminal current. No TCAD source or run modifications.
+
+Next: JuSubin SVisual n4_des AugerRecombination integration on the same eight QW regions, then calculate and compare three-channel values and note fixed-V versus equal-current distinctions.
+
+---
+
+## 2026-10-12T10:06:45Z — TaekGyu0801
+
+[2026-10-12 ~18:23 KST]
+WORKER: 이택규
+AI: ChatGPT
+TYPE: RESULT INTERPRETATION / RESEARCH PROPOSAL REVIEW / HANDOFF
+STATUS: SVisual CUTLINE USER-REPORTED; PHYSICAL CAUSALITY UNRESOLVED; NO SIMULATION/NO SOURCE CHANGE.
+
+CAL4V n2_4V_final_des.tdr y=2.0um x=0.10-0.30um cutline user reports abrupt e/h quasi-Fermi steps (per QW interface ~0.35-0.5eV), valence and conduction band interface spikes, EBL Ev slope -4.0→-5.05 eV and Ec slope -0.3→-1.55 eV. Different QWs electron/hole QF splitting approximate 1.95,1.90,1.75,1.45eV; this is NOT 4V-to-2V voltage loss: simultaneous jumps in both QF cannot simply be added. Thermionic heterojunction BC can naturally allow quasi-Fermi discontinuities with finite transport. Presence of steps alone does NOT prove missing tunneling nor exclude EBL or contact problems. EBL band-edge bending ≈1eV cannot be assigned electrostatic potential drop without potential/offset calculation; previous terminal C equivalent thickness EBL match not causal. User says y=2.0 is central slice but it must be checked against actual Half geometry (could be near edge). Existing n2_des.plt anode DisplacementCurrent must be extracted before accepting 98% charging interpretation.
+
+Research literature correction: Rahman et al J Appl Phys (2022) 132:235702 DOI 10.1063/5.0125684 / arXiv:2211.05704 **actual 11-page PDF directly read**. On p3 describes combined Thermionic Emission, Field Emission, and nonlocal quantum barrier tunneling across QWs/QBs in Silvaco; on p5 Fig3c gives effect of FE/QB tunneling on forward voltage. Uniform well model still overestimates turn-on even with relevant transport; a LOW+HIGH indium composition parallel transport path contributes major improvement. Thus QB tunneling testing is grounded (PROPOSED); neither exact Sentaurus T-2022.03 keyword compatibility nor tunneling-only fix is supported by this paper. Additional Lu et al 2021 DOI 10.1186/s11671-021-03557-4 and Yin et al 2024 DOI 10.1007/s12200-024-00111-9 use 50% polarization as study assumptions, NOT a universal physical calibration.
+
+Claude V2 proposed in *new separate version* global eBarrierTunneling/hBarrierTunneling NLM_MQW, Math NonLocal reference MaterialInterface InGaN/GaN Length=5e-7cm Permeation=5e-7cm Direction=(1 0 0) MaxAngle=5 and Plot rates. Older online SDevice UG O-2018.06/H-2013.03 documents those parameter categories; T-2022.03 claimed local reference/tcad_ug_text/sdevice_ug.txt unavailable to connected GitHub and exact syntax remains NOT INDEPENDENTLY VERIFIED. Geometry: 4 QWs x 2 vertical faces=8 interface planes, potentially each Clean and DmgL lateral strip separate; material-wide applies according to real mesh. Length 5nm and Permeation 5nm are *mesh range*, cannot guarantee tunneling across GaN QB 22nm, only interface spike. Direction vertical x plausible if actual coordinates correct; MaxAngle5 may suppress slanted nonlocal mesh lines. Measure generated line count, connectivity and Plot e/hBarrierTunneling (mesh-dependent rates) before attributing physics. Plot rates are not proof of improved externally measured IQE.
+V2 claimed 3.5V total current ≥1e-12 A/um is an arbitrary improvement threshold, not calibrated physics (transient charging/true J unchanged); half-device Goal 3.5V and FinalTime0.7 must be compared matched 3.5V from preserved parent, preferably after ramp hold stationarity; 1D-like 0.05um 2D column not sidewall/mesa-equivalent, QS previously convergence-failed.
+
+DECISION: No NLM or polarization/surface/SRH edits authorized. Next (1) existing CAL4V n2_des.plt DisplacementCurrent vs TotalCurrent, (2) TDR x-cutline in verified central CLEAN QW with Potential, Ec/Ev, e/hQF, e/hDensity and e/hCurrent, PiezoCharge, (3) actual SDevice T-2022.03 UG excerpts, only then separate versioned smoke and physics sensitivity. Parallel JuSubin 5V_TEST not touched.
+
+GitHub CMP/LeeTaekGyu timeline, team, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json and RELAY updated.
+
+---
+
+## 2026-10-12T10:09:10Z — soybeanmilk0514-jpg
+
+[2026-10-12 18:46 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED (model-integral data), UNRESOLVED (physical calibration / equal-current interpretation)
+
+요약:
+- SVisual 5V_TEST Node2 (NtSide=0)와 Node4 (NtSide=1e18): 8개의 분리된 2D QW 영역 Clean_QW1..4 + DmgL_QW1..4, 세 채널 Radiative/srhRecombination/AugerRecombination 모두 적분 완료. 각 적분 전체 ROI 0.02400002 um².
+- n2 (s^-1 um^-1): Rad=40072.82; SRH=36562940; Auger=1599.707. Rad share=0.10947478%, SRH share=99.88615498%, Auger=0.00437023%.
+- n4 (s^-1 um^-1): Rad=7056.261; SRH=14411700; Auger=265.2578. Rad share=0.04893717%, SRH share=99.94922319%, Auger=0.00183964%.
+- 동일 명목상 5V에서 n4 vs n2: Rad absolute -82.3914%; SRH -60.5839%; Auger -83.4184%; radiative share relative -55.2982% (absolute -0.060538 percentage points).
+- n2 vs n4 raw terminal current 1.4480164608e-11 vs 7.050e-12. 두 소자의 실제 전류가 다르므로 동일 5V 방사비율 차이를 동일 전류 조건의 순수 trap 효과라고 주장할 수 없음. 내부 4QW 비율은 측정 EQE 또는 보정 완료 IQE가 아님.
+- user-provided n4 Auger QW1..QW4 Clean integrals 7.484567e1, 3.921916e-1, 3.097547, 1.862744e2; damaged 2.965803e-1, 1.325766e-4, 5.570887e-3, 3.457612e-1. Total=2.652578e2.
+
+변경:
+- CMP/members/JuSubin/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md/json 문서 기록 완료.
+- 학교 TCAD 소스, mesh, 계산 결과 수정 없음.
+
+다음:
+- Node2/4 전류 I-V, 2D AreaFactor/DisplacementCurrent 등 검증.
+- 기존 저장된 bias-resolved TDR 유무 확인 후 동일 전류 조건 비교 계획.
+- 별도 승인 전 새 긴 simulation이나 baseline 물성 변경 없음.
+
+
+---
+
+## 2026-10-12T10:11:10Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS
+상태: OBSERVED
+
+사용자가 JUSUBIN_FAST_HALF_5V_TEST 디렉터리에서 `ls -lh n2_des.plt n4_des.plt` 실행한 터미널 화면 제공. n2_des.plt 412K (Oct 9 14:29), n4_des.plt 412K (Oct 12 00:12) 모두 존재함. 이는 두 노드의 전류 기록 파일이 있다는 증거이지 I-V dataset 필드 / 전류 정규화 및 동일 전류 비교가 완료됐다는 뜻은 아님. TCAD 파일 변경 없음.
+
+다음: read-only 로 각 .plt의 `datasets` 선언에서 anode OuterVoltage/TotalCurrent/DisplacementCurrent 등을 확인한 뒤, 원본 데이터로 적절한 동일 전류 지점을 찾고 기존 2D snapshot 존재 여부 확인. Transient current에 displacement contribution 유의.
+
+---
+
+## 2026-10-12T10:12:09Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / DATA VERIFICATION
+상태: OBSERVED
+
+사용자 제공 터미널 스크린샷의 `grep -n -A 14 'datasets' n2_des.plt n4_des.plt | head -n 40`에서 `n2_des.plt`, `n4_des.plt` 양쪽 모두 동일한 electrode time-series dataset 이름 구조 확인: time; anode/cathode OuterVoltage/InnerVoltage/QuasiFermiPotential/DisplacementCurrent/eCurrent/hCurrent/TotalCurrent/Charge. 양 파일의 Dataset declarations 일치. 실제 numerical current decomposition, 2D current scaling, AreaFactor 및 equal-current bias는 이 명령으로 확인되지 않음. 사용자는 Read-only 관찰만 수행, 파일/모델 변경 없음.
+
+NEXT READ ONLY: inspect structure of n2_des.plt Data section (`sed -n '1,28p' n2_des.plt`) then plan precise extraction of anode current vs voltage for both nodes; compare DisplacementCurrent against TotalCurrent and calculate effective conductive part accounting for conventions. No new run.
+
+---
+
+## 2026-10-12T10:14:33Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS
+상태: OBSERVED
+
+사용자 터미널 화면: 5V_TEST `sed -n '1,28p' n2_des.plt`의 출력에서 DF-ISE text, Info(type=xyplot, datasets/time/anode cathode voltages, currents, displacement and charge), 그리고 `Data {` 이후 수치가 여러 줄로 줄바꿈되어 기록되는 형식 확인. 이 화면은 실제 final 5V current decomposition 결과가 아님. 아직 시간·전류 개별 숫자 추출/AreaFactor 검증 전.
+
+다음: 데이터셋 이름 순서에 따라 수치 스트림을 읽어 하나의 레코드로 재조립하고 last 5V time/anode voltage, displacement, electron, hole, total 등을 n2/n4 각각 read-only 추출. 파일 변경 없음.
+
+---
+
+## 2026-10-12T10:17:01Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST] 주수빈 작업, OBSERVED: MobaXterm screenshot shows previous multiline `python3 - <<'PY'` command remains at `?` continuation prompt after entering `PY`; no extracted currents or code execution result yet. Diagnosed as shell here-document completion/quoting problem (not TCAD error). NEXT: cancel with Ctrl+C, use single-line read-only `python3 -c` to inspect n2 .plt final record before proceeding to n4. No TCAD source/results modified.
+
+---
+
+## 2026-10-12T10:18:27Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: ERROR / FIX GUIDANCE
+상태: OBSERVED (error); PROPOSED (fix not yet executed)
+
+사용자 제공 새 SSH 터미널 화면에서 현재 prompt가 `[semi437@ssudisu3 ~]$`인 홈 디렉터리에서 `python3 -c ... open("n2_des.plt")`을 실행하여 FileNotFoundError: [Errno 2] No such file or directory: 'n2_des.plt' 발생. 이전 터미널에서 `JUSUBIN_FAST_HALF_5V_TEST/n2_des.plt` 파일 존재(412 KB)는 확인됐으므로 현 오류는 작업 디렉터리 경로 문제이며 TCAD 시뮬레이션 실패가 아님.
+
+안내한 read-only 해결: `cd /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST` 후 prompt 확인, 다음 단계에서 숫자 파싱 재시도. 현재 폴더 이동/해결 실행 완료 확인 전. 소스/결과/모델 변경 없음.
+
+---
+
+## 2026-10-12T10:20:53Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / FIX
+상태: OBSERVED
+
+User screenshot confirms previous FileNotFoundError was resolved after `cd /user/semi/semi437/tmp/myproject/JUSUBIN_FAST_HALF_5V_TEST`; read-only python parser successfully extracts final anode record from `n2_des.plt` (1023 records, remainder=0). Final time=1.0 s, anode OuterVoltage=5.0 V; raw TotalCurrent=1.44801646079583e-11; raw DisplacementCurrent=3.29132361382365e-18; raw eCurrent=2.78143237811134e-13; raw hCurrent=1.42020180788235e-11. Final displacement/total ~0.00002273 percent (negligible at last data point). This does not independently prove steady state, verified AreaFactor/current-density normalization, or carrier injection to MQW. No TCAD code/results changed.
+
+NEXT READ ONLY: extract identical last-record anode component values from `n4_des.plt`, then analyze I-V and possible equal-current comparisons; avoid unmotivated new simulations. Synchronized personal/team timeline, CURRENT_STATUS, NEXT_ACTIONS, and LIVE_STATE md/json.
+
+---
+
+## 2026-10-12T10:26:49Z — soybeanmilk0514-jpg
+
+[2026-10-12] JuSubin OBSERVED: read-only n4_des.plt parser succeeded (1023 records). At t=1s, anode 5V: raw total current 7.05011114486348e-12, displacement 3.38231191699972e-18, electron 7.53447212445082e-14, hole 6.97476304130706e-12. Compared with n2 5V totals 1.44801646079583e-11, n4 total -51.31194%, electron -72.91154%, hole -50.88893%. Final displacement negligible in both. Not proof of true DC steady state or validated 2D current density. Next read-only compare full I-V and saved bias-resolved TDR for equal-current analysis. No TCAD code/results edited.
+
+---
+
+## 2026-10-12T10:27:12Z — TaekGyu0801
+
+[2026-10-12 KST]
+작업자: 이택규
+AI: ChatGPT (Claude 19:30 KST 재판단 전달 내용 독립 검토)
+구분: REVIEW / HANDOFF / NEXT ACTION
+상태: OBSERVED (전달된 보고서 내용) / DERIVED (제시 수치 재계산) / UNRESOLVED (실제 원인)
+
+요약:
+- 사용자 제공 Claude 19:30 보고서: 과거 '4V 전류의 98% 충전전류', 'QF 계단 합산 2V 손실', 'EBL에서 정전기적 1V 손실' 결론 철회. NonLocal tunneling V2 미승인/보류.
+- 전달 4V 수치: anode total 3.498e-14 A/um, 8-QW integral Rad 6.29e-4, SRH 5.13, Auger 2.13e-4 s^-1 um^-1. 재계산 qΣR=8.2205e-19 A/um; qΣR/I=2.3501e-5 = 0.002350%. 작은 QW 재결합 전류가 '98% charging'이나 '정공만 부족'을 입증하지 않음. 모델 안 QW 밖 재결합, 누설/수송/충전 및 정규화 함께 검증 필요.
+- 부모 5V에서 Displacement 3.29e-18 vs Total 1.448e-11은 별도 bias/run. 4V CAL4V 충전 비율 판정 불가.
+- electrode 'Charge'의 dQ/dt 또한 접촉 전하+도핑 우물 공간전하의 변화이며 전체 소자 전하 저장율과 반드시 동일하지 않음. |dQdt/Total|=0.9~1.1이면 90~100% charging '확정'이라는 Claude 기준은 단독으론 부적절. 외부에서 확인 가능한 구판 SDevice UG O-2018.06 Charge 정의 참고, T-2022.03 인용은 Claude 전달문 근거로 한정.
+- 수송 병목 후보: MQW 이종계면, 분극 및 carrier overlap. QW1의 방사 재결합 집중만으로 hole starvation 단정 불가; EBL hQF flat 판독도 좌표 및 원값 재확인 필요.
+
+근거:
+- 이택규가 제공한 CAL4V_LOWJ_LOWIQE_DIAGNOSIS.md 내용(Claude 사용자 전달)
+- GitHub 기존 CAL4V 관련 LIVE_STATE 기록
+- O-2018.06 SDevice UG Electrode Charge Calculation / drift-diffusion continuity equation
+
+변경:
+- GitHub 이택규 TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY 연구기록 갱신. 서버 TCAD 소스·결과·실행 변경 없음.
+
+다음:
+1) CAL4V n2_des.plt의 anode+cathode Total/e/h/DisplacementCurrent/Charge vs time read-only 추출(열/단위/부호 검증).
+2) 중앙 CLEAN x-cutline e/hQF, e/hDensity, e/hCurrent, Ec/Ev, Potential, PE_Charge 좌표확인 후 비교.
+3) 근거 충분할 때에만 별도 승인된 NLM smoke. JuSubin 5V_TEST 보존.
+
+---
+
+## 2026-10-12T10:28:58Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / NEXT ACTION
+상태: OBSERVED (top-level TDR filenames) / UNRESOLVED (intermediate spatial snapshots)
+
+User SSH screenshot in JUSUBIN_FAST_HALF_5V_TEST: command `find . -maxdepth 1 -type f -name '*.tdr' | sort` returned exactly four root-level entries: `./n1_bnd.tdr`, `./n1_msh.tdr`, `./n2_des.tdr`, `./n4_des.tdr`. n2/n4 were previously identified as final 5V TDR datasets. The find command does NOT include subdirectories, so cannot conclude there are no intermediate-voltage TDRs anywhere in this project. A checkpoint .sav, even if present, should not be assumed equivalent to a plot-ready intermediate spatial TDR.
+
+Next read-only search recursively for existing `.tdr` and `.sav` files in this project, then determine whether matching-current recombination spatial analysis is possible without re-simulation; extract matched-current voltages from 1023-sample n2/n4 PLT separately. No TCAD edits/new runs.
+
+JuSubin TIMELINE and NEXT_ACTIONS updated.
+
+---
+
+## 2026-10-12T10:32:20Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / HANDOFF
+상태: OBSERVED (file inventory) / UNRESOLVED (matched-current spatial comparison)
+
+User supplied read-only recursive `find` output for `JUSUBIN_FAST_HALF_5V_TEST` (all nested subfolders): TDRs: n1_bnd.tdr, n1_msh.tdr, n2_des.tdr, n4_des.tdr. SAVs: n2_5V_ckpt_circuit_des.sav, n2_5V_ckpt_des.sav, n2_smoke_ckpt_0p3V_circuit_des.sav, n2_smoke_ckpt_0p3V_des.sav, n4_5V_ckpt_circuit_des.sav, n4_5V_ckpt_des.sav. The displayed list includes only final 5V spatial TDR outputs; no intermediate-voltage TDR was found. SAV files are solver checkpoint states, not automatically TDR spatial snapshots for SVisual Field Integration. `0p3V` in smoke SAV basename does not verify actual solved 0.3V; previous QS pilot aborted around 0.019304636 V and checkpoint naming was previously flagged as potentially misleading.
+
+Confirmed 5V n2/n4 4QW 3-channel radiative shares stay OBSERVED but are not equal-current comparisons. NEXT read-only parse PLT I-V curves for matching terminal current and voltage, then decide separately whether additional spatial snapshots/continuation are required. No new simulation or TCAD file modifications.
+
+GitHub updated JuSubin personal timeline, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json.
+
+---
+
+## 2026-10-12T10:35:12Z — TaekGyu0801
+
+[2026-10-12 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: REVIEW / HANDOFF
+상태: USER-REPORTED / DERIVED / UNRESOLVED
+
+Claude 새 CAL4V 4V 보고: 전영역 SRH 12294.2, Rad 0.00243, Auger 0.000296 s^-1 um^-1. Clean+DmgL EBL SRH=12265.6, 전체 SRH의 99.7674%. QW 총 SRH 5.134 (~0.04176%). q*전영역 재결합=1.96975e-15 A/um으로 anode TotalCurrent 3.498e-14의 5.6311%에 상당. **나머지 94.37%가 충전전류임은 증명되지 않음**: bulk recombination sink는 곧 전체 DC terminal conduction 아님. 이 수치들은 Claude가 사용자에게 보고한 원문에서 산술만 확인; raw server TDR 직접 접근 못함.
+
+다음: AlGaN SRH lifetime 실제 적용값과 EBL SRH 공간분포 확인. 중앙 x cutline에서 e/h density, e/h current, quasi Fermi, Potential, Ec/Ev, PE_Charge 확인. NLM/물성 수정 보류. 주수빈 5V_TEST 변경 없음.
+
+---
+
+## 2026-10-12T10:37:35Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST] Worker JuSubin / ChatGPT — OBSERVED PLUS DERIVED (NOT SIMULATION AT INTERPOLATED POINT). User supplied n2_des.plt read-only nearest-current output: n2 at V 4.91836886499322 I 6.84313365428304e-12 t 0.983673772998644s; n2 at V 4.92336886499322 I 7.14463993632474e-12 t 0.984673772998644s. Target n4 last raw 5V anode TotalCurrent 7.05011114486348e-12. Two-point linear interpolation gives n2 V 4.921801256V and n4 minus n2 delta V +0.078198744V (+78.2mV) on 5V/s TRANSIENT, not independently validated DC series resistance. Nearest n2 sampled bias 4.923369V gives current 7.14464e-12 (difference 9.45288e-14). No stored n2 spatial TDR near 4.9218V, thus previously measured fixed-5V 4QW fractions are NOT matched-current IQE comparison. Next check displacement/current components near target in PLT and AreaFactor, decide spatial snapshot separately, no changes to TCAD source or run. Timeline, status, action and live md updated.
+
+---
+
+## 2026-10-12T10:42:46Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / NEXT ACTION
+상태: OBSERVED / DERIVED
+
+User actual SSH Python PLT parser n2_des.plt nearest point to node4 final 5V raw TotalCurrent target=7.05011114486348e-12:
+- time=0.984673772998644 s, voltage=4.92336886499322 V, TotalCurrent=7.14463993632474e-12, DisplacementCurrent=3.0437121600456e-18, eCurrent=1.01944917915676e-13, hCurrent=7.0426919746969e-12 (raw electrode currents).
+- Nearest sampled n2 current +1.34081278% above n4 target, not exactly matched.
+- n2 displacement share=0.0000426013% at this nearest point; n4 t=1s, 5V displacement share=0.0000479753%: both negligible at comparison point. This does NOT independently prove DC steady state, physical current-density normalization or QW carrier injection.
+- Earlier n2 PLT 2-point linear interpolation yielded V~4.921801256V for exact n4 raw current, but no spatial TDR at that n2 bias, so 5V 4QW radiative fraction results are not matched-current IQE observations.
+
+Updated GitHub individual timeline, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS and LIVE_STATE.md/json. School TCAD files unchanged. NEXT: read-only inspect effective AreaFactor/2D current normalization in n2/n4 preprocessed decks/logs before linking to physical current density.
+
+---
+
+## 2026-10-12T10:44:57Z — TaekGyu0801
+
+[2026-10-12 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: REVIEW / PROPOSED EXPERIMENT PLAN
+상태: PROPOSED (서버 실행·코드 수정 없음)
+
+객관적 재판단: 마감이 촉박한 상황에서 매번 READ-ONLY 진단 후 순차적으로 수일 소요 실험을 새로 시작하는 방식은 비효율적이다. 이전 ChatGPT의 순차적 조언은 일정 관리를 충분히 고려하지 않았다. Claude처럼 원인 후보를 실험하는 것이 적절하지만 한꺼번에 여러 물성 변경하거나 전류 증가만 보고 Baseline 확정하면 안 된다.
+
+제안: 원본 CAL4V 보존 후 (0) 기존 설정 4V ramp+hold 안정화, (A) AlGaN EBL SRH tau 한 변수만 10배 변화(임의 민감도, 보정 아님), (B) polarization activation 1.0 vs 0.5 한 변수 변경(문헌 기반 민감도, 물리 보정 아님)을 개별 프로젝트로 실행, 여건 되면 병렬. 병렬 자원이 부족하면 대조군+EBL 민감도를 우선. NLM V2는 mt/mesh 오류 해소 전 장시간 실행하지 않고 문법·mesh 스모크 준비만. 실제 코드 소스·저장 재시작점·라이선스 한도 확인 전 실행 성공/시간 단정 금지.
+
+비교 지표: 같은 bias/time/geometry/mesh, 전극 I_total/e/h/displacement/Charge, EBL SRH, 8QW Rad/SRH, n/p, quasi-Fermi, 누설/전류 연속성. 변위전류 94% 주장은 미증명, EBL 99.77% SRH도 원인 확정은 아님.
+
+변경: 이택규 TIMELINE + NEXT_ACTIONS에 PROPOSED 기록. TCAD 코드/시뮬레이션 변경 없음.
+다음: 기존 소스와 pp2_des.par에서 EBL tau 확인 후 각각의 한 변수 변경 모델을 안전하게 clone 및 short diagnostic run.
+
+---
+
+## 2026-10-12T10:45:51Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST]
+Worker: JuSubin; AI: ChatGPT
+Type: PROGRESS / PHYSICAL NORMALIZATION GATE
+Status: OBSERVED for files, UNRESOLVED for J conversion
+
+User executed read-only `grep -ni 'AreaFactor' pp2_des.cmd pp4_des.cmd FASTC1_pp6_des.par n2_des.log n4_des.log | head -n 60` in JUSUBIN_FAST_HALF_5V_TEST; no output, then normal prompt. This means no textual AreaFactor keyword appears in those five files, NOT that its effective default value/current unit was independently verified. Therefore do not prematurely convert raw terminal current to A/cm2. Known raw total at final 5V: n2 1.44801646079583e-11, n4 7.05011114486348e-12; neither steady-state J nor physical injection established. Project COMMON_BASELINE says 2D Cartesian planar geometry, representative mesa 4um, domain 5um; use actual half-geometry and electrode extent for normalized J after confirming T-2022.03 conventions. No new run or modifications to source/results.
+
+Next: read-only inspect SDevice deck File/Electrode/Math and SDE actual geometry/contact dimensions; identify documentation-based 2D current scaling and distinguish mesa vs domain/pitch.
+
+---
+
+## 2026-10-12T10:49:46Z — TaekGyu0801
+
+[2026-10-12 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / EXPERIMENT PLAN / HANDOFF
+상태: USER-APPROVED PROPOSED (학교 서버 수정·실행 확인 전)
+
+요약:
+- 기존 CAL4V에서 분극 문제 가설을 즉시 직접 시험하기로 사용자 결정. 원본 CAL4V와 5V_TEST 보존, 분리 clone으로 분극 계면전하 activation 1.0 -> 0.5만 바꿔 단일 변수 비교.
+- 후보 새 프로젝트 CMP_BASELINE_1.4.0_POL50 (공식 명명 규칙상 물리 변경=minor, 서버 기존 이름 재확인 필요). 4V/FinalTime0.8s/5V/s ramp, mesh, geometry, doping, contacts, SRH, NtSide=0, trap, solver, 기타 polarization parameters 및 tunneling 모두 불변.
+- 새 0.5 계수가 실제 어떤 interface qPE를 줄이는지 T-2022.03 공식 문서 및 전처리 활성 deck 확인 후 적용. 별도 `FixedCharge` 등 우회 override 여부 점검; active parameters 한 변수만 바꾸고 preprocess diff 확인. 기존 4V SAV를 물성 바뀐 계산에 무검증 재시작하지 않음.
+- 동일 4V 결과에서 electrode currents, EBL/QW SRH/radiative, carrier density, QF, potential, PE_Charge 비교. 50%는 calibrated truth 아님; 전류 개선만으로 원인 확정 금지.
+
+근거: 사용자 직접 실행 방향 결정; GitHub protocol/naming convention; Sentaurus Training AlGaN 16.4.3 (polarization activation charge scaling) https://ghzphy.github.io/Sentaurus_Training/sd/sd_16.html
+변경: LeeTaekGyu timeline, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY 기록. 코드/서버 계산 직접 실행 없음.
+다음: Claude가 실제 학교 server parent 소스와 model/PAR 확인하여 1 factor clone + preprocess + smoke, 가용하면 즉시 새 4V run. 실행 후 log/status/결과 기록.
+
+---
+
+## 2026-10-12T10:49:59Z — soybeanmilk0514-jpg
+
+[2026-10-12 ~19:46 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / PHYSICAL NORMALIZATION REVIEW
+상태: OBSERVED for geometry; DERIVED CONDITIONAL for J; UNRESOLVED for effective 2D scaling
+
+User actual SDE `pp1_dvs.cmd` grep terminal screenshot: 'Simulate only LEFT HALF of mirror-symmetric full device', 'physical mesa width = 4.0 um', 'simulated mesa width = 2.0 um'; W_mesa=4.000, W_domain=5.000. Centerline is W_domain/2 and physical left edge (W_domain-W_mesa)/2. DmgR absent in half, top contact comment DmgL+Clean. Numerical 5um domain is not active mesa width. Previous grep found no explicit AreaFactor text in pp2_des.cmd, pp4_des.cmd, FASTC1_pp6_des.par or n2/n4 logs.
+
+Using raw 5V I_n2=1.44801646079583e-11 and I_n4=7.05011114486348e-12, IF default 2D raw units A/um and effective scale=1 and physical half mesa lateral width 2um then conditional J_n2=7.2400823e-4 A/cm2 and J_n4=3.5250556e-4 A/cm2. These are NOT yet verified physical current densities; actual contact width and Sentaurus current-unit and default AreaFactor behavior need verification. No user code or simulations changed.
+
+Next read-only inspect SDE actual top/bottom contact extents (around lines 415–495), then confirm proper normalization. Written JuSubin TIMELINE, TEAM_TIMELINE, NEXT_ACTIONS, LIVE_STATE.md/json; CURRENT_STATUS write attempt blocked.
+
+---
+
+## 2026-10-12T10:54:56Z — soybeanmilk0514-jpg
+
+[2026-10-12] JuSubin OBSERVED SDE contacts from pp1_dvs.cmd lines 415-495: anode assigned two top left-half mesa edges at y midpoints (yL,yDL) and (yDL,yC), corresponding DmgL and Clean. Cathode assigned one bottom n-GaN base edge at yC/2, numerical base spans y 0 to yC. Symmetry boundary at yC is not an etched sidewall. With prior full mesa 4um, half mesa 2um and domain 5um, upper contact width estimated 2um, lower numerical base 2.5um, pending numeric y variable and actual edge checks. AreaFactor defaults and physical current density NOT validated. Next read-only inspect SDE numeric variables and 2D current convention. Shared status and timelines synced; TCAD files unchanged.
+
+---
+
+## 2026-10-12T10:59:36Z — soybeanmilk0514-jpg
+
+[2026-10-12 KST] JuSubin OBSERVED SDE numeric coordinate/contact audit. From actual pp1_dvs.cmd W_mesa=4um, W_domain=5um, W_damage=0.005um, yL=(5-4)/2=0.500um, yDL=0.505um, yC=5/2=2.500um. Top anode covers DmgL segment y=0.500..0.505 (5nm) plus Clean y=0.505..2.500 (1.995um), half-mesa contact total 2.000um. Bottom cathode numerical n-GaN base covers y=0..2.500, width 2.500um; NOT emission mesa width. Model planar left-half of 4um full mesa with artificial symmetry boundary yC. Older Sentaurus UG shows default 2D out-of-plane thickness 1um and AreaFactor multiplier; no explicit AreaFactor was found in project five inspected files, but installed T-2022.03 effective scaling still needs verification. Conditional J using I raw per default 1um thickness / (2um*1um): n2 5V 7.24008e-4 A/cm2, n4 5V 3.52506e-4 A/cm2. These are DERIVED CONDITIONALLY, not accepted experimental/model-calibrated J; low-J baseline remains blocker. No school TCAD files changed. Written JuSubin timeline, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE md/json. Next confirm effective scaling then physical hole injection/SRH.
+
+---
+
+## 2026-10-12T11:22:29Z — TaekGyu0801
+
+[2026-10-12 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT REVIEW / PROGRESS / HANDOFF
+상태: USER-REPORTED OBSERVED / DERIVED / UNRESOLVED
+
+요약:
+- User supplied Claude report with CAL4V 4V cutline y=2.0um. Given QW1 eQF=-1.4025eV, hQF=-3.017eV, anode hQF=-4eV and cathode eQF=0eV, arithmetic exactly 4.000 = electron 1.4025 + hole 0.9830 + QW splitting 1.6145 eV. This is quasi-Fermi decomposition (identity), not proof of dissipative 2.4V loss.
+- EBL Potential 2.3215 -> 3.3274V over 0.026um gives 1.0059V, average ~0.3869 MV/cm; EBL Ev changes -1.046eV, ratio 96.2%, consistent electrostatic contribution along reported layer. Cannot attribute to polarization alone without bias/reference comparisons.
+- At QW/B1 E normal 2.61 and -0.15 MV/cm, epsr assumed equal 9.5 -> field jump corresponds nominal ~1.45e13 charge/cm2. Literature (Cambridge Core paper 'Material Properties of GaN in the Context of Electron Devices') gives In=0.15 Ppiezo ~1.65e13 e/cm2, order-of-magnitude compatible; NOT independent demonstration exactly 100% polarization because epsilon differs and mobile sheet charge/strain/material DB unverified.
+- Claude estimate WKB transmission at one energy T~9e-3 does NOT establish complete tunneling impact limited to <=2x; unknown energy integration, hole masses/paths, tunneling etc. Keep NLM V2 on hold.
+- User supplies Claude report POL50 was created by SWB Save As, global polarization activation changed 1.0 to 0.5 ONLY (source/preproc line64 single difference, par unchanged). Equilibrium smoke success, PE_Charge interface sampling all 0.5x (e.g. 5.7719771e20 -> 2.8859886e20 cm^-3), and node2 NtSide0 original 4V/0.8s 5V/s transient RUN STARTED. No POL50 4V completion/results yet supplied. We did not access school server independently; these remain user-shared Claude observations.
+- Earlier q(total bulk R)/anode total ~5.63% is NOT proof 94% transient charging. EBL SRH 99.77% does not alone prove hole barrier; material effective AlGaN SRH tau, electron and hole currents/leakage remain unverified.
+
+변경:
+- CMP LeeTaekGyu TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json and RELAY updated. School TCAD files untouched by ChatGPT.
+
+다음:
+- POL50 actual 4V run status; compare exactly matched 4V/0.8s parent vs POL50 anode/cathode currents, EBL + QW recombination spatial integrals, carrier density/QF, band/potential, PE_Charge. Do not equate increased current with calibrated physics.
+- No additional long job or polarization/lifetime/tunneling edits before first comparison; preserve both original CAL4V and JuSubin 5V_TEST.
+
+Sources:
+- User-provided Claude pasted server-output summary.
+- https://www.cambridge.org/core/journals/materials-research-society-internet-journal-of-nitride-semiconductor-research/article/material-properties-of-gan-in-the-context-of-electron-devices/6F9A295C18136F93903933CB8BD15108
+- https://ghzphy.github.io/Sentaurus_Training/sd/sd_16.html
+- https://arxiv.org/abs/2211.05704
+
+---
