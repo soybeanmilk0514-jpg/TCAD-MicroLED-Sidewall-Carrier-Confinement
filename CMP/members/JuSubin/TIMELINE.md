@@ -1,3 +1,28 @@
+## 2026-10-13 — 3주차 발표 12번 '향후 연구 계획' 단일 슬라이드 개정 (PRESENTATION / OBSERVED)
+- 사용자 요청으로 기존 13장 중 **12번 슬라이드만** 가독성 중심의 4단계 로드맵으로 재설계하고, 요청대로 한 장짜리 편집 가능한 PowerPoint로 출력: `CMP_3주차_12번_향후연구계획_한장.pptx` (채팅 산출물; GitHub 바이너리 업로드 안 함).
+- 핵심 순서 유지: ① 전류 정규화·Mg/EBL/MQW 수송 검증 → ② 동일 전류의 Trap별 QW SRH/Radiative 비교 → ③ Full/Half·Mesh 정확도 검증과 Baseline 확정 → ④ Project A C 고저항 Edge와 B AlGaN Barrier 성능 평가.
+- 하단 지표는 측벽 SRH↓, QW Radiative↑, IQE↑, 구동전압 페널티로 축약. 미해결 항목은 향후 단계로 표시했으며 이미 완료된 것처럼 표현하지 않음.
+- 원본 2주차 밝은 배경·청록색 팔레트·헤더/푸터 계승. 수정 슬라이드만 분리한 PPTX의 slide count=1, ZIP 무결성 및 LibreOffice PDF 1페이지 변환·PNG 렌더링 확인. TCAD 코드·시뮬레이션·연구 결론 변경 없음.
+
+## 2026-10-13 — 3주차 PPT 11번 슬라이드 가독성 개정 (PRESENTATION / OBSERVED)
+- 사용자 요청으로 11번 '추가 원인 검토'의 장황한 로그 상태표를 교체. 9·10번 개정 슬라이드 유지, 13장 전체 PPTX 산출물 `CMP_Week3_JuSubin_Slide11_Clear.pptx` (채팅 전달, GitHub에 PPT 바이너리는 올리지 않음).
+- 핵심 흐름을 ① 손실 위치: 이택규의 별도 CAL4V에서 전체 domain SRH 중 EBL 약 99.77% 집중으로 보고 ② 원인 후보: EBL/MQW 정공 주입 및 수송 제한 가능성은 UNRESOLVED ③ 검증 방향: POL50(activation 1.0→0.5) 별도 분극 민감도 시험, 4V 수송 결과 완료 확인 전으로 축약.
+- 실제 CAL4V SVisual cutline 이미지 삽입 위치는 그대로 두고 가짜 SVisual 결과를 생성하지 않음. 사용자 전달 Claude 분석 보고치와 주수빈의 별도 5V_TEST 데이터를 혼합하지 않고, 원본 학교 서버 출력 미검증임을 각주에 표시.
+- PPTX 13장 재파싱, LibreOffice PDF 13장 변환, 11번 페이지 렌더링 시각 확인 성공. TCAD 코드·물성·실제 시뮬레이션 변경 없음.
+- 다음: 실제 SVisual cutline 확보 시 placeholder 교체; 사용자가 PowerPoint 열림 및 발표 디자인 확인.
+
+## 2026-10-13 — 3주차 PPT 10번 슬라이드 가독성 개정 (PRESENTATION / OBSERVED)
+- 사용자 요청에 따라 10번 슬라이드 “문제 해결 시도”를 기존 5행 검사표에서 교수님이 이해하기 쉬운 **세 질문 → 확인된 근거 → 아직 남은 검증** 구조로 재설계. 산출물: `CMP_Week3_JuSubin_Slide10_Clear.pptx` (13장 전체, 기존 9번 슬라이드 개선 상태 유지, 10번만 변경).
+- ① 전극/대칭 구조 확인: Half 상부 접촉 2.0 um 및 중앙 대칭면 확인. ② p-GaN Mg 9.59e18 / hole density 약 3e17 cm^-3 관측, 이온화 해석은 미해결. ③ Thermionic 모델 ON 로그 확인, 실제 2D 전류 면적 보정 및 저전류 원인은 미해결.
+- 오른쪽 SVisual p-GaN Probe 또는 SDE Contact 실제 캡처를 넣을 플레이스홀더를 유지했으며, 가짜 실험 이미지는 생성하지 않음. 결론은 “구조/Thermionic 일부 설정 확인, 저전류 원인과 전류 정규화는 여전히 검증 중”으로 명시.
+- 출력 PPTX는 python-pptx 열기, 13장 검증, LibreOffice 렌더 및 슬라이드 오버플로 테스트를 통과함. 학교 서버 실행, TCAD 코드·물성·시뮬레이션 결과 변경 없음.
+
+## 2026-10-13 — 3주차 PPT 9번 슬라이드 가독성 개정 (PRESENTATION / OBSERVED)
+- 사용자 요청에 따라 9번 슬라이드의 장황한 본문을 제거하고, 좌측 5V raw TotalCurrent 2조건 수평 막대와 우측 QW SRH/방사 재결합 핵심 수치로 재설계함. 산출물: `CMP_Week3_JuSubin_Slide09_Clean.pptx` (13장 전체 덱, 9번만 변경).
+- 5V raw terminal current: NtSide=0 1.448e-11 vs NtSide=1e18 7.050e-12 (약 51.3% 차이). QW 모델 내부 SRH 비율 약 99.9%; 방사 비율 0.1095% vs 0.0489%를 표시함.
+- 저전류와 SRH 우세의 원인은 미확정. 동일 전압에서 서로 다른 전류로 비교한 결과이며, 동일 전류의 순수 Trap 영향으로 확정하지 않음. 2D 전류 정규화 및 IQE calibration 미완료 주의 문구 유지.
+- PPTX 13장 파싱·ZIP 무결성·9번 페이지 렌더링 확인 완료. TCAD 코드/시뮬레이션/물리 설정 변경 없음. 사용자 실제 PowerPoint 열림은 확인 전.
+
 ## 2026-10-13 — 3주차 PPTX 열기 문제 대응 (DELIVERABLE FIX / USER VERIFICATION PENDING)
 - 사용자 보고: 기존 3주차 PPTX가 열리지 않음. 기존 PPTX는 ZIP 무결성, XML 파싱, python-pptx(13장), LibreOffice 파일 열기/렌더링 검사에서 오류 재현되지 않음. 사용자 앱/다운로드 환경 원인은 확인하지 못함.
 - LibreOffice Impress Office Open XML 형식으로 다시 저장한 호환성 수정본 `CMP_Week3_JuSubin_Compatible.pptx` 작성. ZIP 압축 배포본과 13장 PDF 미리보기도 채팅에 제공. 수정본 ZIP/슬라이드 파싱/13장 PDF 생성 검사를 통과했으나 실제 사용자 PowerPoint에서 열리는지는 확인 전.

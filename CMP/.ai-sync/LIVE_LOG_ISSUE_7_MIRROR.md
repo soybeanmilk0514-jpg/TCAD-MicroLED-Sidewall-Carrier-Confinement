@@ -6643,3 +6643,106 @@ AI: ChatGPT
 다음: 사용자 측 실제 파일 열림 여부 확인.
 
 ---
+
+## 2026-10-13T04:57:17Z — soybeanmilk0514-jpg
+
+[2026-10-13 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / PRESENTATION
+상태: OBSERVED (PPT 개정 및 렌더링), UNRESOLVED (모델 전류 정규화/동일전류 Trap 비교)
+
+요약: 3주차 PPT 9번 슬라이드를 가독성 중심으로 재편집. 5V raw 전류 수평 막대(1.448e-11, 7.050e-12), QW SRH≈99.9%와 방사 비율(0.1095%/0.0489%)만 주요 시각 정보로 남기고 상세 문단 제거. 13장 덱에서 9번만 변경. 동일 5V·서로 다른 전류에 따른 해석 한계는 유지.
+근거: 기존 JuSubin 5V_TEST SVisual/PLT 분석 결과 및 새 PPTX 렌더링 확인.
+변경: 주수빈 TIMELINE, 채팅 배포 PPTX. TCAD 코드와 실험 결과 변경 없음.
+다음: 주수빈 최종 디자인 편집 및 실제 PowerPoint 열림 확인.
+
+---
+
+## 2026-10-13T05:01:40Z — TaekGyu0801
+
+[2026-10-13 KST]
+작업자: 이택규
+AI: ChatGPT (Claude V2 독립 정적 검토)
+구분: PROGRESS / BLOCKER / HANDOFF
+상태: OBSERVED (ZIP 원본과 코드), PROPOSED (V2); UNRESOLVED (실서버 실행·수렴)
+
+요약:
+- 사용자 업로드 `CMP_BASELINE_V2_20261013.zip` 확인. ZIP SHA256 `8f26d1d17fb24ba4528dc51daf0bb9edf3f95c6c984ceb942e02e5882099bde8`, 내부 SHA256SUMS 일치. Claude README는 NOT RUN이라고 명시; 실행 로그, TDR 없음.
+- 중요 코드 불일치: `bl2_des.par` Scharfetter 모든 물질 τmin=0, τmax=1e-7s, Nref=1e16, gamma=1. 따라서 문서의 '전 영역 τ=100ns'와 다름. 명목 도핑으로 계산한 τ(pGaN)=0.166ns, τ(EBL)=0.050ns, τ(nGaN)=0.200ns, τ(pCap)=0.020ns, τ(QW)=90.91ns. 실제 effective 값은 T-2022.03 출력에서 재확인해야 함.
+- 분극 activation 0.5는 literature precedent가 있으나 CMP calibration 아님; 보호된 원래 1.0 기준은 control로 보존. EBL Mg 2e19 incomplete ionization, 고정 mobility, p+ cap, QS 등 여러 모델을 동시 변경한 신규 후보일 뿐 기존 low J를 해결한 증거는 없음.
+- `bl2_check.py` q*(Rad+SRH+Aug+Trap)/I ~1 이 자동 통과조건이라는 설명은 leakage와 trap bookkeeping 미검증 때문에 부적절. 독립적 전류 수지/정규화/트랩 채널을 확인해야 함.
+
+근거: 사용자 업로드 파일 직접 확인, 코드 라인, 프로젝트 GitHub 선행 검증 기록. GitHub private TCAD 코드 원문은 게시하지 않음.
+변경: Lee TIMELINE, TEAM_TIMELINE, ERROR_LOG, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/.json, RELAY. 기존 SWB source 및 실행 job 변경 없음.
+다음: τ 의도를 확정하고 별도 V2 후보에서 SDE/SDevice S0 파싱 및 평형 검증 → I–V 누설/재결합 분리 후 S1 → NtSide 비교. 서버에서 이미 돌린 경우 해당 실로그/해시를 먼저 대조.
+
+---
+
+## 2026-10-13T05:05:17Z — soybeanmilk0514-jpg
+
+[2026-10-13 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / PRESENTATION
+상태: OBSERVED (PPT 수정), UNRESOLVED (저전류의 물리적 원인)
+
+요약: 사용자 요청으로 3주차 PPT 10번 슬라이드를 “낮은 전류 원인 점검”으로 수정. 기존 5항목 표를 전극·대칭 구조 / p-GaN 정공 및 Mg 이온화 / 수송 모델·전류 정규화의 세 개 쉬운 질문과 확인 결과로 재배치. 실제 SVisual/SDE 이미지는 플레이스홀더로 유지. 기존 9번 슬라이드 개선 사항도 보존.
+
+근거: 2026-10-12 JuSubin 5V_TEST 기존 SDE/SVisual/SDevice 로그, 수정 PPTX(13장) 렌더링과 오버플로 검사.
+변경: CMP/members/JuSubin/TIMELINE.md; 사용자 전달 PPTX. 소자 코드/계산/결과 변경 없음.
+다음: 사용자가 발표자료 편집 중 실제 SVisual Probe 화면 삽입; 낮은 전류 및 2D 정규화는 미해결.
+
+---
+
+## 2026-10-13T05:13:42Z — TaekGyu0801
+
+[2026-10-13 KST] 
+작업자: 이택규
+AI: ChatGPT
+구분: FIX (audit erratum) / PROGRESS
+상태: OBSERVED SOURCE / UNRESOLVED T-2022.03 RUN
+
+**Correction to preceding V2 review in this Issue**: Previous assertion 'current V2 Scharfetter makes EBL SRH lifetime ≈0.05ns' was WRONG. `SWB_PASTE/sdevice_des.cmd` line 35 is `Recombination(SRH Radiative Auger)` without `SRH(DopingDependence)`. Sentaurus UG SRH Doping Dependence states if no option then τ=τmax, so active intended V2 lifetime =100ns (all .par Scharfetter taumax=1e-7). 0.05ns is hypothetical only if doping dependence were explicitly enabled. Do not patch 100ns setting based on old error; verify actual T-2022.03 load/log.
+
+Additional source-checked review:
+- Lu 2021 (NRL 16:99) and Yin 2024 (Front Optoelectron 17:8) employ polarization 0.5 and 70:30 offset *as assumptions*; Baek 2023 (Nat Commun 14:1386) uses 0.5/50:50 and B=1e-10 C=1e-31. VM2003 bowing InGaN1.4/AlGaN0.7. Neutral-bulk Mg inversion math close to V2 N values but EBL activation and p+ cap uncalibrated.
+- User ZIP remains PROPOSED/NOT RUN, no server data. `bl2_check.py` IQE QW rad/whole recomb is not solely QW IQE, qR/I cannot universally equal1 when leakage, and EBL fraction omits trap/Auger. CurrentPlot trap e/h and integration semantics need S0 runtime verification.
+- Previous 0.0193V QS failure causal diagnosis (RHSMin=1e-3) unproven; actual V2 SUPER method not explicitly selected. Mesh equality under Project B material changes not established without node comparison. Quantum corrections not explicit.
+
+변경: Lee/TEAM timelines, ERROR_LOG, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE md/json, RELAY (correction appends); no SWB code/process changed.
+다음: S0 source preprocess, mesh/contact/material/0V and true runtime log; correct postprocessor, then S1/S2 conditional; keep legacy controls.
+
+---
+
+## 2026-10-13T05:15:51Z — soybeanmilk0514-jpg
+
+[2026-10-13 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / PRESENTATION
+상태: OBSERVED (11번 슬라이드 편집·파일 검증), UNRESOLVED (저전류 원인 및 POL50 4V 결과)
+
+요약: 기존 3주차 PPT 11번 '추가 원인 검토'를 간결한 3단계 질문(EBL에서 손실 집중 → 정공 수송 원인 미확정 → POL50 민감도 테스트) 형식으로 재편집. 이택규 별도 CAL4V에서 전체 SRH 중 약 99.77%가 EBL에 집중됐다는 사용자 전달 보고값을 사용하고, 이를 주수빈 5V_TEST와 혼합하지 않음. 원본 서버 로그는 이 작업 중 재검증하지 않음. SVisual cutline 이미지는 실제 사진 삽입 자리로 유지.
+
+근거: CMP 2026-10-12 기록; 13장 PPTX 파싱, PDF 재변환 및 슬라이드 11 렌더링 확인.
+변경: CMP/members/JuSubin/TIMELINE.md, 채팅 배포 PPTX. TCAD 코드/실험/결과 변경 없음.
+다음: 실제 CAL4V SVisual 이미지 삽입 및 발표자 검토.
+
+---
+
+## 2026-10-13T05:35:46Z — soybeanmilk0514-jpg
+
+[2026-10-13 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / PRESENTATION
+상태: OBSERVED (PPT 편집/렌더링), UNRESOLVED (Baseline 물리 검증)
+
+요약: 3주차 발표 12번 '향후 연구 계획' 페이지를 가독성 높은 4단계 가로 로드맵으로 재구성하고 **12번 한 장짜리 편집 가능한 PPTX만** 전달함. 단계는 전류·수송 검증 → 동일 전류 Trap 비교 → Baseline 확정(Full/Half·Mesh) → Project A/B 성능 검증, 성과지표는 Sidewall SRH/Radiative/IQE/전압 페널티로 축약. 아직 완료되지 않은 연구 검증 항목은 계획으로 유지.
+
+근거: 기존 CMP GitHub 기록 및 2주차 발표자료. 산출물 PPTX slide count 1, ZIP 무결성, PDF 1페이지 변환과 PNG 렌더링 통과.
+변경: 주수빈 TIMELINE, 채팅 배포 PPTX. 학교 서버/TCAD 코드/실험 결과 변경 없음.
+다음: 연구원 발표 디자인 및 내용 최종 확인.
+
+---
