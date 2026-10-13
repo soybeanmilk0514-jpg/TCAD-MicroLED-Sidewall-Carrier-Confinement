@@ -6746,3 +6746,40 @@ AI: ChatGPT
 다음: 연구원 발표 디자인 및 내용 최종 확인.
 
 ---
+
+## 2026-10-13T12:07:34Z — TaekGyu0801
+
+[2026-10-13 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / RESULT-INVENTORY
+상태: OBSERVED (서버 파일 존재), UNRESOLVED (SDevice 정상 종료·물리 검증)
+
+요약: Claude Baseline V2 실제 서버 프로젝트가 /user/semi/semi437/CMP_BASELINE_2.0.0_V2에 존재함을 사용자 터미널 출력으로 확인. Node1 n1_msh.tdr(2,060,977B), node2 n2_des.log(324,401B)/n2_des.plt(134,765B)/n2_des.tdr(20,661,842B) 및 n2_end_des.sav, node6 n6_des.log(257,035B)/n6_des.plt(65,627B)/n6_eq_des.tdr가 존재. 제출 목록에는 n6_des.tdr 없음. 기존 ZIP만 검사할 당시 NOT RUN이었으나 지금 서버 산출물은 관찰되었음. 성공적 종료·최종 전압·전류·모델 타당성은 아직 확인하지 않음.
+
+근거: 사용자 제공 2026-10-13 ls -lh 및 find 원문 출력.
+변경: Lee/TEAM timelines, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY; TCAD 코드나 원본 시뮬레이션 파일 수정 없음.
+다음: read-only n1/n2/n6 *.sta와 n2/n6 des.log tail 및 fatal/error/finished 줄을 받고 종료·전압·전류 판정, 이후 물리 모델 확인.
+
+---
+
+## 2026-10-13T12:09:39Z — TaekGyu0801
+
+[2026-10-13 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED (n1 done, n2 SDevice 정상 종료, n6 running); UNRESOLVED (V2 물리적 타당성)
+
+사용자 실제 서버 출력: n1_dvs.sta=done, n2_des.sta=done, n6_des.sta=running. n2_des.log 마지막: 'Sentaurus Device simulation finished' at Tue Oct 13 18:51:50 2026 KST, Good Bye!, wallclock 13107.96 sec (3h38m27s), peak memory 2.41 GB, n2_end_des.tdr/.sav 및 n2_des.tdr 저장 완료. n6_des.log 마지막 표시된 완료된 단자 상태: anode 2.018V, raw conduction 9.514E-17, cathode opposite sign; 새 Newton step t=.0113234→.0119577 iteration4까지만 보이며 현재 step 수렴/경과는 확인 전. **n2 solver 종료와 물리적으로 검증된 Baseline은 별개**. 완료 n2의 실제 최종 전압·전류 및 T-2022.03 효과적 모델·2D 면적 정규화 아직 미검증.
+
+변경: 이택규/팀 타임라인, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json. 학교 서버 파일 및 코드는 변경하지 않음.
+다음: read-only n2 로그 최종 anode 전류 + pp2 전압 Goal, n6 PID 93107 및 로그 수정시각 확인. 이후 contact balance / model physics check.
+
+---
+
+## 2026-10-13T12:17:56Z — TaekGyu0801
+
+[2026-10-13 KST] 이택규 / ChatGPT / BLOCKER / USER-REPORTED + UNRESOLVED: User confirmed Claude V2 n2 ended early, before requested 3.6V. Previously observed SDevice simulation finished/Good Bye and SWB done, but last reported anode was 2.070V and raw conduction 1.781e-16. Cause remains unknown; normal process termination is not proof that voltage goal was reached. Next: read-only inspect pp2_des.cmd Solve lines 175-215 and n2_des.log termination/convergence and final 65 lines. Do not rerun n2 or interrupt n6 until diagnosed. GitHub timelines/status/next actions/live state/relay updated.
+
+---

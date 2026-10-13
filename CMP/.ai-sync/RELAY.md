@@ -1,3 +1,24 @@
+## 2026-10-13 — 이택규 Claude V2 독립 수치·물리 검토 (GPT ANALYSIS / USER-REPORTED RUN3)
+- 사용자 전달 Claude 설명: run1 2.31V 도달 후 QS Newton 진동, run2 2.070V 조기 종료, **run3는 Claude가 수정한 복사본**에서 `Method=Blocked, SubMethod=ParDiSo, NumberOfThreads=4, Iterations=20, NotDamped=50, ExtendedPrecision` 설정으로 실행 중이라고 보고됨. **새 복사본의 원본 pp*/log 및 성공/개선은 직접 검증되지 않음**.
+- 독립 검토(해석, 결과 아님): QS MaxStep는 V가 아닌 정규화된 t에 작용하므로 stage 2.0→3.6V의 MaxStep 0.01은 최대 0.016V, 0.02는 0.032V, MinStep 1e-6은 1.6 microV. 2.3V 수렴은 스텝 크기/수치 stiff 문제 가능성 높으나 물리 원인 미확정. `NotDamped=50>Iterations=20`은 기본적으로 Bank–Rose damping을 지연시키지만 Sentaurus 교육자료는 QS에서 작은 스텝을 일반적으로 우선하므로 '오류'로 단정 금지.
+- Sentaurus 교육자료 `sd_6`에 따라 CNormPrint/NewtonPlot 좌표로 실패 방정식/영역을 확인. 사용자 서버 n2 파일 목록에는 `n2_des_min_des.tdr` 존재하므로 near-MinStep 자동 진단과 관계 있을 가능성(확정 전 로그 확인). 저밀도 `HighFieldSaturation` driving-force smoothing은 **실제 electron/hole 저밀도 수치 불안정이 확인되는 경우만** 제안.
+- `Method=Blocked, SubMethod=ParDiSo`는 mixed-mode에 적합; standalone device면 `Method=ParDiSo`가 교육자료 예시. `ExtendedPrecision`은 III-N에서 권장되지만 PARDISO 4-thread와 조합 시 병렬 성능이 저하될 수 있음. `Iterations=20` 일반적으로 합리적. T-2022.03 UG p221/1070 사용자 인용은 원문 직접 미대조.
+- 2.31V J≈1.3e-6 A/cm2 및 국소 이상계수≈1.6이 3.6V에서 J>1A/cm2 증거는 아님: 300K/고정 n=1.6 가정의 **순수 수학적** 외삽에서 J=1A/cm2는 V≈2.871V이며 높은 주입/직렬저항/수송 변화로 물리적 예측 불가. 2D J/AreaFactor 실제 설정 확인 필요.
+- A/B 보류사항: 50% polarization/70:30 offset calibration 없음; p+Mg/EBL PDopant 실제 활성 정공 및 thermionic interface 확인; sidewall uniform 5nm Nt1e18 cm-3→조건부 5e11cm-2 등가 면밀도, C implant의 실측 프로파일 아님; Project B edge-QW AlGaN replacement는 QW 부피/밴드·계면을 동시에 바꾸며 conformal barrier와 다름; equal-current QW IQE/transport, symmetry/full-vs-half/mesh convergence 검증 필요.
+- 근거: 사용자 메시지+앞서 제공된 n2/n6 실제 파일 목록/로그, GitHub 기존 V2 감사 및 Synopsys 교육자료 웹 미러 sd_6/sd_8/sd_9/sd_16, 학술 microLED 문헌. **코드 수정 또는 run 재시작 없음.**
+- 다음: 복사본 실제 전처리 Solve/Math, 최근 마지막 accepted voltage/current 및 CNormPrint/MinStep 메시지 확인. 실행 중인 원본 n6 및 복사본 무단 종료 금지.
+
+## 2026-10-13 — 이택규 Claude V2 n2 조기 종료 인수인계 (UNRESOLVED)
+- 관측: n2 done/SDevice finished, 마지막 표시 2.070V, 1.781e-16 raw, pp2 Goal 3.6V. 사용자 조기 종료 확인. 원인 아직 모름. 먼저 pp2_des.cmd 175–215행과 n2_des.log termination/last65 lines를 요청. n6 진행 중, 작업 및 소스 수정 금지.
+
+## 2026-10-13 — 이택규 Claude V2 서버 실행 산출물 최초 확인 (OBSERVED FILE INVENTORY / UNRESOLVED RUN STATUS)
+- 사용자 제공 실제 학교 서버 Bash `ls -lh` 및 `find` 출력. 실 프로젝트 경로는 `/user/semi/semi437/CMP_BASELINE_2.0.0_V2` (**`tmp/myproject` 아래가 아님**); 이전 경로 안내를 정정.
+- SDE node1: `n1_bnd.tdr` 109,952 bytes, `n1_msh.tdr` 2,060,977 bytes, `n1_dvs.log` 8,046 bytes 및 `n1_msh.log` 2,992 bytes. 파일 생성 자체 확인, 메쉬 품질/접촉 검증 미완료.
+- SDevice node2: `n2_des.log` 324,401 bytes, `n2_des.plt` 134,765 bytes, `n2_des.tdr` 20,661,842 bytes, `n2_end_des.tdr` 및 `n2_end_des.sav` 존재; `n2_eq_des.tdr` 존재. 이는 실제 실행 산출물의 존재를 확인하는 것이지 완료 성공/최종 전압/전류 검증은 아님.
+- SDevice node6: `n6_des.log` 257,035 bytes, `n6_des.plt` 65,627 bytes, `n6_eq_des.tdr` 및 `n6_V1_des.sav` 존재; 보여준 목록에는 `n6_des.tdr` 없음. 실제 진행/실패/완료 미확인.
+- 기존 정적 감사의 'NOT RUN'은 ZIP 배포 당시의 기록으로만 유지. 현 서버에는 2026-10-13 실제 출력 파일이 존재하므로 현재도 미실행이라고 말해서는 안 됨. 현재 상태는 **runtime artifacts observed; physics/electrical validation unresolved**.
+- 사용자는 시간 제약으로 빠른 read-only 검증 요청. 다음 실행: 현재 V2 폴더에서 `cat n1_dvs.sta n2_des.sta n6_des.sta`, `tail -n 35 n2_des.log`, `tail -n 20 n6_des.log`, `grep -iE 'fatal|error|failed|simulation finished|good bye' n2_des.log n6_des.log | tail -n 25` 출력 확인. 성공이 입증되면 목표 전압, raw terminal current, contact balance, physics runtime 적용을 점검. 모델/원본 결과 무단 수정·재실행 금지.
+
 ## 2026-10-13 — CORRECTION: Claude V2 SRH activation + full audit (OBSERVED source / pending T-2022.03 run)
 - Correction for next AI: **Do not 'fix' V2 Scharfetter by changing τ due to past claim of EBL τ 0.05ns**; active SDevice physics only `SRH` (no DopingDependence), so expected τmax=100ns. The conditional 0.05ns arises only with doping-dependent SRH. Confirm on real T-2022.03.
 - Remaining tasks: S0 SWB syntax/0V charge/contact/mesh, verify effective applied material params and new p+cap/EBL acceptor species, check absent MaterialInterface and trap currentplot syntax. bl2_check.py IQE and qR/I gate require leakage and trap reconciliation; S2 matched current. No server code/run edits by this audit. Full interpretation in Lee TIMELINE and Issue #7.
