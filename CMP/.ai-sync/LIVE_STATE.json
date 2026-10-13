@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-12",
+  "updated": "2026-10-13",
   "primaryWorker": "이택규",
   "phase": "Phase 0 — working 5V reference NtSide 0/1e18 comparison; physical Gate0 low-J still unresolved",
   "task": "Lee user reports CMP_BASELINE_1.4.0_POL50 started (node2, NtSide0, Goal 4V, FinalTime 0.8s, ramp 5V/s) with only global polarization activation 1->0.5; source/preprocess one-line diff and equilibrium smoke halved PE_Charge. Await actual 4V result; existing CAL4V cutline suggests EBL/B0/QW polarization-related injection barrier but causality not confirmed.",
@@ -2778,5 +2778,55 @@
       "Read actual active AlGaN SRH lifetime and whether EBL recombination persists or moves, identify electron leakage/cathode hCurrent separately",
       "Preserve original CAL4V and JuSubin 5V_TEST unchanged; no new long simulation or model edits pending results"
     ]
+  },
+  "leePOL50RuntimeDelay20261013": {
+    "worker": "이택규",
+    "status": "OBSERVED_PARTIAL_SERVER_LOG_NEWTON_RHS_PLATEAU_PID_MAPPING_UNRESOLVED",
+    "project": "CMP_BASELINE_1.4.0_POL50",
+    "logFile": "n2_des.log",
+    "logMtimeKST": "2026-10-13 11:54:26.576373260 +0900",
+    "logSizeBytes": 3371197,
+    "previousAcceptedTime_s": 0.572417,
+    "previousAcceptedRHS": 0.000497,
+    "criterionRHS": 0.001,
+    "laterAttemptStartTime_s": 0.572527,
+    "laterAttemptEndTime_s": 0.572534,
+    "laterAttemptStepsize_s": 0.0000067501,
+    "ramp_V_per_s": 5,
+    "derivedLatestAttemptStartVoltage_V": 2.862635,
+    "latestAttemptIterations_2_through_6_RHS": 0.00117,
+    "latestAttemptCompletionVerified": false,
+    "observedSDevicePIDs": [
+      88354,
+      94012
+    ],
+    "processCmd": "sdevice --max_threads 4 pp2_des.cmd",
+    "processProjectMappingVerified": true,
+    "futureConvergenceAndETA": "UNRESOLVED",
+    "next": "Read-only check POL50 and CAL log progress and process CPU/memory/thread counts. Do not terminate either job without evaluating results and user direction.",
+    "pidToProjectObserved20261013": {
+      "88354": "CMP_BASELINE_1.2.0_CAL",
+      "94012": "CMP_BASELINE_1.4.0_POL50"
+    },
+    "competingRuntimeJobsObserved": true,
+    "hardwareContentionHypothesis": "UNVERIFIED"
+  },
+  "leeCAL1p2Runtime20261013": {
+    "worker": "이택규",
+    "status": "OBSERVED_PARTIAL_LOG_STEP_NOT_YET_ACCEPTED",
+    "project": "CMP_BASELINE_1.2.0_CAL",
+    "pid": 88354,
+    "latestAnodeVoltageRounded_V": 4.207,
+    "latestAnodeTotalCurrentRaw": 6.429e-14,
+    "latestAttemptStartTime_s": 0.841422,
+    "latestAttemptEndTime_s": 0.841424,
+    "latestAttemptStepsize_s": 0.0000016305,
+    "latestIteration2RHS": 0.00139,
+    "convergenceRHSThreshold": 0.001,
+    "completedStepWallclock_s": 8.03,
+    "latestAttemptSucceeded": null,
+    "processAlivePreviouslyObserved": true,
+    "sideBySide": "POL50 PID 94012 at ~2.863V and very small dt, not valid matched-bias current comparison",
+    "next": "Inspect ps -p 88354,94012 -o pid,etime,time,pcpu,pmem,nlwp,stat,args and nproc; examine new accepted times. Do not stop jobs without decision."
   }
 }

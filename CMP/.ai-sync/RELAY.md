@@ -1,3 +1,28 @@
+## 2026-10-13 — Lee CAL 1.2.0 and POL50 parallel slow SDevice run handoff (OBSERVED)
+- 실서버 CAL 1.2.0 `n2_des.log`: 직전 완료 전압 4.207V, I=6.429e-14 raw, 새 시도 t=0.841422→0.841424s, dt=1.6305e-06s, Newton iteration2 RHS=1.39e-03 > 1e-03. 해당 시도 이후 수렴은 아직 미확인. PID 88354 = CAL 1.2.0, PID 94012 = POL50. POL50 직전 로그 ≈2.863V, dt≈6.7501e-06s. 두 계산 모두 느리며 CPU 경합은 아직 검증되지 않음. 원본 계산/결과/물성 유지, 급히 kill/restart 하지 말 것. 다음 단계: 프로세스 `%CPU`, `%MEM`, NLWP와 nproc 확인 및 로그 시간 증가 재확인. CAL4V 4V 대조와 POL50 2.863V 값을 직접 비교하지 말 것.
+
+## 2026-10-13 — 이택규 POL50 PID 출처 확인 (OBSERVED)
+- 사용자 제공 서버 `/proc` cwd 출력으로 PID 88354는 `CMP_BASELINE_1.2.0_CAL`, PID 94012는 `CMP_BASELINE_1.4.0_POL50`임을 확인. 두 SDevice 동시 실행은 사실이지만 CPU 경합이 지연 원인인지 미확인. 다음 단계: 각 로그 진행 상태 및 자원 사용량 읽기 전용 점검. 계산 중단 또는 코드 변경 없음.
+
+## 2026-10-13 — 이택규 POL50 slow-step Newton pattern and two SDevice PIDs (OBSERVED / UNRESOLVED)
+- Evidence: user-pasted live server `tail -n 40 n2_des.log`, `ps -fu semi437 | grep '[s]device'`, `stat -c '%y %s bytes' n2_des.log`, `tail -n 15 n2_des.log` in `/user/semi/semi437/tmp/myproject/CMP_BASELINE_1.4.0_POL50`. n2_des.log reported modified 2026-10-13 11:54:26.576373260 +0900; size 3,371,197 bytes.
+- Earlier completed BE-step at t=0.572417s with RHS 4.97e-04 <1e-03 and anode V ~2.862V, raw total I=7.796e-14. Later snippet shows new attempt `Computing BE-step from 0.572527 s to 0.572534 s (Stepsize: 6.7501e-06 s)` at 5V/s. Thus log advanced from t=0.572417 to a new attempt starting t=0.572527 (difference 1.10e-4 s = 0.00055V). Latest attempt is NOT shown converged. RHS iterations 2–6 repeatedly 1.17e-03 > criterion 1e-03, with alternate reported error around 6.34e2/4.16e3: observed iteration plateau; future acceptance/cutback/termination unknown.
+- Two observed `sdevice --max_threads 4 pp2_des.cmd` processes owned by semi437: PID 88354 (start Oct10, displayed CPU 99), PID 94012 (start Oct12, displayed CPU 99). The matching command alone does not establish which is POL50; need read-only `ls -l /proc/88354/cwd /proc/94012/cwd` to map cwd, and fresh n2_des.log tail/stat to confirm current liveness/progress. No proof of actual final POL50 completion. Existing CAL4V/5V_TEST results preserved.
+- DERIVED: time 0.572527s ×5V/s ≈2.862635V; target 4V corresponds t=0.8s. If 6.7501e-6s step never grows, approximately (0.8−0.572527)/6.7501e-6 ≈33,699 more steps would be needed, but solver adaptive stepping makes elapsed-runtime extrapolation invalid. Do not claim estimated completion time, root cause or failure from this partial log. No TCAD code or run modifications.
+- Next: map PID to project and check fresh accepted t/stepsize trend; then decide whether continuing the long run is justified. Avoid killing/restarting or changing physics before verifying.
+
+## 2026-10-13 — 이택규 POL50 n2_des.log 직접 확인: 약 2.862 V, 작은 시간 간격 (OBSERVED / UNRESOLVED)
+- 사용자 제공 학교 서버 터미널 `tail -n 40 n2_des.log` 출력. 경로: `/user/semi/semi437/tmp/myproject/CMP_BASELINE_1.4.0_POL50`.
+- 마지막으로 단자 값이 출력된 수렴 단계: `Computing BE-step from 0.572412 s to 0.572417 s (Stepsize: 4.5285e-06 s)`; Newton iteration 2에서 `|RHS|=4.97e-04 < 1.0e-03`로 `Finished`. Anode Voltage 출력 `2.862E+00 V`, eCurrent `3.023E-17`, hCurrent `7.793E-14`, TotalCurrent `7.796E-14` (로그 원래의 전류 단위/AreaFactor는 아직 별도 확인 필요). Cathode TotalCurrent `-7.796E-14`. 직전 단계 시간 6.82 s wallclock.
+- 다음 계산 **시작만 확인**: `Computing BE-step from 0.572417 s to 0.572422 s (Stepsize: 5.4342e-06 s)`; iteration table header에서 출력이 끝남. 이 다음 단계 수렴 여부, 현재 실제 프로세스 동작 및 최근 파일 갱신 여부 미확인.
+- DERIVED: 5 V/s 램프 기준 0.572417 s → 약 2.862085 V, 4 V 목표의 약 71.55%; 다음 nominal time step의 bias 증가량 = 5×5.4342e-06 = 2.7171e-05 V (27.171 µV). 최근 매우 작은 stepsize 때문에 진행이 느릴 가능성 있으나 축소 원인과 미래 완료 시간은 예측/확정하지 않음.
+- 현재 발췌에 MinStep/fatal/simulation complete 출력 없음; **정상 완주나 현재 살아 있는 프로세스의 증거는 아님**. 즉시 종료/재시작·코드/물성 변경하지 말고 `ps -fu semi437 | grep '[s]device'`와 로그 수정 시각 및 새 BE accepted t를 확인하여 진행/정체/실패 분류. CAL4V 4V 값과 POL50 2.862V 값은 동등 조건이 아니므로 성능 개선 결론 금지.
+
+## 2026-10-13 — 이택규 POL50 약 15시간 경과 미완료 보고 (USER-REPORTED / UNRESOLVED)
+- 사용자는 `CMP_BASELINE_1.4.0_POL50` 4V transient 계산이 시작된 지 약 15시간이 되었으나 아직 완료되지 않았다고 보고함. 경과 시간은 추정, 학교 서버 실제 `n2_des.log`/SWB 상태/프로세스는 ChatGPT가 직접 확인하지 못함. 오류·정체·진행 중 여부와 현재 accepted t/V/Stepsize는 불명.
+- 우선 READ-ONLY `cd /user/semi/semi437/tmp/myproject/CMP_BASELINE_1.4.0_POL50; tail -n 40 n2_des.log; ps -fu semi437 | grep '[s]device'`로 현재 계산 진행/반복 실패/프로세스 확인. 필요한 경우 반복 log snapshots로 accepted time과 Stepsize 비교.
+- 오류 미확인 상태에서 잡 강제 종료/재실행, 물성·메쉬·분극 추가 변경 금지. 기존 CAL4V 원본/5V_TEST 보존. POL50 최종 4V 결과·민감도 개선은 계속 UNVERIFIED. 사용자 로그 확인 후 계속/중단/수정 여부 결정.
+
 ## 2026-10-12 — Lee CAL4V cutline audit and POL50 running report (USER-REPORTED / DERIVED / RUN NOT DIRECTLY VERIFIED)
 - User provided Claude notes labeled 19:40 and 20:28 KST. Raw school-server cutline CSV / SWB job log not directly accessible to this ChatGPT. Claude reports completed CAL4V central y=2.0um x cutline: QW1 eQF=-1.4025eV, hQF=-3.017eV; anode hQF=-4, cathode eQF=0. Thus arithmetic exact 4.000=1.4025 electron difference +0.9830 hole difference +1.6145 QW splitting. Their alternative 1.397+0.983+1.615=3.995 is rounded/mismatched sampling, not proof of extra loss. QF drops localize especially B0 and QB interfaces, but heterojunction discontinuity alone does not identify tunneling absence.
 - EBL Potential reported 2.3215 to 3.3274 over 0.026um: 1.0059V, mean field ~0.3869MV/cm. EBL Ev -3.995 to -5.041 means 1.046eV change, ~96.2% numerical slope consistent with electrostatic contribution within reported homogeneous EBL. Source of equilibrium polarization vs imposed bias UNRESOLVED.

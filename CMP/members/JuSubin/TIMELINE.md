@@ -1,3 +1,15 @@
+## 2026-10-13 — 3주차 PPTX 열기 문제 대응 (DELIVERABLE FIX / USER VERIFICATION PENDING)
+- 사용자 보고: 기존 3주차 PPTX가 열리지 않음. 기존 PPTX는 ZIP 무결성, XML 파싱, python-pptx(13장), LibreOffice 파일 열기/렌더링 검사에서 오류 재현되지 않음. 사용자 앱/다운로드 환경 원인은 확인하지 못함.
+- LibreOffice Impress Office Open XML 형식으로 다시 저장한 호환성 수정본 `CMP_Week3_JuSubin_Compatible.pptx` 작성. ZIP 압축 배포본과 13장 PDF 미리보기도 채팅에 제공. 수정본 ZIP/슬라이드 파싱/13장 PDF 생성 검사를 통과했으나 실제 사용자 PowerPoint에서 열리는지는 확인 전.
+- TCAD 코드/계산/물리 해석/결과 변경 없음. 기존 발표 구조와 7개 목차 유지. 다음: 사용자가 수정본을 실제 PowerPoint에서 열 수 있는지 확인.
+
+## 2026-10-13 — 주수빈 3주차 발표 PPT 초안 제작 (PRESENTATION / OBSERVED)
+- 2주차 발표 PDF와 CMP의 2026-10-12 실제 기록을 바탕으로 7개 한국어 목차를 유지한 13장 편집 가능한 발표 PPT 초안을 제작함. 산출물 로컬 파일명: `CMP_PRESENTATION_1.0.0_WEEK3_JUSUBIN.pptx`. GitHub에는 PPT 바이너리를 업로드하지 않았으며, 사용자의 채팅에서 파일로 제공함.
+- 구성: 이전 연구 및 현황 → Baseline 계산 문제 → Half-Mesa 물리 타당성/검증 조건 → Baseline 최적화 및 5V 결과 → 예상 외 저전류/SRH 지배 → 도핑·Contact·CAL 모델 진단 → 다음 계획. 기존 2주차 원문보다 기대/문제/대응/검증 수준에 집중하도록 편집.
+- 계산 근거로는 JuSubin 5V_TEST NtSide 0/1e18 두 조건 종료, raw current 1.44801646e-11 / 7.05011114e-12, QW 3-channel radiative fraction 0.10947478% / 0.04893717%를 사용함. 두 조건은 5V 고정 전압에서 서로 다른 전류이므로 matched-current IQE 또는 Trap 순수 효과로 결론내리지 않음.
+- Full/Half, Mesh, p-GaN SVisual, EBL/MQW cutline은 실제 스크린샷 삽입 위치를 명시한 PLACEHOLDER로 처리했으며 결과 이미지를 생성하거나 꾸며내지 않음. Half의 대칭성 논리는 이론적 전제, Full/Half 수치 동등성은 아직 미검증으로 표시. 이택규 별도 CAL4V 진단과 주수빈 5V_TEST를 구분함.
+- **중요:** 본 작업은 발표 자료 작성으로, 소자 코드/학교 서버 시뮬레이션/검증 상태는 변경되지 않았음. 다음 PPT 작업은 실제 SDE/SVisual 원본 캡처 삽입 및 발표 문구 검토.
+
 ## 2026-10-12 — JuSubin 5V_TEST numeric SDE y coordinates and half-contact lengths verified (OBSERVED / CONDITIONAL J)
 - Worker 주수빈. Actual terminal `sed -n '65,160p' pp1_dvs.cmd` plus prior `sed -n '415,495p' pp1_dvs.cmd`. SDE defines W_mesa=4.000 um, W_domain=5.000 um, W_damage=0.005 um. Therefore yL=(5-4)/2=0.500 um, yDL=yL+W_damage=0.505 um, yC=W_domain/2=2.500 um; x0=0.
 - Anode set-contact top two edges centered at y=(yL+yDL)/2 and (yDL+yC)/2: segment DmgL y=0.500..0.505 (0.005um), Clean y=0.505..2.500 (1.995um), half-mesa anode total=2.000um. Bottom cathode in numerical n-GaN base y=0..2.500 total=2.500um. y=yC is an artificial symmetry plane (not an etched wall). Cathode numerical extent is NOT equal to emissive mesa width. Device described as LEFT HALF of full 4um mesa in 2D Cartesian.

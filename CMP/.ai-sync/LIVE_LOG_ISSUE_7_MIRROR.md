@@ -6527,3 +6527,119 @@ Sources:
 - https://arxiv.org/abs/2211.05704
 
 ---
+
+## 2026-10-13T03:32:07Z — TaekGyu0801
+
+[2026-10-13 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / HANDOFF
+상태: USER-REPORTED / UNRESOLVED
+
+요약:
+- 사용자가 POL50 (`CMP_BASELINE_1.4.0_POL50`) 4V run 시작 후 약 15시간 경과에도 미완료라고 보고. 경과 시간은 추정; 실제 서버 로그/실행 상태 미제공이므로 진행·수렴 지연·오류 어느 쪽인지 미확정.
+근거: 이번 사용자 직접 보고. 학교 서버 SDevice log 검증 전.
+변경: GitHub 연구 상태 문서에 미완료 blocker 및 read-only 진단 계획 반영. TCAD 소스/실행 변경 없음.
+다음: n2_des.log 마지막 40줄, ps -fu semi437 중 sdevice 프로세스 확인. 미확인 상태에서 중단/재실행하지 않음.
+
+---
+
+## 2026-10-13T03:35:05Z — soybeanmilk0514-jpg
+
+[2026-10-13 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / PRESENTATION
+상태: OBSERVED (PPT 제작), UNRESOLVED (Baseline 물리 검증)
+
+요약:
+- 2주차 발표 자료 및 2026-10-12 GitHub 검증 기록 기반으로 3주차 13장 한국어 발표 PPT 편집 초안 제작. 7개 목차 유지, 기대 → 실제 문제 → 대응 → 검증 상태 → 계획 흐름.
+- 실제 SDE/SVisual/Mesh 및 CAL cutline 스크린샷은 별도 삽입 위치로 표시하고 임의의 결과 이미지를 사용하지 않음.
+- NtSide 0 vs 1e18 5V 전류/재결합 결과는 확인된 값만 표시하고, 전류 정규화·Full/Half equivalence·matched-current 비교는 미해결로 유지.
+
+근거: 주수빈 TIMELINE 및 이전 2주차 PDF / CMP GitHub 기록.
+변경: CMP/members/JuSubin/TIMELINE.md; 발표 PPT는 현재 채팅 파일로 전달하며 GitHub에 바이너리 업로드하지 않음. TCAD 코드 및 연구 판정 변경 없음.
+다음: 사용자 확인 후 실제 SDE/SVisual 원본 캡처 삽입, 슬라이드 문구/그래프 보완.
+
+---
+
+## 2026-10-13T03:37:15Z — TaekGyu0801
+
+[2026-10-13 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / BLOCKER
+상태: OBSERVED (terminal excerpt) / UNRESOLVED (current process & delay cause)
+
+요약: POL50 n2_des.log tail real stdout. Last completed step from 0.572412 to 0.572417 s (dt 4.5285e-06 s), Newton RHS=4.97e-04 <1e-03; anode 2.862E+00 V, eCurrent=3.023E-17, hCurrent=7.793E-14, TotalCurrent=7.796E-14 (raw log units). That step wallclock 6.82 s. Next attempted step 0.572417 ->0.572422 s (dt 5.4342e-06 s) printed only header; its outcome unknown. From 5V/s t=0.572417 corresponds ~2.862085V (~71.55% of 4V) and dt gives 27.171µV increment. This excerpt has no fatal/MinStep but does not prove process alive.
+근거: 사용자 직접 제공 서버 tail -n 40 n2_des.log, POL50 project.
+변경: 타임라인, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE md/json, RELAY 업데이트. TCAD 소스 변경 없음.
+다음: read-only check live sdevice process and log mtime, compare subsequent accepted times/steps. Do not compare POL50 2.862V current directly to CAL4V at 4V or claim completion/physics improvement.
+
+---
+
+## 2026-10-13T03:45:31Z — TaekGyu0801
+
+[2026-10-13 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / BLOCKER / HANDOFF
+상태: OBSERVED (server stdout), UNRESOLVED (Newton step outcome/PID project mapping)
+
+요약:
+- New POL50 n2_des.log snippet after previously accepted t=0.572417s shows computing BE-step t=0.572527→0.572534s, dt=6.7501e-06s. At 5V/s, latest step starts near 2.862635V, about +0.00055V since previous completed t.
+- Newton iterations 2–6 show |RHS|=1.17e-03 > threshold 1e-03 (alternating error ~6.34e2 / 4.16e3); no success/failure yet in excerpt.
+- Log file mtime 2026-10-13 11:54:26 KST, size 3,371,197 bytes; 2 concurrent sdevice processes: PID 88354 (Oct10) and PID 94012 (Oct12), each showing %CPU 99 at ps sample; both cmd pp2_des.cmd. Process cwd unverified, don't assign PID or kill any process by assumption.
+근거: 사용자 학교 서버 terminal tail, ps, stat 원문.
+변경: 이택규/팀 timeline, current status, next actions, LIVE_STATE md/json, RELAY. TCAD 변경 없음.
+다음: read-only ls -l /proc/88354/cwd /proc/94012/cwd; latest POL50 n2_des.log tail/stat and accepted t/stepsize. No model changes or premature completion/ETA.
+
+---
+
+## 2026-10-13T03:47:56Z — TaekGyu0801
+
+[2026-10-13 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / HANDOFF
+상태: OBSERVED
+
+요약: Live /proc cwd symlink command identifies SDevice PID 88354 as CMP_BASELINE_1.2.0_CAL and PID 94012 as CMP_BASELINE_1.4.0_POL50. Both had been listed active in the preceding ps snapshot. This confirms two separate SDevice jobs; resource contention remains unproven. POL50 4V not yet completed in provided outputs.
+근거: 사용자 직접 제공 ls -l /proc/88354/cwd /proc/94012/cwd 결과; earlier ps and POL50 n2_des.log.
+변경: 이택규/팀 timeline and next actions; live JSON status. TCAD 변경 없음.
+다음: read-only per-PID CPU/memory/thread and both project logs; do not stop either process before deciding.
+
+---
+
+## 2026-10-13T03:51:47Z — TaekGyu0801
+
+[2026-10-13 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / BLOCKER
+상태: OBSERVED (CAL 1.2.0 live log), UNRESOLVED (step completion/resource cause)
+
+요약:
+- Server log `../CMP_BASELINE_1.2.0_CAL/n2_des.log`: last contact print anode Voltage 4.207E+00 V, electron 2.330E-17, hole 6.423E-14, Total 6.429E-14 (raw units). Next BE-step t=0.841422→0.841424s, dt 1.6305E-06s; Newton iter2 |RHS|=1.39E-03 > criterion 1E-03; following acceptance unknown. Last completed wallclock 8.03s.
+- PID 88354 maps to CAL 1.2.0; PID 94012 maps to POL50. Both have shown very small adaptive steps and slow progress. CPU contention possible but not confirmed. No valid comparison from CAL1.2 4.207V vs POL50 ~2.863V. POL50 matched-4V objective remains priority.
+근거: 사용자 직접 제공 live `tail -n 20 ../CMP_BASELINE_1.2.0_CAL/n2_des.log` plus earlier `ls -l /proc/PID/cwd` and POL50 snippets.
+변경: updated Lee/team timeline, current status, next actions, LIVE_STATE, RELAY; no TCAD source modifications or solver intervention.
+다음: read-only `ps -p 88354,94012 -o pid,etime,time,pcpu,pmem,nlwp,stat,args; nproc` and subsequent log progression; do not stop/restart any task without evaluating consequences.
+
+---
+
+## 2026-10-13T03:52:00Z — soybeanmilk0514-jpg
+
+[2026-10-13 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: FIX / PRESENTATION DELIVERABLE
+상태: OBSERVED (재저장/파일검사), UNRESOLVED (사용자 PowerPoint 실제 열기 확인 전)
+
+요약:
+기존 3주차 PPTX가 사용자 환경에서 열리지 않는다는 보고. 파일은 13장 ZIP/XML/python-pptx/LibreOffice 검사를 통과했으나 사용자 환경 원인은 미확인. 호환성 수정본 PPTX를 LibreOffice OOXML로 다시 저장하고 ZIP 압축본, PDF 미리보기를 함께 제공. 수정본도 구조 검사와 13장 PDF 변환 통과. TCAD 코드는 변경하지 않음.
+
+변경: CMP/members/JuSubin/TIMELINE.md 및 채팅 산출물. 연구 실험 상태 변화 없음.
+다음: 사용자 측 실제 파일 열림 여부 확인.
+
+---
