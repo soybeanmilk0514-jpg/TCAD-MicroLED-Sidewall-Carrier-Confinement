@@ -1,3 +1,21 @@
+## 2026-10-15 — 주수빈 V2.1 n2 SRH 12 QW integration 관찰
+- srhRecombination, 12 QW ROI Total Integral=1.253894e10 s^-1 um^-1, Domain=0.02399999 um². QW4 share≈98.64%. 이전 n2 Rad=1.524099e11, 두 채널 기준 Rad fraction≈92.40%; Auger 미확인, IQE 물리 해석 미검증. 다음 n2 Auger, n6 동일 ROI.
+
+## 2026-10-15 — 주수빈 V2.1 QW 방사 재결합 적분 결과 (OBSERVED)
+- n2_des SVisual: Clean/Edge/Dmg 4개 QW, 총 12 regions RadiativeRecombination integral 1.524099e11 s^-1 um^-1, Domain 0.02399999 um². QW4 방사 기여율 약 99.9688%. SRH/Auger 및 n6 동일 영역 적분 대기. 물리적 IQE나 정상 LED 성능 확정 아님.
+
+## 2026-10-15 — 주수빈 V2.1 n2/n6 학교 서버 상태·최종 전압 확인 (OBSERVED)
+- 근거: 주수빈이 2026-10-15 실제 학교 서버에서 복사한 읽기 전용 출력. 경로 `/user/semi/semi437/CMP_BASELINE_2.0.0_V2`; `cat n2_des.sta n6_des.sta`에서 두 노드 모두 `done`; `grep '^ *anode' n2_des.log | tail -3` 마지막 (3.576V,2.424e-08), (3.592V,3.180e-08), (3.600V,3.647e-08); n6 동일 전압에서 7.077e-09 / 8.433e-09 / 9.220e-09 (SDevice raw terminal total-current log values).
+- 파일 존재: n2_des.plt 293K, n2_des.tdr 21M (Oct14 15:44); n6_des.plt 295K, n6_des.tdr 23M (Oct14 17:43). 출력 시점 및 최종 전압 기록은 사용자가 직접 제시한 실제 파일/로그 텍스트로 **OBSERVED**. 이는 종전의 Claude 단독 RUN 전사 근거를 강화함.
+- 동일 3.6V n6/n2 raw terminal current ratio = 9.220e-09/3.647e-08≈0.2528. 진정한 QW 주입/효율/트랩 효과 원인, 2D A/µm/AreaFactor 정확한 설정, TDR가 목표 3.6V 최종 저장본인지, 활성 코드 Wshelf·PolAct·접촉 설정은 아직 **UNRESOLVED**.
+- 원본 소스/실행 변경 없음. 다음은 TDR 저장 시점·활성 덱 정의와 SVisual ROI·물리 필드 확인 후 QW별 Radiative/SRH/Auger 적분; 단일 전압에서 IQE causality 단정 금지.
+
+## 2026-10-15 — 이택규/Claude V2.1 첫 3.6V 도달 및 작업용 구조 채택 (USER-REPORTED RUN)
+- 사용자 제공 Claude 기록 #02: shelf 제거 `CMP_BASELINE_2.0.0_V2` V2.1(PolAct0.5)은 NtSide=0/1e18 모두 3.600V 도달; 조건부 전류밀도 1.8235/0.4610 A/cm². shelf 유지+PolAct0 대조군은 2.069/2.036V에서 정체. **GPT는 실제 서버 로그/코드를 직접 열람하지 않음.**
+- 의사결정은 이택규/Claude의 **검증용 V2.1 구조 채택**; 연구팀 전체 물리 검증 완료 아님. shelf 제거 외 cathode 변화도 있어 정확한 수렴 원인은 미확인. NtSide ON/OFF 동일전압 전류비 약 25.3%의 원인도 미확인.
+- 기존 blocker '3.6V 미도달'은 이 사용자 보고의 V2.1 실행에 대해서는 완화되었으나 QW/EBL/측벽 적분, 전류 정규화·IQE/누설, 문헌 I-V, Full/Half/mesh 및 A/B gate는 남음.
+- 근거: [상세 보고 보존](members/LeeTaekGyu/LOG_20261015_02_baseline_v2_1_shelf_removal.md). 다음: 로그/.plt 검증 → S3 → A/B pilot, Common Baseline freeze 보류.
+
 ## 2026-10-13 — 이택규 Claude V2 n2 조기 종료 확인 (USER-REPORTED / CAUSE UNRESOLVED)
 - 사용자: n2가 목표 3.6V 전에 조기 종료. 로그 정상 finish와 2.070V 마지막 출력 확인됨. 원인 확인 위해 read-only Solve/code/log 출력 요청, n6는 보호. Baseline 완료 판정 불가.
 

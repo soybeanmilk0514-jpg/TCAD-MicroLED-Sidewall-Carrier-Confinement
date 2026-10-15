@@ -1,3 +1,54 @@
+## 2026-10-15 — 주수빈 n6 GUI dataset/ROI 재선택 필요
+- 새 Radiative 출력이 `n2_des`, Clean+Dmg 8개 2D ROI, Domain=0.02279999um², Total=1.447895e11로 나타나 n6 결과가 아님. 기존 n2 12ROI와의 차이≈Edge 4ROI 합.
+- 다음: n6_des 로드 및 현재 Dataset 선택 확인 → 12개 Clean/Edge/Dmg QW1..4 적분, Total Domain 약 0.02399999um² 필수 확인. 기존 n2 3채널 결과 유지, n6 신규 측정 없음.
+
+## 2026-10-15 — 주수빈 n2 3채널 확보 → n6 동일 QW 적분
+- OBSERVED n2 12 QW ROIs 동일 Domain 2.399999e-02 um²: Radiative 1.524099e11, SRH 1.253894e10, Auger 6.265625e10 s^-1 um^-1. Derived modeled 3-channel radiative share=66.96243%, SRH 5.50908%, Auger 27.52849%.
+- **NEXT:** n6_des.tdr 열기 → 실제 12개의 Clean/Edge/Dmg QW1..4와 3개 재결합 필드 확인 → n6 Rad, srhRecombination, Auger 적분 결과 전체 및 Domain(0.02399999 um²) 확보. n2/n6 동일전압 3.6V 전류가 달라 matched-current IQE 개선/손실 효과로 단정하지 않는다.
+- **추가 audit:** n2 TDR가 3.6V 저장점인지, AreaFactor, QW4 주입 편중·Auger 파라미터, leakage/Trap recombination/charge balance 확인. 기존 소스/데이터 덮어쓰기 금지.
+
+## 2026-10-15 — 주수빈 n2 MQW SRH 완료 → Auger 적분
+- OBSERVED: n2_des srhRecombination 12 QW ROI 1.253894e10 s^-1 um^-1, Domain=0.02399999 um², 이전 Radiative 동일 Domain.
+- 다음: n2_des에서 AugerRecombination을 같은 12 ROI로 적분하고 Total Integral, Domain 기록. 이후 세 채널로 모델 내 QW 방사 비율만 계산, n6에서 같은 영역/필드 반복. QW4 SRH 98.64% 원인, 누설, AreaFactor, TDR 3.6V 저장 시점 별도 검증. 기존 소스와 실행 변경 금지.
+
+## 2026-10-15 — 주수빈 n2 MQW Radiative 적분 완료 후 다음 단계
+- OBSERVED: n2 SVisual에서 Clean/Edge/Dmg × QW1..4 총 12개 RadiativeRecombination 적분 = 1.524099e11 s^-1 um^-1, Total Domain=0.02399999 um². QW4 비중 약 99.9688%; 원인/정상성 미확정.
+- NEXT: 같은 12 regions에서 SRHRecombination 필드(실제 Scalars 이름 확인) 적분 → AugerRecombination 적분; 각 Total Domain이 0.02399999 um²인지 검사. 이후 n6에서 완전히 같은 ROI/필드 반복. 수치 합산 뒤 단일 전압 3.6V 3채널 비율 계산, IQE 해석 제한·matched-current 미확보 고지.
+- TDR final-bias 및 유효 AreaFactor/활성 trap 모델은 별도 검증 유지. 원본 덱/결과 수정 없음.
+
+## 2026-10-15 — 주수빈 n2 Radiative 필드 표시 확인, 적분이 다음
+- SVisual `n2_des`에서 `RadiativeRecombination` 필드 활성화 및 최대 3.07538e25 cm^-3 s^-1 표시 관찰. 이는 공간 국소값이며 QW 재결합 총합 아님.
+- 다음 SVisual **Field Integration** → Region/Material 탭에서 실제 확인되는 Clean_QW1..4/Edge_QW1..4/Dmg_QW1..4만 선택하고 Start Integration. 수치 Total Integral과 Domain 보존. 전체 구조/재료 기본 적분을 QW 적분으로 잘못 해석하지 않기. 이후 SRH/Auger 동일 ROI, n6에서도 반복.
+
+## 2026-10-15 — 주수빈 V2.1 MQW ROI 이름 생성 코드 확인 완료 (OBSERVED)
+- 실 서버 SDE grep: `QW1..4`, 3nm 각 well, `Wdmg=0.005µm`, `Wedge=@Wedge@`, `Edge_ + name`, `Dmg_ + name`을 확인. Clean/Edge/Dmg × 4 QW = 12 ROI 예상. 기존 exact-name grep no matches는 string-append 동적 명명 때문.
+- 다음: SVisual Regions에서 실제 12개를 확인, 각 field Radiative/SRH/Auger가 존재하면 동일한 12 QW ROI로 적분. barrier/EBL/interface 선택 금지. n2/n6 동일 기준 유지, TDR final bias 검증은 별도.
+
+## 2026-10-15 — 주수빈 V2.1 QW ROI 명칭 확인 필요
+- 사용자의 SVisual 보고에서 `DmgL_QW1~4`가 없고 `Dmg_QW14` (정확 표기/범위 미확인) 및 `Edge_QW1~4`가 존재함. `Clean_QW1~4`는 이전 스크린샷에서 직접 관찰.
+- V2.1 활성 SDE `sde_dvs.cmd` 및 `pp1_dvs.cmd`를 read-only grep으로 확인하기 전 Clean/Edge/Dmg QW를 합쳐 적분하거나 중복 제거 관계를 가정하지 않는다. 실제 소스 검증 후 동일 ROI의 Rad/SRH/Auger 적분.
+
+## 2026-10-15 — 주수빈 SVisual n2 확인 후 적분
+- 확인: Clean_QW1~4, AugerRecombination 필드, 화면 Elements=129404 Points=62529. 재결합 수치 아직 없음.
+- 다음: Regions의 DmgL_QW 존재와 Scalars의 Radiative/SRH 필드 확인 → QW 영역별 적분, n6 반복. TDR 최종 3.6V 저장 여부는 별도 확인.
+
+## 2026-10-15 — 주수빈 V2.1 실행 확인 통과 후 다음 물리 검증
+- 완료된 확인(OBSERVED): `CMP_BASELINE_2.0.0_V2` n2/n6 status done, 마지막 anode 3.600V, n2 3.647e-08 / n6 9.220e-09 raw current, 두 노드의 TDR/PLT 파일 존재.
+- 다음 READ-ONLY: SDevice active pp2/pp6 `Plot/Save` 및 `AreaFactor`/물리 설정 확인; SVisual에서 두 TDR가 최종 3.6V인지 및 QW 영역/필드 availability 확인 → 동일한 4QW(각 Clean/DmgL 실제 region 명칭 확인) Rad/SRH/Auger 적분 → 정의 명확한 QW 3채널 비율 산출. 동전압 Trap ON/OFF는 matched-current 효율 비교가 아님. 소스/실행은 수정하지 않음.
+
+## 2026-10-15 — 주수빈 V2.1 물리 검증 시작 (PROPOSED; no new measurement)
+- 주수빈은 기존 V2_Copy 수렴 진단 계획 대신 `CMP_BASELINE_2.0.0_V2` 안의 shelf 없는 **V2.1** 결과의 전류·MQW 재결합·IQE 검증을 맡기로 선택. 이택규의 실제 현재 작업/역할 합의는 미확인.
+- **최우선 READ-ONLY:** 보고된 서버 경로에서 `n2_des.tdr/n6_des.tdr`, `n2_des.plt/n6_des.plt`, `n2_des.sta/n6_des.sta`, 로그 마지막 anode 3.6V 실제 값의 존재·완료 여부 확인. 검증 출력은 아직 사용자로부터 도착하지 않음.
+- **다음:** 실제 공간 TDR이 최종 3.6V 시점인지 검증 → 같은 4QW Clean+DmgL ROI에 Rad/SRH/Auger 적분 → QW radiative share 및 IQE 정의 분리 → 전류밀도/누설·Trap ON/OFF matched-current 한계 검토. 원본 소스/기존 run 변경 금지.
+
+## 2026-10-15 — Baseline V2.1 3.6V 도달 후 우선 실행 계획 (USER-REPORTED RUN → INDEPENDENT VERIFICATION PENDING)
+1. **Read-only 최신 근거 확보:** 이택규/Claude가 수행했다고 보고한 V2.1 n2/n6 `n*_des.log`, `n*_des.plt`, active `pp*.cmd`/par, SDE `Wshelf=0`, cathode geometry, `AreaFactor`, mesh/contact; 각각 실제 accepted 최종 3.600V와 적용 물리 확인. source/hash 및 V2→V2.1 diff 보존.
+2. **후처리 먼저 검증:** `bl2_check.py` 실제 `.plt` 필드/적분 영역/2D 정규화 확인 후 J–V, QW Rad/SRH/Auger, EBL/sidewall Trap/total, current continuity+leakage. `q∫R/I≈1`을 항상 통과 기준으로 강제하지 않으며 QW IQE vs whole-device recombination share를 구분. NtSide=1e18 n6에서 전류가 n2 25.3%로 감소하는 메커니즘을 trap charge/occupancy, e/h density/current 맵으로 확인.
+3. **물리 성능:** 문헌 I–V/turn-on 대조. V2.1 shelf 제거와 bottom cathode 변경의 2D lateral current paths 및 Project A/B 해석 영향 검증, half/full·mesh test 일정 수립. 정식 Baseline freeze 보류.
+4. **조건부 후속:** 위 통과 시 S3 `PolAct=1.0` 분극 대조→ Project A `GaN:C` (`NCedge`) 및 Project B `AlGaN` (`Bspan`) 별도 pilot, 공통 baseline과 동일 전류밀도 비교.
+5. **필요시 확장:** 실제 유효한 `n@node@_end` Save/Load 여부를 확인한 복사본에서 4–5V; 원본 성공 run 훼손 금지.
+- 근거: 이택규/Claude 보고 #02, [보존본](members/LeeTaekGyu/LOG_20261015_02_baseline_v2_1_shelf_removal.md). 3.6V 도달과 물리/논문 검증은 별개. 관련 이전 미해결 구 V2 진단 항목은 별도 히스토리로 보존.
+
 ## 2026-10-13 — V2 copied Run3 fast verification plan (PROPOSED)
 - Run3 user reported PARDISO/ExtendedPrecision/Iterations20 change; no new log independently validated. Preserve running copies. First inspect active pp6 Math/Solve and latest accepted anode, fail markers, CNormPrint/MinStep logs. Quasistationary MaxStep normalized to bias span (2→3.6V, 0.01 => 0.016V). Before any more solver tuning isolate failing vertex/region, contact current, effective Mg ionization, polarization and mesh. Original user-uploaded T-2022.03 manual specific pages not directly opened this session.
 

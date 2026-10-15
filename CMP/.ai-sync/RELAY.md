@@ -1,3 +1,39 @@
+## 2026-10-15 — 주수빈 n2 3채널 완료, n6 물리 검증 인수인계 (OBSERVED)
+- 데이터 n2_des 12 QW: Rad=1.524099e11, SRH=1.253894e10, Auger=6.265625e10 s^-1 um^-1, Total Domain=0.02399999 um² 각 동일. 3채널 방사비율=66.96243%. QW4 집중(방사≈99.969%, SRH≈98.644%, Auger≈99.993%) 확인, 물리 원인 불명.
+- Next SVisual n6_des.tdr 동일 12 regions + 세 필드 적분, 각 Total Domain 검증. n2/n6 3.6V 동일 전압이나 다른 전류라 matched current 불가. 실제 TDR 최종 저장 bias, current units AreaFactor, 물리 calibration 미해결. 기존 계산 덱 변경 금지.
+
+## 2026-10-15 — HANDOFF 주수빈 n2 QW SRH 적분 완료
+- 사용자 SVisual n2_des srhRecombination 12개 Clean/Edge/Dmg × QW1..4 적분 총 1.253894e10 s^-1 um^-1, 면적 0.02399999 um². 이전 Radiative 총 1.524099e11 같은 면적. QW4에 SRH 약 98.64%, Radiative 약 99.97% 집중. 물리 원인 불명, Auger 아직 없음.
+- 다음 단계: 같은 12 QW 영역 AugerRecombination 적분 원문 회수, n2 3채널 비율 산출 후 n6 반복. 물리적 IQE/누설/AreaFactor/bias 미검증. 소스 수정 없음.
+
+## 2026-10-15 — HANDOFF 주수빈 V2.1 n2 QW 방사 재결합 적분 완료 (OBSERVED)
+- 출처(OBSERVED): 주수빈이 2026-10-15 실제 Sentaurus Visual `Dataset: n2_des`, `Field: RadiativeRecombination`, `Regions of Dimension 2`의 Field Integration 출력 전체를 채팅에 제공. `Clean_QW1..4`, `Dmg_QW1..4`, `Edge_QW1..4` 총 12개 물리 영역이 확인됨. `Total Integral = 1.524099e+11 [s^-1*um^-1]`, `Total Domain = 2.399999e-02 [um^2]`; 12개 개별 값의 합 = 1.52409866249133e11 (출력 반올림과 일치).
+- QW별 세 영역 합계(표시 정밀도): QW1=1.884852e6, QW2=2.718766e6, QW3=4.298663e7, QW4=1.52362276e11 [s^-1*um^-1]. QW4 비중 ≈99.9688%. 공간적 방사 재결합 분포일 뿐 IQE가 아님. QW4 우세의 수송/전자·정공 주입 물리 원인은 미확인.
+- 각 Clean 합계≈1.44408491777e11, Edge≈7.62036249754e9, Dmg≈3.81011974593e8; 과거 `Dmg_QW14` 사용자 간략 표기와 달리 실제 적분에서 `Dmg_QW1..4` 개별 이름 확인. n6, SRH/Auger 및 3.6V에 대응하는 TDR 최종 저장점·물리 모델/AreaFactor 미검증.
+- 다음: 동일한 12개 ROI로 **n2 SRH** 적분 (`Total Domain` 동일 확인), 이후 Auger 적분하고 n6 반복. `Radiative/(Radiative+SRH+Auger)`는 정의 한정의 QW 내 비율이며 전류/누설/Trap 생성·재결합 수지 별도 검증 전 물리적으로 확정된 IQE 또는 matched-current 성능 차이가 아님. 코드/시뮬레이션 변경 없음.
+
+## 2026-10-15 — 주수빈 V2.1 물리 검증 STEP 1 완료 (OBSERVED USER TERMINAL)
+- 근거: 주수빈이 2026-10-15 실제 학교 서버에서 복사한 읽기 전용 출력. 경로 `/user/semi/semi437/CMP_BASELINE_2.0.0_V2`; `cat n2_des.sta n6_des.sta`에서 두 노드 모두 `done`; `grep '^ *anode' n2_des.log | tail -3` 마지막 (3.576V,2.424e-08), (3.592V,3.180e-08), (3.600V,3.647e-08); n6 동일 전압에서 7.077e-09 / 8.433e-09 / 9.220e-09 (SDevice raw terminal total-current log values).
+- 파일 존재: n2_des.plt 293K, n2_des.tdr 21M (Oct14 15:44); n6_des.plt 295K, n6_des.tdr 23M (Oct14 17:43). 출력 시점 및 최종 전압 기록은 사용자가 직접 제시한 실제 파일/로그 텍스트로 **OBSERVED**. 이는 종전의 Claude 단독 RUN 전사 근거를 강화함.
+- 동일 3.6V n6/n2 raw terminal current ratio = 9.220e-09/3.647e-08≈0.2528. 진정한 QW 주입/효율/트랩 효과 원인, 2D A/µm/AreaFactor 정확한 설정, TDR가 목표 3.6V 최종 저장본인지, 활성 코드 Wshelf·PolAct·접촉 설정은 아직 **UNRESOLVED**.
+- 원본 소스/실행 변경 없음. 다음은 TDR 저장 시점·활성 덱 정의와 SVisual ROI·물리 필드 확인 후 QW별 Radiative/SRH/Auger 적분; 단일 전압에서 IQE causality 단정 금지.
+
+## 2026-10-15 — 주수빈 V2.1 physical validation intake (PROPOSED, no fresh TCAD result)
+- **작업자/AI:** 주수빈 / ChatGPT. 기존 V2_Copy 수렴 진단을 우선 진행하겠다는 선택에서 전환하여, 이택규/Claude 보고의 `CMP_BASELINE_2.0.0_V2` (실제 구조 V2.1) n2(NtSide0)/n6(NtSide1e18) **전류·MQW 재결합·IQE 검증**을 맡음.
+- **현재 근거/한계:** V2.1 3.6V 도달 수치는 이택규/Claude 사용자 전달 보고만 존재하며 주수빈 현 세션에서 서버 로그/실제 최종 TDR 아직 확인하지 않음. 코드/물성/결과를 변경하지 않음.
+- **첫 점검 요청:** `/user/semi/semi437/CMP_BASELINE_2.0.0_V2`에서 n2/n6 .tdr/.plt, *.sta 확인 후 `grep '^[[:space:]]*anode'` 마지막 행 확보. 사용자 명령 실행 출력 대기. n2/n6 마지막 bias 3.6V, TDR final bias 확인 후 동일 QW region에 SVisual Rad/SRH/Auger Field Integration.
+- **금지:** 기존 successful run 덮어쓰기, V2_Copy와 V2.1 code/물리 가정 섞기, 다른 전류에서 나온 Radiative/SRH/Auger 비율을 matched-current trap 효과나 measured IQE로 지칭하기.
+- **담당 경계:** 이택규 구조/solver 담당은 ChatGPT의 추천 분업일 뿐 이택규가 수락한 사실이나 현재 작업 중임을 입증하지 않음.
+
+## 2026-10-15 — HANDOFF: 이택규 Claude V2.1 shelf 제거 3.6V 도달 (USER-REPORTED; original server logs NOT VERIFIED BY GPT)
+- **작업자/AI:** 이택규, 서버 실험 보고 Claude → GPT가 전달 내용을 GitHub에 기록.
+- **최신 진전:** `CMP_BASELINE_2.0.0_V2`를 V2.1(`Wshelf=0`, shelf 및 shelf 하단 cathode 제거, PolAct=0.5, 기본 solver 20/50 non-PARDISO)로 변경한 run에서 n2 NtSide0 **3.600V / 3.647e-08 A/µm** (조건부 J 1.8235 A/cm²), n6 NtSide1e18 **3.600V / 9.220e-09 A/µm** (J 0.4610 A/cm²) 도달 보고. shelf 유지+PolAct0 `CMP_BASELINE_2.0.0_V2_Copy`는 2.069/2.036V 정체.
+- **기존 blocker 변화:** 기본 solver의 2.0–2.3V 정체는 보고된 V2.1 계보에서 해결된 것으로 보이나 아직 로그 독립 검증 없음. 분극 활성도를 0으로 만드는 조작만으로는 정체 해소되지 않았음. 정확히 shelf 모서리 자체 때문인지, cathode 경계 등 다른 구조 변수인지 **UNRESOLVED**.
+- **남은 blocker:** V2.1 활성 SDE/SDevice/cathode/area 및 실제 `.log`/`.plt` 출처 확인, `bl2_check.py` IQE 정의/재결합 수지와 leakage 검증, 논문 I-V/turn-on, NtSide ON 전류 감소 원인, full/half mesh 및 A/B 해석 적합성. 정식 physical baseline NO-GO.
+- **변경한 파일/실행:** GPT는 학교 서버/TCAD 소스 및 실행을 변경하지 않음. 보고서상 Claude는 서버 SDE·SDevice를 수정/실행. 자세한 파일 경로는 [상세 기록](../members/LeeTaekGyu/LOG_20261015_02_baseline_v2_1_shelf_removal.md) 참조. 이전 구 V2 파일을 무단 덮어쓰지 말 것.
+- **다음 AI 첫 확인:** 실제 `pp2_des.cmd`/`pp6_des.cmd`, `n2_des.log`/`n6_des.log` 완료된 3.6V 출력·`.plt` 데이터 및 AreaFactor; V2.1 디렉터리의 정확한 SDE/mesh/cathode 코드 hash 확보 후 J–V/region-integral 재계산.
+- **변경 금지 조건:** 프로젝트 A/B 비교 전 공통 5nm sidewall defect Nt/Et/σ, epitaxy, contacts/mesh provenance 보호; geometry 바뀐 V2.1은 이전 공통 baseline과 동등하다고 가정하지 않음.
+
 ## 2026-10-13 — 이택규 Claude V2 독립 수치·물리 검토 (GPT ANALYSIS / USER-REPORTED RUN3)
 - 사용자 전달 Claude 설명: run1 2.31V 도달 후 QS Newton 진동, run2 2.070V 조기 종료, **run3는 Claude가 수정한 복사본**에서 `Method=Blocked, SubMethod=ParDiSo, NumberOfThreads=4, Iterations=20, NotDamped=50, ExtendedPrecision` 설정으로 실행 중이라고 보고됨. **새 복사본의 원본 pp*/log 및 성공/개선은 직접 검증되지 않음**.
 - 독립 검토(해석, 결과 아님): QS MaxStep는 V가 아닌 정규화된 t에 작용하므로 stage 2.0→3.6V의 MaxStep 0.01은 최대 0.016V, 0.02는 0.032V, MinStep 1e-6은 1.6 microV. 2.3V 수렴은 스텝 크기/수치 stiff 문제 가능성 높으나 물리 원인 미확정. `NotDamped=50>Iterations=20`은 기본적으로 Bank–Rose damping을 지연시키지만 Sentaurus 교육자료는 QS에서 작은 스텝을 일반적으로 우선하므로 '오류'로 단정 금지.

@@ -1,3 +1,49 @@
+## 2026-10-15 — 주수빈 n6 분석 중 n2/8 QW 적분 출력 확인 (OBSERVED; n6 PENDING)
+- 추가 SVisual Radiative 출력은 n6가 아닌 `n2_des`이며 Clean+Dmg 8개 QW ROI, Total 1.447895e11, Domain=0.02279999um². 과거 n2 12 ROI 1.524099e11과 차≈Edge_QW1..4 합. GUI Dataset과 Region selection을 수정한 뒤 n6 12ROI 측정 필요. n6 재결합 데이터는 아직 미확보.
+
+## 2026-10-15 — 주수빈 V2.1 n2 MQW 재결합 3채널 적분 (OBSERVED)
+- 동일 12 QW, 면적 0.02399999 um²: Radiative 1.524099e11, SRH 1.253894e10, Auger 6.265625e10 s^-1 um^-1. Radiative fraction 66.9624%, Auger 27.5285%, SRH 5.5091% (3채널 모델 내부 비율). QW4 방사 99.969%, SRH 98.644%, Auger 99.993% 집중. n6 동일 ROI 적분 대기. IQE 검증, AreaFactor, 공간 TDR bias, 물리 원인 미해결.
+
+## 2026-10-15 — 주수빈 V2.1 n2 QW SRH integration 관찰 (OBSERVED)
+- n2_des 12 QW ROI srhRecombination integral 1.253894e10 s^-1 um^-1, Domain 0.02399999 um². QW4가 약 98.6438% 담당. 이전 Rad=1.524099e11, 두 채널 rad share 92.40% (Auger 미포함, validated IQE 아님). 다음 n2 Auger 동일 ROI 후 n6 반복. TDR bias/AreaFactor 검증 잔여.
+
+## 2026-10-15 — 주수빈 V2.1 n2 QW Rad integral OBSERVED
+- 출처(OBSERVED): 주수빈이 2026-10-15 실제 Sentaurus Visual `Dataset: n2_des`, `Field: RadiativeRecombination`, `Regions of Dimension 2`의 Field Integration 출력 전체를 채팅에 제공. `Clean_QW1..4`, `Dmg_QW1..4`, `Edge_QW1..4` 총 12개 물리 영역이 확인됨. `Total Integral = 1.524099e+11 [s^-1*um^-1]`, `Total Domain = 2.399999e-02 [um^2]`; 12개 개별 값의 합 = 1.52409866249133e11 (출력 반올림과 일치).
+- QW별 세 영역 합계(표시 정밀도): QW1=1.884852e6, QW2=2.718766e6, QW3=4.298663e7, QW4=1.52362276e11 [s^-1*um^-1]. QW4 비중 ≈99.9688%. 공간적 방사 재결합 분포일 뿐 IQE가 아님. QW4 우세의 수송/전자·정공 주입 물리 원인은 미확인.
+- 각 Clean 합계≈1.44408491777e11, Edge≈7.62036249754e9, Dmg≈3.81011974593e8; 과거 `Dmg_QW14` 사용자 간략 표기와 달리 실제 적분에서 `Dmg_QW1..4` 개별 이름 확인. n6, SRH/Auger 및 3.6V에 대응하는 TDR 최종 저장점·물리 모델/AreaFactor 미검증.
+- 다음: 동일한 12개 ROI로 **n2 SRH** 적분 (`Total Domain` 동일 확인), 이후 Auger 적분하고 n6 반복. `Radiative/(Radiative+SRH+Auger)`는 정의 한정의 QW 내 비율이며 전류/누설/Trap 생성·재결합 수지 별도 검증 전 물리적으로 확정된 IQE 또는 matched-current 성능 차이가 아님. 코드/시뮬레이션 변경 없음.
+
+## 2026-10-15 — 주수빈 V2.1 n2 RadiativeRecombination field 시각화 확인 (OBSERVED)
+- SVisual n2_des screenshot: RadiativeRecombination active, displayed maximum 3.07538e25 cm^-3 s^-1 (local field, NOT ROI integral); Edge_QW3/4 region labels visible. n2 QW 적분과 12 ROI 실제 선택 미수행. 다음: Field Integration Region/Material 탭에서 QW regions만 선택해 Total Integral 확보.
+
+## 2026-10-15 — 주수빈 V2.1 QW ROI 생성 규칙 확인 (OBSERVED SDE EXCERPT)
+- 실제 서버 `sde_dvs.cmd` grep은 각 QW1..4 thickness 0.003µm, `Wdmg=0.005` µm, `Wedge=@Wedge@`, `rE=(string-append "Edge_" name)`, `rD=(string-append "Dmg_" name)`을 보여줌. 기존 Clean_QW1..4 SVisual 확인과 합쳐 4 wells × 3 segments = 12 region ROI 구성이 예상됨. 실제 SVisual 12개 전체 선택 및 수치 적분은 아직 미수행.
+- Edge/clean baseline 동질성 및 Dmg NtSide 적용은 SDE 주석 근거이며 활성 effective SDevice deck 검증 필요. 다음: GUI region+field 존재 확인 후 동일 QW ROI 방사/SRH/Auger 적분.
+
+## 2026-10-15 — 주수빈 V2.1 region names differ from old 5V_TEST (USER-REPORTED; ROI NOT YET VERIFIED)
+- SVisual `n2_des`에 기존 `DmgL_QW1~4` 대신 사용자 표기 `Dmg_QW14`, `Edge_QW1~4` 존재 보고. `Clean_QW1~4`는 이전 스크린샷으로 관찰. Dmg_QW14가 정확한 단일 region label인지, Clean/Edge/Dmg의 물리적 범위 및 QW 중복 여부 미확인.
+- 다음: 활성 SDE 소스 read-only grep 후 동일 QW ROI 재결합 적분. 미확인 region을 합산하지 않음. 코드 수정/시뮬레이션 실행 없음.
+
+## 2026-10-15 — 주수빈 n2 SVisual QW 표시 확인 (OBSERVED SCREENSHOT)
+- `CMP_BASELINE_2.0.0_V2/n2_des` SVisual: Clean_QW1..4/EBL 지역과 AugerRecombination scalar 존재, DopingConcentration 현재 선택, Elements 129404 / Points 62529. DmgL_QW 및 Radiative/SRH는 현재 화면 스크롤 범위 밖으로 미확인. 공간 TDR의 최종 bias 및 실제 재결합 적분은 미검증.
+- 다음: ROI/필드명 확인 → Rad/SRH/Auger 동일 영역 적분. 기존 소스/실행 변경 없음.
+
+## 2026-10-15 — 주수빈 V2.1 실행 완료 직접 확인 (OBSERVED)
+- 학교 서버 `CMP_BASELINE_2.0.0_V2`: n2/n6 status `done`, 각 최종 anode 3.600 V, raw total current n2=3.647e-08, n6=9.220e-09. n2 TDR 21M/PLT 293K, n6 TDR 23M/PLT 295K 실제 파일 존재(10/14 수정). 주수빈이 10/15 제공한 원본 터미널 텍스트 기준. **전압 목표/파일 존재 확인이며 물리 타당성, TDR 최종바이어스, AreaFactor는 미검증.**
+- 다음: 읽기 전용으로 최종 TDR 저장 시점·SVisual QW 4개 영역/재결합 필드 확인 후 Radiative/SRH/Auger 적분. 소자 변경 없음.
+
+## 2026-10-15 — 주수빈 V2.1 물리 검증 담당 전환 (PROPOSED / AWAITING SERVER READ-ONLY OUTPUT)
+- 주수빈은 V2_Copy 수렴 실패 진단을 우선 수행하려던 계획을 변경하고, 이택규/Claude 보고의 `CMP_BASELINE_2.0.0_V2` 내부 V2.1 결과에 대해 **전류 I–V / MQW Rad·SRH·Auger / QW IQE 검증**을 시작하기로 함. 이전 V2_Copy 선택은 historical, 최신 할 일은 V2.1.
+- 첫 단계는 n2/n6 파일 TDR/PLT/STA 존재 및 마지막 anode voltage/current를 서버 터미널에서 read-only 확인. 명령 안내는 완료되었지만 실제 출력·새 수치/실험은 아직 없음. 다음: 최종 bias 공간 TDR 검증 후 SVisual 4QW ROI 동일 적분.
+- 이택규의 구조/solver 담당은 GPT 추천안이며 이택규의 실시간 진행 또는 두 연구원 간 확정 역할분담이 아님. 물리 baseline 정식 freeze는 여전히 미완료.
+
+## 2026-10-15 — Baseline V2.1 shelf 제거 후 n2/n6 3.6V 도달 (USER-REPORTED RUN / GPT HAS NOT SEEN RAW SERVER LOG)
+- **실행 보고:** 이택규가 Claude의 #02(2026-10-15)를 전달. `CMP_BASELINE_2.0.0_V2`를 shelf 없는 V2.1(`Wshelf=0`, shelf와 해당 하단 cathode 삭제, PolAct=0.5, 기본 solver Iterations20/NotDamped50)로 SDE부터 다시 실행. n2(NtSide0)와 n6(NtSide1e18) 모두 3.600V 도달, raw terminal I 3.647e-08/9.220e-09 A/µm; half 2µm 가정 J 1.8235/0.4610 A/cm², didn't converge 0/1회. **사용자가 인용한 서버 grep 수치이며 실제 로그 파일을 GPT가 직접 열어 검증하지는 않음.**
+- **대조:** shelf 포함 V2+PolAct0 `CMP_BASELINE_2.0.0_V2_Copy` n2/n6 2.069/2.036V 정체 및 17/23 비수렴 출력. 분극 제거만으로 해결되지 않음. 정확한 수렴 원인은 shelf 자유표면/270도 모서리일 수 있지만 cathode 경계조건도 달라져 **원인 분리는 아직 미완료**.
+- **의사결정:** 이택규/Claude가 **V2.1을 다음 단계 working Baseline geometry로 채택**했다고 보고; 물리적 Common Baseline final freeze 아님. 이 보고와 2026-10-13 구 V2 run3 기록은 *서로 다른 run*으로 취급.
+- **blockers:** 명시적 SDevice log/.plt/pp·AreaFactor·contact 검증; QW/EBL/sidewall SRH/Rad/Auger 및 qR/I 의미/누설, IQE 후처리; NtSide1e18 전류가 NtSide0 25.3%로 감소하는 원인; 문헌 turn-on I–V와 mesh/full-half/cathode 변경 물리 영향. 순수 수치 국소 ideality n≈2.27 (3.576→3.600V)이 수송원인을 입증하지 않음.
+- **next:** `bl2_check.py` 실 데이터/정의 검사 → J–V·지역별 적분/누설/전하 점유 검증 → 문헌 IV → S3(PolAct1) → Project A/B pilot (조건부), 4–5V Save/Load는 별도 검증한 복사본에서만. [상세 #02](../members/LeeTaekGyu/LOG_20261015_02_baseline_v2_1_shelf_removal.md).
+
 ## 2026-10-13 — 이택규 V2 independent analysis (ANALYSIS, not experimental result)
 - User reports Claude already diagnosed and launched run3 in a copy with Blocked/ParDiSo, 4 threads, Iterations20, NotDamped50, ExtendedPrecision. Original pp/log not inspected; outcome unverified. QS stage 2.0-3.6 V MaxStep 0.01 means at most 0.016 V (normalized). Existing n2_des_min_des.tdr supports looking for automatic Newton/min-step diagnostics, but actual trigger unconfirmed.
 - Priority: locate failing Newton equation/mesh vertex; check low-density HFS, polarization EBL barrier and Mg activation; avoid calling NotDamped50 an error. PARDISO+extended precision supported but potential threading slowdown. Small-bias n=1.6 extrapolation cannot validate 3.6V / QW injection. For A/B, prevent conflating C process with ideal traps and conformal AlGaN with QW-edge substitution. No solver/physics validation confirmed; protect existing runs.

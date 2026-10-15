@@ -6783,3 +6783,161 @@ AI: ChatGPT
 [2026-10-13 KST] 이택규 / ChatGPT / BLOCKER / USER-REPORTED + UNRESOLVED: User confirmed Claude V2 n2 ended early, before requested 3.6V. Previously observed SDevice simulation finished/Good Bye and SWB done, but last reported anode was 2.070V and raw conduction 1.781e-16. Cause remains unknown; normal process termination is not proof that voltage goal was reached. Next: read-only inspect pp2_des.cmd Solve lines 175-215 and n2_des.log termination/convergence and final 65 lines. Do not rerun n2 or interrupt n6 until diagnosed. GitHub timelines/status/next actions/live state/relay updated.
 
 ---
+
+## 2026-10-15T05:30:52Z — TaekGyu0801
+
+[2026-10-15 KST]
+작업자: 이택규
+AI: Claude (학교 서버 RUN 보고) → ChatGPT (transcription/math review/GitHub sync)
+구분: RESULT / FIX / DECISION / HANDOFF
+상태: **USER-REPORTED RUN (Claude source)** / **UNRESOLVED physical validity**; GPT는 서버 로그 원본 미열람
+
+요약:
+- V2.1 (CMP_BASELINE_2.0.0_V2): Wshelf=0; shelf region 및 shelf 하부 cathode 삭제; SDE부터 재실행; PolAct=0.5; 기본 solver Iterations20/NotDamped50 (PARDISO 미사용).
+- n2 (NtSide=0) 마지막 3.600V / I_total=3.647e-08 A/µm → J=1.8235 A/cm² (half mesa 2µm 가정); "didn't converge" 0회.
+- n6 (NtSide=1e18) 마지막 3.600V / I_total=9.220e-09 A/µm → J=0.4610 A/cm²; "didn't converge" 1회.
+- V2_Copy shelf 유지+PolAct=0 동일 solver: n2 2.069V / 1.764e-16 A/µm / J=8.82e-9, "didn't converge" 17회; n6 2.036V / 1.235e-16 A/µm / J=6.175e-9, 23회.
+- V2.1 n2 마지막 3점: (3.576V,2.424e-08), (3.592V,3.180e-08), (3.600V,3.647e-08) A/µm. 국소 300K 이상계수≈2.27 (2점 도출). 동일 3.6V에서 n6/n2 I 비≈25.3%.
+
+판단:
+- shelf 보유 구조에서 PolAct=0 만으로는 정체 미해결. shelf 제거+바닥 cathode 변경 구조는 3.6V 도달. **270° corner/자유 표면 그 자체가 단독 원인인지까지는 미확인**.
+- 이택규/Claude는 V2.1을 다음 검증의 working baseline geometry로 채택했다고 보고. 단, 과학적 Common Baseline 최종 freeze 아님.
+- NtSide1e18에서 전류 감소 이유(acceptor trap 공핍 등)는 가설; PLT 후처리 필요.
+- q∫R/I≈1을 leakage/flux 검증 없이 보편적 합격 조건으로 취급하지 않음. bl2_check.py의 IQE 정의 및 EBL/sidewall 적분 실데이터 점검 필요.
+
+근거:
+- 사용자 전달 Claude Baseline V2 작업 기록 #02 (2026-10-15), grep "anode " n*_des.log | tail -3 전사값. GPT는 원본 서버 파일이나 active pp deck을 직접 검사하지 않음.
+- 상세: https://github.com/TaekGyu0801/GGYU/blob/main/CMP/members/LeeTaekGyu/LOG_20261015_02_baseline_v2_1_shelf_removal.md
+
+변경:
+- 상세 #02 보존본; Lee/TEAM timelines; ERROR_LOG; CURRENT_STATUS; NEXT_ACTIONS; .ai-sync/LIVE_STATE.md/json; RELAY. 학교 서버 코드·run을 GPT가 직접 변경하지 않음.
+
+다음:
+1) V2.1 active pp/log/plt+AreaFactor/cathode/mesh source-readonly 검증, region-integral 재계산.
+2) turn-on 문헌 비교 및 NtSide ON/OFF 유효 비교.
+3) 통과 후 S3 PolAct1, A/B 파일럿; 물리 baseline freeze 여부 별도 판단.
+
+---
+
+## 2026-10-15T06:45:47Z — soybeanmilk0514-jpg
+
+[2026-10-15 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / PROGRESS / HANDOFF
+상태: PROPOSED (검증 계획, 신규 서버 결과 없음)
+
+요약:
+- 주수빈은 V2_Copy 수렴 실패 분석 선택을 변경해, 이택규/Claude가 3.6V 도달을 보고한 CMP_BASELINE_2.0.0_V2 내부 V2.1의 전류, 4QW Radiative/SRH/Auger, QW IQE 독립 검증을 시작하기로 결정.
+- 서버 터미널에서 n2/n6 .tdr/.plt 및 *.sta, 로그 마지막 anode 전압/전류를 읽기 전용 확인하는 초기 명령 안내 완료. 현 시점 새 실행/출력 미수신.
+- 이택규가 수치해석/구조를 맡는다는 역할분담은 GPT 권고이며 확정 합의/실시간 작업 상태로 간주하지 않음.
+
+근거:
+- 2026-10-15 주수빈 프로젝트 채팅의 작업 대상 변경 지시, GitHub 이택규/Claude V2.1 RUN 보고(원본 로그 미검증).
+변경:
+- JuSubin/TIMELINE.md, NEXT_ACTIONS.md, LIVE_STATE.md, LIVE_STATE.json, RELAY.md (GitHub)
+- TCAD 코드/학교 서버 원본 run 변경 없음.
+다음:
+- 최초 터미널 명령 출력 확보 → 실제 3.6V endpoint와 TDR/PLT 기원 확인 → SVisual 동일 ROI 재결합 적분.
+
+---
+
+## 2026-10-15T06:48:53Z — soybeanmilk0514-jpg
+
+[2026-10-15 KST] 주수빈 / ChatGPT / RESULT OBSERVED
+주수빈 제공 실제 서버 출력: CMP_BASELINE_2.0.0_V2 n2/n6 *.sta 모두 done. 로그 마지막 anode 각각 3.600 V, raw TotalCurrent n2=3.647e-08 및 n6=9.220e-09. 각 TDR/PLT 파일 존재(n2 21M/293K, n6 23M/295K, Oct14 저장).
+해석: 이택규/Claude의 3.6V 도달 보고를 학교 서버 터미널 텍스트로 독립 재확인. QW IQE, 최종 TDR 바이어스, 2D AreaFactor, 물리 성능은 여전히 미검증.
+다음: SVisual QW region/필드 및 TDR 마지막 저장점 검증 후 Rad/SRH/Auger 적분. 소스 및 실행 변경 없음.
+GitHub 동기화: JuSubin TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE md/json, RELAY.
+
+---
+
+## 2026-10-15T06:53:01Z — soybeanmilk0514-jpg
+
+[2026-10-15 KST]
+작업자: 주수빈 / AI: ChatGPT / 구분: PROGRESS / 상태: OBSERVED (SVisual 화면)
+V2.1 n2_des.tdr를 Sentaurus Visual T-2022.03에서 열었고 화면에 Clean_EBL, Clean_QW1~4 region 및 AugerRecombination scalar가 확인됨. 현재 선택 필드는 DopingConcentration, 표시 데이터 Elements=129404/Points=62529. DmgL_QW1~4 지역과 Radiative/SRH 필드명, 공간 TDR 최종 3.6V 시점 및 적분 수치는 아직 검증되지 않음.
+다음: DmgL QW 영역과 Radiative/SRH 필드를 화면에서 확인 → 동일 QW ROI 적분 → n6과 비교. TCAD 소스/실행 수정 없음.
+GitHub 기록: JuSubin TIMELINE, NEXT_ACTIONS, LIVE_STATE md/json.
+
+---
+
+## 2026-10-15T06:55:59Z — soybeanmilk0514-jpg
+
+[2026-10-15 KST] 주수빈 / ChatGPT / PROGRESS — REGION NAMING CHECK (USER-REPORTED SVisual)
+주수빈은 V2.1 n2 SVisual region 목록에 과거 5V_TEST의 DmgL_QW1~4 대신 'Dmg_QW14' (정확히 한 개 이름인지 미확인) 및 Edge_QW1~4가 있다고 보고. Clean_QW1~4는 이전 스크린샷에서 확인됨. 활성 SDE 코드와 물리적 영역 대응이 아직 입증되지 않아 이들 영역을 임의 합산해 IQE를 계산하지 않음.
+다음: CMP_BASELINE_2.0.0_V2의 실제 sde_dvs.cmd 및 pp1_dvs.cmd에서 Dmg_QW/Edge_QW/Clean_QW 정의를 읽기 전용 확인 후 적분 ROI 결정. 학교 서버 코드 및 run 변경 없음.
+GitHub 기록: JuSubin/TIMELINE, NEXT_ACTIONS, LIVE_STATE.
+
+---
+
+## 2026-10-15T06:59:44Z — soybeanmilk0514-jpg
+
+[2026-10-15 KST] 주수빈 / ChatGPT / PROGRESS / OBSERVED SDE CODE
+주수빈이 CMP_BASELINE_2.0.0_V2/sde_dvs.cmd 실제 서버 grep을 제공. QW1~4 각각 0.003 um, Wdmg=0.005 um, Wedge=@Wedge@; Edge_ 및 Dmg_ 영역명이 string-append로 생성됨. 이전 exact-name grep 결과가 없었던 것은 동적 이름 구성과 일치함. 앞선 Clean_QW1..4 SVisual 확인을 더하면 MQW 4개 × Clean/Edge/Dmg 3종 = 총 12개 region이 의도됨. 실제 SVisual에서 12개가 모두 있는지와 활성 SDevice trapping은 아직 미확인. 다음: GUI ROI 12개 확인 후 Radiative/SRH/Auger를 동일 QW 영역에 적분; interface 및 barrier/EBL 제외. 학교 서버 코드/실행 변경 없음.
+GitHub: JuSubin TIMELINE, NEXT_ACTIONS, LIVE_STATE md/json.
+
+---
+
+## 2026-10-15T07:01:11Z — TaekGyu0801
+
+[2026-10-15 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / SOURCE AUDIT
+상태: OBSERVED (사용자가 제공한 학교 서버 출력), mesh 숫자 UNRESOLVED
+
+요약:
+현재 실제 서버 /user/semi/semi437/CMP_BASELINE_2.0.0_V2/sde_dvs.cmd L33의 (define (RS name mxl mxd mnl mnd) (sdedr:define-refinement-size name mxd mxl mnd mnl)) 확인. L31–32 좌표 P(lat,dep,z)->position(dep,lat,z), L37 Wshelf=0.0 및 V2.1 주석 확인.
+
+주의:
+grep 패턴이 'define-refinement-size'라 함수 호출 (RS ...)은 출력되지 않았음. V2.1의 실제 mesh max/min 수치 및 generated element count는 아직 확인 안 됨. 구 FAST_C1 수치 또는 BulkFac1.5를 V2.1 값으로 대체하지 말 것.
+
+다음:
+동일 프로젝트에서 grep -n -E '\(RS[[:space:]]' sde_dvs.cmd 로 호출값 확인. RS argument maxLat,maxDep,minLat,minDep의 좌표 순서 주의. 시뮬레이션/코드 변경 없음.
+
+기록: CMP/members/LeeTaekGyu/TIMELINE.md
+
+---
+
+## 2026-10-15T07:02:28Z — soybeanmilk0514-jpg
+
+[2026-10-15 KST] 주수빈 / ChatGPT / PROGRESS / OBSERVED SCREENSHOT
+CMP_BASELINE_2.0.0_V2 Sentaurus Visual n2_des에서 RadiativeRecombination scalar 필드가 활성화되어 있고 범례 최대 3.07538e25 cm^-3 s^-1가 표시됨. 이는 2D 공간 국소 최대값이고 QW 영역 적분 결과나 IQE가 아님. Regions 목록에는 Edge_QW3/4가 보임. 전체 12개 Clean/Edge/Dmg QW 지역 선택·통합 값은 아직 측정하지 않음.
+다음: SVisual Field Integration Region/Material 탭에서 해당 QW region만 선택, Total Integral과 Domain 출력 확보; 이후 SRH/Auger 동일 ROI, n6 비교. 소스/실행 변경 없음.
+저장: JuSubin/TIMELINE.md, NEXT_ACTIONS.md, LIVE_STATE.md/json.
+
+---
+
+## 2026-10-15T07:08:04Z — soybeanmilk0514-jpg
+
+[2026-10-15 KST] 작업자: 주수빈 / AI: ChatGPT / 구분: RESULT / 상태: OBSERVED (Sentaurus Visual 적분 출력)
+V2.1 n2_des RadiativeRecombination, Clean_QW1..4, Edge_QW1..4, Dmg_QW1..4 총 12개 2D ROI: Total Integral=1.524099e11 s^-1 um^-1, Total Domain=0.02399999 um². QW별 합계: QW1=1.884852e6, QW2=2.718766e6, QW3=4.298663e7, QW4=1.52362276e11. QW4가 전체 방사 재결합의 약 99.9688% 차지. 방사 위치 비율이지 IQE가 아님. 다음: 동일 12 ROI의 n2 SRH, Auger 적분 후 n6 반복. 3.6V TDR 시점, AreaFactor 및 IQE 해석 미검증. 원본 소스/시뮬레이션 변경 없음.
+
+---
+
+## 2026-10-15T07:12:18Z — soybeanmilk0514-jpg
+
+[2026-10-15 KST] 작업자: 주수빈 / AI: ChatGPT / 구분: RESULT / 상태: OBSERVED (SVisual Field Integration)
+V2.1 n2_des srhRecombination, Clean_QW1..4 + Edge_QW1..4 + Dmg_QW1..4 총 12개 2D ROI 적분. Total Integral=1.253894e10 s^-1 um^-1, Total Domain=0.02399999 um². QW1=2.251474379e7, QW2=2.770548437e7, QW3=1.198340442e8, QW4=1.236888616e10, SRH QW4 기여≈98.6438%. 기존 Radiative=1.524099e11/같은 domain. 두 채널 기준 Rad share≈92.40%, Auger 미포함이므로 3채널 QW 비율 또는 검증된 IQE 아님.
+다음: 같은 12개 ROI에서 n2 AugerRecombination 적분 후 n6 조건에서 3채널 반복. QW4 집중 원인, AreaFactor, 누설 및 TDR final bias 미검증. 기존 코드와 시뮬레이션 변경 없음.
+반영 위치: JuSubin TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE md/json, RELAY.
+
+---
+
+## 2026-10-15T07:16:22Z — soybeanmilk0514-jpg
+
+[2026-10-15 KST] 주수빈 / ChatGPT / RESULT (OBSERVED SVisual Auger integration)
+CMP_BASELINE_2.0.0_V2 n2_des, Clean/Edge/Dmg × QW1..4 12개 ROI. AugerRecombination Total Integral=6.265625e10 s^-1 um^-1, Total Domain=2.399999e-02 um²; QW4 Auger 합≈6.26521553e10 (99.99346%).
+이전 동일 ROI Radiative=1.524099e11, srhRecombination=1.253894e10과 합하면 3채널 Total=2.2760509e11 s^-1 um^-1, Radiative fraction=66.96243%, SRH=5.50908%, Auger=27.52849%. QW별 3채널 방사 비율 QW1=7.70%, QW2=8.90%, QW3=25.78%, QW4=67.01%. 모델 내부 비율이며 물리적으로 검증된 IQE/EQE 아님.
+다음: n6_des.tdr에서 동일 12개 ROI를 세 필드로 적분하고 동일 Domain 확인. QW4 집중, 2D 전류 정규화, n2 TDR 3.6V snapshot, model calibration 및 동일 전류 조건 미검증. TCAD 원본/시뮬레이션 수정 없음.
+
+---
+
+## 2026-10-15T07:23:10Z — soybeanmilk0514-jpg
+
+[2026-10-15 KST] 작업자 주수빈 / ChatGPT / PROGRESS OBSERVED
+사용자가 n6 검증 단계에서 제공한 새 SVisual 출력은 실제 Dataset=n2_des, RadiativeRecombination, Clean_QW1..4 + Dmg_QW1..4 총 8개 ROI임. Total Integral=1.447895e11 s^-1 um^-1, Domain=0.02279999 um². 기존 n2 12 ROI 1.524099e11 / 0.02399999 um²와 차 약 7.6204e9은 누락 Edge_QW1..4 합과 일치. n6 수치는 아직 확보하지 못함.
+다음: GUI에서 n6_des 데이터셋 선택 확인 후 Clean/Edge/Dmg×QW1..4 12개 ROI 적분. 원본 코드/실행 변경 없음.
+
+---

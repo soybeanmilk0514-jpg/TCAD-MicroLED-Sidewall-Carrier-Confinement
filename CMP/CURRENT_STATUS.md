@@ -1,3 +1,29 @@
+## 2026-10-15 — V2.1 n2 MQW 3-channel integrals OBSERVED, physics gate open
+- 주수빈 SVisual 실제 출력 동일한 Clean/Edge/Dmg QW1..4 총 12 ROI (Domain=0.02399999 um²): Rad 1.524099e11, SRH 1.253894e10, Auger 6.265625e10 s^-1 um^-1. Derived 3-channel QW radiative fraction 66.9624%, SRH 5.5091%, Auger 27.5285%. QW4의 극단적 편중, 높은 Auger, current balance/AreaFactor/실제 n2 TDR bias 등 검증 필요. n6 적분 대기. This is not calibrated device IQE.
+
+## 2026-10-15 — 주수빈 n2 MQW SRH 적분 관찰 (OBSERVED)
+- V2.1 SVisual n2_des srhRecombination 12 QW ROI Total Integral=1.253894e10 s^-1 um^-1, Domain=0.02399999 um²; QW4 98.6438%. 앞선 Radiative=1.524099e11. 두 채널 radiative share≈92.40% (not IQE). Auger/n6 미측정, AreaFactor와 TDR 최종 bias 미확인.
+
+## 2026-10-15 — V2.1 n2 4QW Radiative 적분 첫 확보 (OBSERVED; SRH/Auger pending)
+- 출처(OBSERVED): 주수빈이 2026-10-15 실제 Sentaurus Visual `Dataset: n2_des`, `Field: RadiativeRecombination`, `Regions of Dimension 2`의 Field Integration 출력 전체를 채팅에 제공. `Clean_QW1..4`, `Dmg_QW1..4`, `Edge_QW1..4` 총 12개 물리 영역이 확인됨. `Total Integral = 1.524099e+11 [s^-1*um^-1]`, `Total Domain = 2.399999e-02 [um^2]`; 12개 개별 값의 합 = 1.52409866249133e11 (출력 반올림과 일치).
+- QW별 세 영역 합계(표시 정밀도): QW1=1.884852e6, QW2=2.718766e6, QW3=4.298663e7, QW4=1.52362276e11 [s^-1*um^-1]. QW4 비중 ≈99.9688%. 공간적 방사 재결합 분포일 뿐 IQE가 아님. QW4 우세의 수송/전자·정공 주입 물리 원인은 미확인.
+- 각 Clean 합계≈1.44408491777e11, Edge≈7.62036249754e9, Dmg≈3.81011974593e8; 과거 `Dmg_QW14` 사용자 간략 표기와 달리 실제 적분에서 `Dmg_QW1..4` 개별 이름 확인. n6, SRH/Auger 및 3.6V에 대응하는 TDR 최종 저장점·물리 모델/AreaFactor 미검증.
+- 다음: 동일한 12개 ROI로 **n2 SRH** 적분 (`Total Domain` 동일 확인), 이후 Auger 적분하고 n6 반복. `Radiative/(Radiative+SRH+Auger)`는 정의 한정의 QW 내 비율이며 전류/누설/Trap 생성·재결합 수지 별도 검증 전 물리적으로 확정된 IQE 또는 matched-current 성능 차이가 아님. 코드/시뮬레이션 변경 없음.
+
+## 2026-10-15 — V2.1 n2/n6 3.6V 실행 완료 직접 터미널 확인 (OBSERVED, 물리 검증 계속 UNRESOLVED)
+- 근거: 주수빈이 2026-10-15 실제 학교 서버에서 복사한 읽기 전용 출력. 경로 `/user/semi/semi437/CMP_BASELINE_2.0.0_V2`; `cat n2_des.sta n6_des.sta`에서 두 노드 모두 `done`; `grep '^ *anode' n2_des.log | tail -3` 마지막 (3.576V,2.424e-08), (3.592V,3.180e-08), (3.600V,3.647e-08); n6 동일 전압에서 7.077e-09 / 8.433e-09 / 9.220e-09 (SDevice raw terminal total-current log values).
+- 파일 존재: n2_des.plt 293K, n2_des.tdr 21M (Oct14 15:44); n6_des.plt 295K, n6_des.tdr 23M (Oct14 17:43). 출력 시점 및 최종 전압 기록은 사용자가 직접 제시한 실제 파일/로그 텍스트로 **OBSERVED**. 이는 종전의 Claude 단독 RUN 전사 근거를 강화함.
+- 동일 3.6V n6/n2 raw terminal current ratio = 9.220e-09/3.647e-08≈0.2528. 진정한 QW 주입/효율/트랩 효과 원인, 2D A/µm/AreaFactor 정확한 설정, TDR가 목표 3.6V 최종 저장본인지, 활성 코드 Wshelf·PolAct·접촉 설정은 아직 **UNRESOLVED**.
+- 원본 소스/실행 변경 없음. 다음은 TDR 저장 시점·활성 덱 정의와 SVisual ROI·물리 필드 확인 후 QW별 Radiative/SRH/Auger 적분; 단일 전압에서 IQE causality 단정 금지.
+
+## 2026-10-15 — Baseline V2.1 working structure 3.6V endpoint (USER-REPORTED RUN; physical baseline UNVALIDATED)
+- **최신 사용자 전달 Claude 서버 실행**: `CMP_BASELINE_2.0.0_V2`에서 shelf 제거(`Wshelf=0`), shelf region·바닥 cathode 제거, PolAct=0.5, 기본 solver(Iterations20/NotDamped50, PARDISO 없음)로 n2 NtSide=0 및 n6 NtSide=1e18 모두 **3.600V 도달**. 조건부 half-width 2µm 기준 `I_total`=3.647e-08/9.220e-09 A/µm, J=1.8235/0.4610 A/cm², `didn't converge` 0/1회. 수치 출처는 Claude 보고이며 **GPT에서 서버 원본 로그 미검증**.
+- **대조:** shelf 유지+PolAct=0 `CMP_BASELINE_2.0.0_V2_Copy`는 n2/n6 2.069/2.036V에서 정체. 분극 제거 단독 해결 가설은 지지되지 않음; shelf 제거와 cathode 경계조건 변경을 하나씩 격리한 인과 실험은 아님. 구체적 수치 불안정 원인 미확인.
+- **의사결정(이택규/Claude 보고):** shelf 없는 **V2.1을 작업용 Baseline 구조로 채택**. 기존 shelf V2 수렴 실패한 계보는 현 검증 흐름에서 사용하지 않음. **Common Baseline 물리·효율 검증/정식 freeze 아님**.
+- **최신 blocker:** 활성 deck/AreaFactor·contact·mesh 대조, 3.6V QW·EBL·측벽 recombination 및 누설/current balance, `bl2_check.py` IQE 계산 정의 확인, NtSide ON 전류 25.3%의 원인, 문헌 I–V 대비 turn-on, 구조 변경의 A/B lateral physics 적합성 검증 필요. 3.6V 도달 = 동작 타당성 검증 완료 아님.
+- **다음:** V2.1 실제 pp/log/.plt 검증→ J–V/지역별 적분·동일전류 비교→ 기준 논문 I–V → 검증 통과 시 S3 PolAct1.0, A/B pilot; 필요 시 Save/Load 확인 후 복사본에서 4–5V 확장. [근거 #02](members/LeeTaekGyu/LOG_20261015_02_baseline_v2_1_shelf_removal.md).
+- 과거 CAL, POL50, Half+Coarse 5V 수치·이슈는 독립 계보로 유지함. 학교 서버 실제 코드 수정 없음.
+
 ## 2026-10-13 — 이택규 Claude V2 독립 수치·물리 검토 (GPT ANALYSIS / USER-REPORTED RUN3)
 - 사용자 전달 Claude 설명: run1 2.31V 도달 후 QS Newton 진동, run2 2.070V 조기 종료, **run3는 Claude가 수정한 복사본**에서 `Method=Blocked, SubMethod=ParDiSo, NumberOfThreads=4, Iterations=20, NotDamped=50, ExtendedPrecision` 설정으로 실행 중이라고 보고됨. **새 복사본의 원본 pp*/log 및 성공/개선은 직접 검증되지 않음**.
 - 독립 검토(해석, 결과 아님): QS MaxStep는 V가 아닌 정규화된 t에 작용하므로 stage 2.0→3.6V의 MaxStep 0.01은 최대 0.016V, 0.02는 0.032V, MinStep 1e-6은 1.6 microV. 2.3V 수렴은 스텝 크기/수치 stiff 문제 가능성 높으나 물리 원인 미확정. `NotDamped=50>Iterations=20`은 기본적으로 Bank–Rose damping을 지연시키지만 Sentaurus 교육자료는 QS에서 작은 스텝을 일반적으로 우선하므로 '오류'로 단정 금지.
