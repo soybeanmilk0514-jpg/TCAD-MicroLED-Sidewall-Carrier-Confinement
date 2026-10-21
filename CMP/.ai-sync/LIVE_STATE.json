@@ -3224,5 +3224,214 @@
       "S3 PolAct1 control conditional",
       "A/B pilot conditional"
     ]
+  },
+  "leeV21MeshAudit20261021": {
+    "worker": "이택규",
+    "status": "OBSERVED_SOURCE_AND_GENERATED_MESH_LOG_QUALITY_WARNING",
+    "source": "User-pasted sde_dvs.cmd lines 25-55, 170-270, 2026-10-21",
+    "device": "CMP_BASELINE_2.0.0_V2 (V2.1, shelf removed)",
+    "geometry": {
+      "fullMesaUm": 4,
+      "halfMesaUm": 2,
+      "sidewallDamageUm": 0.005,
+      "Wshelf": 0,
+      "Cath": 0
+    },
+    "meshSettingsMaxUm": {
+      "globalLateral": 0.25,
+      "globalDepth": 0.25,
+      "qwDepth": 0.0003,
+      "activeDepth": 0.0015,
+      "interfaceDepth": 0.0002,
+      "damagedLateral": 0.0005,
+      "cleanEdgeBoundaryLateral": 0.0008
+    },
+    "caution": "Nominal max mesh sizing is not actual element count, quality or convergence. R_sh remains in code although Wshelf=0. SWB Wedge/Bspan actual values unresolved.",
+    "next": "Read pp2_des.cmd/pp6_des.cmd physics and AreaFactor, verify current normalization; Full after Half validation",
+    "tcadCodeChanged": false,
+    "geometryDepthUm": 4.288,
+    "observedMeshLog": {
+      "points": 62529,
+      "elements": 123917,
+      "regionsReported": 42,
+      "nMats": 40,
+      "totalAreaUm2": 8.576,
+      "minAngleDeg": 0.0167024,
+      "maxAngleDeg": 128.367,
+      "minEdgeUm": 0.0000195312,
+      "minEdgeNearDepthUm": 0.0041875,
+      "minEdgeNearLateralUm": 1.89501,
+      "bboxDepthUm": 4.288,
+      "bboxLateralUm": 2,
+      "generationStatus": "done"
+    },
+    "derived": {
+      "XeUm": 1.895,
+      "note": "The min edge appears near clean/edge transition within pCap region; hypothesis pending SVisual validation."
+    },
+    "userSequence": "Defer Full simulation until Half mesh verification complete",
+    "latestObservedLogGrep": {
+      "matchingLines": 4,
+      "independentWarningErrorText": false,
+      "minimumAngleDeg": 0.0167024,
+      "minimumEdgeUm": 0.0000195312,
+      "smallestRegion": "Dmg_QW3",
+      "smallestRegionAreaUm2": 0.000015
+    },
+    "investigationPriority": "Leave minimum-angle outlier as unresolved issue; move to broad physics and current consistency audit unless new numerical evidence emerges"
+  },
+  "leeFullHalfValidationGate20261021": {
+    "worker": "이택규",
+    "source": "User reported professor feedback and pasted server terminal, 2026-10-21",
+    "status": "PROPOSED_GATE_OBSERVED_PP1_NO_FULL_RUN",
+    "requirement": "Full 4um symmetric reference vs half 2um electrical and recombination validation before defending half-model performance.",
+    "observedPP1": {
+      "Wshelf_um": 0,
+      "Wedge_um": 0.1,
+      "Bspan": 0,
+      "Cath": 0
+    },
+    "observedMeshFile": {
+      "path": "CMP_BASELINE_2.0.0_V2/n1_msh.tdr",
+      "sizeReported": "2.0M",
+      "date": "2026-10-14 13:43 KST"
+    },
+    "knownCaveats": [
+      "V2_Copy remains half, not full",
+      "Half/Full raw current factor two only with equal 2D normalization and AreaFactor",
+      "No mesh-convergence accuracy established"
+    ],
+    "next": "Inspect actual SDE geometry/contact/source 55-170 and mesh log; produce protected independent full candidate and verify preprocessed geometry and two-sided traps before solving full NtSide=0, later n6.",
+    "tcadCodeChanged": false
+  },
+  "leeV21PhysicsAudit20261021": {
+    "worker": "이택규",
+    "status": "N2_N6_DECK_AND_PARITY_PASS_J_NORMALIZATION_PENDING",
+    "proof": "User-pasted diff -u pp2_des.par pp6_des.par | head -n 80 produced no output; full 76-line pp2 vs pp6 command diff was seen earlier",
+    "preprocessedParamsEquivalent": true,
+    "commandDifferences": "SideTrap Conc=0 in 13 Dmg regions on n2 vs 1e18 in n6; other diffs only node-specific filenames and .par reference; same n1_msh.tdr",
+    "runtimeThermionic": "n2 and n6 logs both indicate electron+hole thermionic emission, Formula 1",
+    "stillOpen": [
+      "AreaFactor 2D current normalization",
+      "actual current and TDR bias consistency",
+      "QW n6 triple-integral and matched-current comparison",
+      "physical validation and mesh convergence"
+    ],
+    "next": "Read .plt datasets/current units and SDevice File/Electrode to audit I-V before Full/Half comparison.",
+    "tcadCodeChanged": false
+  },
+  "leeV21ElectricalAudit20261021": {
+    "worker": "이택규",
+    "source": "User-pasted real server DF-ISE n2/n6 PLT Python extraction at 3.600V, 2026-10-21",
+    "status": "N2_OFF_N6_ON_TRAP_CURRENT_BALANCE_OBSERVED_PHYSICAL_AND_AREAFACTOR_PENDING",
+    "selected": {
+      "n2": {
+        "datasets": 100,
+        "points": 123,
+        "lastIndex": 122,
+        "voltage": 3.6,
+        "anodeCurrent": 3.64728525e-8,
+        "cathodeCurrent": -3.64728525e-8,
+        "displacement": 0,
+        "QW_Rad": 1.52410078e+23,
+        "QW_SRH": 1.25388758e+22,
+        "QW_Auger": 6.26565608e+22,
+        "QW_RadFraction": 0.66962383696,
+        "QW3ChannelsEquivalentCurrentFraction": 0.9998237381
+      },
+      "n6": {
+        "datasets": 100,
+        "points": 124,
+        "lastIndex": 123,
+        "voltage": 3.6,
+        "anodeCurrent": 9.21970771e-9,
+        "cathodeCurrent": -9.21970771e-9,
+        "displacement": 0,
+        "QW_Rad": 2.55545394e+22,
+        "QW_SRH": 4.31092452e+21,
+        "QW_Auger": 7.83986116e+21,
+        "QW_RadFraction": 0.67774351092,
+        "QW3ChannelsEquivalentCurrentFraction": 0.6552332538
+      }
+    },
+    "derived": {
+      "n6_to_n2_same_voltageCurrentRatio": 0.2527827433,
+      "n6_to_n2_QWRadiativeRatio": 0.167669617,
+      "PLTrawToSVisualObservedFactor": 1e-12,
+      "conditional": "q*QW PLT raw*1e-12/I assumes PLT/SVisual 2D unit convention, AreaFactor not independently verified"
+    },
+    "limitations": [
+      "QW 3channel proportion is not proven total device IQE",
+      "n6 residual ~34.48% not attributable to trap until eGapStatesRecombination and all-device channel integration read",
+      "same-voltage is not same-current efficiency",
+      "QW4 dominates; revisit if needed",
+      "Terminal current balance confirms numerical consistency only",
+      "Python NameError PY after all prints harmless"
+    ],
+    "next": "Verify 2D terminal current units and AreaFactor, review physical plausibility and prepare Full/Half after Half check.",
+    "codeModified": false,
+    "simulationRerun": false,
+    "n6FinalGlobalRecombRaw": {
+      "volts": 3.6,
+      "trap": 1.98258247754075e+22,
+      "SRH": 4.32337288643595e+21,
+      "Radiative": 2.55552035945039e+22,
+      "Auger": 7.83993596604716e+21
+    },
+    "derivedUsingQAnd1eMinus12": {
+      "trapEquivalentAPerOutOfPlaneUnit": 3.1764473204936194e-9,
+      "trapFractionTerminal": 0.3445279850952693,
+      "allFourEquivalent": 9.219619251673693e-9,
+      "allFourOverTerminal": 0.99999040551728,
+      "currentResidual": 8.845832630664573e-14,
+      "residualFraction": 0.00000959448271995661,
+      "qwThreeChannelFraction": 0.6552332538159192
+    },
+    "caution": "PLT data strongly supports internal current/recombination closure but 2D units and AreaFactor need independent review; do not infer same-current IQE or causality. n6 eGapStates total pertains to registered trap regions, ON/OFF effect requires control interpretation.",
+    "tcadCodeChanged": false,
+    "n6Final3p6V": {
+      "anodeCurrentRaw": 9.21970771e-9,
+      "trapGapStateRaw": 1.98258247754075e+22,
+      "wholeDeviceRadiativeRaw": 2.55552035945039e+22,
+      "wholeDeviceSRHRaw": 4.32337288643595e+21,
+      "wholeDeviceAugerRaw": 7.83993596604716e+21
+    },
+    "conditionalConvertedCurrent": {
+      "nontrapEquivalent": 6.04317193118e-9,
+      "trapEquivalent": 3.17644732049e-9,
+      "totalEquivalent": 9.21961925167e-9,
+      "reportedAnodeCurrent": 9.21970771e-9,
+      "closureRatio": 0.9999904055,
+      "trapFraction": 0.3445279851
+    },
+    "caveat": "Applying q and PLT*1e-12 supported by previous numerical SVisual comparison. Physical model, AreaFactor and absolute current units still require independent verification. n6 trap channel accounts for prior ~34.48% QW-only current residual numerically but is NOT proof of unique causal mechanism nor calibrated IQE.",
+    "observedN2TrapAt3p6V": 1178830.32026416,
+    "observedN6TrapAt3p6V": 1.98258247754075e+22,
+    "n6ToN2TrapRawRatio": 16818217545477454,
+    "conditionalEquivalentCurrentAssumption": "q*1e-12 raw PLT, 2D unit/AreaFactor requires independent checking",
+    "n2TrapEquivalentCurrent": 1.8886943945779735e-25,
+    "n2TrapCurrentFraction": 5.178356682077371e-18,
+    "n6TrapEquivalentCurrent": 3.1764473204936194e-9,
+    "n6TrapCurrentFraction": 0.3445279850952693,
+    "n6WholeDeviceCurrentAccountingFraction": 0.9999904055,
+    "inferenceLimit": "Trap OFF practically negligible and ON material; does NOT imply proven unique mechanism of lower 3.6V terminal current or calibrated IQE."
+  },
+  "leeV21FinalFiles20261021": {
+    "worker": "이택규",
+    "status": "OBSERVED_FILE_EXISTENCE_ONLY",
+    "folder": "CMP_BASELINE_2.0.0_V2",
+    "files": [
+      "n2_end_circuit_des.sav",
+      "n6_end_circuit_des.sav",
+      "n2_end_des.sav",
+      "n6_end_des.sav",
+      "n2_end_des.tdr",
+      "n6_end_des.tdr"
+    ],
+    "earlierLsError": "Malformed shell redirection parsed literal 2; not missing final file",
+    "knownPLTFinalBiasV": 3.6,
+    "pending": "Inspect SVisual TDR QW4 dominance and 2D current normalization before Full/Half validation",
+    "codeChanged": false,
+    "rerun": false
   }
 }

@@ -1,3 +1,25 @@
+## 2026-10-21 — V2.1 n6 3.6V 전체 재결합/Trap 전류 수지 99.9990% 확인 (USER-OBSERVED PLT; UNIT CONSISTENCY INFERRED)
+- 작업자 이택규가 학교 서버 n6_des.plt 마지막 행에서 직접 추출해 제공: bias=3.6V; IntegrTrap_all eGapStatesRecombination = 1.98258247754075e22, IntegrSRH_all srhRecombination = 4.32337288643595e21, IntegrRad_all RadiativeRecombination = 2.55552035945039e22, IntegrAug_all AugerRecombination = 7.83993596604716e21 (raw PLT integral data).
+- 이전 같은 행 Ianode=9.21970771e-09, Icathode=-9.21970771e-09, displacement=0. Earlier n6 four-QW 3-channel sum raw Rad=2.55545394e22 SRH=4.31092452e21 Aug=7.83986116e21.
+- DERIVED using q=1.602176634e-19 C and PLT raw recombination x 1e-12 numerical SVisual 2D conversion (unit conventions still need formal confirmation): Trap equivalent current=3.17644732e-09, =34.4528% of terminal current; total-device Rad=44.4092%, SRH=7.5130%, Auger=13.6240%. Four-channel all-device sum equivalent=9.21961925e-09, =**99.99904%** terminal current, residual 8.85e-14 =0.000959%. QW-only 3-channel =65.5233% terminal current, Trap=34.4528%, other-than-QW normal channels ~0.02292%; residual ~0.00096%.
+- INTERPRETATION: numerical charge/recombination balance closes very tightly in n6 at final steady-state-like 3.6V and eGapStates recombination is substantial, consistent with active SideTrap in Dmg regions (EdgeTrap Conc0); not proven that this alone causes reduced terminal current, not matched-current IQE, not device physical calibration, not independent unit/AreaFactor confirmation. No need to pursue tiny mesh-angle without new evidence. `IntegrTrap_all` area attribution to sidewall can be checked with regionwise integrated values if needed.
+- NEXT: read n2 all-device trap/channel totals for control/balance, check current units/AreaFactor and QW4-dominant spatial recombination physical plausibility as part of broader Half validation; then prepare professor-requested 4um Full vs 2um Half run on protected separate project. Existing TCAD code/runs untouched.
+
+## 2026-10-21 — 이택규 V2.1 mesh minimum angle/edge handoff (OBSERVED LOG, UNRESOLVED)
+- Worker 이택규, AI ChatGPT. Actual SDE code and mesh log user supplied, original Half must be preserved.
+- Geometry: SDE depth x=0..4.288um, lateral y=0..2um; pCap 20nm, pGaN 120nm, EBL26nm, 5 barriers22nm, 4 wells3nm, nMesa0.5um, nBulk3.5um. Wedge0.1um, Wshelf0, Bspan0, Cath0. Top anode and bottom cathode in SDE.
+- Mesh log 62529 points,123917 elements, 42 regions vs 40 nMats (meaning unknown), minAngle 0.0167024deg and min edgeLength 1.95312e-05um near (depth0.0041875,lateral1.89501)um, corresponding to near Clean/Edge boundary Xe1.895um. Mesh saved successfully. Do not claim convergence error or cause from this alone.
+- NEXT FIRST: grep full n1_msh.log warnings, inspect SVisual n1_msh.tdr at suspicious location; validate mesh quality, geometry, contacts and decide whether isolated refinement test needed.
+- User explicitly deferred Full/Half production until current Half verification completes; do not create/launch Full ahead of that decision. No source or simulations changed.
+
+## 2026-10-21 — 이택규 교수 피드백 반영: V2.1 Full/Half 근거 확보 필요 (HANDOFF, PROPOSED)
+- 작업자: 이택규; AI: ChatGPT. 사용자 보고 교수 피드백: 2um half model을 학술 발표/논문에 쓰려면 4um full reference와 정량 성능 동등성 검증 필요.
+- 확인된 근거: 활성 `pp1_dvs.cmd` Wshelf=0, Wedge=0.1um, Bspan=0, Cath=0, `n1_msh.tdr` 2.0MB 생성 2026-10-14. 앞선 실제 `sde_dvs.cmd`로 x=depth/y=lateral 및 RS ref-size 확인. `V2_Copy`는 구 shelf 포함 half로 Full이 아님.
+- 미해결: geometry mirror symmetry, full left/right contacts and sidewall trap placement, area normalization/AreaFactor, actual generated mesh quality, later Full/Half J-V/recombination/profile comparison. 원래 성공한 half V2.1 n2/n6 출력 절대 덮어쓰지 않음.
+- 이미 한 것: 소스 크기 설정 및 macros read only 확인. 아직 Full 구조 소스/시뮬레이션 생성하지 않음.
+- NEXT FIRST: `sed -n '55,170p' sde_dvs.cmd`, `tail -n 35 n1_msh.log`, inspect SVisual actual mesh; 이후 버전된 별도 Full 구조 작성해 NtSide0 먼저 수치 비교.
+- 보호 조건: 4um full, 5nm sidewall damage, Wedge0.1um, Bspan0, shelf0, Cath0, same EPI/doping/physics/solver/PolAct+NtSide cases. 2D full-to-half raw current 2x only conditional on normalization.
+
 ## 2026-10-15 — 주수빈 n2 3채널 완료, n6 물리 검증 인수인계 (OBSERVED)
 - 데이터 n2_des 12 QW: Rad=1.524099e11, SRH=1.253894e10, Auger=6.265625e10 s^-1 um^-1, Total Domain=0.02399999 um² 각 동일. 3채널 방사비율=66.96243%. QW4 집중(방사≈99.969%, SRH≈98.644%, Auger≈99.993%) 확인, 물리 원인 불명.
 - Next SVisual n6_des.tdr 동일 12 regions + 세 필드 적분, 각 Total Domain 검증. n2/n6 3.6V 동일 전압이나 다른 전류라 matched current 불가. 실제 TDR 최종 저장 bias, current units AreaFactor, 물리 calibration 미해결. 기존 계산 덱 변경 금지.

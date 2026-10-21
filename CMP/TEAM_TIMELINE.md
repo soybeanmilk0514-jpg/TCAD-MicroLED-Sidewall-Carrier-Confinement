@@ -1,3 +1,32 @@
+## 2026-10-21 — V2.1 n6 3.6V 전체 재결합/Trap 전류 수지 99.9990% 확인 (USER-OBSERVED PLT; UNIT CONSISTENCY INFERRED)
+- 작업자 이택규가 학교 서버 n6_des.plt 마지막 행에서 직접 추출해 제공: bias=3.6V; IntegrTrap_all eGapStatesRecombination = 1.98258247754075e22, IntegrSRH_all srhRecombination = 4.32337288643595e21, IntegrRad_all RadiativeRecombination = 2.55552035945039e22, IntegrAug_all AugerRecombination = 7.83993596604716e21 (raw PLT integral data).
+- 이전 같은 행 Ianode=9.21970771e-09, Icathode=-9.21970771e-09, displacement=0. Earlier n6 four-QW 3-channel sum raw Rad=2.55545394e22 SRH=4.31092452e21 Aug=7.83986116e21.
+- DERIVED using q=1.602176634e-19 C and PLT raw recombination x 1e-12 numerical SVisual 2D conversion (unit conventions still need formal confirmation): Trap equivalent current=3.17644732e-09, =34.4528% of terminal current; total-device Rad=44.4092%, SRH=7.5130%, Auger=13.6240%. Four-channel all-device sum equivalent=9.21961925e-09, =**99.99904%** terminal current, residual 8.85e-14 =0.000959%. QW-only 3-channel =65.5233% terminal current, Trap=34.4528%, other-than-QW normal channels ~0.02292%; residual ~0.00096%.
+- INTERPRETATION: numerical charge/recombination balance closes very tightly in n6 at final steady-state-like 3.6V and eGapStates recombination is substantial, consistent with active SideTrap in Dmg regions (EdgeTrap Conc0); not proven that this alone causes reduced terminal current, not matched-current IQE, not device physical calibration, not independent unit/AreaFactor confirmation. No need to pursue tiny mesh-angle without new evidence. `IntegrTrap_all` area attribution to sidewall can be checked with regionwise integrated values if needed.
+- NEXT: read n2 all-device trap/channel totals for control/balance, check current units/AreaFactor and QW4-dominant spatial recombination physical plausibility as part of broader Half validation; then prepare professor-requested 4um Full vs 2um Half run on protected separate project. Existing TCAD code/runs untouched.
+
+## 2026-10-21 — 이택규 V2.1 3.6V 실제 n2/n6 단자전류·MQW 재결합 추출
+- OBSERVED n2 Ianode=3.64728525e-08 and n6 Ianode=9.21970771e-09 raw (same 3.600V, n6/n2=25.28%), respective cathode currents negative identical magnitude and displacement 0.
+- QW1..4 Clean/Edge/Dmg PLT integrals: n2 (Rad1.52410078e23, SRH1.25388758e22, Aug6.26565608e22); n6 (Rad2.55545394e22, SRH4.31092452e21, Aug7.83986116e21) raw. Radiative QW three-channel fractions 66.96% n2 and 67.77% n6 (NOT absolute physical IQE). n2 PLT raw ×1e-12 agrees with prior 주수빈 SVisual QW three-channel integrals.
+- q×(QW3channel raw)×1e-12 / I gives n2~99.98%, n6~65.52% under assumed normalization; residual n6 ~34.48% unresolved pending trap/whole-device integrated recombination. Do not assert mechanism. No run/edits.
+
+## 2026-10-21 — 이택규 V2.1 n2/n6 .par 일치 확인 (OBSERVED)
+- 실제 서버 `diff -u pp2_des.par pp6_des.par | head -n 80` 출력 없음. 기존 동일 `n1_msh.tdr`/Solver/Physics, SideTrap OFF0/ON1e18 차이를 보이는 .cmd 전체 diff 결과와 합쳐, 현재 NtSide OFF/ON의 입력 split 일관성 검토를 통과. 물성 검증 완료/실제 IQE 검증 완료 의미 아님.
+- 다음은 전류 정규화, 실제 I-V, QW n6 integral 확인. 소스 및 시뮬레이션 변경 없음.
+
+## 2026-10-21 — 이택규 V2.1 Half 생성 Mesh 로그 분석 및 교수 Full 검증 순서 조정
+- `sde_dvs.cmd` 확인: half 폭2um, depth4.288um, 4×3nm QW, 5nm damage, top anode/bottom cathode. `n1_msh.log`: 62529 points/123917 triangles, minAngle 0.0167024deg, min edge 1.95312e-05um at (depth0.0041875,lateral1.89501)um near Clean/Edge boundary, bbox 4.288×2um². Numeric mesh quality issue is **flagged**, not proven physics error.
+- User choice: finish existing V2.1 structure/mesh check first; subsequently prepare/run separate 4um Full comparison without changing original Half. No new simulation, code modification or confirmed mesh equivalence.
+
+## 2026-10-21 — 이택규 교수 피드백: V2.1 Full-vs-Half 재현성 검증 선행 (USER-REPORTED CONSTRAINT; PROPOSED GATE)
+- Half 2um만으로 논문 타당성을 주장하지 않고 4um Full symmetric reference와 J-V, MQW 재결합, 대칭 carrier/current field를 정량 비교하기로 검증 계획 보강. 기존 `_Copy`는 구 V2 half 구조로 Full reference가 아님.
+- 사용자 제공 `pp1_dvs.cmd` 활성 설정: Wshelf=0, Wedge=0.1um, Bspan=0, Cath=0. `n1_msh.tdr` 약 2.0MB Oct14 생성 확인; 실제 mesh 내용/품질 미확인.
+- Full 개발/실행 없음; 기존 V2.1 half를 보존. 다음 실제 원본 geometry/contact/mesh log audit 후 독립 Full 비교 소자 제안.
+
+## 2026-10-21 — 이택규 V2.1 SDE 실제 Mesh refinement 설정 확인 (OBSERVED SOURCE ONLY)
+- 서버 `CMP_BASELINE_2.0.0_V2/sde_dvs.cmd` 전체 mesh block 발췌에서 coordinate x=depth/y=lateral, half width 2um, sidewall damage 5nm, `Wshelf=0`, `Cath=0`, QW depth max 0.3nm 및 sidewall lateral max 0.5nm 등 상세 설정을 확인. `R_sh` window는 shelf 제거 후에도 코드에 존재.
+- 이는 **설정 확인**이지 생성된 mesh/물리 정확도나 수렴성 통과가 아님. 실제 SWB `Wedge/Bspan` 값, n1_msh.log/tdr, 요소 품질 및 refinement convergence 필요. 이택규는 구조/mesh 검증 진행, 주수빈 n6 QW 재결합 적분 별도 진행. 원본 코드/계산 변경 없음.
+
 ## 2026-10-15 — 주수빈 V2.1 n2 SRH 12 QW integration 관찰
 - srhRecombination, 12 QW ROI Total Integral=1.253894e10 s^-1 um^-1, Domain=0.02399999 um². QW4 share≈98.64%. 이전 n2 Rad=1.524099e11, 두 채널 기준 Rad fraction≈92.40%; Auger 미확인, IQE 물리 해석 미검증. 다음 n2 Auger, n6 동일 ROI.
 

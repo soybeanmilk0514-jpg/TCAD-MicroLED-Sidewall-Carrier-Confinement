@@ -6941,3 +6941,291 @@ CMP_BASELINE_2.0.0_V2 n2_des, Clean/Edge/Dmg × QW1..4 12개 ROI. AugerRecombina
 다음: GUI에서 n6_des 데이터셋 선택 확인 후 Clean/Edge/Dmg×QW1..4 12개 ROI 적분. 원본 코드/실행 변경 없음.
 
 ---
+
+## 2026-10-21T12:44:27Z — TaekGyu0801
+
+[2026-10-21 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS
+상태: OBSERVED (SERVER SOURCE), Mesh-quality/convergence UNRESOLVED
+
+요약:
+- 사용자가 실제 학교 서버 `CMP_BASELINE_2.0.0_V2/sde_dvs.cmd` 25–55, 170–270행을 제공. x=depth/y=lateral, Wm=4um/half=2um, Wdmg=5nm, Wshelf=0, Cath=0.
+- SDE `RS` 실제 크기 설정: R_qw depth max 0.0003um (0.3nm), R_act depth max 0.0015um, R_if1 depth max 0.0002um, R_x4 damage layer lateral max 0.0005um (0.5nm), global max 0.25um. R_sh shelf-corner refinement window remains despite Wshelf=0.
+- 이는 source sizing 설정이지 실제 생성 mesh cell count, accuracy, convergence의 입증은 아님. `Wedge=@Wedge@`/`Bspan=@Bspan@` 의 SWB resolved values 미확인.
+
+근거: 2026-10-21 이택규가 제공한 학교 서버 sed 출력.
+변경: 학교 서버 TCAD 코드/시뮬레이션 변경 없음; GitHub LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, LIVE_STATE.md/json 기록.
+다음: n1_msh.log, pp1_dvs.cmd parameter, SVisual n1_msh.tdr 실제 mesh/contacts 점검; 향후 controlled mesh refinement comparison 결정.
+
+---
+
+## 2026-10-21T12:49:07Z — TaekGyu0801
+
+[2026-10-21 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / HANDOFF
+상태: USER-REPORTED REQUIREMENT + OBSERVED PREPROCESSED VALUES; FULL/HALF VALIDATION NOT RUN
+
+요약:
+- 사용자 전달 교수 피드백: 4um Full 소자의 결과와 2um Half-domain의 성능이 실질적으로 일치함을 입증해야 Half 시뮬레이션 결과에 학술적 설득력이 생김. Full/Half reference comparison을 Baseline freeze 전 검증 게이트로 추가.
+- 실제 서버 pp1_dvs.cmd: Wshelf=0, Wedge=0.1um, Bspan=0, Cath=0. n1_msh.tdr 2.0MB, 생성 2026-10-14 13:43. 기존 CMP_BASELINE_2.0.0_V2_Copy는 구 V2 shelf를 유지한 half 조건으로 Full reference가 아님.
+- 4um Full mirror symmetry가 실제 모델/contact/trap/doping/physics에서 성립하는지 아직 미확인. Full 소자 생성이나 계산을 완료하지 않았으며 'Full=Half' 결론은 아직 없음.
+
+근거: 사용자 제공 2026-10-21 서버 grep/ls 출력, 2026-10-15 Baseline V2 Log #02, professor feedback user report.
+변경: GitHub LeeTaekGyu TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.md. 학교 서버 코드·런 무변경.
+다음: sde_dvs.cmd 55–170행/ n1_msh.log 확인 → 보호된 독립 Full 4um 구조 생성과 preprocess geometry/contact/mesh 검사 → NtSide OFF 동전압 J-V·normalized QW channels·대칭 분포 비교, 그다음 ON. I_full~2 I_half 기대값은 AreaFactor와 2D normalization을 확인한 경우로 제한.
+
+---
+
+## 2026-10-21T12:54:23Z — TaekGyu0801
+
+[2026-10-21 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / BLOCKER / HANDOFF
+상태: OBSERVED MESH LOG, QUALITY ISSUE UNRESOLVED
+
+요약:
+- 사용자 제공 V2.1 실제 SDE 구조 코드(55–170행): 2um half lateral 폭, depth 4.288um(0.020+0.120+0.026+5×0.022+4×0.003+0.5+3.5), p+ cap top full-width anode and nGaN bottom cathode, 4 QW×3nm, 5nm damaged sidewall; preprocessed Wshelf=0, Wedge0.1um, Bspan0, Cath0.
+- n1_msh.log: mesh saved successfully, 62529 points, 123917 elements, reported 42 regions / nMats 40, bbox depth4.288 × lateral2um, total 2D area8.576um². minAngle=0.0167024 deg; minimum edge=1.95312e-05um=0.0195312nm near (depth0.0041875, lateral1.89501)um. Derived Xe=1.895um, hence minimum edge is near pCap Clean/Edge boundary. Such a narrow triangle/edge warrants local mesh inspection, but **not yet proof of numerical instability or published-quality mesh convergence**.
+- User explicitly elected to complete current half-mesh/structure validation BEFORE creating/running 4um Full/2um Half comparison; no Full run now.
+
+근거: user-pasted school-server actual sde_dvs.cmd and n1_msh.log 2026-10-21.
+변경: GitHub LeeTaekGyu TIMELINE, TEAM_TIMELINE, ERROR_LOG, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.md; original Sentaurus projects unchanged.
+다음: grep complete mesh log for warnings/quality, inspect n1_msh.tdr in SVisual around indicated coordinates; determine if mesh sliver is isolated and whether numerical refinement validation is needed; then Full reference test separately.
+
+---
+
+## 2026-10-21T12:59:36Z — TaekGyu0801
+
+[2026-10-21 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / DECISION
+상태: OBSERVED LOG OUTPUT; MINIMUM-ANGLE IMPACT UNRESOLVED
+
+요약:
+- 실제 서버 `grep -niE 'warning|error|bad|small|quality|angle|edgeLength' n1_msh.log | tail -n 40` 출력이 `tri-grid quality`, `minAngle=0.0167024`, `min edgeLength=1.95312e-05um`, `Smallest region Dmg_QW3 Total volume 1.5e-05` 항목만 보이며 독립적인 warning/error 텍스트 없음.
+- 이 로그만으로 매우 작은 angle/edge의 실제 solver 영향은 판별 불가; mesh 생성 자체는 이전 확인대로 성공.
+- 이택규 명시 요청: 한 가지 수치 이상치에 집착하지 않고 빠르고 정확하게 소자 전체 구조/physics/I-V/current normalization을 폭넓게 점검. Minimum-angle 이슈는 추후 결과 이상/mesh convergence 민감도 근거가 생기면 재조사.
+- Full/Half run은 Half 검증 종료 후 실시하는 기존 순서를 유지.
+
+근거: 사용자 2026-10-21 실제 서버 terminal grep 출력과 직접 우선순위 요청.
+변경: GitHub LeeTaekGyu/TIMELINE.md, NEXT_ACTIONS.md, LIVE_STATE.md/json. TCAD 소스/run 무변경.
+다음: preprocessed pp2_des.cmd / pp6_des.cmd의 AreaFactor, traps, polarization, recombination, contacts 등 검사 후 단자 전류 정규화/실제 결과 검증.
+
+---
+
+## 2026-10-21T13:04:53Z — TaekGyu0801
+
+[2026-10-21 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / PHYSICS AUDIT
+상태: OBSERVED (USER-PASTED PREPROCESSED DECK EXCERPTS), RUNTIME/UNITS UNRESOLVED
+
+요약:
+- `pp2_des.cmd` (NtSide=0) / `pp6_des.cmd` (NtSide=1e18) keyword grep 실출력에서 global `Recombination(SRH Radiative Auger)`, `IncompleteIonization(pMagnesiumActiveConcentration PDopantActiveConcentration)`, `Piezoelectric_Polarization(strain activation=0.5)`가 양쪽 동일함을 확인.
+- `SideTrap`이 13개 Dmg layers (pCap, pGaN, EBL, 4QW, 5 barrier, nMesa)에 regionwise 명시됨. n2 `Conc=0`; n6 `Conc=1e18`; energy=0.75eV fromValBand and sigma_e=sigma_h=1e-15 cm² shown. `EdgeTrap`은 양쪽 13개 Edge layer에서 `Conc=0`, energy=0.9eV fromValBand. Thus ON/OFF trap split design supported by actual preprocessed command snippets.
+- NOT YET PROVED: full pp2/pp6 identical except trap (need whole-file diff), runtime effective parameters/physics, 2D AreaFactor and terminal current normalization. `AreaFactor`/`ThermionicEmission` not appearing in user-shared grep is not automatically proof of disabled model.
+- As user requested, do not over-focus on minimum mesh-angle outlier; move to broad physical/electrical verification. No changes to Sentaurus files or runs, Full/Half remains later.
+
+근거: 2026-10-21 이택규 실제 학교 서버 pp2/pp6 grep output.
+변경: GitHub LeeTaekGyu/TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, LIVE_STATE.md/json.
+다음: `diff -u pp2_des.cmd pp6_des.cmd` and selected global Physics/log lines to validate model consistency and current normalization.
+
+---
+
+## 2026-10-21T13:12:37Z — TaekGyu0801
+
+[2026-10-21 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS
+상태: OBSERVED (n2 runtime log, diff line count); DECK EQUIVALENCE UNRESOLVED
+
+요약:
+- n2_des.log lines 662/671/680 show "With Thermionic Emission at heterointerfaces for electrons and holes"; lines 1784/1790/1796 show "ThermionicEmission: Formula = 1, instead of: 0 [1]". n2 runtime recognized thermionic with Formula1, but this does not establish physical injection correctness.
+- `diff -u pp2_des.cmd pp6_des.cmd | wc -l` returned 76 unified-diff lines (includes hunk/context/header, NOT 76 parameter differences). Diff content still unavailable; matching physical setup except trap not fully verified.
+- No `AreaFactor` keyword matched user's n2 log search, therefore AreaFactor/2D current unit normalization remains unverified; no conclusion of wrong scaling.
+- Next read-only: actual `diff -u pp2_des.cmd pp6_des.cmd | head -n 110` and `grep -niE 'Thermionic|AreaFactor' n6_des.log | head -n 25`. Half verification precedes Full reference. No TCAD code/run modifications.
+
+근거: 사용자 직접 제공한 학교 서버 터미널 출력.
+기록: 이택규 TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md (JSON sync may require retry).
+
+---
+
+## 2026-10-21T13:17:23Z — TaekGyu0801
+
+[2026-10-21 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / RESULT
+상태: OBSERVED COMMAND-LEVEL SPLIT, PARAMETER EQUIVALENCE UNRESOLVED
+
+요약:
+- 실 서버 diff -u pp2_des.cmd pp6_des.cmd 전체 76줄 확인. 공통 n1_msh.tdr, 동일 Physics/Electrode/Math/Solve/3.6V ramp. 13개 Dmg 영역 SideTrap Conc=0 (n2) vs Conc=1e18 (n6) 이외의 다른 부분은 pp2/pp6_des.par 참조와 n2/n6별 출력 및 Plot/Save FilePrefix. 실제 .par 내용은 확인 전.
+- n2_des.log와 n6_des.log 모두 With Thermionic Emission at heterointerfaces for electrons and holes (662/671/680), ThermionicEmission: Formula=1 instead of 0 [1] (1784/1790/1796) 확인. 모델 적용은 확인, 물리적 정확성/2D AreaFactor는 미확인.
+- 다음: diff -u pp2_des.par pp6_des.par | head -n 80; 후속 전류 정규화, final TDR bias, n6 QW 적분 검증.
+근거: 2026-10-21 사용자 실서버 출력.
+변경: GitHub LeeTaekGyu TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md 및 JSON (성공한 항목에 한함). 학교 서버 코드/런 변경 없음.
+
+---
+
+## 2026-10-21T13:20:44Z — TaekGyu0801
+
+[2026-10-21 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED — PARAMETER COMPARISON PASS; PHYSICAL VALIDATION UNRESOLVED
+
+요약:
+- 사용자 실제 학교 서버에서 `diff -u pp2_des.par pp6_des.par | head -n 80` 결과 차이 출력 없이 정상 프롬프트 복귀. 따라서 preprocessed SDevice parameter-file 내용 동일성 확인.
+- 앞서 n2/n6 .cmd 전체 diff는 13개 Dmg regions `SideTrap Conc=0` vs `Conc=1e18` 이외 물리/solver/mesh 같고, 출력 및 파일참조명만 달랐음. n2/n6 SDevice 로그에서도 electron/hole thermionic emission Formula1 동일하게 확인.
+- **Input configuration gate PASSED** for one-factor NtSide OFF/ON comparison. This does not certify material-model calibration, device physical accuracy, current-density normalization, actual TDR 3.6V state, or matched-current IQE.
+
+근거: 2026-10-21 사용자 학교 서버 diff stdout(빈 출력) 및 앞선 전체 cmd diff, n2/n6 runtime grep.
+변경: GitHub LeeTaekGyu TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md and JSON (if successful). School TCAD code/simulations not modified.
+다음: Examine I–V .plt datasets/current-unit and AreaFactor, compare n2/n6 validated 3.6V outputs, final bias and n6 MQW recombination, then professor Full/Half gate after Half checks.
+
+---
+
+## 2026-10-21T13:24:21Z — TaekGyu0801
+
+[2026-10-21 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS
+상태: OBSERVED METADATA (NO NUMERIC VALIDATION YET)
+
+요약:
+- 실제 서버 `head -n 28 n2_des.plt`: DF-ISE xyplot dataset list has both terminals' OuterVoltage/InnerVoltage, displacement/e/h/total current; all 4 QWs split Clean/Edge/Dmg region-integrated Radiative, SRH, Auger terms; EBL recombination; damaged+edge eGapStatesRecombination.
+- This existing PLT may permit rapid n2/n6 recombination and J-V verification without new run/manual SVisual ROI summation, but metadata alone does not establish final-bias values, sign, units or physical IQE.
+- `pp2_des.cmd` inspected: Grid n1_msh.tdr; electrodes anode/cathode initial 0V; Physics Fermi, default parameters, no BGN, high-field mobility, SRH+Radiative+Auger, Mg/PDopant incomplete ionization, polarization activation0.5 and explicit thermionic InGaN/GaN, AlGaN/GaN, AlGaN/InGaN.
+- n6 runtime thermionic Formula1 and pp2/pp6 parameter-file identical reconfirmed. Current-normalization AreaFactor remains unresolved.
+
+변경: GitHub LeeTaekGyu TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/JSON. Original TCAD untouched.
+다음: Read .plt functions/units/data sections and programmatically sum all QW channels at matching final bias for n2 and n6, validate I-V and units, then decide remaining needed physical checks and Full/Half.
+
+---
+
+## 2026-10-21T13:26:30Z — TaekGyu0801
+
+[2026-10-21 KST] 작업자 이택규 / GPT / PROGRESS (OBSERVED). n2_des.plt의 functions 배열에 단자 전류, 방사/SRH/Auger 및 eGapStates 재결합 항목 존재. n2_des.plt와 n6_des.plt 모두 Info block 3행, functions 28행, Data block 52행임을 사용자 제공 터미널로 확인. Numeric sample/units/final bias는 아직 미확인. NEXT: PLT 45–58행과 파일 끝부분 일부를 읽어 데이터 구조 확인한 뒤 기존 두 파일에서 최종 전압의 전류와 QW1~4 Clean/Edge/Dmg 3채널 적분을 읽기 전용으로 추출. 기존 TCAD 코드와 run 변경 없음. 개인 TIMELINE 및 NEXT_ACTIONS 동기화 성공, LIVE_STATE.md write는 안전 검사에 차단됨.
+
+---
+
+## 2026-10-21T13:30:46Z — TaekGyu0801
+
+[2026-10-21 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / HANDOFF
+상태: OBSERVED NUMERIC DATA FORMAT; MEASUREMENTS NOT EXTRACTED
+
+사용자 실제 학교 서버 `n2_des.plt` 45–58행: `functions` 목록 종료, `Data {` 52행부터 scientific notation numeric values 시작. 파일 끝에서도 수치 배열이 줄바꿈을 넘어 계속되다가 종료되므로 tail의 줄을 개별 V–I 결과로 해석하면 안 됨. n6 동일 Data block 위치는 이전 출력으로 확인.
+
+다음: 파일 내용은 변경하지 않고 Python에서 `datasets` quoted labels 개수와 `Data` 내 numeric tokens를 대조해 행 구성 검사; 3.6V 근접 최종 행을 선택해 n2/n6 양 전극 e/h/displacement/total currents, QW1–4 Clean/Edge/Dmg Radiative/SRH/Auger integrated sums를 출력. Absolute J (AreaFactor) 및 physically calibrated IQE는 여전히 미확인으로 둠. TCAD 코드/시뮬레이션 변경 없음.
+
+GitHub LeeTaekGyu/TIMELINE.md, NEXT_ACTIONS.md, LIVE_STATE.md/json 동기화.
+
+---
+
+## 2026-10-21T13:45:30Z — TaekGyu0801
+
+[2026-10-21 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED 3.600 V PLT numerical results; trap/current normalization unresolved
+
+기존 `CMP_BASELINE_2.0.0_V2` 2D Half V2.1의 n2/n6 `.plt` 실제 최종 값 추출 결과:
+- n2, 100 datasets, 123 points, final #122 3.600000 V: anode +3.64728525e-08, cathode -3.64728525e-08, displacement=0, QW1-4 Clean/Edge/Dmg raw integrated Radiative=1.52410078e23, SRH=1.25388758e22, Auger=6.26565608e22. 3-channel rad fraction 66.9624%.
+- n6, 100 datasets, 124 points, final #123 3.600000 V: anode +9.21970771e-09, cathode -9.21970771e-09, displacement=0, QW raw Rad=2.55545394e22, SRH=4.31092452e21, Auger=7.83986116e21, 3-channel rad fraction 67.7744%.
+- Equal-voltage n6/n2 current=25.2783%; n6/n2 QW Radiative total=16.7670%. Anode/cathode current magnitude balances in each run.
+- Raw PLT QW integrals *1e-12 numerically reproduce prior 주수빈 SVisual n2 integral totals. Under conditional 2D unit conversion q*(QW 3-channel PLT raw)*1e-12/I yields n2=99.9824%, n6=65.5233%; remaining n6 ~34.48% could be gap-state trap / QW-external recombination / currents; attribution is unverified. Do not call the 3-channel Rad percentage an experimentally/physically validated absolute IQE or infer ON efficiency benefit from same-voltage split.
+- Python trailing NameError `PY` happened after full extraction output and does not invalidate printed numbers.
+- NEXT: read `IntegrTrap_all eGapStatesRecombination` plus total-device radiative/SRH/Auger at n6 3.6V and check units/AreaFactor; conclude Half audit before professor Full/Half comparator. TCAD files and simulation runs untouched.
+
+---
+
+## 2026-10-21T13:54:59Z — TaekGyu0801
+
+[2026-10-21 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / DECISION
+상태: OBSERVED (n6 saved 3.6V PLT); CURRENT BALANCE INTERNAL PASS; ABSOLUTE PHYSICS UNRESOLVED
+
+n6_des.plt final-row user output:
+- anode OuterVoltage=3.6V
+- IntegrTrap_all eGapStatesRecombination = 1.98258247754075e22
+- IntegrSRH_all srhRecombination = 4.32337288643595e21
+- IntegrRad_all RadiativeRecombination = 2.55552035945039e22
+- IntegrAug_all AugerRecombination = 7.83993596604716e21 (raw PLT rates)
+- Previous same-point Ianode=9.21970771e-09, Icathode=-9.21970771e-09, displacement0.
+
+DERIVED with q=1.602176634e-19 and PLT raw rate*1e-12 empirically consistent with past SVisual area integrals: Trap equivalent=3.17644732049e-09 (~34.4528% I), full-device Rad 44.4092%, SRH 7.5130%, Auger 13.6240% I. Four-channel sum current=9.21961925167e-09, equals 99.99904055% of terminal current; residual 8.84583e-14 (~0.0009594%). Earlier QW3channel only accounted for 65.5233% I; gap states explain nearly all remaining, QW-external conventional recomb ~0.02292%.
+
+INTERPRETATION: n6 steady-state 3.6V internal recombination/current closure is very strong, and traps actively recombine carriers. Do NOT conclude that trap alone causes terminal current suppression or equal-current IQE difference. Unit/AreaFactor physical interpretation, material model suitability, extreme QW4 share and Full/Half validation are pending. No TCAD edit/rerun.
+
+GitHub sync attempted in member/TEAM/CURRENT/NEXT/LIVE_STATE.md+json/RELAY. Failed writes are not claimed.
+
+---
+
+## 2026-10-21T13:57:11Z — TaekGyu0801
+
+[2026-10-21 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / CROSS-CHECK
+상태: OBSERVED DATA; CURRENT EQUIVALENCE CONDITIONAL ON 2D UNITS
+
+n6 3.600V 실제 `n6_des.plt` last row:
+- `IntegrTrap_all eGapStatesRecombination`=1.98258247754075e22
+- `IntegrRad_all RadiativeRecombination`=2.55552035945039e22
+- `IntegrSRH_all srhRecombination`=4.32337288643595e21
+- `IntegrAug_all AugerRecombination`=7.83993596604716e21
+- terminal anode current from previous full PLT extraction =9.21970771e-09.
+
+Under numerical SVisual/PLT mapping factor1e-12 and electron charge q=1.602176634e-19 C:
+- all-device Rad+SRH+Aug current equivalent=6.04317193118e-09 (65.54624% terminal)
+- gap-state trap equivalent=3.17644732049e-09 (34.45280% terminal)
+- sum=9.21961925167e-09 (99.9990406% of terminal), residual8.84583e-14.
+Earlier QW-only 3channel unexplained ~34.48% is numerically accounted for by explicit trap-related recombination plus very small non-QW recombination. Do NOT claim trapped-sidewall recombination uniquely causes current reduction, absolute IQE or current normalization without independent validation. n2 trap baseline cross-check pending.
+
+GitHub LeeTaekGyu/TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, LIVE_STATE.md/json updated. Existing Sentaurus projects and calculations unchanged.
+NEXT READ-ONLY: extract n2 IntegrTrap_all and whole-device channels once, then validate effective current units/AreaFactor; after Half validation run independent Full comparator.
+
+---
+
+## 2026-10-21T14:06:01Z — TaekGyu0801
+
+[2026-10-21 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED PLT; ASSUMED 2D RATE-TO-CURRENT CONVERSION
+
+- n2 Trap OFF 실제 3.600V `IntegrTrap_all eGapStatesRecombination` = 1,178,830.32026416 (raw), n6 Trap ON = 1.98258247754075e22 (raw); n6/n2 = 1.68182e16. n2 technically nonzero but negligible.
+- With provisional q×1e−12 PLT-rate to current conversion, n2 OFF trap equivalent I = 1.88869439458e−25, relative to n2 anode I=3.64728525e−08 is 5.17836e−18. n6 ON trap equivalent I=3.17644732049e−09, 34.4528% of n6 anode I=9.21970771e−09.
+- Previously extracted n6 global Radiative+SRH+Auger+Trap accounts for 99.99904% terminal-current equivalent; supports numerical current accounting, not independently calibrated physical mechanism, true IQE, or current units/AreaFactor.
+- User explicitly requests balanced validation rather than single anomaly tunnel vision. Next verify 2D current scaling and broad physical plausibility, then Full/Half benchmark after Half verification. No TCAD code edits or simulations rerun.
+
+Recorded in LeeTaekGyu/TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, LIVE_STATE.md/json.
+
+---
+
+## 2026-10-21T14:32:04Z — TaekGyu0801
+
+[2026-10-21 KST] 작업자 이택규 / ChatGPT / PROGRESS (OBSERVED FILE LIST)
+- 실 서버 `find . -maxdepth 1 -name '*end*' -print`: `n2_end_circuit_des.sav`, `n6_end_circuit_des.sav`, `n2_end_des.sav`, `n6_end_des.sav`, `n2_end_des.tdr`, `n6_end_des.tdr` 존재 확인.
+- 앞선 'ls cannot access 2'는 shell redirection 복붙 문제로 보이며 최종 파일 부재를 뜻하지 않음. File existence만 검증됨: 실제 TDR 내부 최종 바이어스 및 Save/Load 재시작 기능까지 입증된 것은 아님.
+- 이전 n2/n6 PLT 모두 3.600V 도달, 단자 전류 수지와 n6 Trap 포함 recombination accounting 양호. Half 재실행하지 않고 SVisual에서 두 end TDR의 MQW 방사재결합(QW4 집중) 공간 분포를 확인. AreaFactor/2D J 보정은 별도; 이후 교수 요청 Full(4um)/Half(2um) 검증 run.
+- 원본 TCAD 코드와 계산 결과 무변경. TIMELINE/NEXT_ACTIONS/LIVE_STATE.md/json 업데이트.
+
+---

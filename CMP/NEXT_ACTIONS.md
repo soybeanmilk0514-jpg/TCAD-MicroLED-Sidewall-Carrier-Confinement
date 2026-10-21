@@ -1,3 +1,82 @@
+## 2026-10-21 n2 Radiative 화면 확인
+- 사용자 SVisual n2_des RadiativeRecombination 측벽 근처 MQW 화면 확보. QW4 강한 띠는 기존 PLT n2 QW4 Rad 99.9688% 우세와 정성 일치; 이미지 색상만으로 전역 분포/정량 비율/최종 바이어스 확증 불가.
+- NEXT: n6_end_des.tdr에서 같은 범위/스칼라 확인. Auto legend가 다르면 색의 절대 강도 직접 비교 금지. 그후 current normalization 확인 및 Full/Half.
+
+## 2026-10-21 — Final TDR and SAV files confirmed; next MQW map, then Full comparison
+- 실제 `find . -maxdepth 1 -name '*end*' -print` 결과 n2/n6 `end_des.tdr`, `end_des.sav`, `end_circuit_des.sav` 모두 존재. File existence only; restart and TDR contents not yet independently opened.
+- 이미 두 condition PLT at 3.600V, terminal charge balance and whole-device recombination closure available. Do not rerun Half.
+- NEXT: SVisual open n2_end_des.tdr then n6_end_des.tdr, check RadiativeRecombination field across QW1..4 and carrier distribution (the earlier total had extraordinary QW4 localization). Do brief unit/AreaFactor qualification before claiming J, and then build protected independent Full device for professor feedback. No code changes.
+
+## 2026-10-21 — n2 OFF/ n6 ON Trap-output cross-check complete; next current scaling and broad physics
+- n2 raw `IntegrTrap_all` 1.17883032026416e6 vs n6 1.98258247754075e22 at 3.6V; under provisional q×1e−12 conversion OFF trap contribution ~5.18e−18 of terminal current, ON ~34.453%. n6 whole-device Rad+SRH+Aug+Trap accounts for ~99.999% terminal current. ON/OFF input and output consistent; no re-run needed for this audit.
+- NEXT read-only: verify effective 2D current units and AreaFactor against runtime/manual/current log; confirm J at 3.6V only after units. Then assess QW4 dominance and overall physical plausibility without over-focusing any one mesh issue. Half audit before Full reference run.
+
+## 2026-10-21 — n6 3.6V channel current balance nearly complete, n2 Trap + units next
+- OBSERVED n6 PLT final raw IntegrTrap_all=1.98258247754075e22, IntegrRad_all=2.55552035945039e22, IntegrSRH_all=4.32337288643595e21, IntegrAug_all=7.83993596604716e21. Under PLT×1e−12 and q conversion, recombination current equivalent: Rad+SRH+Aug 6.04317e−09 (65.546%), Trap 3.17645e−09 (34.453%), vs I_anode 9.21970771e−09; 99.999% closure. QW-only ~34.48% gap accounted numerically.
+- NEXT: one read-only `n2_des.plt` last-row `IntegrTrap_all eGapStatesRecombination` and whole-device Rad/SRH/Aug, assess any trap baseline. Then confirm current unit/AreaFactor assumptions from SDevice 2D conventions and revisit physical model validity; no need overfocus mesh outlier. Full/Half after Half.
+
+## 2026-10-21 — n6 3.6V 재결합 수지 closure 통과, 다음 n2 all channels/unit 확인
+- 작업자 이택규가 학교 서버 n6_des.plt 마지막 행에서 직접 추출해 제공: bias=3.6V; IntegrTrap_all eGapStatesRecombination = 1.98258247754075e22, IntegrSRH_all srhRecombination = 4.32337288643595e21, IntegrRad_all RadiativeRecombination = 2.55552035945039e22, IntegrAug_all AugerRecombination = 7.83993596604716e21 (raw PLT integral data).
+- 이전 같은 행 Ianode=9.21970771e-09, Icathode=-9.21970771e-09, displacement=0. Earlier n6 four-QW 3-channel sum raw Rad=2.55545394e22 SRH=4.31092452e21 Aug=7.83986116e21.
+- DERIVED using q=1.602176634e-19 C and PLT raw recombination x 1e-12 numerical SVisual 2D conversion (unit conventions still need formal confirmation): Trap equivalent current=3.17644732e-09, =34.4528% of terminal current; total-device Rad=44.4092%, SRH=7.5130%, Auger=13.6240%. Four-channel all-device sum equivalent=9.21961925e-09, =**99.99904%** terminal current, residual 8.85e-14 =0.000959%. QW-only 3-channel =65.5233% terminal current, Trap=34.4528%, other-than-QW normal channels ~0.02292%; residual ~0.00096%.
+- INTERPRETATION: numerical charge/recombination balance closes very tightly in n6 at final steady-state-like 3.6V and eGapStates recombination is substantial, consistent with active SideTrap in Dmg regions (EdgeTrap Conc0); not proven that this alone causes reduced terminal current, not matched-current IQE, not device physical calibration, not independent unit/AreaFactor confirmation. No need to pursue tiny mesh-angle without new evidence. `IntegrTrap_all` area attribution to sidewall can be checked with regionwise integrated values if needed.
+- NEXT: read n2 all-device trap/channel totals for control/balance, check current units/AreaFactor and QW4-dominant spatial recombination physical plausibility as part of broader Half validation; then prepare professor-requested 4um Full vs 2um Half run on protected separate project. Existing TCAD code/runs untouched.
+
+## 2026-10-21 — 이택규 V2.1 n2/n6 실제 3.6V 전류/QW 3채널 확보, 마지막 Trap 적분 확인
+- 실제 PLT 추출: n2 anode 3.64728525e-08, n6 anode 9.21970771e-09 (3.6V, both balanced cathode, displacement0); QW raw Rad: n2 1.52410078e23 / n6 2.55545394e22, three-channel Rad percentages 66.9624 vs 67.7744. Under PLT*1e-12 vs SVisual and q conversion, 3-channel QW sum/I = 99.982% n2 vs 65.523% n6.
+- n6 ~34.477% residual NOT YET ASSIGNED TO TRAP: next read final-row `IntegrTrap_all eGapStatesRecombination` and whole-device `IntegrRad_all`, `IntegrSRH_all`, `IntegrAug_all`, and verify against current balance/units.
+- Read-only extraction, then assess physical interpretation and AreaFactor. Preserve Half run; professor Full/Half after Half audit.
+
+## 2026-10-21 — V2.1: Stop header probing; parse existing n2/n6 PLT numeric data
+- `n2_des.plt` Data block at line52 contains numerical scientific-notation values wrapped across lines; `tail` lines are NOT independently interpretable physical rows. n2/n6 datasets list already includes both contacts + full 4 QW Clean/Edge/Dmg radiative/SRH/Auger integrals.
+- Immediate read-only extraction with Python from both DF-ISE files: validate numeric tokens divisible by number of dataset names, choose final saved 3.6V row, report anode/cathode electron/hole/displacement/total currents, sum QW Radiative/SRH/Auger by region and by QW; compare at equal voltage and avoid absolute IQE/J claims until units/AreaFactor and other physical checks are resolved. No new run.
+
+## 2026-10-21 — n2/n6 DF-ISE PLT Data at line52, next inspect numeric layout before extraction
+- Both n2_des.plt and n6_des.plt have Info line3, functions line28 and Data line52. n2 functions contain terminal V/e/h/displacement/total currents and QW radiative/SRH/Auger/trap integrated outputs, but actual numeric values/units not yet read.
+- Fast read-only next: `sed -n '45,58p' n2_des.plt` and `tail -n 5 n2_des.plt | cut -c1-180` to identify block structure, then a one-pass read-only extraction for both n2/n6 at final matched 3.6V. Do not infer units or IQE before reviewing values.
+
+## 2026-10-21 — Read existing .plt integrated recombination instead of re-running or manual SVisual
+- OBSERVED `n2_des.plt` Info datasets include terminal voltage eCurrent/hCurrent/TotalCurrent/DisplacementCurrent and per-region MQW Radiative, SRH, Auger and trap-related integrals; actual data values/units still uninspected. Physics blocks confirmed, n2 and n6 thermionic runtime active.
+- NEXT READ ONLY: `sed -n '28,48p' n2_des.plt` and `grep -nE '^(Data|Values|Info|[[:space:]]*functions|[[:space:]]*units)' n2_des.plt n6_des.plt | head -n 30` to inspect DF-ISE data layout/unit metadata. Then extract final-voltage terminal current and MQW sum for n2/n6, validate electrical/recombination consistency, avoid treating raw QW radiative fraction as physically calibrated IQE.
+
+## 2026-10-21 — n2/n6 full .cmd+parameter diff gate PASS; move to I–V/units
+- OBSERVED: `diff -u pp2_des.par pp6_des.par | head -n 80` no output, supporting identical preprocessed .par. Combined earlier 76-line .cmd diff indicates controlled 13 Dmg SideTrap OFF vs ON, with only files/prefixes otherwise changed.
+- NEXT concise READ ONLY: inspect `n2_des.plt` dataset metadata/current units and active SDevice File/Electrode/AreaFactor context; verify n2/n6 accepted 3.6V currents and 2D width normalization, assess conduction/displacement where available, then n6 QW integrals. Do not repeat basic trap diff or overfocus mesh short edge. Full after Half validated.
+
+## 2026-10-21 — n2/n6 full .cmd diff done, next parameter diff
+- OBSERVED n2 versus n6 preprocessed SDevice .cmd differences limited to Dmg SideTrap concentration and node-specific file names/references. Both runtime logs confirm Thermionic electron/hole Formula1.
+- NEXT READ ONLY: diff -u pp2_des.par pp6_des.par | head -n 80; check .par differences before concluding pure trap split. Then current scaling AreaFactor, saved final TDR bias, n6 QW results.
+
+## 2026-10-21 — 다음: n2/n6 실제 diff hunk와 n6 thermionic 실행 확인
+- OBSERVED: n2_des.log에서 electron/hole heterointerface thermionic emission, Formula1 실적용 출력. pp2/pp6 unified diff 총 76줄은 차이 개수 아님.
+- READ ONLY 즉시: `diff -u pp2_des.cmd pp6_des.cmd | head -n 110`; `grep -niE 'Thermionic|AreaFactor' n6_des.log | head -n 25`. 확인 후 ON/OFF 물리 조건 동질성 판정과 2D AreaFactor/current units 검증 진행. 기존 소자 무수정.
+
+## 2026-10-21 — 이택규 V2.1 effective SDevice n2/n6 비교 다음 단계
+- OBSERVED `pp2_des.cmd`, `pp6_des.cmd`: n2 Dmg SideTrap Conc0 vs n6 Conc1e18 across 13 Dmg regions; EdgeTrap Conc0 both; global recombination SRH/Radiative/Auger, Mg+PDopant incomplete ionization and polarization activation0.5 shared.
+- NEXT concise READ ONLY: `diff -u pp2_des.cmd pp6_des.cmd | head -n 100` to audit other meaningful differences; `sed -n '1,27p;145,215p' pp2_des.cmd` plus selected runtime `n2_des.log` model lines as needed to confirm thermionic treatment, current normalization / AreaFactor and solver. Missing AreaFactor/ThermionicEmission in keyword grep does not by itself prove wrong physics. Check I-V/3.6V end and matched-current comparisons later.
+- User emphasis: do not fixate on single mesh angle, advance broad validation, Half first, then independent Full symmetric reference.
+
+## 2026-10-21 — 폭넓은 Gate 검증 우선, Mesh 이상치 단독 추적 보류
+- OBSERVED `n1_msh.log` grep warning/error/quality 검색에서 경고/오류 텍스트는 추가로 나오지 않고 minAngle0.0167024°, minEdge1.95312e-05um 등 기존 품질 통계만 나옴. 품질 이상치 원인과 수송 정확도 영향은 UNRESOLVED.
+- 사용자 요청: 한 문제에 몰입하지 말고 빠르고 정확하게 전반적 물리/전기 검증으로 진행.
+- NEXT read-only: preprocessed `pp2_des.cmd`/`pp6_des.cmd`의 AreaFactor/contacts/traps/polarization/SRH/Auger/thermionic 유효 설정, logs 및 current normalization 확인. Mesh sliver는 추후 mesh independence/convergence 이상 시 국소 점검. Half 검증 후 Full.
+
+## 2026-10-21 — 다음: V2.1 Half mesh-quality 경고 국소 확인 후 Full 구조 준비
+- Observed `n1_msh.log`: mesh saved; points 62529, elements 123917, minAngle0.0167024deg; minimum edge0.0195312nm near SDE coords depth0.0041875, lateral1.89501um (Clean/Edge boundary). Geometry/contact source inspected.
+- NOW: `grep -niE 'warning|error|angle|quality|degenerate|sliver' n1_msh.log | tail -n 40` and SVisual `n1_msh.tdr` local mesh inspection around reported coordinates. Check whether extreme sliver isolated or prevalent; map to region boundary. Confirm generated contacts/interface and numerical quality, avoid unproven mesh-convergence claims.
+- AFTER Half verification: create independent 4um Full reference with symmetric damage/contact settings and validate against 2um Half. User explicitly deferred Full run until current validation complete. Do not alter original successful Half run.
+
+## 2026-10-21 — 우선순위 상향: 교수 피드백 Full(4um) vs Half(2um) 동등성 검증
+- REQUIREMENT USER-REPORTED: 논문/발표의 Half-domain 근거로 독립 Full-domain reference 필요; 현 `V2_Copy`는 Full이 아님.
+- OBSERVED `pp1_dvs.cmd`: Wshelf=0, Wedge=0.1um, Bspan=0, Cath=0. `n1_msh.tdr` 약 2.0MB 존재; mesh quality unknown.
+- FAST GATE 1 (read only): `sed -n '55,170p' sde_dvs.cmd`; `tail -n 35 n1_msh.log`. Symmetry boundary/regions/contact, actual 2D units, active physics/mesh audit.
+- GATE 2 (PROPOSED): 원본 half는 보존하고 별도 versioned Full symmetric SDE project 생성; 양 측벽에 동일 damage/edge/traps 적용, 동일 epitaxy/contacts/physics/mesh target; preprocess + geometry/contact/mesh inspection.
+- GATE 3 (NOT RUN): 동일 모델/solver/전압에서 NtSide0 Full vs Half 3.6V J-V, I_full~2I_half conditional on units, recombination ratios & mirrored profile; 이어 NtSide1e18. Full/Half 비교 오차는 mesh convergence 수준 고려하여 판정.
+
+## 2026-10-21 — 이택규 V2.1 Mesh 검증 다음 읽기 전용 단계
+- OBSERVED `sde_dvs.cmd`: QW depth max 0.3nm, sidewall damaged 5nm width에서 lateral max 0.5nm, `Wshelf=0`, `Cath=0`; window `R_sh` 남아 있음. Mesh sizing source 검토는 진행되었으나 generated mesh geometry·품질·수렴성 검증은 아님.
+- NEXT: `tail -n 35 n1_msh.log` 및 `grep -nE 'define Wedge|define Bspan|define Wshelf' pp1_dvs.cmd` (실제 syntax 맞는지 확인)로 생성 로그/활성 값 확인; 이후 SVisual `n1_msh.tdr`에서 QW/sidewall/mesa corner mesh와 contacts inspect. 동작 확인 이후에만 격리된 복사본에서 mesh-convergence test 결정. 원본 데크 무수정.
+
 ## 2026-10-15 — 주수빈 n6 GUI dataset/ROI 재선택 필요
 - 새 Radiative 출력이 `n2_des`, Clean+Dmg 8개 2D ROI, Domain=0.02279999um², Total=1.447895e11로 나타나 n6 결과가 아님. 기존 n2 12ROI와의 차이≈Edge 4ROI 합.
 - 다음: n6_des 로드 및 현재 Dataset 선택 확인 → 12개 Clean/Edge/Dmg QW1..4 적분, Total Domain 약 0.02399999um² 필수 확인. 기존 n2 3채널 결과 유지, n6 신규 측정 없음.
