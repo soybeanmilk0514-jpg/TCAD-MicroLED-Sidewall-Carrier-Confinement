@@ -1,3 +1,79 @@
+## 2026-10-22 — JuSubin clarifies SWB staged serial execution for Project B (USER-REPORTED QUEUE INTENT)
+- User clarifies copied SWB `/user/semi/semi437/CMP_B0/CMP_BASELINE_2.0.0_V2` is scheduled to run Bspan=0→1→3 sequentially. Earlier absence of `pp31_dvs.cmd` does NOT justify separately launching n31; likely next stage not yet reached. Do not claim live scheduler status or assured run from image alone; current actual n17 mesh and n24 iteration were observed.
+- CORRECTED action: do not manually submit duplicate n31 or restart any SDevice. While SWB runs, **read-only inspect n17_msh.tdr in SVisual** for Bspan1 `Edge_QW1..4` AlGaN, `Clean_QW` & `Dmg_QW` InGaN, material/mesh and intact damage region. Prepare controlled comparison for Trap ON branches n6(Bspan0), n30(Bspan1), n44(Bspan3), and Trap OFF branches n2/n24/n38, with current-matched voltage, QW Rad/SRH/Auger, Dmg trap recomb, carrier/band profiles and changed QW active volume. No software/deck changes or new run by assistant.
+- Pending user SVisual screenshot on existing `n17_msh.tdr`; no new TCAD results as of this note. Common Baseline physical freeze still provisional.
+
+## 2026-10-22 — Project B Bspan3 n31 preprocess not found; execution status requires SWB check (OBSERVED)
+- User ran Bash read-only command against cloned `/user/semi/semi437/CMP_B0/CMP_BASELINE_2.0.0_V2`: `grep: pp31_dvs.cmd: No such file or directory`. Because it was chained by `&&`, `ls -lh n31_msh.tdr` did not execute. Thus **pp31 absent is observed**, while n31 mesh presence/absence and job/scheduler state are not proved by this call.
+- Earlier user SWB screenshot showed `Bspan=3 [n31]:3` as a white/uncompleted-looking cell, in contrast to yellow completed Bspan1 n17. This suggests n31 has not completed, but screenshot may be stale; do not claim it has failed.
+- NEXT inspect current SWB Bspan3 n31 scheduler state and start SDE n31 only if not queued/running, verify Bspan=3 in preprocessed pp31 and new n31 mesh before enabling Bspan3 device node. Don't modify source, interrupt n24, or repeat a completed run.
+
+## 2026-10-22 — Project B 실행 로그 1차 검증 (USER OBSERVED; NOT COMPLETE)
+- 사용자 Bash wrapper 실행 성공. 경로 `/user/semi/semi437/CMP_B0/CMP_BASELINE_2.0.0_V2`에서 `pp17_dvs.cmd:45 (define Bspan 1)` 확인. `n17_msh.tdr` 존재(2.0M, Oct22 15:29). Bspan1 SDE mesh file OBSERVED (new mesh provenance/timestamp relative to user start plausible; region-level material inspection remains).
+- n24_des.log last lines show Newton iterations: Rhs 2.63e10 → 5.25e8 → 2.00e4, iterations 0/1/2, no finish status. This means SDevice iteration recorded, not convergence completion or definite live PID. n30, n38, n44 log files absent on check. n31 pp31_dvs.cmd matching Bspan and n31_msh.tdr not found by command; SDE Bspan3 may be queued, not submitted or failed; do not label fail without SWB scheduler.
+- Shell prior `for: Command not found` resolved as read-only diagnostic succeeds under `bash -lc '...'`. No TCAD edits or extra RUN performed by ChatGPT.
+- NEXT immediate: inspect SWB n31 SDE scheduler status. If already pending/queued/running, do not resubmit; if ready/not submitted, run SDE n31 *only* and verify new pp31 Bspan=3 + mesh, then analyze Bspan3. Preserve n24 and other jobs.
+
+## 2026-10-22 — Project B read-only diagnostic command rejected by user shell (OBSERVED, NO TCAD EFFECT)
+- In screenshot-confirmed SWB project `/user/semi/semi437/CMP_B0/CMP_BASELINE_2.0.0_V2`, user pasted assistant Bash `for ... do ... done` command into login shell and observed `for: Command not found.`. This is a **shell command-compatibility error**, likely login csh/tcsh, not SDE/SDevice failure. No file modifications, simulation cancellation or changes reported.
+- Fix (PROPOSED, not yet user tested): wrap existing read-only inspection in `bash -lc '...'` using ASCII-only echo labels; inspect pp17/pp31 Bspan + n17/n31 mesh + n24/n30/n38/n44 device logs. Do not rerun SWB/alter code because of this shell error.
+
+## 2026-10-22 — JuSubin Project B Bspan 0/1/3 node matrix screenshot and RUN reported (USER OBSERVED/REPORTED; COMPLETION UNVERIFIED)
+- User SWB screenshot header: `/user/semi/semi437/CMP_B0/CMP_BASELINE_2.0.0_V2` (separate visible path from older root `/user/semi/semi437/CMP_BASELINE_2.0.0_V2`; protect parent). User states already cloned, split and running Bspan=1/3; no proof of individual terminal solve success, so mark SWB setup OBSERVED and simulation launch USER-REPORTED.
+- Screenshot shows one copied SWB project with 3 Bspan groups: `Bspan=0` SDE n1, SDevice Trap OFF n2 (NtSide=0), ON n6 (NtSide=1e18); `Bspan=1` SDE n17, OFF n24, ON n30; `Bspan=3` SDE n31, OFF n38, ON n44. `Wedge=0.1`, `PolAct=0.5`, `NCedge=0`, `V1=2.0`, `Vmax=3.6`, `NPlot=8` appear shared. Color cells in screenshot do NOT prove every run done; n31 SDE appears not yellow done; must verify actual preprocessed `pp17_dvs.cmd`, `pp31_dvs.cmd`, timestamp of `n17_msh.tdr`, `n31_msh.tdr`, and final SDevice logs n24/n30/n38/n44.
+- **No source modification indicated/needed at first pass:** observed SDE in-Bspan? mapping prewires 1 & 3 lateral AlGaN replacements; SDevice AlGaN/GaN and AlGaN/InGaN Thermionic blocks and polarization already present. Don't edit protected original or copied *generated* pp*. If error occurs use actual log and minimal justified change in copied user project only. Do not launch duplicate RUN before inspecting jobs.
+- NEXT: in screenshot-specific copied project folder read-only inventory + grep SDE parameter substitutions and n24/30/38/44 logs. Ensure Bspan1 and 3 use new meshes, verify region material/xMoleFraction/5nm Dmg and contacts. Once completed, current and matched-current QW/sidewall recombination analysis. Unresolved baseline physical freeze/2D current normalization and QW4 issue remain; result not publication-confirmed.
+
+## 2026-10-22 — 주수빈 Project B 즉시 구현 계획 승인 (USER DECISION, RUN PENDING)
+- User requests today completing Project B implementation while operationally assuming Baseline frozen; this is NOT evidence of scientific freeze. Parent CMP_BASELINE_2.0.0_V2 remains protected.
+- NEW separate SWB ProjectB: CMP_PROJECTB_1.0.0_ALBARRIER, Save As parent, change Bspan0→3 in SWB only, Wedge0.1um, xAlB0.15, Wdmg0.005um, existing traps/physics unchanged. First SDE mesh, verify newly generated mesh and AlGaN QW/Barrier Edge, then Trap ON 3.6V pilot. School server clone/run NOT YET OBSERVED.
+- Execution plan: CMP/members/JuSubin/PROJECT_B_IMPLEMENTATION_RUNBOOK_20261022.md. Preserve source and provenance, do not assert baseline calibration or actual IQE.
+
+## 2026-10-22 — JuSubin GaN/InGaN vs AlGaN band-parameter audit (OBSERVED + DERIVED; NO PROJECT B RUN)
+
+### Direct server evidence (read-only)
+Source: `CMP_BASELINE_2.0.0_V2/pp2_des.par`, user terminal `sed -n '1,85p' pp2_des.par` on 2026-10-22. `LatticeParameters: X=(0,0,-1), Y=(1,0,0)`; `Material=GaN`: Eg0=3.4376 eV, Chi0=4.1000 eV, alpha=9.09e-4, beta=830, Tpar=300 K; `Material=InGaN`: Eg0=2.8569 eV, Chi0=4.5065 eV, alpha=8.09e-4, beta=799, Tpar=300 K. Both displayed ConstantMobility(300,10), Scharfetter taumax=1e-7, Radiative C=2e-11, Auger A=5e-31. Previous actual `pp2_des.par` output: `AlGaN` Eg0=3.7564 eV, Chi0=3.8768 eV, Tpar=300 K; actual preprocessed SDE `xIn=xEBL=xAlB=0.15`, `Wedge=0.1um`, `Bspan=0`, `Wdmg=0.005um`.
+
+### Conditional analytic estimates (not Sentaurus solved band structure)
+Using electron-affinity/Anderson vacuum-reference rule at 300K with `Ec=-Chi`, `Ev=-Chi-Eg` and neglecting electrostatic potential, strain-induced changes, interface charges, polarization and local carrier redistribution:
+- GaN: Ec=-4.1000 eV, Ev=-7.5376 eV
+- InGaN: Ec=-4.5065 eV, Ev=-7.3634 eV
+- AlGaN: Ec=-3.8768 eV, Ev=-7.6332 eV
+- Going from GaN into AlGaN: nominal electron upward Ec=+0.2232 eV, hole downward Ev=0.0956 eV.
+- Going from InGaN into AlGaN: nominal electron upward Ec=+0.6297 eV, hole downward Ev=0.2698 eV.
+Neither is the actual 2D lateral barrier under bias. Do not claim physically validated sidewall confinement from numbers alone. Recombination and strain/polarization are model-dependent.
+
+### Practical design decision
+- The `Bspan=3, xAlB=0.15, Wedge=0.1um` case is an INITIAL PROPOSED geometry/material-substitution screening candidate, not a proven optimal design and **not yet launched**; `Bspan=0` with same sidewall trap and frozen source/mesh is the proper control. `Bspan=1` is a candidate for localization-range sensitivity, after basic smoke.
+- `Bspan>0` changes material in the lateral 100nm QW Edge, i.e. 5% of 2um half QW lateral width; compare corrected active region integral and absolute radiative emission at matched current as well as defect trap SRH, band-edge lateral cutlines and current crowding.
+- Previously audited `AlGaN` params have fixed scalar Eg0/Chi0 without explicit composition-dependent interpolation visible in displayed section. Don't vary `xAlB` as if bandgap/affinity automatically recalibrate; inspect runtime mole-fraction interpolation in T-2022.03 effective material parameters before alloy sweeps.
+- No TCAD code, SDevice input, new SWB project or simulation modified. Must check final Baseline frozen status/source provenance before independent Project B clone.
+- Today's prep work is now sufficiently defined: await verifiable freeze; then clone preserved baseline into independently named Project B, run separate preprocess/SDE mesh smoke for Bspan=3, inspect AlGaN Edge region xMoleFraction and new lateral Ec/Ev and polarization before running 3.6V ON trap comparison.
+
+## 2026-10-22 — JuSubin Project B SDevice material-interface model declarations observed (SERVER OUTPUT, NO B RUN)
+- User provided read-only `grep -nEi 'AlGaN|Piezoelectric_Polarization|Thermionic|MoleFraction|BandOffset|Bandgap' pp2_des.cmd pp2_des.par | head -n 90` from actual server `CMP_BASELINE_2.0.0_V2`.
+- OBSERVED: `pp2_des.cmd` line21 `Piezoelectric_Polarization( strain activation=0.5 )`; lines24-26 `Physics (MaterialInterface="InGaN/GaN") { Thermionic }`, `AlGaN/GaN`, `AlGaN/InGaN`. Lines59-67 requested `ConductionBandEnergy`, `ValenceBandEnergy`, `BandGap`, `ElectronAffinity`, `xMoleFraction` plot outputs. `pp2_des.par` line112 `Material = "AlGaN" { Bandgap {...}` start, lines166/169/172 `ThermionicEmission { Formula = 1 }` under relevant interface sections (verify exact headers via expanded excerpt).
+- Inference limited: these are present in baseline preprocessed n2 deck with **Bspan=0**; they DO NOT confirm correctness or runtime application of newly introduced lateral AlGaN interfaces at Bspan>0, orientation-dependent polarization charge, model parameter suitability, or Project B performance.
+- NEXT READ-ONLY: `sed -n '1,34p' pp2_des.cmd` and `sed -n '108,176p' pp2_des.par` to inspect effective AlGaN Bandgap, electron affinity, alloy interpolation and all Thermionic context. No code changes and no Project B simulation until verified Common Baseline freeze.
+
+## 2026-10-22 — JuSubin Project B active V2.1 Bspan/Edge code hooks verified (OBSERVED USER TERMINAL)
+- User ran READ-ONLY `grep -nEi 'Bspan|Wedge|Wdmg|AlGaN|Aluminum|Edge_|Dmg_' sde_dvs.cmd pp1_dvs.cmd | head -n 140` in actual school server directory `/user/semi/semi437/CMP_BASELINE_2.0.0_V2`; source and preprocessed SDE printouts matched semantic definitions.
+- OBSERVED `sde_dvs.cmd`: Wdmg=0.005um (line38); Wedge=`@Wedge@` line39; Bspan=`@Bspan@` line45; `Xd=Xs-Wdmg`, `Xe=Xd-Wedge` lines54–55. Actual `pp1_dvs.cmd` has Wedge=0.1um and Bspan=0 (lines39,45).
+- OBSERVED documented mapping: `Bspan=0` baseline no new lateral AlGaN edge; Bspan1 -> Edge of QW1–4, Bspan2 -> Edge of QW1–4 plus B1–B3, Bspan3 -> Edge of QW1–4 plus B0–B4; explicit `in-Bspan?` function and conditional `AlGaN` material selection lines80–89. `MF_AlB` material profile for selected AlGaN edge referenced at line112; value/composition and actual geometric/electrical interpretation are UNVERIFIED. `Edge_`/`Dmg_` region dynamic names lines128–129; Edge keeps host doping by source comment at line133.
+- INTERPRETATION: This is a PREWIRED lateral **material substitution** in QW and optionally GaN barrier EDGE regions, **not proof of a deposited outside coating**, unchanged active/emissive area, polarization consistency or viable physical performance. Baseline unchanged, no Bspan>0 preprocessing or RUN tested. Potential material-replacement/polarization/offset impacts are open review items.
+- NEXT FIRST: read-only `sed -n '65,145p' pp1_dvs.cmd` to obtain `base-mat`, `in-Bspan?`, actual "MF_AlB" definition/use and `make-layer` region geometry; if Al mole fraction outside displayed block then grep `MF_AlB|MoleFraction|Aluminum|xAl` in pp1_dvs.cmd. Verify sidewall and vertical extents before choosing a Project B test condition. Do not edit V2.1 or start Project B runs pending frozen baseline.
+
+## 2026-10-22 — 주수빈 Project B 단독 담당 방향 명확화 (USER DECISION; PREPARATION STARTED)
+- 사용자 2026-10-22 명시: 오늘 Baseline 최종 검증/확정이 이루어질 경우, **이택규는 Project A(GaN:C), 주수빈은 Project B(AlGaN)로 분리 진행**한다. 이는 사용자 제공 분업 계획이며 이택규와의 독립적 직접 합의는 현재 채팅에서 검증되지 않음. Baseline freeze 사실도 아직 미확인.
+- 주수빈의 오늘 당장 작업은 Project B-only 기하/재료/물리 모델 사전 확인과 한 가지 pilot 및 후속 조성·폭 DOE 설계. 독립 계획 문서 `members/JuSubin/PROJECT_B_PLAN_20261022.md` 작성(PROPOSED). 이전 A/B 양쪽 검토 제안보다 최신 사용자 지정 분담을 우선한다.
+- FIRST SERVER ACTION: `CMP_BASELINE_2.0.0_V2` SDE 코드에서 Bspan/Wedge/Wdmg, AlGaN/Edge/Dmg region 생성 및 활성 preprocessing READ-ONLY 검사. 소자 코드/런 변경 없음. Baseline 확정 후 별도 versioned `CMP_PROJECTB_1.0.0_ALBARRIER` 후보 구현/short smoke; 확정 전 장시간 run 금지.
+
+## 2026-10-22 — 주수빈 Project A/B 설계 준비 착수 (USER-APPROVED DIRECTION; PROPOSED DESIGN)
+- 주수빈이 이택규와 Baseline V2.1 최종 검증을 중복하지 않고 Project A(GaN:C 고저항 측벽 Edge), Project B(측벽 AlGaN lateral heterobarrier) 구현 준비에 집중하기로 선택. 이택규와의 상호 역할 승인/전담 확정은 아직 아님.
+- GitHub Phase #3/#4/#5, AI_SHARED_MEMORY_PROTOCOL 및 선행문헌을 기반으로 독립 설계 준비 문서 `members/JuSubin/PROJECT_AB_PREPARATION_20261022.md` 작성. 실제 Sentaurus 소스/런/새 프로젝트 생성 없음.
+- Project A는 nominal C dose를 고정 저항 또는 이온화 acceptor/trap 밀도로 단정하지 않으며, GaN 영역과 QW를 구분한 C 모델 검증이 선행되어야 함. Project B는 실제 Bspan geometry, Al mole fraction, polarization/band offsets 검증이 선행되어야 함. 수치 sweep은 PROPOSED screening only.
+- 다음 최우선: 학교 서버 `CMP_BASELINE_2.0.0_V2`에서 `sde_dvs.cmd`/`pp1_dvs.cmd`의 Wedge/Bspan/Wdmg 및 Edge/Dmg 재료·영역 생성 부분을 READ-ONLY 출력으로 확인. Common Baseline/기존 n2/n6 결과 보존; 이택규의 2D current normalisation 및 Full/Half 최종 검증 후 본격 A/B pilot.
+
 ## 2026-10-15 — n6 적분 시도에서 n2 데이터셋/8영역 선택 오류 확인 (OBSERVED)
 - 사용자가 새로 전달한 SVisual 출력은 `Dataset: n2_des`, `Field: RadiativeRecombination`. Clean_QW1..4 및 Dmg_QW1..4만 포함한 8개 2D 영역의 Total Integral 1.447895e11 s^-1 um^-1, Total Domain 0.02279999 um². n6의 측정 결과가 아님.
 - 앞서 n2 12개 QW 적분(1.524099e11, 0.02399999um²)과의 차는 약 7.6204e9 s^-1 um^-1로 이전 Edge_QW1..4 적분합과 일치함. 물리 변화가 아닌 ROI/데이터셋 선택 차이.

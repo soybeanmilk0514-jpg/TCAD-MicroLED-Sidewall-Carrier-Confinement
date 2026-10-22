@@ -7229,3 +7229,782 @@ Recorded in LeeTaekGyu/TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, LIVE_STA
 - 원본 TCAD 코드와 계산 결과 무변경. TIMELINE/NEXT_ACTIONS/LIVE_STATE.md/json 업데이트.
 
 ---
+
+## 2026-10-22T06:12:24Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / RESULT
+상태: OBSERVED USER SCREENSHOT (spatial only)
+
+요약:
+- SVisual T-2022.03 `n6_end_des` `RadiativeRecombination` 화면 확보. X(depth) 약 0–0.45um, Y(lateral) 약 1.2–2.0um; MQW 수평 방사재결합 띠와 x~0.26um 부근 강한 띠가 보임. 범례 최고값 약 5.02e24 cm^-3 s^-1.
+- 이전 n2 그림과 색상만으로 절대 강도 비교할 수 없음(공통 legend/스케일 미확인). 이 화면 단독으로 최종 TDR 바이어스, QW별 적분, 물리적 Trap 인과, 정규화된 J, 동전류 IQE는 확정 불가.
+
+근거:
+- 2026-10-22 사용자 제공 SVisual n6 스크린샷.
+
+변경:
+- 연구 기록/계획 문서만 갱신. TCAD 코드·계산 원본 무변경.
+
+다음:
+- n2/n6 동일 X/Y ROI, 동일 Radiative field, 동일 logarithmic color legend로 시각화 비교; 정량은 이미 추출한 PLT QW integrals를 따로 사용.
+- 이후 AreaFactor/2D current normalization 확인과 4um Full/2um Half 독립 검증.
+
+---
+
+## 2026-10-22T06:31:55Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / VALIDATION
+상태: OBSERVED current-unit grep; J normalization UNRESOLVED
+
+요약:
+- 학교 서버 V2.1에서 `grep -niE 'AreaFactor|current unit|length unit|A/cm|A/um' pp2_des.cmd pp2_des.par n2_des.log n6_des.log` 결과 n2,n6 로그 297줄 각 1개: `Use length unit of micrometer during currentplot integration.`
+- 이 메시지는 CurrentPlot 적분 길이 단위이며 단자 전류의 A/A-um 구분이나 외부 1um 폭/실제 4um 원형 소자 면적을 확인하지 않음. 위 검사 파일 내 명시적 AreaFactor 검색 결과 없음. 기존 n2/n6 3.6V raw current는 관측값으로 유지하되, 절대 J는 보류.
+
+근거:
+- 사용자가 복사한 실행 터미널 출력, 2026-10-22.
+- 프로젝트 TCAD_REFERENCE_INDEX.md에 등록된 T-2022.03 sdevice_ug.pdf; 상용 매뉴얼 원본은 공개 GitHub에 복제하지 않음.
+
+변경:
+- 개인 TIMELINE / CURRENT_STATUS / NEXT_ACTIONS / LIVE_STATE.md+json만 갱신. 서버 TCAD 코드/출력 무변경.
+
+다음:
+- pp2와 pp6 전처리 덱에서 AreaFactor/Cylindrical/CoordinateSystem 단일 읽기 검사, 2D 기본 등가 두께/접촉 면적 근거 확인, 이후 조건부 J 계산 및 Full/Half 비교.
+
+---
+
+## 2026-10-22T06:36:04Z — soybeanmilk0514-jpg
+
+[2026-10-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / PROGRESS / HANDOFF
+상태: PROPOSED DESIGN (user direction agreed; no TCAD implementation)
+
+요약: 주수빈은 이택규의 V2.1 최종 baseline 검증을 중복하지 않고 Project A(GaN:C lateral high-R edge), B(AlGaN localized heterobarrier) 연구/구현 사전설계에 착수. 이택규의 전담 역할 명시적 합의는 미확인.
+
+근거: GitHub Issue #3/#4/#5 및 protocol/naming rules, 사용자 2026-10-22 작업 결정. 선행문헌 검토는 물리 아이디어 근거이며 특정 C농도/Al 조성의 측벽 성능 입증 아님.
+
+변경: `CMP/members/JuSubin/PROJECT_AB_PREPARATION_20261022.md` 신규 PROPOSED 계획; JuSubin/TIMELINE.md, TEAM_TIMELINE.md, NEXT_ACTIONS.md, LIVE_STATE.md/json, RELAY.md 문서 업데이트. 실제 Sentaurus source, SWB project, simulation, RUN 변경 없음.
+
+다음: 학교 서버 기존 V2.1 sde_dvs.cmd/pp1_dvs.cmd에서 Wedge/Bspan/Wdmg 및 Edge/Dmg 물질/기하를 read-only 확인 → GaN:C compensation & potential added traps, AlGaN offsets/polarization 검토 → 최소 DOE 계획. Baseline current scaling/Full-Half/mesh gate 이후에만 A/B pilot.
+
+---
+
+## 2026-10-22T06:37:13Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / VALIDATION
+상태: OBSERVED USER-REPORTED NEGATIVE GREP; DERIVED CONDITIONAL 2D CURRENT DENSITY
+
+요약:
+- 사용자: `grep -niE 'AreaFactor|Cylindrical|CoordinateSystem' pp2_des.cmd pp6_des.cmd pp2_des.par pp6_des.par` 실행 후 아무 결과도 나오지 않았다고 보고함. 따라서 양쪽 전처리 덱 검사 범위에서 명시적 관련 설정이 확인되지 않음.
+- 공식 Sentaurus training (https://ghzphy.github.io/Sentaurus_Training/sd/sd_3.html)에서 2D 유효 기본 두께 1um 설명. Half 유효 횡폭 2um과 상단 전체 anode contact를 가정하면 area = 2um × 1um = 2e-8 cm².
+- 관측된 기존 PLT 3.6V terminal currents: n2 3.64728525e-8 / (2e-8) = conditional J 1.823642625 A/cm², n6 9.21970771e-9 / (2e-8) = 0.4609853855 A/cm². 정확한 contact span/원형 Full/physical calibration 미검증. 이 값은 잠정 planar effective J, 실물 4um 원형 LED의 확정 J 아님.
+
+근거:
+- 사용자 터미널 무출력 보고 및 앞선 3.6V n2/n6 PLT 원시 전류 기록.
+- 이전 `CurrentPlot` 적분 길이 로그는 단자 전류 단위를 직접 검증하지 않음.
+
+변경:
+- 개인 TIMELINE/CURRENT_STATUS/NEXT_ACTIONS/LIVE_STATE.md+json 기록만. TCAD 코드/시뮬레이션 무변경.
+
+다음:
+- 실제 SDE anode contact y-span 읽기 전용 확인 후 Half 물리 검증, 교수 요청 별도 Full/Half 비교.
+
+---
+
+## 2026-10-22T06:40:38Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED SOURCE; NUMERICAL CONTACT WIDTH / FULL-DEVICE J UNRESOLVED
+
+요약:
+- pp1_dvs.cmd lines150–168 from real server: anode on three p+ cap top edges, selected at [0,Xe], [Xe,Xd], [Xd,Xs] midpoints; comment says entire mesa top Clean+Edge+Dmg. Cathode in Cath=0 case selected at bottom edge Xs/2; Wshelf>0 conditional adds separate shelf bottom.
+- Prior runtime parameter excerpts show Cath=0, Wshelf=0, thus expected bottom contact branch. Need one check of actual numeric Xs/Xe/Xd to establish full 2um Half anode span; source contact declaration alone is not meshed edge numerical length proof.
+- Absence of explicit AreaFactor in pp2/pp6 and default effective width 1um described in Synopsys training (https://ghzphy.github.io/Sentaurus_Training/sd/sd_3.html). Previously calculated J_n2 1.82364 and J_n6 0.460985 A/cm2 remain conditional planar values, not validated circular 4um mesa J or absolute IQE.
+
+근거:
+- User pasted terminal source lines 150–168, 2026-10-22.
+
+변경:
+- CMP current status, next actions, personal timeline, LIVE_STATE.md/json updated; original Sentaurus code/logs and finished runs untouched.
+
+다음:
+- Inspect Xs/Xd/Xe geometry definitions and then proceed without additional redundant greps to broader Half physical gate and Full/Half comparison.
+
+---
+
+## 2026-10-22T06:43:22Z — soybeanmilk0514-jpg
+
+[2026-10-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / PROGRESS / HANDOFF
+상태: USER-DEFINED FUTURE ROLE SPLIT; PROJECT B DESIGN PROPOSED / NOT RUN
+
+요약:
+- 사용자 최신 지시: **Baseline 최종 검증·확정 후 이택규는 Project A(GaN:C), 주수빈은 Project B(localized lateral AlGaN)** 별도 연구. 이전 주수빈 A/B 동시 준비 제안은 Project B 전담 준비로 변경.
+- Baseline이 실제 오늘 최종 freeze됐다는 근거는 아직 없으며, 이택규가 별도 채팅에서 직접 분업을 확정한 기록으로 오인 금지.
+- 주수빈은 오늘 Project B 시작: 기존 V2.1 원본을 변경하지 않고 Bspan/Edge/Dmg/AlGaN 구조 read-only audit → 전자/정공 Ec/Ev, 분극/strain 모델과 장벽 위치 검토 → 초기 pilot 및 폭·Al 조성 sensitivity 설계.
+
+근거:
+- 주수빈 현재 채팅의 명시적 연구 분담 지시.
+- GitHub Phase 3 Issue #4/Phase 4 Issue #5, CURRENT_STATUS 및 V2.1 physics validation 아직 미완료.
+
+변경:
+- 신규 `CMP/members/JuSubin/PROJECT_B_PLAN_20261022.md` (PROPOSED plan)
+- JuSubin/TIMELINE, TEAM_TIMELINE, NEXT_ACTIONS, CURRENT_STATUS, LIVE_STATE.md/json, RELAY 기록 갱신.
+- 기존 Sentaurus 코드 및 SDevice 실행/계산 결과 변경 없음.
+
+다음:
+- `cd /user/semi/semi437/CMP_BASELINE_2.0.0_V2`에서 `grep -nEi 'Bspan|Wedge|Wdmg|AlGaN|Aluminum|Edge_|Dmg_' sde_dvs.cmd pp1_dvs.cmd | head -n 140` 출력 확인.
+- Baseline freeze 검증 후 분리된 버전 `CMP_PROJECTB_1.0.0_ALBARRIER`를 부모 버전 명시해 만들고 preprocess/mesh smoke 후 단일 pilot; fixed defect와 동일 전류 비교로만 효과 판단.
+
+---
+
+## 2026-10-22T06:45:22Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / VALIDATION
+상태: OBSERVED user preprocessed SDE source; 2D J only CONDITIONAL
+
+요약:
+- User `grep -nE 'define Xs|define Xe|define Xd|define Xend|define Wmesa|define Wedge|define Wshelf' pp1_dvs.cmd`: actual lines37 `Wshelf=0`,39 `Wedge=0.1um`,53 `Xs=Wm/2`,54 `Xd=Xs-Wdmg`,55 `Xe=Xd-Wedge`,56 `Xend=Xs+Wshelf`. Latest grep does not itself show Wm or Wdmg numeric value.
+- Earlier actual n1_msh.log bbox shows 2um Half lateral span, and actual pp1 SDE contact source maps pCap top anode across three Clean+Edge+Dmg segments [0,Xs]. This supports baseline planar Half geometry and closes the limited contact-width rationale without more repetitive single-variable grep.
+- In n2/n6 processed decks, explicit `AreaFactor`/Cylindrical overrides not found. Synopsys Training 2D default effective depth 1um (https://ghzphy.github.io/Sentaurus_Training/sd/sd_3.html). Conditional planar model area=2um×1um=2e-8cm², 3.6V OFF 3.64728525e-8/2e-8=1.823642625 A/cm²; ON 9.21970771e-9/2e-8=0.4609853855 A/cm². Not actual calibrated circular 4um-LED J or physical IQE.
+
+근거:
+- User school-server terminal output (2026-10-22), earlier recorded mesh bbox/anode source.
+
+변경:
+- CMP TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, Issue #7 only; no Sentaurus simulation/code changes.
+
+다음:
+- SVisual n2_end_des.tdr hDensity (log scale) over 4 QWs to examine unusual QW4-dominant Radiative spatial pattern, eDensity second as needed. Do not over-focus minor setup searches; then physical plausibility / independent protected Full-vs-Half gate.
+
+---
+
+## 2026-10-22T06:48:59Z — soybeanmilk0514-jpg
+
+[2026-10-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED SCHOOL SERVER CODE (not simulated Project B)
+
+요약:
+- 주수빈이 학교 서버 `/user/semi/semi437/CMP_BASELINE_2.0.0_V2`에서 `grep`으로 직접 확인한 실행기준 `sde_dvs.cmd` 및 `pp1_dvs.cmd`의 Project B 구현 hook:
+  - Wdmg=0.005um(5nm), preprocessed Wedge=0.1um(100nm), Bspan=0 (현행 baseline).
+  - `Xd=Xs-Wdmg`, `Xe=Xd-Wedge`로 Edge와 Dmg 경계 구분.
+  - `in-Bspan?`가 Bspan 1→QW1~4, 2→QW1~4+B1~3, 3→QW1~4+B0~4 Edge 영역의 AlGaN 재료 전환을 결정. `MF_AlB` composition profile 참조(line112), 정확한 조성 수치 미확인. 동적 `Edge_`/`Dmg_` region labels 및 Edge host doping 주석 존재.
+- 중요한 해석: 기존 Edge region의 **일부 QW/Barrier 물질을 AlGaN으로 교체**하는 로직이며, QW 발광 영역과 캐리어 수송/분극을 바꿀 수 있다. 외부 코팅이나 성공한 AlGaN 시뮬레이션으로 단정하지 않음.
+
+근거: 사용자 제공 read-only `grep ... sde_dvs.cmd pp1_dvs.cmd` 실제 line-number 출력, 2026-10-22.
+변경: 문서 동기화 JuSubin/TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY. TCAD 소스/실험 무변경.
+다음: `sed -n '65,145p' pp1_dvs.cmd` 및 `MF_AlB` 정의 위치 read-only 확인하여 Al 조성, vertical/lateral span, 영역 생성/도핑을 검토. Baseline 동결 확인 후에만 독립 Project B 실행.
+
+---
+
+## 2026-10-22T06:50:12Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PHYSICAL_VALIDATION
+상태: OBSERVED_USER_SVISUAL_IMAGE; QW4_CARRIER_CAUSE_UNRESOLVED
+
+요약:
+- 사용자 Sentaurus Visual T-2022.03 스크린샷에 `n2_end_des` `hDensity` 선택, 로그 범례 최소 약 1e-30 최대 약 8.2788e19 cm^-3 표시. Y(lateral)는 전 Half 폭~0–2um이지만 X(depth)는 활성층보다 지나치게 넓어 QW1–QW4 층이 압축되어 개별 QW별 정공 농도를 판정할 수 없음.
+- 화면 전체 최댓값을 QW의 최댓값으로 잘못 읽거나 QW4 집중 원인을 확정하지 않음. 이전 QW4 방사재결합 적분량 집중은 별도 관측 데이터이며, hDensity 원인 검증은 현재 열려 있음.
+
+근거:
+- 이택규가 현재 채팅에 제공한 SVisual n2_end_des/hDensity 화면.
+
+변경:
+- CMP personal timeline, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json; 학교 서버 TCAD 소스와 계산 결과 무변경.
+
+다음:
+- SVisual Plot Properties > Axes: 깊이 X 0.14–0.29um, 측면 Y 0–2um 확대해 동일 hDensity 로그 화면 확보, 필요시 동일 ROI의 eDensity 및 cutline 비교.
+
+---
+
+## 2026-10-22T06:53:19Z — soybeanmilk0514-jpg
+
+[2026-10-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED USER-SUPPLIED ACTIVE SDE PREPROCESSED CODE, NO RUN
+
+주수빈 학교 서버 `CMP_BASELINE_2.0.0_V2/pp1_dvs.cmd` lines60–145 직접 출력으로 Project B geometry/mole profile 로직 추가 확인.
+- Layer stack: pCap 0.020um, pGaN 0.120um, EBL 0.026um, B0..B4 each 0.022um, QW1..QW4 each 0.003um, nMesa dEtch.
+- `base-mat`: QW InGaN, EBL AlGaN, rest GaN.
+- `in-Bspan?`: 1 QW1..4, 2 QW1..4+B1..B3, 3 QW1..4+B0..B4.
+- `mC=(base-mat role)`, `mE=(edge-mat name role)`, `mD=(base-mat role)` therefore only SELECTED Edge material is changed to AlGaN. Clean and Dmg keep host material. `dope-region` applies same role-dependent doping to all three regions.
+- `MF_AlB` defined as AlGaN `xMoleFraction=xAlB` profile except original EBL `MF_EBL=xEBL`; numerical xAlB was NOT printed yet.
+- Physical boundary: this replaces lateral parts of InGaN QWs with AlGaN, NOT deposited outside-coating. Effective luminescent volume, new Ec/Ev and polarization changes require checking. No device effects, new mesh or simulation confirmed.
+
+변경: `CMP/members/JuSubin/PROJECT_B_PLAN_20261022.md`, CURRENT_STATUS.md, RELAY.md, LIVE_STATE.json updated successfully. Some large legacy docs blocked by connector safety review; do NOT claim synced: JuSubin/TIMELINE.md, TEAM_TIMELINE.md, NEXT_ACTIONS.md, LIVE_STATE.md for this specific new observation.
+
+다음: read only `sed -n '23,59p' pp1_dvs.cmd` and `grep -nEi 'xAlB|xEBL|xIn|MF_AlB|define.*P' pp1_dvs.cmd` to confirm actual alloy fractions/coordinate mapping; then select minimal Project B pilot conditional on final Baseline freeze.
+
+---
+
+## 2026-10-22T06:56:19Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / PHYSICAL_VALIDATION
+상태: OBSERVED SCREENSHOT; QW4_CARRIER_CAUSE UNRESOLVED
+
+요약:
+- SVisual `n2_end_des`의 `hDensity` 확대 화면을 사용자에게서 확인. 깊이 X~0–0.45um, lateral Y~1.0–1.65um(측벽 Y~2.0um 제외); 4 QW 층이 X~0.17–0.27um 부근에서 구분됨.
+- 로그 색상 범례는 전체 ~1e-30–8.279e19 cm^-3로 매우 넓고, 이미지 색상만으로 각 QW 정공 농도 수치, QW4의 상대적 정공 집중 또는 방사재결합 QW4 우세의 물리적 원인을 검증할 수 없음. 과거 QW4 Radiative 약 99.97% PLT 적분은 별도 정량 관측으로 유지.
+
+근거:
+- 현재 사용자 SVisual 캡처; Synopsys Visual Training 5.3 (https://ghzphy.github.io/Sentaurus_Training/sv/sv_5.html)에서 2D Cut Y는 Y 고정 절단/1D XY plot 생성임을 확인.
+
+변경:
+- TIMELINE/CURRENT_STATUS/NEXT_ACTIONS/LIVE_STATE.md/json 동기화. Sentaurus 소스/계산 수정 없음.
+
+다음:
+- 추가 zoom 반복 대신 SVisual Cut Y (lateral Y~1.3um 일정)로 깊이 방향 hDensity 1D profile을 확보하고 필요 시 동일 cut의 eDensity 비교; Full/Half 실행은 Half 물리 검증 뒤 별도 프로젝트에서.
+
+---
+
+## 2026-10-22T06:58:18Z — soybeanmilk0514-jpg
+
+[2026-10-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED USER TERMINAL (preprocessed SDE values); derived geometry; NO PROJECT B RUN
+
+요약:
+- 실제 서버 `CMP_BASELINE_2.0.0_V2/pp1_dvs.cmd` grep에 명시된 값: `P(lat dep z)=(position dep lat z)` line32, `Wedge=0.1um` line39, `xIn=0.15` line42, `xEBL=0.15` line43, `xAlB=0.15` line44, `MF_AlB xMoleFraction xAlB` line99. 앞선 전처리 기록 `Bspan=0`, `Wdmg=0.005um` 유지.
+- 사용자 터미널에서 `pp1_dvs.cmdsed`로 두 명령이 붙어 발생한 'No such file'은 단순 쉘 입력 오류이며 기존 모델/시뮬레이션 오류 아님. 그 뒤 실제 grep 결과는 출력됨.
+- DERIVED existing half lateral 2um: Clean=1.895um, Edge=0.100um, Dmg=0.005um. Bspan>0은 QW 측면 Edge InGaN 100nm를 Al0.15Ga0.85N으로 교체하므로 nominal QW lateral area 5% 교체. 실제 emissive physics, carrier confinement/sidewall SRH, band alignment, polarization, IQE는 미검증.
+- PROPOSED pilot: frozen Baseline의 별도 Project B clone에서 Bspan=0 control과 Bspan=3 (all B0..B4+QW1..4 Edge) 단일 후보를 우선 geometry/mesh smoke로 검토, Bspan=1은 다른 층 범위의 비교 후보. xAlB=.15는 코드상 기존 정의이지 최적화/문헌 검증값이 아님. Baseline 물성/손상/트랩 동일 조건 유지.
+
+변경: `members/JuSubin/PROJECT_B_PLAN_20261022.md`, CURRENT_STATUS.md, LIVE_STATE.json GitHub 업데이트. 기존 SDE/SDevice/실행 수정 없음.
+
+다음: 기존 프로그램에서 AlGaN material/polarization interface 정의와 프로젝트 원본/최종 확정 여부 확인 후, 버전화된 독립 클론에서만 preprocessing 실행.
+
+---
+
+## 2026-10-22T07:01:15Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / VALIDATION
+상태: OBSERVED_SVISUAL_CUTLINE_CREATED; QW_HOLE_MAGNITUDES_UNRESOLVED
+
+요약:
+- 사용자 SVisual 스크린샷에서 `Cutline_Y Plot` / `hDensity(C2(n2_end_des))` 정식 생성 확인. C2는 lateral Y~1.3um 위치를 지나는 세로선, right XY plot은 depth X를 0..4.288um로 표시 중; MQW X~0.17–0.27um peak가 좌측에 압축됨.
+- Axis Properties 좌측에 horizontal X Min0 Max4.288, Fixed 설정 표시. Y축 로그 농도 값 자체로는 아직 네 개 QW의 상대 홀농도를 판정할 수 없음.
+
+근거:
+- 사용자 Sentaurus Visual T-2022.03 화면 이미지, 2026-10-22.
+
+변경:
+- READ ONLY visualization; Sentaurus TCAD 코드/계산 무변경. NEXT_ACTIONS/LIVE_STATE.md/json 동기화. 개인 TIMELINE 갱신은 커넥터 안전검사로 차단되어 미반영(재시도 예정 없음).
+
+다음:
+- 현재 Axis Properties의 fixed Min 0.14 / Max0.29um로 XY plot 확대 후 각 QW hDensity 피크 확인, 필요시 동일 Cut Y eDensity 비교.
+
+---
+
+## 2026-10-22T07:01:57Z — soybeanmilk0514-jpg
+
+[2026-10-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED SDEVICE DECK CONFIGURATION; PROJECT B NOT RUN
+
+근거: 실제 학교 서버 `CMP_BASELINE_2.0.0_V2` 디렉터리에서 사용자 제공 `grep` 출력.
+- pp2_des.cmd:21 `Piezoelectric_Polarization(strain activation=0.5)`.
+- pp2_des.cmd:24~26 `Thermionic` MaterialInterface InGaN/GaN, AlGaN/GaN, AlGaN/InGaN.
+- pp2_des.cmd:59~67 band-edge / affinity / xMoleFraction plot field declarations.
+- pp2_des.par:112 AlGaN Bandgap section exists; 166/169/172 interface `ThermionicEmission { Formula = 1 }` entries.
+
+해석: 현 파일은 baseline n2 (Bspan=0)의 사전처리 덱이므로 새로운 Bspan>0 측면 AlGaN/GaN 및 AlGaN/InGaN 계면의 실제 런타임 적용/분극 전하/밴드 오프셋·전자-정공 주입·효율 검증까지 통과했다는 의미는 아님. 특히 AlGaN bandgap 파라미터 수치와 물질 인터페이스 하위 블록 전체 문맥 미확인.
+
+변경: 주수빈 Project B plan, JuSubin TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json 업데이트 성공. TEAM_TIMELINE 이번 갱신은 안전 검사로 차단; TCAD 코드/결과는 변경하지 않음.
+
+다음: `sed -n '1,34p' pp2_des.cmd` 및 `sed -n '108,176p' pp2_des.par`로 물리/물성 정의 읽기만 수행. Baseline freeze 확인 전까지 Project B 복제/장시간 계산 보류.
+
+---
+
+## 2026-10-22T07:05:22Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / PHYSICAL_VALIDATION
+상태: OBSERVED_SCREENSHOT; QW4_CARRIER_MECHANISM_UNRESOLVED
+
+요약:
+- n2_end_des의 hDensity Cutline_Y(C2, lateral Y≈1.3um)에서 XY plot X(depth) 축을 0.14–0.29um로 고정해 QW 층의 반복 피크를 표시함.
+- log hDensity 수직축 상한이 약 1e17 cm^-3라 여러 QW 피크가 그래프 상단에서 잘림. 이 화면으로 QW4 정공 농도 우위나 방사 재결합 QW4 편중의 물리적 원인을 입증할 수 없음.
+
+근거:
+- 이택규 사용자 제공 Sentaurus Visual T-2022.03 화면 캡처.
+
+변경:
+- CMP 연구 기록만 갱신; TCAD 소스/실행 변화 없음.
+
+다음:
+- 오른쪽 Cutline_Y Plot의 **수직 밀도축** 로그 범위를 1e10..1e20 cm^-3로 고정한 뒤 같은 X 범위(0.14..0.29um)에서 QW 피크 높이를 재검토. 필요시 같은 위치 eDensity 비교.
+
+---
+
+## 2026-10-22T07:05:57Z — soybeanmilk0514-jpg
+
+[2026-10-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / VALIDATION / HANDOFF
+상태: OBSERVED AlGaN preprocessed material source; PROJECT B NOT RUN
+
+실 서버 V2.1 `sed -n '108,176p' pp2_des.par`로 다음 파라미터 직접 확인: AlGaN Bandgap Eg0=3.7564 eV, Chi0=3.8768 eV, alpha=1.043e-3, beta=925, Tpar=300 K; ConstantMobility mumax=(electron 300, hole 10); Scharfetter taumin=0, taumax=1e-7 s (100 ns), Nref=1e16, gamma=1; Radiative C=2e-11; Auger A=5e-31 both; pMagnesium 및 PDopant Ionization(E0=0.2eV); InGaN/GaN, AlGaN/GaN, AlGaN/InGaN ThermionicEmission Formula1 블록.
+
+주의: 유효 주입장벽은 상대 물질 Ec/Ev 및 분극을 함께 확인해야 하며, 선언된 Tpar/Eg0 또는 Thermionic 블록만으로 새 lateral AlGaN sidewall의 물리적 타당성을 주장하지 않음. AlGaN의 Eg0/Chi0은 이번 블록에서 scalar 고정값이고 명시적 mole-fraction interpolation 보이지 않음. `xAlB`만 변경해 조성 sweep 하는 경우 실제 밴드갭/affinity 조성 의존성이 반영되는지 검증 필수. Scharfetter taumax=100ns 설정만으로 doping-dependent 활성 lifetime 단정 금지.
+
+결정/다음: 초기 구조 pilot 후보는 Bspan=3, xAlB=0.15, Wedge=0.1um (PROPOSED only)로 두고, 처음에는 xAlB sweep 보류. 다음 read-only `sed -n '1,85p' pp2_des.par`로 GaN/InGaN Bandgap/Chi 비교하고 확정 baseline 복제 후만 pilot 전처리/mesh/simulation. 기존 SDE/SDevice/실제 계산 수정 없음.
+
+GitHub 저장 성공: Project B plan, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.json. JuSubin/TIMELINE.md 본 관찰 업데이트 시도는 안전 검사 차단으로 미반영; 본 Issue가 인수인계 대체 기록.
+
+---
+
+## 2026-10-22T07:09:43Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PHYSICAL_VALIDATION
+상태: OBSERVED GRAPH; APPROXIMATE GRAPH-READ VALUES (NOT EXPORTED QUANTIFICATION)
+
+요약:
+- n2_end_des, SVisual Cutline_Y hDensity(C2(...)), lateral Y≈1.3um, depth X=0.14–0.29um, logarithmic vertical axis=1e10–1e20 cm^-3. Four QW-local peaks visible at X≈0.190, 0.215, 0.240, 0.265um; plot-read maxima QW1≈9e18, QW2≈1e19, QW3≈2e19, QW4≈8e19 cm^-3. The QW4 hole-density peak is highest on this interior lateral cut.
+- The source is a screenshot; estimated numbers are not measured data from an exported cutline. Prior independent 2D-integrated n2 radiative QW4 share~99.9688% is OBSERVED but not a consequence proven by this hole plot. Need eDensity, electron-hole overlap, region behavior for causal discussion.
+
+근거:
+- 2026-10-22 사용자 SVisual Cutline_Y graph screenshot; earlier n2 radiative PLT QW totals.
+
+변경:
+- Individual TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json updated; no Sentaurus sources or runs changed.
+
+다음:
+- Same Cutline_Y lateral Y~1.3um and depth X~0.14–0.29um plot eDensity for n2_end_des. Keep models untouched; Full/Half after Half physics gate.
+
+---
+
+## 2026-10-22T07:11:17Z — soybeanmilk0514-jpg
+
+[2026-10-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / PROGRESS / HANDOFF
+상태: OBSERVED pp2_des.par MATERIAL PARAMS; DERIVED NOMINAL OFFSET; PROJECT B NO RUN
+
+실 서버 `CMP_BASELINE_2.0.0_V2/pp2_des.par` lines1-85 사용자 제공:
+- GaN Eg0 3.4376 eV / Chi0 4.1000 eV; InGaN Eg0 2.8569 / Chi0 4.5065; 기존 확인 AlGaN Eg0 3.7564 / Chi0 3.8768. 각 Bandgap Tpar=300K.
+- GaN/InGaN ConstantMobility e/h 300/10, Scharfetter taumax100ns 등 같은 설정 존재. LatticeParameters X=(0,0,-1), Y=(1,0,0) 정의 확인.
+
+계산 (DERIVED, not TCAD-solved): 전자친화도 법칙 Ec=-Chi, Ev=-(Chi+Eg)로 진공기준 GaN Ec/Ev -4.1000/-7.5376, InGaN -4.5065/-7.3634, AlGaN -3.8768/-7.6332 eV. 명목상 GaN→AlGaN 전자/정공 장벽 0.2232/0.0956 eV, InGaN→AlGaN 0.6297/0.2698 eV. 전위, 분극, strain, interface dipoles, band bending, 실제 bias를 무시한 수치임. 절대 IQE나 효율 향상 주장 불가.
+
+연구 계획 (PROPOSED): 동일 frozen Baseline, NtSide/Et/sigma 고정한 Bspan0 대비 Bspan3, xAlB0.15, Wedge0.1um 측면 AlGaN Edge 재료 치환 후보를 첫 pilot으로 검토. 100nm Edge = Half QW 폭의 5%; 방사 영역 변경이므로 current-matched absolute MQW radiative, edge trap SRH, band offsets, lateral e/h current, polarization과 Voc/Vf penalty 함께 분석. xAl 조성 sweep은 effective Eg/Chi alloy interpolation 검증 전 보류.
+
+확인 상태: 오늘 Project B 기본 물리·구조 사전설계 확보. 이택규 Baseline 최종 freeze/Full-Half 및 2D J 검증 아직 이 채팅에 CONFIRMED 보고 없음. 원본 SWB/SDE/SDevice/mesh/run 수정 없음.
+
+GitHub 동기화: JuSubin Project B plan, JuSubin TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY 갱신 완료. 다음: Baseline freeze와 parent source provenance 확인 후 독립 versioned Project B copy에서 preprocess/mesh smoke 시작.
+
+---
+
+## 2026-10-22T07:12:01Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / PHYSICAL_VALIDATION
+상태: OBSERVED SCREENSHOT; QW eDensity comparison PENDING
+
+요약:
+- n2_end_des에서 기존 C2 Cutline_Y(~lateral Y1.3um)의 스칼라를 eDensity로 변경하여 `eDensity(C2(n2_end_des))` 1D 그래프가 생성됨.
+- 변경 직후 오른쪽 XY plot의 가로 X(depth) 범위가 0..4.288um로 돌아가 QW 깊이 ~0.17–0.27um는 좁게 압축되어 있음. 이 화면만으로 QW별 eDensity 상대 크기나 99.97% QW4 방사 편중 원인 단정 불가.
+
+근거:
+- 이택규 제공 Sentaurus Visual T-2022.03 스크린샷.
+
+변경:
+- 개인 TIMELINE/NEXT_ACTIONS/LIVE_STATE.md/json 및 Issue7 기록만. 소스/시뮬레이션 변경 없음.
+
+다음:
+- 오른쪽 1D 그래프 가로축 X를 0.14..0.29um(Fixed)으로 설정 후 eDensity/QW별 피크 확인 및 기존 hDensity와 비교.
+
+---
+
+## 2026-10-22T07:16:23Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PHYSICAL_VALIDATION
+상태: OBSERVED E_DENSITY SVisual IMAGE; CAUSALITY UNRESOLVED
+
+요약:
+- n2_end_des Cutline_Y C2, lateral Y~1.3um에서 eDensity 1D depth X=0.14–0.29um 그래프 확보. X~0.19,0.215,0.24,0.265um 부근 4개 피크, 마지막 피크가 정성적으로 높아 보임. 이전 같은 hDensity에서도 마지막 피크가 가장 높았음.
+- 정확한 peak 수치는 export하지 않았고 QW 내부/장벽/계면 대응을 확인하지 않았음. 이전 전체 QW 적분 n2 QW4 Radiative 약 99.9688%의 원인을 위 국소 1D 전자·정공 피크로 확정 불가. 높은 캐리어 피크는 관련 가능성만 지지. 2D carrier overlap, 모델, 밴드 구조 및 물리적 타당성 여전히 UNRESOLVED.
+
+근거:
+- 사용자 SVisual T-2022.03 eDensity Cutline_Y 스크린샷, 기존 hDensity 화면과 QW regionwise Radiative PLT 결과.
+
+변경:
+- CMP 개인 TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json 기록. 원본 TCAD 소스·시뮬레이션 무변경.
+
+다음:
+- 같은 플롯 확대 반복 없이 실제 QW 경계와 integrated radiative/current 물리 타당성을 정량적으로 대조. 그 후 보호된 별도 Full/Half 검증.
+
+---
+
+## 2026-10-22T07:18:53Z — TaekGyu0801
+
+[2026-10-22 KST] 작업자: 이택규 / AI: ChatGPT / 구분: VALIDATION / 상태: DERIVED_FROM_OBSERVED_SOURCE
+- 이택규의 n2_end_des Cutline_Y hDensity/eDensity 그래프 피크 약 X0.190/0.215/0.240/0.265um를, 동일 프로젝트 주수빈이 실제 pp1_dvs.cmd에서 확인해 GitHub에 기록한 EPI 두께(pCap20nm,pGaN120nm,EBL26nm,B0..B4 각22nm,QW1..4 각3nm)와 대조.
+- 누적층 두께 계산상 QW1 X0.188–0.191um, QW2 0.213–0.216, QW3 0.238–0.241, QW4 0.263–0.266. 이미지 피크 위치가 네 QW와 일치함(그래프 해상도 범위). 해당 위치 대응은 데이터로부터 유도한 값이며, 새 SVisual numerical probe는 아님.
+- n2 QW4 Radiative 적분 99.9688%를 이 사실만으로 설명/검증했다고 주장하지 않음. 재결합은 n·p overlap, 물성, 공간 적분의 영향을 받음. 실측 IQE, 원형 Full J, Full/Half 여전히 미검증.
+- 기록만 수행. TCAD 원본/실행 미변경. 다음: 불필요한 UI 확대 반복 없이 물리 타당성 판단 및 보호된 독립 Full/Half 비교 준비.
+
+---
+
+## 2026-10-22T07:21:43Z — soybeanmilk0514-jpg
+
+[2026-10-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / IMPLEMENTATION PLAN / HANDOFF
+상태: USER AUTHORIZED PROVISIONAL PROJECT B PILOT; NOT RUN
+
+사용자는 시간 절약을 위해 오늘 Baseline이 최종 확정됐다고 '가정'하여 Project B 구현/실행에 착수하라고 명시적으로 지시함. 이는 과학적으로 검증된 Baseline freeze, 2D J/Full-Half 정규화/QW4 실재성을 CONFIRMED로 변경하지 않음.
+
+실행안:
+- 학교 서버의 원본 `/user/semi/semi437/CMP_BASELINE_2.0.0_V2`는 보호. Workbench File→Save As로 별도 신규 SWB 후보 `CMP_PROJECTB_1.0.0_ALBARRIER` (존재 시 충돌 방지). **새 프로젝트** SWB 파라미터 Bspan 0→3 변경. Wedge0.1um, xAlB0.15, Wdmg0.005um, 5nm 손상 Trap 등 A/B 공통 모델/solver 변경 금지.
+- 새로운 SDE 노드만 먼저 실행 → 전처리 pp1_dvs.cmd Bspan3 확인, 생성된 mesh timestamp 및 Edge_QW1..4, Edge_B0..4의 AlGaN 재료 전환과 Clean/Dmg 유지 확인 → 통과 시 실제 NtSide1e18 Trap ON 시나리오 3.6V SDevice 단일 pilot. Save As 구형 결과를 새 결과로 오인 금지. 변경된 100nm QW Edge 발광영역 및 극성 계면 영향 추적.
+- 세부 Runbook `CMP/members/JuSubin/PROJECT_B_IMPLEMENTATION_RUNBOOK_20261022.md` 신규 작성.
+
+실제 학교 서버의 파일 수정, SWB 복제, SDE/SDevice 실행은 이 AI가 수행하거나 사용자에게서 완료 보고를 받지 않았음. 즉 구현 계획/절차 작성만 관측됨.
+
+저장 완료: runbook, JuSubin TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY. Next: 사용자 SWB 새 프로젝트 Save As 및 첫 SDE 실행 결과 확인.
+
+---
+
+## 2026-10-22T07:24:07Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / IQE INTERPRETATION
+상태: DERIVED FROM OBSERVED PLT; PHYSICAL CALIBRATION UNRESOLVED
+
+요약:
+- 사용자 "전체 IQE 얼마?" 질의에 따라 기존 n2/n6 3.6V 재결합 결과 정의를 구별. QW 3-channel Rad/(Rad+SRH+Auger): n2 66.9624%, n6 67.7744% (Trap 제외; 확정 전체 IQE 아님).
+- n6 whole device raw IntegrRad_all=2.55552035945039e22, IntegrSRH_all=4.32337288643595e21, IntegrAug_all=7.83993596604716e21, IntegrTrap_all=1.98258247754075e22. 전체 네 채널 방사 비율 = Rad/(Rad+SRH+Aug+Trap) = 44.4095889% (Trap 비중34.45313%). 이미 관찰된 99.99904% 전류/재결합 수지는 수치적 일관성을 지지하지만 물리적 측정 IQE 검증은 아님.
+- n2 Trap integral 무시 가능; n2의 QW-3채널 Rad 비율은 66.9624%, 조건부 q×1e-12×QW Rad / I ≈66.95058%. n2 전체소자 global Rad/SRH/Aug 적분은 아직 별도 추출되지 않아 정확한 full-device rate ratio는 확인되지 않음.
+- 동일 전압 3.6V에서 n2와 n6는 전류가 크게 다르므로 66.96% vs 44.41% 차이를 동전류 Trap 인과효과 또는 검증된 실제 LED IQE 손실로 주장하면 안 됨. QW4 99.97% 집중은 별도의 QW 공간 분포 현상이고, IQE 수치 그 자체와 혼동 금지.
+
+근거:
+- CMP/CURRENT_STATUS.md 및 이택규 TIMELINE.md의 2026-10-21 원시 PLT 데이터.
+
+변경:
+- TIMELINE/CURRENT_STATUS/NEXT_ACTIONS/LIVE_STATE.md/json/Issue #7 설명 추가. TCAD 소스·런 변경 없음.
+
+다음:
+- n2 full global integrals 및 동전류 비교/물리 타당성은 미검증 과제로 유지. 기준 논문 수준의 참조는 해당 논문 원문 확인과 별도로 대조.
+
+---
+
+## 2026-10-22T07:26:57Z — soybeanmilk0514-jpg
+
+[2026-10-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / OBSERVED GUI / USER-REPORTED RUN LAUNCH
+상태: OBSERVED SWB split matrix; execution user-reported, completion UNRESOLVED
+
+사용자가 실제 Sentaurus Workbench T-2022.03 스크린샷과 함께 이미 복제본을 만들고 Bspan=1/3을 나눠 실행 중이라고 보고함. 화면의 실제 활성 프로젝트 경로는 `/user/semi/semi437/CMP_B0/CMP_BASELINE_2.0.0_V2`이며 기존 root `/user/semi/semi437/CMP_BASELINE_2.0.0_V2`와 별개 위치. 임의로 `CMP_PROJECTB_1.0.0_ALBARRIER`로 개명했다고 주장하지 않음.
+
+확인된 노드 구성:
+- Bspan0: SDE n1, Trap OFF NtSide0 n2, Trap ON NtSide1e18 n6
+- Bspan1: SDE n17, OFF n24, ON n30
+- Bspan3: SDE n31, OFF n38, ON n44
+- 공통 화면 값 Wedge0.1um, PolAct0.5, NCedge0, V1=2V, Vmax=3.6V, NPlot8. 각 로그 완료/현재 실행 여부는 스크린샷만으로 증명되지 않음; Bspan3 SDE n31 완료도 독립 확인 필요.
+
+현재 판단: 기존 `in-Bspan?` Scheme과 AlGaN/GaN 및 AlGaN/InGaN Thermionic 및 polarization 선언이 이미 있어 first-pass 추가 SDE/SDevice 코드 변경 불필요. 새 프로젝트 생성/기존 런 재시작 하지 않고 먼저 실제 preprocessed `pp17_dvs.cmd`/`pp31_dvs.cmd`, `n17_msh.tdr`/`n31_msh.tdr` 시각 및 `n24/n30/n38/n44_des.log` 존재·진행 상태를 비교할 것. Original baseline and 2D AreaFactor/Full-Half/QW4 publication gate remain protected/unresolved.
+
+변경 기록: JuSubin TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY, Project B implementation runbook 모두 GitHub 업데이트 완료. AI는 학교 서버에서 어떠한 실행/코드 수정도 수행하지 않았음.
+
+다음: 사용자 단일 terminal 확인 명령 결과 수신 후, 이미 실행 중인 노드의 상황에 따라 메쉬·실행 로그 검사 또는 실제 결과 추출로 진행.
+
+---
+
+## 2026-10-22T07:30:30Z — soybeanmilk0514-jpg
+
+[2026-10-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER / FIX PROPOSED
+상태: OBSERVED terminal-only shell error, solution PROPOSED NOT RETESTED
+
+사용자가 Project B 복제 SWB 프로젝트 `/user/semi/semi437/CMP_B0/CMP_BASELINE_2.0.0_V2`에서 Bash for-loop 기반 read-only 검증 명령을 실행하자 `for: Command not found.`가 반환됨. TCAD SDE/SDevice 코드/mesh/실행 오류가 아닌 login shell csh/tcsh 추정 호환성 문제. 기존 실행 상태 및 파일에 영향은 보고되지 않음.
+
+FIX PROPOSED: 루프 전체를 `bash -lc '...'` 한 줄로 감싸고 echo 문자열을 ASCII만 사용해 pp17/pp31 Bspan 및 n17/n31 mesh, n24/n30/n38/n44_des.log 상태 검사. 사용자 재실행 확인 전에는 해결 완료라고 하지 않음. 기존 SWB run을 재시작하거나 코드를 수정하지 말 것.
+
+GitHub 업데이트: JuSubin/TIMELINE.md, ERROR_LOG.md. 다음: 사용자 bash-wrapper 명령 출력 확인.
+
+---
+
+## 2026-10-22T07:41:40Z — soybeanmilk0514-jpg
+
+2026-10-22 | 주수빈 | ChatGPT | OBSERVED, Bspan3 pp31 file not found
+Server clone CMP_B0/CMP_BASELINE_2.0.0_V2: `grep pp31_dvs.cmd` returned `No such file or directory`. The following `ls n31_msh.tdr` did not execute because commands used &&. Thus no conclusion about n31 mesh existence, current job scheduling, or an SDE error. Earlier SWB Bspan3 n31 cell appeared white vs Bspan1 n17 yellow; screenshot alone cannot prove fresh scheduler state. NEXT inspect live SWB n31 state: run SDE only if ready/unsubmitted; do not duplicate if queued/running, diagnose if failed. Keep n24 and original parent unchanged. GitHub personal timeline, NEXT_ACTIONS, LIVE_STATE md/json updated. No TCAD edits/runs performed by AI.
+
+---
+
+## 2026-10-22T07:41:43Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규 (Project A GaN:C; 주수빈 Project B AlGaN)
+AI: ChatGPT
+구분: VALIDATION / BLOCKER / RESEARCH BENCHMARK
+상태: REFERENCE VERIFIED AND NUMERIC DIFFERENCE OBSERVED; BASELINE QUANTITATIVE VALIDATION UNRESOLVED
+
+요약:
+- 기준 논문 Kou et al. (Optics Express 2019, DOI10.1364/OE.27.00A643) 직접 검토: EPI design nGaN4um donor5e18; QW4×In0.15/3nm; GaN barrier22nm; EBL26nm; pGaN120nm; p layer hole3e17cm-3. 현재 4um V2.1은 EPI 대부분을 따르나 동일 디바이스 복제 아님.
+- Kou Fig3 **J20A/cm2**에 필요한 V: OFF sizes100/60/20um=3.48/3.37/3.33V, ON=3.47/3.33/3.23V. 우리 V2.1 3.6V provisional planar J OFF=1.823642625A/cm2, ON=0.4609853855A/cm2; 20A/cm2 대비 각각10.967/43.385배 작음. 이렇게 더 높은 전압에서도 낮은 J는 검증 플래그지만 크기·전극/재료/모델 차이가 있으므로 곧바로 오류 확정 아님.
+- Kou damaged 'dead zone' width4um, trap Ec−0.24/Ev+0.46 eV ~1e13cm−3 (APSYS); 우리의 Wu(2023 DOI10.1016/j.micrna.2023.207542) inspired damage width5nm acceptor Ev+0.75eV Nt1e18/sigma1e-15 (Sentaurus). Kou 20um 모델은 trap ON J20에 더 낮은 V(3.23 vs3.33)를 보이며 leakage를 기술; 우리 3.6V ON/OFF I ratio=0.2528. 인과/누설 방향의 조건부 차이를 추적할 필요.
+- n2 3.6V QW Auger 27.53% of 3channel at J~1.824 and QW4 radiative integral99.9688% are additional physical-plausibility flags. Kou/Wu identical 4um QW-level integral benchmark 미확인; 공식 재결합 IQE 또는 광출력445nm 검증 없음.
+
+근거:
+- https://doi.org/10.1364/OE.27.00A643 (Kou 2019, Fig3/Section2)
+- https://doi.org/10.1016/j.micrna.2023.207542 (Wu 2023, Fig1/abstract)
+- https://pmc.ncbi.nlm.nih.gov/articles/PMC8175512/ (low injection Auger versus SRH context)
+- GitHub CMP/COMMON_BASELINE.md 및 2026-10-21~22 n2/n6 원시 PLT/SVisual 기록.
+
+변경:
+- CMP/members/LeeTaekGyu/TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, Issue#7 상태 동기화. 학교 서버 코드·계산 변경 없음.
+
+다음:
+- 기존 PLT I–V 검증 및 동일 J 비교, 한정된 접촉/수송/물성·분극/EBL 모델 진단, QW4/Auger 분포 검증 후 독립 Full/Half. Project A는 별도 파일럿 가능하나 기준 소자가 Kou 수준으로 동작한다고 주장하지 않음.
+
+---
+
+## 2026-10-22T07:45:46Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규 (Project A)
+AI: ChatGPT
+구분: VALIDATION / CORRECTION
+상태: OFFICIAL_SOURCE_VERIFIED / ROOT_CAUSE_UNRESOLVED
+
+요약:
+- Optica 공식 Kou et al. (2019), DOI https://doi.org/10.1364/OE.27.00A643 문서에 Open Access 표기가 있으며 HTML 본문 전체 Sections1–4와 Figure 설명 실제 확인. 별도 유료 논문 구매 없이 공식 HTML을 읽을 수 있음; PDF 자체를 열었다는 뜻은 아님.
+- Kou 소자 크기는 20×20, 60×60, 100×100um². Kou의 4um는 nGaN 수직 두께, 4는 MQW 개수. 우리 모델 lateral mesa 4um와 동일한 크기 아님. JBD pixel pitch4um 역시 mesa4um 실측 근거가 아님.
+- 앞서 "전류 주입이 안 된다"라고 표현한 것은 부정확하므로 정정: V2.1 3.6V 단자전류 n2/n6는 실제 0이 아니며 QW 방사재결합도 있음. 조건부 planar J n2~1.824, n6~0.461A/cm²가 Kou Fig3의 J20A/cm² 도달 전압3.23–3.48V 대비 낮다는 것이 직접 확인된 비교 사실. 구조/접촉/Trap/면적/내부전압강하가 달라 이유와 QW Injection Efficiency는 확인할 수 없음.
+- 터미널 바이어스3.6V는 MQW에 동일한 유효 주입 전압3.6V가 걸림을 뜻하지 않음. 그 원인을 Mg incomplete ionization, EBL barrier, polarization, series resistance, contact, trap 중 어느 하나로 특정하지 않음.
+
+근거: Optica 공식 Open Access 본문 Section2 및 Fig3, CMP 현재 n2/n6 실제 PLT 및 AreaFactor 조건부 환산 기록.
+
+변경: 개인 TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json 및 Issue7. 서버 TCAD 코드/실행 변경 없음.
+
+다음: 기존 결과에서 밴드/준페르미/전자·정공 전류와 MQW 입구 전하 플럭스 점검; Kou와 동일 J 기준 비교 시도 후 Project A 설계 근거로 삼기.
+
+---
+
+## 2026-10-22T07:49:26Z — soybeanmilk0514-jpg
+
+[2026-10-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: HANDOFF / CORRECTION
+상태: USER-REPORTED SERIAL QUEUE; SDE1 STRUCTURAL CHECK NEXT
+
+사용자 추가 설명: 복제 SWB 프로젝트는 Bspan=0→1→3 순서로 진행되도록 실행 중임. 앞서 pp31_dvs.cmd가 없는 것을 n31 별도 수동 실행 대상으로 성급하게 본 판단을 수정. **기존 SWB 순차 작업이 진행된다면 n31을 중복 Run하지 않음.** 실제 Scheduler 현재 상태/미래 완료 여부는 미확인.
+
+확인된 파일: Bspan1 SDE n17 preprocessed/mesh 존재. 해당 n17_msh.tdr를 SVisual에서 열어 Edge_QW1~4 AlGaN 전환과 Clean/Dmg InGaN 및 Mesh를 읽기 전용으로 점검하는 것이 현재 병행 가능한 작업. 비교 분석은 Trap ON n6/n30/n44, OFF n2/n24/n38을 구분, 같은 전류에서 QW recombination 및 damaged edge trap recombination, 실제 밴드 프로파일·전류 crowding을 검토. Baseline freeze는 사용자 일정상 가정으로만 유지.
+
+GitHub 동기화: JuSubin TIMELINE, NEXT_ACTIONS, LIVE_STATE.md/json 반영. 기존 SWB 노드 및 TCAD 파일 수정 없음.
+
+---
+
+## 2026-10-22T07:52:03Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / PHYSICAL_VALIDATION
+상태: SOURCE_VERIFIED; SCALE_TRANSFER_TO_4UM_NOT_CALIBRATED
+
+요약:
+- Kou 2019 https://doi.org/10.1364/OE.27.00A643 은 20/60/100um lateral chips. 4개 QW/3nm, 22nm barriers, 26nm EBL, 120nm p-GaN 등 vertical epi를 our representative 4um mesa starting stack으로 유지하는 것은 타당한 가설. 그러나 4um-wide damaged dead zone, 소자 접촉/전류·EQE 수치는 4um에 그대로 적용 불가. 4um JBD pitch 또한 실제 mesa width 실측이 아님. CMP planar 2D Half/Full는 square/circular 4-sidewall/corners를 직접 모사하지 않음. 20x20um 대비 4x4um square P/A가 5배임.
+- size-matched experimental references: Wang et al. Nature Communications 2023 https://www.nature.com/articles/s41467-023-43472-z, 3.5x3.5um GaN blue NBE etched 16QWs, peak EQE~3A/cm2 & max EQE~37.5%; Chen ACS Appl Electron Mater 2024 https://doi.org/10.1021/acsaelm.4c01540 actual 4x4um nitrogen sidewall-treated microLED output +97.29% at25A/cm2. Both different epitaxy/process; prove feasibility/trends only, not exact numeric calibration of CMP.
+- 이전 Kou J20A/cm2와 우리 nominal n2 J~1.824A/cm2 at3.6V 비교를 injection failure라는 결정적 증거처럼 취급한 것은 부적절함. 주요 미검증은 면적 정규화, contact/transport, 5nm damage trap calibration, QW4 99.97% 재결합 편중 및 Full/Half 비교.
+
+근거: Kou OA 본문, Wang Nature Comm OA 본문, Chen ACS 논문 초록, CMP/COMMON_BASELINE.md.
+
+변경: 이택규 TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json 연구 판단 갱신. TCAD 시뮬레이션/코드 변경 없음.
+
+다음: vertical epi 자동 축소/재설계 금지. 4um 근접 문헌과 동일 J 조건에서 물리 검증·2D 정규화·Trap effect 확인 후 Baseline freeze 판정.
+
+---
+
+## 2026-10-22T08:25:57Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규 — Project A GaN:C
+AI: ChatGPT
+구분: RESEARCH VALIDATION / BLOCKER / PROPOSED BENCHMARK STRATEGY
+상태: PUBLICATIONS VERIFIED; CMP MODEL PHYSICAL CALIBRATION UNRESOLVED
+
+요약:
+1. CMP V2.1은 Kou 2019의 4QW In0.15/3nm + GaN barrier22nm + EBL26nm EPI, Wu 2023의 5nm sidewall damage를 결합한 자체 설계 representative 4um 모델. Koe의 20/60/100um 소자를 그대로 4um 구현한 논문 재현 결과는 아님. Kou 수직 EPI 참고 자체가 오류라는 근거는 없으나 J–V/EQE/Trap 수치 전이는 불가.
+2. 실제 4um 청색 microLED 공개 문헌: Chen et al ACS 2024 DOI10.1021/acsaelm.4c01540 4x4um² 25A/cm² N2 처리로 상대 광출력 +97.29% (IQE 아님); Wang et al Nature Comm 2023 DOI10.1038/s41467-023-43472-z 3.5x3.5um² 16QWs/NBE 제작 최고 EQE37.5% @~3A/cm² (IQE 아님). 동일 EPI/Trap이 아니라 정성/scale validity benchmark.
+3. 필수 물리지표 분리: η_QW-rad=integral_QW Rad/(QW Rad+SRH+Auger); η_internal photon/current≈q integral_QW Rad/Iterminal with same 2D current units and current accounting; global trap-inclusive Rad/(Rad+SRH+Auger+Trap) agrees as approximation if current closes; η_EQE additionally extraction physics. Current values n2 QW3ch66.96%, n6 QW3ch67.77%, n6 global4ch44.41%, n2 qRad/I conditional ~66.95% are model outputs not experimental 4um absolute IQE.
+4. Geometry critical: 2D planar stripe full width4um lateral P/A=2/4=0.5perum; real 4x4um square 4/4=1perum, factor2 more sidewalls per active area; Half->Full planar mirror still not true square 3D. Nt,Et,sigma modeled starts not measured 4um defects. QW4 Rad99.97% and Auger27.53% physical plausibility unresolved. Do not blindly multiply Nt by2.
+
+변경:
+- 이택규 TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.md 기록만 갱신. 실제 Sentaurus 덱/런 전혀 변경 없음. Subin Project B pilot is not equivalent to a scientifically frozen baseline.
+
+다음:
+- parameter provenance (DIRECT / ASSUMED / NEEDS CALIBRATION) 정리, 2D-normalization/contact/SRV check, n2/n6 same J recombination and QW4 physics, then ON+carbon vs same ON control Project A tests. Kou structure 자체를 임의 폐기하거나 고치는 결론은 아직 채택하지 않음.
+
+---
+
+## 2026-10-22T09:06:29Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규 / AI: ChatGPT (Claude 독립 검토 인계 수신)
+구분: REVIEW / HANDOFF
+상태: PROPOSED / NO NEW RUN
+
+요약:
+Claude의 Baseline V2.1 독립 검토 의견을 사용자로부터 수신. 판정 B(구조 유지 + 필수 검증, 확신 중간 이하), 물리적으로 Baseline freeze 확정되지 않음. 저전류만으로 injection failure라 하는 과거 Kou 비교 논리 기각 제안. QW4 ~99.97% 편중, Auger ~27.5%, Trap ON terminal I 약 1/4, 2D P/A mismatch는 검증 대상으로 유지. Claude-derived QW4 n~1.6e19, p~8e16cm^-3, n_id~2.3, S~1e4cm/s는 인계문 수치로서 독립 재현 전. 3채널 QW radiative fraction에는 gap-state trap recombination이 명시 포함되지 않아 같은 J에서 q×QW radiative integral / Iterminal 함께 분석 제안.
+
+근거와 한계:
+사용자 제공 Claude handoff. Claude는 SWB_PASTE hash prefix SDE907d267c, SDevice c01ab2c1, PAR826b63c7 및 LOG #01/#02 검토 주장. Active school-server deck 동일 여부 미확인, raw PLT/TDR Claude 미수신. UG 참조 페이지만 pp.58–59,253,473,580; UG 원문 미업로드.
+
+변경:
+CMP/members/LeeTaekGyu/TIMELINE.md, CMP/CURRENT_STATUS.md, CMP/NEXT_ACTIONS.md (검토 의견만 반영). 서버 덱 및 SDevice run 미변경.
+
+다음:
+1) 기존 n2_eq_des.tdr, n2_end_des.tdr 존재/변수 확인 후 y=1.0um x=0~0.40um cutline: Ec/Ev, polarization charge, electron/hole density, QF.
+2) 실제 n2/n6 gtree·PLT, 전류 정규화/보존 및 matched-J IQE_sim 검증.
+3) 필요 시 사용자 승인 후 단일 변수 민감도. 2D square geometry 차이 공개 검증.
+
+
+---
+
+## 2026-10-22T09:18:56Z — TaekGyu0801
+
+[2026-10-22 KST] 이택규 / ChatGPT / PROGRESS / OBSERVED USER SCREENSHOT (NO NEW RUN)
+SVisual n2_eq_des equilibrium ConductionBandEnergy Cut Y (1D vs depth X) screenshot shows ~4 repeated quantum-well-like conduction-band features near X 0.19/0.215/0.24/0.265um. Exact fixed lateral Y and region naming not independently shown. This is NOT polarization sign validation or the cause of QW4 radiative 99.97%.
+NEXT: read-only n2_end_des hDensity/eDensity Cut Y at same Y~1.0um and QW depth range; check 1D log densities. No server deck edit or simulation.
+
+---
+
+## 2026-10-22T09:31:48Z — TaekGyu0801
+
+[2026-10-22 18:31 KST] 이택규 / ChatGPT / PROGRESS / OBSERVED (user SVisual screenshot, no simulation)
+On n2_end_des at 3.6 V, Cutline_Y Plot now overlays hDensity (red, C1) and eDensity (green, C2) at depths X~0.14-0.29 um. Four near-QW density peaks visible. Interwell hole density declines and electron density increases with increasing depth toward n side. C1/C2 are separate cutline identifiers: equal fixed Y coordinates NOT verified. No numerical peak extraction, QW-integral analysis, or QW4 99.97% mechanism established.
+Next read only: verify C1/C2 same Y~1.0um; use SVisual probes to obtain electron and hole numerical values at each well; compare QW-resolved RadiativeRecombination integrals. No source or run changed.
+
+---
+
+## 2026-10-22T09:39:01Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규 / AI: ChatGPT / PROGRESS / OBSERVED USER-REPORTED GUI / NO NEW RUN
+이택규가 SVisual n2_end_des, 3.6 V에서 hDensity(C1) 및 eDensity(C2) Cutline Y 고정값을 모두 1.0um로 맞췄다고 확인함. 두 1D carrier curves가 동일한 lateral 위치를 나타낸다는 사용자 확인을 확보했으나, 스크린샷만으로 QW별 절대 n/p 농도를 정확히 추출할 수 없고 QW4 99.97% 방사 원인은 미규명.
+다음: 기존 그래프에서 Data Probe 또는 수치 내보내기로 Y=1.0um 각 QW 중심 n/p를 확인한 후 QW 방사 적분과 대조. TCAD 코드를 변경하거나 새 계산을 시작하지 않음.
+변경: CMP/members/LeeTaekGyu/TIMELINE.md.
+
+---
+
+## 2026-10-22T09:48:13Z — TaekGyu0801
+
+[2026-10-22 KST] 이택규 | ChatGPT | RESULT / OBSERVED SVisual Probe; NO NEW RUN
+n2_end_des 3.6V, Cut Y user-confirmed at lateral Y=1.0um. Probe at depth X=0.26177um: Curve_1 hDensity 2.63775e13 cm^-3; Curve_2 eDensity 2.11675e12 cm^-3 (h/e≈12.46). Screenshot readout is direct evidence at a single spatial position, NOT verified QW4 center: crosshair appears left of rightmost peak. Does not validate Claude's hypothesized QW4 n/p or cause of 99.97% QW4 integrated radiative share.
+NEXT: probe rightmost sharp carrier peak at exact identical x,y, verify QW region boundary and match n/p values. No deck modification or new simulation.
+GitHub LeeTaekGyu TIMELINE updated.
+
+---
+
+## 2026-10-22T09:49:47Z — TaekGyu0801
+
+2026-10-22 이택규 SVisual 관측: n2_end_des 3.6V, Y=1um, X=0.262612um에서 hDensity=1.64061e13, eDensity=2.84557e12 cm^-3 (사용자 화면). QW4 중심으로 검증되지 않음. 다음 X=0.265um Probe 확인. 새 계산 및 코드 수정 없음.
+
+---
+
+## 2026-10-22T09:53:59Z — TaekGyu0801
+
+2026-10-22 이택규 / SVisual screenshot OBSERVED / no new simulation. In n2_end_des 3.6V, Y=1um carrier Cut Y Probe now reports X=0.262955um, hDensity 1.3111e13 cm^-3 and eDensity 3.20976e12 cm^-3. User clicked green peak visually, but numeric probe position lies at/just before narrow carrier rise; cannot call these QW4 peak numbers. Next inspect Probe At dialog for precise coordinate entry; actual QW center/region mapping still unverified.
+
+---
+
+## 2026-10-22T09:58:05Z — TaekGyu0801
+
+[2026-10-22 KST] 작업자 이택규 | ChatGPT | OBSERVED SVisual Probe | 새 RUN 없음
+기존 n2_end_des(3.6 V), 두 Cut Y의 lateral Y=1.0um(사용자 확인), Probe At X=0.265um 적용: hDensity=4.96786e18 cm^-3, eDensity=3.00217e17 cm^-3 (직접 화면 숫자). 이 한 지점에서는 h>e. QW4의 실제 중심/영역 경계는 미확인이며 이 점의 값을 QW4 평균 또는 재결합 편중 원인으로 일반화하지 않음. Claude n-rich/h-poor 해석은 여기서 단순 입증되지 않음. 다음: Regions/geometry로 QW4 경계 확인 후 정확한 중심과 다른 QW들의 같은-Y probe, region-integrated radiative recombination 비교. 서버 덱/계산 변경 없음.
+기록: LeeTaekGyu/TIMELINE.md 반영.
+
+---
+
+## 2026-10-22T10:03:47Z — TaekGyu0801
+
+2026-10-22 이택규 SVisual 관측: n2_end_des 3.6V, Y=1.0um, X=0.266um에서 hDensity=8.27385e19, eDensity=7.7108e15 cm^-3. 기존 V2.1 적층 계산상 QW4=0.263~0.266um이며 중심=0.2645um. 0.266은 경계 위치이므로 QW4 중심으로 해석 금지. 다음 0.2645um에서 두 농도 Probe. 새로운 서버 실행이나 코드 변경 없음. 개인 TIMELINE 갱신.
+
+---
+
+## 2026-10-22T10:05:40Z — TaekGyu0801
+
+[2026-10-22 KST] 이택규 / ChatGPT / RESULT / OBSERVED SVisual Probe (NO NEW RUN)
+n2_end_des 3.6V, user-confirmed Cut Y lateral Y=1.0um, Probe At X=0.2645um. SVisual readout: hDensity(Curve_1)=1.13508e18 cm^-3, eDensity(Curve_2)=1.35190e18 cm^-3, n/p≈1.19. Existing V2.1 source-derived QW4 interval X0.263–0.266um, so this is its nominal center. At this local point electron and hole concentrations are comparable; Claude's proposed QW4 n~1.6e19/p~8e16 not reproduced at this location. QW4 99.97% region-integrated radiation cause STILL UNRESOLVED; a single probe is not full-region carrier/recombination integral.
+NEXT READ ONLY: Probe at same Y=1.0um, nominal centers QW1 X0.1895, QW2 X0.2145, QW3 X0.2395um; then compare full well integrals. Server deck/runs unchanged. Lee TIMELINE updated.
+
+---
+
+## 2026-10-22T10:13:21Z — TaekGyu0801
+
+[2026-10-22 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED SCREENSHOTS + DERIVED, NO NEW RUN
+
+기존 n2_end_des 3.6V, lateral Y=1.0um 고정 Cut Y SVisual Probe에서 QW 중심 x[um]=0.1895/0.2145/0.2395/0.2645에 대한 전하 농도 확보.
+OBSERVED(cm^-3, p=hDensity/n=eDensity):
+QW1 p=3.42849e15, n=4.46006e15
+QW2 p=4.47871e15, n=4.99354e15
+QW3 p=1.82582e16, n=2.04189e16
+QW4 p=1.13508e18, n=1.35190e18
+QW nominal centers are DERIVED from previous V2.1 source stack, not newly verified by region probe.
+DERIVED: center n*p QW1=1.52912711e31, QW2=2.23646175e31, QW3=3.72812360e32, QW4=1.53451465e36 cm^-6. QW4/(sum QW1-3) center n*p ≈3738.45; equal-B pointwise n*p QW4 fraction=99.9733%, very near prior region-integrated radiative QW4=99.9688% (comparison not mathematical equality). Both carrier types climb ~300x between QW1 and QW4; n/p QW4~1.19 at center. Claude hypothesized QW4 electron-only accumulation is not supported by this one position.
+LIMIT: Pointwise B*n*p surrogate is not a full 2D radiative integral and DOES NOT demonstrate physical calibration or determine why carrier buildup occurs. QW4 99.97% remains suspicious as physical prediction although local-np correlation is now supported.
+NEXT READ ONLY: compare equilibrium/final Ec-Ev, QF and polarization charge sign at same lateral Y, especially QW1 vs QW4; then conservation/current normalization and full radiative integrals. Do not change baseline code or rerun simulations.
+변경: LeeTaekGyu/TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json.
+
+---

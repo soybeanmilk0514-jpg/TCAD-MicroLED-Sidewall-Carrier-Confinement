@@ -1,4 +1,116 @@
 {
+  "leeTaekGyuN2HoleDensityZoom20261022": {
+    "worker": "이택규",
+    "date": "2026-10-22",
+    "state": "OBSERVED_SVISUAL_SCREENSHOT; CARRIER_MECHANISM_UNRESOLVED",
+    "dataset": "n2_end_des",
+    "field": "hDensity",
+    "legendRange_cm3": "log~1e-30 to8.279e19",
+    "viewDepthX_um": "0 to about 0.45",
+    "viewLateralY_um": "about 1.0-1.65",
+    "observation": "Four narrow MQW layers visible near depth x~0.17–0.27um, but no numerical per-QW hole density can be extracted from color; sidewall near Y=2um is outside viewport",
+    "existingResult": "n2 PLT QW4 radiative integral ~99.97%, causal carrier mechanism unverified",
+    "next": "Select SVisual Cut Y at constant lateral Y~1.3um to examine 1D hDensity versus depth X across QW1–4; then same-cut eDensity if necessary. No re-run."
+  },
+  "leeTaekGyuN2HoleDensityOverview20261022": {
+    "worker": "이택규",
+    "date": "2026-10-22",
+    "status": "OBSERVED_USER_SCREENSHOT_NEEDS_ZOOM",
+    "target": "CMP_BASELINE_2.0.0_V2/n2_end_des.tdr",
+    "field": "hDensity",
+    "legendCmMinus3": "log approximately 1e-30 to 8.2788e19",
+    "observation": "Full 2um lateral strip plotted but X-depth axis spans far beyond active layer; QW1–4 too compressed for per-well carrier comparison.",
+    "interpretation": "Overall hole density max cannot be assigned to any QW. Extreme QW4 radiative localization cause not established.",
+    "next": "SVisual plot axes depth X 0.14–0.29um, lateral Y 0–2um for enlarged hDensity; same ROI eDensity second if needed. No TCAD code/simulation change."
+  },
+  "leeTaekGyuHalfXsGeometry20261022": {
+    "worker": "이택규",
+    "date": "2026-10-22",
+    "status": "OBSERVED_PREPROCESSED_GEOMETRY; PROVISIONAL_2D_J",
+    "source": "User terminal pp1_dvs.cmd lines37/39/53-56",
+    "definitions": {
+      "Wshelf_um": 0,
+      "Wedge_um": 0.1,
+      "Xs": "Wm/2",
+      "Xd": "Xs-Wdmg",
+      "Xe": "Xd-Wedge",
+      "Xend": "Xs+Wshelf"
+    },
+    "priorValidatedMeshLateralBBox_um": 2,
+    "contactEvidence": "Top anode three Clean/Edge/Dmg edges cover 0..Xs in source; earlier observed SDE lines154-158",
+    "conditionalModelArea_cm2": 2e-8,
+    "conditionalCurrentDensityA_cm2": {
+      "n2_off": 1.823642625,
+      "n6_on": 0.4609853855
+    },
+    "externalReference": "Sentaurus Training sd_3.html: default 2D effective width 1um",
+    "limits": "Not a confirmed physical current density for circular 4um full device, no experimental or matched-current IQE validation; numeric Wm/Wdmg not in this latest snippet",
+    "next": "No further redundant geometry grep; examine hDensity in SVisual at QW1..4 on n2_end, then eDensity if needed; physical plausibility check, separate Full/Half."
+  },
+  "leeTaekGyuContactSegments20261022": {
+    "worker": "이택규",
+    "date": "2026-10-22",
+    "status": "OBSERVED_SDE_CONTACT_SOURCE; Xs_NUMERIC_CONTACT_SPAN_PENDING",
+    "source": "User terminal pp1_dvs.cmd lines 150–168",
+    "anode": "three pCap top edges [0,Xe],[Xe,Xd],[Xd,Xs] mapped via P, midpoint edge-id",
+    "cathode": "Cath=0 branch bottom at Xs/2; shelf bottom optional if Wshelf>0 (prior observed Cath0/Wshelf0)",
+    "uncertainty": "Numerical Xs in actual preprocessed geometry not yet displayed; default 2D effective 1um AreaFactor supported by Synopsys training, not a calibrated 4um circular-LED equivalent current density",
+    "next": "Read-only confirm active Xs/Xd/Xe, then conclude planar conditional J validation and proceed to QW4 physical plausibility/Full-Half protected validation."
+  },
+  "leeTaekGyuAreaFactorNoOverrides20261022": {
+    "worker": "이택규",
+    "date": "2026-10-22",
+    "status": "OBSERVED_USER_REPORTED_NO_MATCHES; PROVISIONAL_PLANAR_2D_J",
+    "command": "grep -niE 'AreaFactor|Cylindrical|CoordinateSystem' pp2_des.cmd pp6_des.cmd pp2_des.par pp6_des.par",
+    "observed": "User reports no terminal output (no matching explicit settings in these files)",
+    "source": "user-shared server execution report; Synopsys training sd_3.html for default 1 um 2D width",
+    "assumptions": [
+      "2D planar device with default 1 um out-of-plane width",
+      "Half lateral anode contact span 2 um; requires contact verification",
+      "Use native current corresponding to 1um effective width"
+    ],
+    "areaCm2": 2e-8,
+    "raw3p6V": {
+      "n2": 3.64728525e-8,
+      "n6": 9.21970771e-9
+    },
+    "conditionalJ_Acm2": {
+      "n2": 1.823642625,
+      "n6": 0.4609853855
+    },
+    "caveat": "Not actual calibrated J for 4 um circular microLED; current unit convention, contact span and Full/Half equivalence require further check",
+    "next": "Read actual SDE anode set-contact geometry then assess J/QW4 plausibility and run separate Full comparator after Half validation."
+  },
+  "leeTaekGyuAreaFactorGrep20261022": {
+    "worker": "이택규",
+    "date": "2026-10-22",
+    "status": "OBSERVED_SEARCH_NO_EXPLICIT_AREAFACTOR; CURRENT_NORMALIZATION_UNRESOLVED",
+    "targetProject": "CMP_BASELINE_2.0.0_V2",
+    "command": "grep -niE 'AreaFactor|current unit|length unit|A/cm|A/um' pp2_des.cmd pp2_des.par n2_des.log n6_des.log",
+    "observations": [
+      "n2_des.log:297: Use length unit of micrometer during currentplot integration.",
+      "n6_des.log:297: Use length unit of micrometer during currentplot integration.",
+      "No explicit AreaFactor or terminal current unit matched in searched files"
+    ],
+    "interpretation": "CurrentPlot integration length unit does not define terminal current unit. No calibrated 4um circular LED current density conclusion.",
+    "next": "Read-only check both pp2 and pp6 preprocessed .cmd/.par for AreaFactor, Cylindrical, CoordinateSystem; reconcile 2D effective width with actual contacts and T-2022.03 manual; avoid rerunning existing V2.1."
+  },
+  "leeTaekGyuN6RadiativeMap20261022": {
+    "worker": "이택규",
+    "date": "2026-10-22",
+    "state": "OBSERVED_SCREENSHOT",
+    "source": "User-supplied Sentaurus Visual T-2022.03 n6 plot screenshot",
+    "datasetTitle": "n6_end_des",
+    "field": "RadiativeRecombination",
+    "roi": {
+      "depthXum": "~0–0.45",
+      "lateralYum": "~1.2–2.0"
+    },
+    "legendTopCm3PerSec": "~5.02e24",
+    "observed": "MQW radiative bands including pronounced stripe near depth x~0.26um",
+    "limits": "Qualitative image only; matched n2/n6 common legend, stored TDR bias, calibrated current density, causal trap mechanism and matched-current IQE unverified.",
+    "next": "Render n2/n6 on identical field, ROI and logarithmic color scale; verify AreaFactor/2D terminal current units, then independently validate Full/Half. No TCAD source/run changes."
+  },
   "juSubinV21PhysicalValidation20261015": {
     "worker": "주수빈",
     "status": "OBSERVED_N2_ALL_THREE_RECOMBINATION_INTEGRALS_N6_PENDING",
@@ -3433,5 +3545,661 @@
     "pending": "Inspect SVisual TDR QW4 dominance and 2D current normalization before Full/Half validation",
     "codeChanged": false,
     "rerun": false
+  },
+  "juSubinProjectABPreparation20261022": {
+    "worker": "주수빈",
+    "date": "2026-10-22",
+    "status": "PROPOSED_DESIGN_ONLY",
+    "userDecision": "Prepare Project A GaN:C resistive edge and Project B AlGaN lateral heterobarrier while Lee works on Baseline V2.1 validation (Lee exclusive-role consent unverified)",
+    "designPlan": "CMP/members/JuSubin/PROJECT_AB_PREPARATION_20261022.md",
+    "firstAction": "Read-only SDE current Wedge/Bspan/Wdmg/Edge/Dmg geometry and materials from school server; then carbon compensation model and AlGaN band offsets/polarization; no code edits or runs.",
+    "baselineGate": "AreaFactor, full/half, mesh/model validation and frozen baseline pending"
+  },
+  "juSubinProjectBOwnership20261022": {
+    "date": "2026-10-22",
+    "worker": "주수빈",
+    "status": "USER_DEFINED_PLAN_PREPARATION_STARTED_NOT_RUN",
+    "plan": "Once Baseline frozen, LeeTaekGyu is assigned Project A(GaN:C) and JuSubin Project B(AlGaN lateral barrier); user states division, Lee direct acceptance not independently verified",
+    "baselineFreeze": "NOT_YET_VERIFIED",
+    "priority": "JuSubin Project B-only; earlier dual A/B preparation proposal superseded",
+    "sourcePlan": "CMP/members/JuSubin/PROJECT_B_PLAN_20261022.md",
+    "next": "Read-only verify actual V2.1 SDE Bspan Wedge Wdmg AlGaN Edge Dmg geometry and material assignments, then review Ec/Ev/strain/polarization and proposed pilot/DOE. Do not edit original baseline or launch simulations before freeze."
+  },
+  "juSubinProjectBActiveBspanInspection20261022": {
+    "worker": "주수빈",
+    "date": "2026-10-22",
+    "status": "OBSERVED_SCHOOL_TERMINAL_SOURCE_AND_PREPROCESSED_SDE",
+    "sourceProject": "/user/semi/semi437/CMP_BASELINE_2.0.0_V2",
+    "sourceCode": "sde_dvs.cmd",
+    "preprocessedCode": "pp1_dvs.cmd",
+    "Wedge_um": 0.1,
+    "Wdmg_um": 0.005,
+    "Bspan_active": 0,
+    "logic": {
+      "0": "No added AlGaN Edge material",
+      "1": "QW1..QW4 Edge to AlGaN",
+      "2": "QW1..QW4+B1..B3 Edge to AlGaN",
+      "3": "QW1..QW4+B0..B4 Edge to AlGaN"
+    },
+    "program": "in-Bspan? (name) controlling AlGaN material; MF_AlB profile applied for AlGaN Edge; Edge host doping by source comment",
+    "unverified": [
+      "MF_AlB actual Al fraction and composition profile",
+      "geometry and layering details beyond grep",
+      "validity of Bspan>0 actual preprocessing/mesh and physics",
+      "Ec/Ev, polarization and trap carrier-access outcomes"
+    ],
+    "next": "Read-only inspect pp1_dvs.cmd lines 65-145 and MF_AlB definition; no source/run changes"
+  },
+  "juSubinProjectBRegionMap20261022": {
+    "worker": "주수빈",
+    "date": "2026-10-22",
+    "status": "OBSERVED_SCHOOL_SERVER_PP1_DVS_60_145",
+    "source": "CMP_BASELINE_2.0.0_V2/pp1_dvs.cmd",
+    "stack": "pCap .020; pGaN .120; EBL .026; barriers B0-4 .022 each; QW1-4 .003 each; nMesa dEtch (um)",
+    "baselineMaterials": "QW InGaN; EBL AlGaN; other GaN",
+    "materialRule": "Clean and Dmg use base-mat; Edge uses AlGaN only if in-Bspan?; mole-region for AlGaN role non-EBL uses MF_AlB xMoleFraction=xAlB; EBL separate MF_EBL",
+    "mapping": {
+      "1": "Edge QW1..4",
+      "2": "Edge QW1..4 + B1..B3",
+      "3": "Edge QW1..4 + B0..B4"
+    },
+    "caveat": "Lateral edge semiconductor material replacement including QW edge, not external coating; no performance conclusion",
+    "unknown": "numerical xAlB xEBL xIn; coordinate P transformation; Bspan>0 mesh/physics",
+    "next": "Read-only sed -n '23,59p' pp1_dvs.cmd and grep xAlB,xEBL,xIn; preserve existing V2.1; no run until baseline frozen."
+  },
+  "juSubinProjectBAlContent20261022": {
+    "worker": "주수빈",
+    "date": "2026-10-22",
+    "status": "OBSERVED_SCHOOL_SERVER_PP1_DVS_PARAMETER_DEFINITIONS",
+    "source": "CMP_BASELINE_2.0.0_V2/pp1_dvs.cmd user supplied grep line output",
+    "xIn": 0.15,
+    "xEBL": 0.15,
+    "xAlB": 0.15,
+    "Wedge_um": 0.1,
+    "Wdmg_um": 0.005,
+    "Bspan": 0,
+    "coordinateTransform": "P(lat,dep,z)=(position dep lat z)",
+    "derivedHalfLateralWidths_um": {
+      "clean": 1.895,
+      "edge": 0.1,
+      "damage": 0.005
+    },
+    "derivedQWEdgeFraction": 0.05,
+    "caveat": "Bspan>0 AlGaN replaces QW lateral edge, not external coating; QW active volume change and interface band/polarization unverified",
+    "proposedPilot": "Isolated Bspan=3 screening geometry first, xAlB=0.15 Wedge=0.1um after freeze; Bspan=1 comparison candidate; no run approved or made",
+    "next": "Read only inspect detailed xAlB/physics/material parameters and then wait for frozen baseline provenance before cloning/running."
+  },
+  "juSubinProjectBPhysicsDeclarations20261022": {
+    "worker": "주수빈",
+    "date": "2026-10-22",
+    "status": "OBSERVED_BASELINE_PP2_SDEVICE_DECLARATIONS_BSPAN0_ONLY",
+    "project": "CMP_BASELINE_2.0.0_V2",
+    "activeCode": "pp2_des.cmd",
+    "polarization": "Piezoelectric_Polarization(strain activation=0.5)",
+    "thermionicMaterialInterfaces": [
+      "InGaN/GaN",
+      "AlGaN/GaN",
+      "AlGaN/InGaN"
+    ],
+    "paramsFile": "pp2_des.par",
+    "thermionicFormula": "Formula=1 for displayed interface sections",
+    "plotScalars": [
+      "ConductionBandEnergy",
+      "ValenceBandEnergy",
+      "BandGap",
+      "ElectronAffinity",
+      "xMoleFraction"
+    ],
+    "unknowns": [
+      "actual AlGaN bandgap/electron affinity numerical parameters",
+      "lateral new-interface polarization applicability",
+      "Bspan>0 preprocessing/simulation outcome"
+    ],
+    "next": "Read pp2_des.cmd lines1-34 and pp2_des.par lines108-176; original code/runs untouched; Project B clone only after baseline freeze."
+  },
+  "leeTaekGyuHoleDensityCutlineY20261022": {
+    "worker": "이택규",
+    "date": "2026-10-22",
+    "status": "OBSERVED_SVISUAL_CUTLINE_CREATED_QW_HOLE_MAGNITUDE_PENDING",
+    "plot": "Cutline_Y Plot hDensity(C2(n2_end_des))",
+    "lateralCutYum": "about 1.3",
+    "depthXAxisBeforeZoom": "0 to 4.288um",
+    "next": "Set fixed depth X axis min 0.14 max 0.29um, get QW1..4 hole density graph; eDensity if required",
+    "limits": "Current 4.288um full depth plot compresses QWs; no QW-specific density conclusion; source/run unchanged"
+  },
+  "leeTaekGyuN2HoleCutlineAxisClipped20261022": {
+    "worker": "이택규",
+    "date": "2026-10-22",
+    "status": "OBSERVED_CUTLINE_X_ZOOMED_BUT_VERTICAL_PEAKS_CLIPPED",
+    "dataset": "n2_end_des",
+    "field": "hDensity",
+    "cutLateralYum": "~1.3",
+    "depthXAxisUm": [
+      0.14,
+      0.29
+    ],
+    "densityYAxisLogTopCm3": 100000000000000000,
+    "observation": "Multiple peaks in QW depth region x~0.17-0.27 um are clipped at vertical axis top, so QW4 hole density relative ranking remains unresolved.",
+    "next": "Set Cutline_Y Plot vertical log density Min1e10 Max1e20 cm^-3, retain depth X 0.14..0.29um; inspect peaks.",
+    "simulationChange": false
+  },
+  "juSubinProjectBAlGaNParAudit20261022": {
+    "worker": "주수빈",
+    "date": "2026-10-22",
+    "status": "OBSERVED_PARSOURCE_ONLY_BSPAN0",
+    "file": "CMP_BASELINE_2.0.0_V2/pp2_des.par",
+    "Bandgap": {
+      "Eg0_eV": 3.7564,
+      "Chi0_eV": 3.8768,
+      "alpha": 0.001043,
+      "beta_K": 925,
+      "Tpar_K": 300
+    },
+    "ConstantMobility": {
+      "electron": 300,
+      "hole": 10
+    },
+    "Scharfetter": {
+      "taumin": 0,
+      "taumax_s": 1e-7,
+      "Nref_cm3": 10000000000000000,
+      "gamma": 1
+    },
+    "RadiativeC_cm3_s": 2e-11,
+    "AugerA_cm6_s": 5e-31,
+    "ionizationSpecies": [
+      "pMagnesiumActiveConcentration",
+      "PDopantActiveConcentration"
+    ],
+    "interfacesWithThermionicFormula1": [
+      "InGaN/GaN",
+      "AlGaN/GaN",
+      "AlGaN/InGaN"
+    ],
+    "limits": "Scalar Eg0/Chi0 overrides shown with no explicit mole-fraction interpolation terms; changing xAlB alone may not vary effective bandgap/affinity. SRH lifetime at operating bias and lateral interface effects not verified. Baseline remains Bspan=0.",
+    "next": "Read-only compare GaN and InGaN Bandgap/Chi in pp2_des.par (sed -n '1,85p' pp2_des.par) then decide physically justified xAlB=0.15 and Bspan pilot only on isolated frozen-baseline clone."
+  },
+  "leeTaekGyuN2QWHoleCutlinePeaks20261022": {
+    "worker": "이택규",
+    "date": "2026-10-22",
+    "status": "OBSERVED_GRAPH; APPROXIMATE_PEAK_READOUTS_NOT_NUMERICALLY_EXTRACTED",
+    "dataset": "n2_end_des",
+    "field": "hDensity",
+    "cut": "Cutline_Y C2 at lateral Y about 1.3um",
+    "depthXum": [
+      0.14,
+      0.29
+    ],
+    "verticalLogDensityCm3": [
+      10000000000,
+      100000000000000000000
+    ],
+    "fourQWPeakApprox": [
+      {
+        "qw": 1,
+        "xUm": 0.19,
+        "hCm3": 9000000000000000000
+      },
+      {
+        "qw": 2,
+        "xUm": 0.215,
+        "hCm3": 10000000000000000000
+      },
+      {
+        "qw": 3,
+        "xUm": 0.24,
+        "hCm3": 20000000000000000000
+      },
+      {
+        "qw": 4,
+        "xUm": 0.265,
+        "hCm3": 80000000000000000000
+      }
+    ],
+    "interpretation": "QW4 has highest hole density peak on this one cut. This may correlate with previous n2 QW4 ~99.97% radiative integral but does not prove root cause; electron overlap and 2D integration unverified.",
+    "next": "Inspect n2_end_des eDensity on the same Y-constant cut and depth ROI; retain protected existing runs."
+  },
+  "juSubinProjectBBandOffsetAudit20261022": {
+    "worker": "주수빈",
+    "date": "2026-10-22",
+    "status": "USER_OBSERVED_MATERIAL_PARAMS_AND_DERIVED_NOMINAL_BAND_OFFSETS",
+    "source": "CMP_BASELINE_2.0.0_V2/pp2_des.par lines 1-85; AlGaN lines 108-176 from preceding terminal output",
+    "materialParamsAtTpar300_eV": {
+      "GaN": {
+        "Eg0": 3.4376,
+        "Chi0": 4.1
+      },
+      "InGaN": {
+        "Eg0": 2.8569,
+        "Chi0": 4.5065
+      },
+      "AlGaN": {
+        "Eg0": 3.7564,
+        "Chi0": 3.8768
+      }
+    },
+    "nominalVacuumReferencedEnergies_eV": {
+      "GaN": {
+        "Ec": -4.1,
+        "Ev": -7.5376
+      },
+      "InGaN": {
+        "Ec": -4.5065,
+        "Ev": -7.3634
+      },
+      "AlGaN": {
+        "Ec": -3.8768,
+        "Ev": -7.6332
+      }
+    },
+    "nominalAlGaNBarrierMagnitude_eV": {
+      "fromGaN": {
+        "electron": 0.2232,
+        "hole": 0.0956
+      },
+      "fromInGaN": {
+        "electron": 0.6297,
+        "hole": 0.2698
+      }
+    },
+    "interpretation": "Anderson/electron-affinity-rule estimates using Ec=-Chi and Ev=-Chi-Eg at nominal Tpar only, not actual bias-dependent polarized lateral interface band profile",
+    "decision": "PROPOSED xAlB0.15 Wedge0.1um Bspan3 first isolated structural smoke after verified Baseline freeze; Bspan0 same-trap control; xAl composition sweep deferred until verified effective compositional physics",
+    "next": "Confirm final baseline freeze and immutable source/mesh provenance, then separate versioned Project B clone/preprocess/mesh/SVisual alloy map and first single-case simulation"
+  },
+  "leeTaekGyuN2ElectronCutlineUnzoomed20261022": {
+    "worker": "이택규",
+    "date": "2026-10-22",
+    "status": "OBSERVED_eDENSITY_CUTLINE_X_AXIS_RESET",
+    "source": "User SVisual screenshot",
+    "dataset": "n2_end_des",
+    "plot": "eDensity(C2(n2_end_des)) on existing Cutline_Y at lateral Y about 1.3um",
+    "observation": "XY plot horizontal depth X was reset to 0–4.288um on field change; four MQW peaks cannot be analyzed in this frame",
+    "next": "Set XY plot horizontal depth X min=0.14 max=0.29um and compare to earlier hDensity Cutline_Y",
+    "tcadModified": false
+  },
+  "leeTaekGyuN2ElectronCutlineQWRegion20261022": {
+    "worker": "이택규",
+    "date": "2026-10-22",
+    "state": "OBSERVED_SVISUAL_E_DENSITY_LINE; PHYSICAL_EXPLANATION_UNRESOLVED",
+    "plot": "eDensity(C2(n2_end_des)) on Cutline_Y, lateral Y~1.3um, depth X~0.14–0.29um",
+    "observed": "Four peaks approximately depth X0.19,0.215,0.24,0.265um. Deepest peak visually highest; density rises further toward n-side. Earlier hDensity same cut deepest peak highest.",
+    "limits": "No export numeric values, no exact region boundary match, single cut is not 2D integrated electron-hole overlap. QW4 ~99.9688% integrated radiative fraction remains unexplained; physical IQE/causality not established.",
+    "next": "Prioritize exact QW-region mapping and global physical plausibility with existing data; later protected Full/Half comparison. Avoid repeated zooming.",
+    "tcadSourceRunChanged": false
+  },
+  "leeTaekGyuQWPeakPositionsCrossChecked20261022": {
+    "worker": "이택규",
+    "date": "2026-10-22",
+    "state": "DERIVED_QW_POSITIONS_MATCH_OBSERVED_DENSITY_PEAKS",
+    "source": "Earlier actual user pp1_dvs.cmd stack recorded in CMP/.ai-sync/RELAY.md and CMP/CURRENT_STATUS.md",
+    "thicknessUm": {
+      "pCap": 0.02,
+      "pGaN": 0.12,
+      "EBL": 0.026,
+      "GaNBarrier": 0.022,
+      "InGaNWell": 0.003
+    },
+    "computedQWDepthUm": {
+      "QW1": [
+        0.188,
+        0.191
+      ],
+      "QW2": [
+        0.213,
+        0.216
+      ],
+      "QW3": [
+        0.238,
+        0.241
+      ],
+      "QW4": [
+        0.263,
+        0.266
+      ]
+    },
+    "observedCutlinePeaksDepthUmApprox": [
+      0.19,
+      0.215,
+      0.24,
+      0.265
+    ],
+    "limits": "Matches well locations at screenshot precision only; integrated QW4 ~99.9688% radiative causality, e*h spatial overlap and calibrated device baseline remain unproven.",
+    "tcadChanged": false
+  },
+  "juSubinProjectBImplementationGreenlight20261022": {
+    "worker": "주수빈",
+    "date": "2026-10-22",
+    "status": "USER_AUTHORIZED_PROVISIONAL_PILOT_NOT_RUN",
+    "decision": "Proceed to independent Project B pilot TODAY by operationally assuming baseline finalized; scientific baseline freeze, full/half, J and QW4 validations remain unverified",
+    "parent": "/user/semi/semi437/CMP_BASELINE_2.0.0_V2",
+    "newCandidate": "CMP_PROJECTB_1.0.0_ALBARRIER",
+    "implementationMethod": "SWB File > Save As clone followed by SWB Bspan=3 in clone only, original Bspan=0 untouched; SDE geometry/mesh first then one SDevice Trap ON 3.6V pilot if SDE validates",
+    "settings": {
+      "Bspan": 3,
+      "Wedge_um": 0.1,
+      "xAlB": 0.15,
+      "Wdmg_um": 0.005,
+      "NtSide_On_cm3": 1000000000000000000
+    },
+    "physicsChanged": false,
+    "cloneCreated": false,
+    "sdeExecuted": false,
+    "sdeviceExecuted": false,
+    "runbook": "CMP/members/JuSubin/PROJECT_B_IMPLEMENTATION_RUNBOOK_20261022.md",
+    "next": "User performs SWB Save As to new named project, changes Bspan=3 and executes SDE node; share verified new folder and pp1/SDE output. Do not claim results before observed output."
+  },
+  "leeTaekGyuWholeIQEProxy20261022": {
+    "worker": "이택규",
+    "date": "2026-10-22",
+    "status": "DERIVED_MODELED_RADIATIVE_SHARE; NOT_ABSOLUTE_VALIDATED_IQE",
+    "biasV": 3.6,
+    "qw3ChannelPercent": {
+      "n2": 66.9623836961,
+      "n6": 67.7744
+    },
+    "fullDeviceRatioN6": {
+      "radiativeRaw": 2.55552035945039e+22,
+      "srhRaw": 4.32337288643595e+21,
+      "augerRaw": 7.83993596604716e+21,
+      "trapRaw": 1.98258247754075e+22,
+      "trapInclusiveRadiativePercent": 44.40958889793,
+      "trapChannelPercent": 34.45312906948
+    },
+    "n2Approx": "QW 3-channel 66.9624%; n2 global channel integrals not independently extracted. q×QW Rad×1e-12 / I ≈66.95058% conditional on current conversion.",
+    "qualification": "Equal voltage different currents, excludes full device calibration/leakage and detailed photon physics; not confirmed matched-current IQE.",
+    "source": "User-provided school server PLT integral records in current project and CMP/CURRENT_STATUS.md"
+  },
+  "juSubinProjectBObservedSWBMatrix20261022": {
+    "worker": "주수빈",
+    "date": "2026-10-22",
+    "status": "SWB_MATRIX_OBSERVED_USER_REPORTS_RUNNING_NOT_COMPLETED",
+    "screenshotActiveProject": "/user/semi/semi437/CMP_B0/CMP_BASELINE_2.0.0_V2",
+    "originalReportedParent": "/user/semi/semi437/CMP_BASELINE_2.0.0_V2",
+    "BspanSplits": [
+      {
+        "Bspan": 0,
+        "SDE": 1,
+        "SDeviceTrapOff": 2,
+        "SDeviceTrapOn": 6
+      },
+      {
+        "Bspan": 1,
+        "SDE": 17,
+        "SDeviceTrapOff": 24,
+        "SDeviceTrapOn": 30
+      },
+      {
+        "Bspan": 3,
+        "SDE": 31,
+        "SDeviceTrapOff": 38,
+        "SDeviceTrapOn": 44
+      }
+    ],
+    "sharedParamsFromScreenshot": {
+      "Wedge": 0.1,
+      "PolAct": 0.5,
+      "NCedge": 0,
+      "V1": 2,
+      "Vmax": 3.6,
+      "NPlot": 8,
+      "NtSideOff": 0,
+      "NtSideOn": 1000000000000000000
+    },
+    "userReported": "User already created clone and running Bspan=1,3; exact completion/launch node statuses unconfirmed by logs",
+    "actualNewRunFilesVerified": false,
+    "sourceEditsNeededNow": false,
+    "doNotInfer": "SDE Bspan3 finished, numerically converged SDevice, baseline scientifically frozen, original unaffected beyond distinct path",
+    "next": "Read only inspect pp17_dvs.cmd/pp31_dvs.cmd for Bspan, n17_msh.tdr/n31_msh.tdr timestamps and n24/30/38/44_des.log process/error/finish before next intervention."
+  },
+  "juSubinProjectBRunStatus20261022": {
+    "worker": "주수빈",
+    "date": "2026-10-22",
+    "status": "OBSERVED_BSPAN1_SDE_MESH_BSPAN3_SCHEDULING_UNVERIFIED",
+    "project": "/user/semi/semi437/CMP_B0/CMP_BASELINE_2.0.0_V2",
+    "shellFix": "bash -lc read-only diagnostic successfully ran; prior for Command not found resolved",
+    "sde17": {
+      "preprocessedBspan": 1,
+      "mesh": "n17_msh.tdr",
+      "meshSize": "2.0M",
+      "timestamp": "Oct 22 15:29",
+      "status": "OUTPUT_EXISTS"
+    },
+    "sde31": {
+      "preprocessedBspan": null,
+      "mesh": false,
+      "status": "NO_PP31_BSPAN_MATCH_OR_MESH_FOUND; queued/not run/failure undetermined"
+    },
+    "sdevice24": {
+      "logExists": true,
+      "lastObservedIteration": 2,
+      "lastObservedRHS": 20000,
+      "finished": "UNVERIFIED",
+      "runCurrentPID": "UNVERIFIED"
+    },
+    "sdeviceLogsMissing": [
+      30,
+      38,
+      44
+    ],
+    "next": "Inspect copied SWB SDE n31 scheduler state first; if ready/unsubmitted select and Run SDE n31 only, else leave queued/running, capture failed node error; keep other SWB jobs untouched. After n31 mesh verify Bspan3 and material region."
+  },
+  "juSubinProjectB31MissingPreprocessed20261022": {
+    "worker": "주수빈",
+    "date": "2026-10-22",
+    "status": "OBSERVED_PP31_ABSENT; SDE_MESH_NOT_CHECKED; SCHEDULER_UNKNOWN",
+    "project": "/user/semi/semi437/CMP_B0/CMP_BASELINE_2.0.0_V2",
+    "terminal": "grep: pp31_dvs.cmd: No such file or directory",
+    "diagnosticCaveat": "In bash chain grep ... && ls n31_msh.tdr, ls was short-circuited so mesh presence was NOT checked",
+    "priorSWB": "n31 Bspan3 displayed white/non-yellow compared with n17 yellow Bspan1; stale screenshot can only suggest not complete",
+    "action": "Check current SWB n31 status; run SDE node 31 if ready/not already queued; if running leave alone; if failed inspect node error. No source changes."
+  },
+  "leeTaekGyuKouWuBenchmark20261022": {
+    "worker": "이택규",
+    "project": "Project A carbon-induced high resistivity GaN:C sidewall",
+    "date": "2026-10-22",
+    "status": "OBSERVED_REFERENCE_AND_COMPUTED_MISMATCH; BASELINE_NOT_QUANTITATIVELY_VALIDATED",
+    "literature": {
+      "Kou2019": {
+        "doi": "10.1364/OE.27.00A643",
+        "modelSizesUm": [
+          100,
+          60,
+          20
+        ],
+        "sameStackDesign": [
+          "nGaN 4um donor5e18",
+          "4 In0.15Ga0.85N QWs x3nm",
+          "GaN barriers22nm",
+          "pAlGaN EBL26nm",
+          "pGaN120nm",
+          "pLayer holes3e17cm-3"
+        ],
+        "forwardVat20Acm2": {
+          "noDefect100": 3.48,
+          "noDefect60": 3.37,
+          "noDefect20": 3.33,
+          "defect100": 3.47,
+          "defect60": 3.33,
+          "defect20": 3.23
+        },
+        "modelDifferences": [
+          "APSYS",
+          "surface damaged 4um dead zone",
+          "electron/hole traps at Ec-0.24/Ev+0.46eV, densities approx1e13cm-3",
+          "Auger 1e-30 cm6/s"
+        ]
+      },
+      "Wu2023": {
+        "doi": "10.1016/j.micrna.2023.207542",
+        "exampleSizeUm": 10,
+        "sidewallDefectDepthNm": 5,
+        "InComposition": 0.08,
+        "wellNm": 3,
+        "barrierNm": 8
+      }
+    },
+    "sim3p6V": {
+      "voltage": 3.6,
+      "model": "2D planar half2um with assumed 1um thickness",
+      "offJ_Acm2": 1.823642625,
+      "onJ_Acm2": 0.4609853855,
+      "offVpaperJ20GapFactor": 10.967061,
+      "onVpaperJ20GapFactor": 43.385323,
+      "trapOnOffCurrentRatio": 0.252782743,
+      "QW4RadiativeSharePercent": 99.9688,
+      "offQWAugerFractionPercent": 27.5286
+    },
+    "interpretation": "Stack broadly matched; sidewall OFF/ON radiative decrease trend compatible with literature, but forward current-density level at 3.6V materially below Kou J20 at V3.23–3.48 and defect-induced current-direction differs near Kou Fig3. Not direct same-device validation because size 4um vs 20/60/100, damaged width 5nm vs 4um, trap physics, contact layout, Auger and simulator differ. Actual IQE, EL wavelength 445nm, and dominant QW4 mechanism unresolved. Do not label baseline frozen or a calibrated Project A mechanism.",
+    "next": "Read-only J-V bias window and physics/transport/contacts review; matched-J n2/n6 analysis; evaluate extreme QW4/Auger; Full/Half protected comparison. Project A pilot can be isolated exploratory only."
+  },
+  "leeTaekGyuKouOAAndInjectionCorrection20261022": {
+    "worker": "이택규",
+    "project": "Project A GaN:C",
+    "date": "2026-10-22",
+    "status": "SOURCE_VERIFIED_TERMINOLOGY_CORRECTED",
+    "source": "https://doi.org/10.1364/OE.27.00A643",
+    "officialArticleOpenAccess": true,
+    "officialHTMLFullTextRead": true,
+    "directPDFReadClaim": false,
+    "kouLateralSizesUm": [
+      20,
+      60,
+      100
+    ],
+    "kouFourUmRefersTo": "n-GaN vertical thickness, not lateral mesa",
+    "kouQWCount": 4,
+    "cmpMesaWidthUm": 4,
+    "cmp3p6VConditionalJ_Acm2": {
+      "trapOff": 1.823642625,
+      "trapOn": 0.4609853855
+    },
+    "meaning": "CMP has nonzero terminal current and radiative recombination. Comparison with Kou ~20Acm2 at 3.23–3.48V flags low forward current density for distinct structures and trap implementations, but no proved poor QW carrier injection efficiency or zero injection.",
+    "unknownCause": [
+      "geometry and contacts",
+      "barrier transport",
+      "Mg hole activation",
+      "polarization",
+      "series resistance",
+      "trap model"
+    ],
+    "next": "Verify integrated or spatial QW electron/hole current injection, band/quasi-Fermi and voltage drops using existing outputs; do not assert a specific root cause. No simulation edits."
+  },
+  "juSubinProjectBSerialSWBClarification20261022": {
+    "worker": "주수빈",
+    "date": "2026-10-22",
+    "status": "USER_REPORTED_SEQUENTIAL_RUN; SCHEDULER_UNVERIFIED",
+    "activeClone": "/user/semi/semi437/CMP_B0/CMP_BASELINE_2.0.0_V2",
+    "report": "SWB is processing Bspan=0 then 1 then 3 in sequence. Missing pp31_dvs.cmd may mean SDE n31 has not been scheduled yet, not evidence of physics failure",
+    "correction": "Do not manually start n31 or duplicate any jobs while queue is progressing",
+    "observed": "n17_mesh.tdr 2MB present, Bspan1 preprocessed, n24 SDevice iteration logs; no later run completion established",
+    "workWhileRunning": "SVisual open preexisting n17_msh.tdr and inspect Edge_QW1-4 AlGaN vs Clean/Dmg InGaN, geometry/mesh; prepare matched-current ON branches n6/n30/n44 comparison",
+    "next": "User provides SVisual screenshot of n17_msh.tdr. Continue respecting existing SWB queue."
+  },
+  "Kou4umScaling20261022Lee": {
+    "worker": "이택규",
+    "status": "Kou 20/60/100 um epitaxy applied to representative 4um mesa is a hypothesis, not automatically wrong; Kou 4um damage dead zone, I-V, IQE and contacts are not transferable. New comparator Wang 2023 Nature Communications actual 3.5um LED EQE peak at J~3A/cm2, different 16-QW. Prior current injection failure inference from Kou J20 benchmark withdrawn. No TCAD changes.",
+    "next": "Validate 4um model current normalization/contact and sidewall traps; QW4 localization unresolved.",
+    "source": "https://www.nature.com/articles/s41467-023-43472-z"
+  },
+  "leeTaekGyuHybridBaselineIQE20261022": {
+    "worker": "이택규",
+    "project": "A GaN:C sidewall",
+    "date": "2026-10-22",
+    "status": "HYBRID_BASELINE_UNCALIBRATED_PAPER_REFERENCE_FRAMEWORK_REVISED",
+    "modelIdentity": "Self-designed representative 4um mesa TCAD combining Kou2019 vertical EPI and Wu2023 5nm sidewall defect, not reproducing any single 4um experimentally reported device",
+    "real4umReferences": [
+      {
+        "doi": "10.1021/acsaelm.4c01540",
+        "year": 2024,
+        "size": "4x4um2",
+        "metric": "N2 treatment +97.29% light output at 25 A/cm2, not absolute IQE"
+      },
+      {
+        "doi": "10.1038/s41467-023-43472-z",
+        "year": 2023,
+        "size": "3.5x3.5um2",
+        "metric": "peak EQE 37.5% at J~3 A/cm2, different 16 QWs"
+      }
+    ],
+    "iqeDefinitions": {
+      "qwThreeChannel": "QWrad/(QWrad+QW_SRH+QW_Auger)",
+      "currentNormalized": "q*integral_QW_Rrad / I_in, matching TCAD units and verifying leakage/steady state",
+      "globalTrapInclusive": "IntegrRad_all/(IntegrRad_all+IntegrSRH_all+IntegrAug_all+IntegrTrap_all), current yield proxy only if currents balance",
+      "experimental": "EQE includes light extraction; cannot compare directly to simulated IQE"
+    },
+    "existingBiasV": 3.6,
+    "ratiosPercent": {
+      "n2QWThreeChannel": 66.9624,
+      "n6QWThreeChannel": 67.7744,
+      "n6GlobalTrapInclusive": 44.4096,
+      "n2CurrentNormalizedConditional": 66.9506
+    },
+    "geometryConcern": "2D planar 4um stripe sidewall P/A=2/4=0.5perum; 4x4um square P/A=4/4=1perum, factor2; Full2D symmetry not true 3D square",
+    "parameterConcerns": [
+      "NtSide1e18 cm-3 not experimentally calibrated",
+      "Et and sigma assumed",
+      "PolAct0.5 model assumption",
+      "QW4 radiative 99.97% unresolved",
+      "QW Auger ~27.5% at provisional low J"
+    ],
+    "next": "Document parameter provenance; choose consistent same-J current-normalized radiative/trap efficiency metric; audit geometry, area and QW4; protect separate Project A/B pilot; no automatic baseline freeze",
+    "dataSource": "Official cited Kou 2019, Wu 2023, Wang 2023 and Chen 2024 articles; CMP COMMON_BASELINE and PLT evidence"
+  },
+  "leeClaudeReviewHandoff20261022": {
+    "worker": "이택규",
+    "status": "USER_SUPPLIED_PROPOSED_NO_NEW_RUN",
+    "reviewerVerdict": "B (structure retained; validate)",
+    "unverified": [
+      "active deck same as SWB_PASTE",
+      "n2/n6 source PLT TDR",
+      "Claude-derived QW4 carriers and ideality"
+    ],
+    "next": "READ ONLY inspect n2_eq_des.tdr/n2_end_des.tdr y=1.0um x=0..0.40um bands/polarization/e-h/QF; gtree & current accounting and matched-J afterward",
+    "issue7comment": 6337013873
+  },
+  "leeV21N2QwCenterCarrierProbes20261022": {
+    "worker": "이택규",
+    "date": "2026-10-22",
+    "status": "OBSERVED_SVISUAL_USER_SCREENSHOTS_AND_DERIVED_POINTWISE_PRODUCT_NO_RUN",
+    "dataset": "n2_end_des",
+    "nominalBiasV": 3.6,
+    "lateralCutY_um": 1,
+    "centers": [
+      {
+        "qw": "QW1",
+        "x_um": 0.1895,
+        "hDensity_cm3": 3428490000000000,
+        "eDensity_cm3": 4460060000000000,
+        "np_cm6": 1.52912711e+31
+      },
+      {
+        "qw": "QW2",
+        "x_um": 0.2145,
+        "hDensity_cm3": 4478710000000000,
+        "eDensity_cm3": 4993540000000000,
+        "np_cm6": 2.23646175e+31
+      },
+      {
+        "qw": "QW3",
+        "x_um": 0.2395,
+        "hDensity_cm3": 18258200000000000,
+        "eDensity_cm3": 20418900000000000,
+        "np_cm6": 3.7281236e+32
+      },
+      {
+        "qw": "QW4",
+        "x_um": 0.2645,
+        "hDensity_cm3": 1135080000000000000,
+        "eDensity_cm3": 1351900000000000000,
+        "np_cm6": 1.53451465e+36
+      }
+    ],
+    "derived": {
+      "qw4_np_over_sum_qw123_np": 3738.449093562272,
+      "qw4_point_np_fraction_percent": 99.97325809297092,
+      "prior_qw4_2d_radiative_integral_fraction_percent": 99.96878290423813
+    },
+    "caveat": "Center-only Bnp proxy is not 2D recombination integral, causality or calibrated IQE. Nominal centers derived from source layering; GUI region label not re-probed.",
+    "next": "Use existing equilibrium/bias Ec, Ev, quasi-Fermi and polarization charge profiles at matched Y=1.0um to investigate both-carrier accumulation toward QW4. No new run or code edits."
   }
 }
