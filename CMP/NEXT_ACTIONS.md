@@ -1,3 +1,35 @@
+## 2026-10-23 — Lee QW4 3.6V TDR cutlines extracted; NEW RUN requires approval (USER-REPORTED OBSERVED)
+- Completed per user/Claude report **on existing n2 eq/end TDR, not new simulation**: qw4cut.tcl CSV outputs (four paths: qw4_eq_depth.csv, qw4_36_depth.csv, qw4_36_qw4fine.csv, qw4_36_qw1fine.csv); xMole/BandGap per QW, signed equilibrium PE_Charge, QW4 intra-well n/p peaks, QF splitting and local J evaluated. Prior NEXT item "export existing n2 TDR CSV" is reported DONE; GPT has not independently received CSVs/script.
+- Immediate READ ONLY before any new run: (1) confirm active pp2_des.cmd/pp6_des.cmd Iterations 12 vs 20 and relevant effective physics parameters (B/C/tau, PolAct, Thermionic, contact/AreaFactor); (2) independently audit existing CSV QW integration, units, current continuity and full-device source/result consistency after actual files are supplied; (3) inspect n6 and n2/n6 matched-J trap comparisons with actual PLT if available.
+- Claude PROPOSED sensitivity only with explicit 이택규 permission and protected copy: one-variable interface transport study (alternative Heterointerface continuous-QF and/or explicit interface tunneling, not simultaneous); verify Sentaurus T-2022.03 UG p.870 and p.1070 syntax and effects before implementing. **Do not run, change common baseline, or treat classic-DD/Thermionic explanation as proven.**
+- Baseline physical freeze HOLD. Update GitHub on actual run/result only after independently observed values.
+
+## 2026-10-23 — Lee Claude QW4 review read-only validation sequence (CLAUDE PROPOSED)
+1. Verify exact preprocessed pp2_des.cmd/pp6_des.cmd and .par on /user/semi/semi437/CMP_BASELINE_2.0.0_V2; grep Iterations, compare CMD/PAR accounting for node parameter substitutions, check Radiative B/Auger C/SRH lifetimes/BandGap/polarization/Thermionic. Resolve attached Iterations=12 versus Claude SWB_PASTE/log=20 before causal analysis. READ ONLY.
+2. After obtaining/reviewing Claude's proposed qw4_plt_audit.py (CLAUDE-FOLDER ONLY; no server execution confirmed), use actual n2/n6 PLT for Rad/SRH/Auger/trap by QW & voltage, QW4 fraction, matched-current and q*QW Rad/I with correct 2D units and trap/SRH accounting. Reported script parser test was on SYNTHETIC DATA ONLY.
+3. After obtaining/reviewing Claude-proposed qw4cut.tcl (not confirmed present on server), export old n2 equilibrium/3.6V Y=1.0um X=0.14..0.30um plus QW1/QW4 fine cuts. Compare xMoleFraction/BandGap four wells, signed PE_Charge by named interface, e/h QF drops, intra-well electron/hole peaks using actual mesh. No new SDevice run.
+- Baseline physically unvalidated / freeze HOLD; only after error exclusion consider limited operational relative baseline with explicit caveats, not absolute experimental IQE or validated QW distribution.
+
+## 2026-10-23 — Lee PE_Charge GUI check complete
+- Signed positive/negative PE_Charge spikes were visualized on linear cutline. Stop repeating GUI. Next READ ONLY verify active area/current normalization, original n2/n6 I-V and recombination budget at matched current. Detailed polarization sign versus named interfaces remains open; preserve V2.1 source.
+
+## 2026-10-23 — Lee immediate PE_Charge plotting fix (READ ONLY)
+- User verified SVisual cutline PE_Charge on existing n2_end_des from X=0.14 to 0.29um at lateral Y=1.0um. Narrow charged interface-associated peaks visible, but 1D ordinate currently logarithmic and cannot reliably distinguish signed positive/negative spikes.
+- FIRST: set PE_Charge graph vertical axis to Linear and autoscale; record +/− signs at known well interfaces, if visible. No rerun/code edit.
+- THEN: assess whether actual model polarity is correctly configured and whether any interface polarization sign imbalance can be related to n2 QW4 carrier concentration; do not infer causation from one cut or conclude valid device without additional physics/current checks.
+
+## 2026-10-23 — Lee V2.1 actual lattice axis parameter declarations verified (OBSERVED SERVER OUTPUT; NO RUN)
+- User ran read-only `grep -nEi -C 4 "LatticeParameters|Piezoelectric_Polarization|SpontaneousPolarization|Polarization" pp2_des.cmd pp2_des.par pp6_des.cmd pp6_des.par` in /user/semi/semi437/CMP_BASELINE_2.0.0_V2.
+- OBSERVED in both `pp2_des.par:1-4` and `pp6_des.par:1-4`: `LatticeParameters { X = (0, 0, -1) Y = (1, 0, 0) }`; both command files line21: `Piezoelectric_Polarization( strain activation=0.5 )`. Prior pp1_dvs.cmd line14 says Ga-polar c-axis points to -x. Thus actual preprocessed parameter vectors match the design COMMENT and n2/n6 match on these inspected lines.
+- LIMIT: the alignment of source comment with values does NOT independently verify true Ga-polar polarity, actual piezoelectric/spontaneous charge signs, magnitudes, physical correctness, or why n2 QW4 has concentrated e/h and ~99.97% QW radiation. Need inspect actual PE_Charge field at interfaces and active polarization constants/runtime log to establish effects; grep finds declarations, not resulting net charge.
+- NEXT READ ONLY: use n2_end_des.tdr existing result to inspect `PE_Charge` near all four wells at lateral Y=1.0um, with well coordinate mapping X=[0.188-0.191,0.213-0.216,0.238-0.241,0.263-0.266]um as PRIOR SOURCE-DERIVED; verify legend sign/units and whether field is resolvable, no fresh simulation. Also audit current normalization/matched-J. No TCAD code change.
+
+## 2026-10-23 — Lee after completed band/QF SVisual first pass (NEXT READ ONLY)
+1. No more repetitive SVisual curves immediately: the same-cut 3.6V Ec/Ev/eQF/hQF overlay is observed and recorded, but does not identify why both electron and hole populations grow so much toward QW4.
+2. Next prioritize active preprocessed SDE/SDevice/parameter inspection for QW region positions, polarization orientation/sign, band offsets and carrier transport settings. Confirm results and current code correspondence; avoid guesses about cause.
+3. Audit n2/n6 terminal current and 2D effective width/area normalization; inspect full-device QW Rad/SRH/Auger/trap integrals and compare Trap ON/OFF at matched J. Do not treat 4um planar half as calibrated 4x4um square.
+4. Only then determine minimal controlled sensitivity validation and future Full4um/Half2um symmetry run on a protected copy. No baseline physical freeze and no new run/code edit from today's SVisual inspection.
+
 ## 2026-10-22 — Lee four-QW carrier center measurements complete (READ ONLY priority)
 - OBSERVED n2_end_des 3.6V, Y=1.0um h/e center probes for all four QWs (Lee TIMELINE for exact numerical values). Derived point n*p QW4/(QW1+QW2+QW3)≈3738.45; equal-B pointwise QW4 share 99.9733%, close to earlier QW4 integrated radiation 99.9688%. DO NOT equate center-point proxy with whole-device radiation or IQE.
 - NEXT 1: diagnose WHY both carrier densities rise ~300x by QW4, not repeat Probe: use existing n2_eq/n2_end Ec/Ev / QF / polarization-charge field profiles at lateral Y=1.0um, verifying correct field and material regions and QW1/QW4 alignment.

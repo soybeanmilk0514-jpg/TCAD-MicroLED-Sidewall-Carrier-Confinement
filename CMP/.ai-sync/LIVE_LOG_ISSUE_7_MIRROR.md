@@ -8063,3 +8063,212 @@ NEXT READ ONLY: compare equilibrium/final Ec-Ev, QF and polarization charge sign
 [2026-10-23 KST] 이택규 / ChatGPT / RESULT / OBSERVED screenshot, NO RUN. SVisual n2_end_des 3.6V의 ValenceBandEnergy(하늘색)를 hQuasiFermiEnergy(파랑), eQuasiFermiEnergy(빨강) 및 n2_eq_des 평형 기준 준페르미(초록)와 동일 X 약0.14~0.29 um Cutline_Y plot에 겹쳐 표시. Valence band와 hole QF가 QW 인접 영역에서 계단형 양상; 정확한 에너지 간격과 QW4 캐리어 급증의 원인, polarization 타당성은 여전히 UNRESOLVED. 사용자 요청에 따라 GUI 반복 최소화: 다음 ConductionBandEnergy 추가 후 1차 그래프 점검 결론 정리. 기존 코드/서버 RUN 변경 없음. Lee TIMELINE 기록 완료.
 
 ---
+
+## 2026-10-23T06:38:50Z — TaekGyu0801
+
+[2026-10-23 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED SCREENSHOT; PHYSICAL VALIDATION UNRESOLVED
+
+요약:
+SVisual 기존 n2_end_des 3.6V의 단일 Cutline_Y(X 깊이 약 0.14–0.29um, 이전 설정 Y=1.0um)에 ConductionBandEnergy(분홍), ValenceBandEnergy(하늘), eQuasiFermiEnergy(빨강), hQuasiFermiEnergy(파랑)을 함께 표시 완료. n2_eq_des 평형 준페르미(초록) 참고선도 표시. 네 QW 부근의 밴드 notch/step과 biased QF의 계단형 변화를 확인하여 이번 SVisual 1차 GUI 검토를 종료.
+
+주의/Blocker:
+화면은 밴드 및 준페르미 에너지 곡선의 존재/형태만 보여준다. 극화 부호, 계면전하, 정확한 에너지 장벽, QW4의 극단적인 e/h 농도·기존 ~99.9688% 방사 재결합 집중의 원인은 확인되지 않았음. QW4 local n*p와 적분 방사 기여가 비슷하다는 기존 관찰은 인과관계/물리 검증을 의미하지 않음. 실측 4um 소자 수준의 Baseline freeze 불가.
+
+근거:
+이번 사용자 SVisual 최종 overlay 스크린샷, 앞선 동일 Y 설정 및 QW1~4 농도 probe 기록.
+변경:
+- LeeTaekGyu/TIMELINE.md
+- TEAM_TIMELINE.md
+- CURRENT_STATUS.md
+- NEXT_ACTIONS.md
+- .ai-sync/LIVE_STATE.md + LIVE_STATE.json
+- TCAD 코드 및 시뮬레이션 RUN 변경 없음
+
+다음:
+반복 SVisual 화면 작업 중단. READ ONLY 실제 활성 덱의 QW 경계/분극/에너지 모델과 2D 전류 단위, n2/n6 전류/재결합 수지 및 matched-J 검토. Full/Half 대칭 검증 별도 미완료.
+
+---
+
+## 2026-10-23T06:45:10Z — TaekGyu0801
+
+[2026-10-23 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED; READ ONLY; NO NEW RUN
+
+요약:
+학교 서버 V2.1 전처리 코드(pp2_des.cmd와 pp6_des.cmd) 양쪽에서 Piezoelectric_Polarization( strain activation=0.5 ) 확인. 양쪽 모두 InGaN/GaN, AlGaN/GaN, AlGaN/InGaN Thermionic 선언 및 파라미터의 ThermionicEmission Formula=1 존재. PE_Charge와 PE_Polarization/Vector는 출력 요청에 포함됨. pp1_dvs.cmd에는 Ga-polar c축이 -x라는 주석이 있음.
+
+주의:
+정확한 LatticeParameters 실제 선언, polarization charge 부호·크기, QW4 캐리어 축적 원인, 두 전체 덱의 동일성은 아직 확인되지 않음. 출력 필드 선언만으로 계산값을 확정할 수 없음.
+
+근거:
+사용자 제공 학교 서버 ls 및 grep 출력 (파일 날짜 Oct 14).
+변경:
+GitHub 연구 기록 동기화, 학교 서버 TCAD 코드/런 변경 없음.
+다음:
+원래 전처리된 파라미터 파일의 LatticeParameters 및 polarization 관련 선언을 READ ONLY로 확인.
+
+---
+
+## 2026-10-23T06:48:04Z — TaekGyu0801
+
+[2026-10-23 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED; NO NEW RUN
+
+요약: 학교 서버 CMP_BASELINE_2.0.0_V2에서 실제 전처리 파일 pp2_des.par와 pp6_des.par 1-4행을 READ-ONLY 확인함. 양쪽 LatticeParameters X=(0,0,-1), Y=(1,0,0) 일치. pp2_des.cmd와 pp6_des.cmd 21행의 Piezoelectric_Polarization(strain activation=0.5) 또한 일치. 이전 pp1_dvs.cmd 14행 설계 주석의 Ga-polar c-axis -x와 파라미터 표기가 일관적.
+
+미해결: 실제 분극전하 PE_Charge의 부호/크기, 결정 극성의 물리적 정당성, QW4 전자·정공 국소 집중의 원인, 정확한 QW 인터페이스 매핑. 코드 선언 일치만으로 물리 모델 검증 완료라고 해석 금지.
+
+근거: 사용자 제공 학교 서버 grep 출력.
+변경: 개인 TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json 최신 상태 기록. 학교 서버 TCAD 원문/런 무변경.
+다음: 기존 n2_end_des의 PE_Charge를 QW 구간에서 READ ONLY 확인, 이후 2D 전류 단위 및 matched-J 수지 검토.
+
+---
+
+## 2026-10-23T07:02:43Z — TaekGyu0801
+
+[2026-10-23 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED SVisual screenshot; PHYSICAL POLARIZATION SIGN UNRESOLVED; NO NEW RUN
+
+요약:
+기존 n2_end_des PE_Charge Cutline_Y 실제 좌표창: (x1,y1)=(0.14,1.0)um, (x2,y2)=(0.29,1.0)um. QW/장벽 주변으로 추정되는 여러 좁은 피크가 관측됨. 색상범례에 양·음으로 대략 10^21 cm^-3 범위가 표시되나 우측 Cutline 그래프의 세로축은 로그 눈금(1e21부터 매우 작은 양수)이므로 양/음 피크 부호를 구별하기 부적절함. 색상범례 한계치를 개별 계면의 실측 피크로 해석하지 않음.
+
+판정:
+PE_Charge 출력/비영(非零) interface-like feature 존재는 관측. 실제 QW별 분극전하의 부호·시트전하·물리적 정당성 및 QW4 캐리어 집중 원인은 아직 미확인.
+
+변경:
+LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, LIVE_STATE.md/json에 관측 및 다음 확인 기록. 학교 서버 TCAD 코드/계산 무변경.
+
+다음:
+SVisual PE_Charge Cutline 그래프 Y축 Logarithmic -> Linear, auto range로 0 기준 +/− 피크 확인. 새 시뮬레이션 불필요.
+
+---
+
+## 2026-10-23T07:08:22Z — TaekGyu0801
+
+[2026-10-23 KST] 이택규 / ChatGPT / OBSERVED GUI visualization; NO RUN. 기존 n2_end_des PE_Charge Cutline_Y Y축 Log Scale 해제 뒤 기존 가느다란 피크 대신 거의 수평 빨간 선이 표시됨(새 스크린샷). 데이터가 0이 되었다는 뜻 아님. 현재 Axis Properties의 Linear Min/Max 값은 확인되지 않았음. 이전 2D 색범례 대략 ±1.23e21 cm^-3. NEXT READ ONLY: 그래프 Y축 Axis Properties에서 Log 해제 유지, Fixed Min=-1.5e21 Max=1.5e21로 표시 범위를 명시하고 재확인. 그래도 수평이면 숫자 Probe/Export로 전하 부호 검증. 서버 코드 및 시뮬레이션 변경 없음. Lee TIMELINE 기록.
+
+---
+
+## 2026-10-23T07:16:03Z — TaekGyu0801
+
+[2026-10-23 KST] 작업자 이택규 / AI ChatGPT / RESULT / OBSERVED. 기존 n2_end_des PE_Charge Cutline(Y=1.0um, X=0.14..0.29um)에서 y축 로그 해제 및 선형 표시 후 0을 중심으로 양·음의 좁은 분극전하 피크가 QW 예상 계면마다 확인됨. 대략 10^21 cm^-3 규모, 정확한 수치와 Ga-polar 부호의 물리적 정당성은 미확인. 시각화 문제 해소. QW4의 e/h 집중 원인, 실제 계면 시트전하, 정량적 모델 물리 검증은 여전히 미해결. 신규 RUN/소스 수정 없음. 연구 기록/다음 작업 갱신; 다음 단계는 코드 및 기존 로그 기반 전류 정규화와 matched-J 수지 검토.
+
+---
+
+## 2026-10-23T08:35:11Z — TaekGyu0801
+
+[2026-10-23 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: VALIDATION / RESEARCH AUDIT
+상태: UNRESOLVED (literature comparison; NO RUN)
+요약: n2 3.6V QW4 QW방사 재결합 적분 비중 ~99.9688%의 물리적 정상 여부 검토. InGaN/GaN MQW에서 p-GaN측 QW에 정공 및 발광 집중 현상은 Ji et al., Opt. Lett. (2013) DOI 10.1364/OL.38.000202 및 Liu et al., J. Appl. Phys. (2011) DOI 10.1063/1.3587176로 뒷받침됨. 다만 이 모델의 99.97% 수치를 정상/검증 완료라고 볼 동일 소자 근거 없음. QW4 share는 IQE가 아님.
+근거: 기존 SVisual QW 적분/농도 및 외부 논문. 변경: 개인 TIMELINE만, TCAD 코드/실행 무변경.
+다음: read-only QW4 p-side 순서, QW region mapping, 2D 전류 정규화, 전체 recombination balance, matched-J 검토.
+
+---
+
+## 2026-10-23T08:40:51Z — TaekGyu0801
+
+[2026-10-23 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: RESEARCH / VALIDATION
+상태: SOURCE-VERIFIED literature; TCAD QW4 physical plausibility UNRESOLVED
+요약: 독립 논문 추가조사 및 모델 위치 재검토. V2.1 QW4는 기존 CURRENT_STATUS에서 **n측 QW**로 기록되어 있으므로 p측 QW가 지배적이라는 David et al. APL 2008 (10.1063/1.2839305), Bojarska-Cieślińska Sci Rep 2025 (10.1038/s41598-025-86774-6)을 QW4 99.9688%의 직접 물리 검증으로 사용하면 안 됨. Casu et al. Micromachines 2022 (10.3390/mi13081266)은 n측 QW 지배 발광을 측정/시뮬레이션으로 보고하나 상이한 In 조성의 2 QW 구조여서 현재 4um/4QW/동일 In 모델의 99.97% 보증은 아님. Han et al IEEE JQE 2018 (10.1109/JQE.2018.2790440)은 QW 재결합 속도 역시 분포 결정 요인이라 분석. 결론: n측 dominance도 물리적으로 가능, 다만 현재 CMP의 극단적 크기는 미확인. 이전 조건부 'QW4가 p측이라면' 언급은 적용되지 않음.
+근거: 위 DOI 저널 원문/초록, CMP/CURRENT_STATUS.md p/EBL/QW 위치 및 기존 SVisual 적분 관측.
+변경: LeeTaekGyu TIMELINE, TEAM_TIMELINE, CURRENT_STATUS 갱신; 서버/TCAD 코드 및 시뮬레이션 무변경.
+다음: 실제 QW order/region integrals와 current normalization, polarity and carrier-balance, matched-J read-only 검증.
+
+---
+
+## 2026-10-23T08:49:53Z — TaekGyu0801
+
+[2026-10-23 KST]
+작업자: 이택규 / AI ChatGPT
+구분: RESEARCH SOURCE AUDIT / HANDOFF
+상태: OBSERVED STATIC CODE; PHYSICAL VALIDATION UNRESOLVED; NO NEW RUN
+
+요약: 사용자가 SDevice 198줄 원문을 업로드. 13개 Dmg + 13개 Edge trap region, QW1..4 Clean/Edge/Dmg별 Radiative/SRH/Auger CurrentPlot 적분, eGapStates Dmg/Edge 및 Trap_all을 구조적으로 확인. NCedge/NtSide/PolAct/Vmax macro 실제 값은 원문에 없음. CurrentPlot(IntegrationUnit=um)의 2D 적분-전류 정규화, SRH 대비 explicit e/h gap state 재결합 accounting, 활성 pp2/pp6 source와 첨부 동일 여부, 분극 부호 및 n측 QW4 ~99.9688% 원인은 검증되지 않음. GitHub CMP/tcad/CURRENT/sdevice2_defect_on.cmd는 첨부와 다른 구버전이며 active server deck으로 전용 금지. n2 3.6V QW4 n/p ~300x QW1은 이전 SVisual 관측값이고 새 run 없음.
+근거: 첨부 198줄 파일 + 서버 과거 검증 기록 + GitHub 기준 소스 구버전 파일 비교. 공식 과거 Sentaurus UG/Tutorial은 IntegrationUnit=um 2D 치환 단위, gap-state trap 정의를 설명하나 T-2022.03 실제 로그 확인 필요.
+변경: LeeTaekGyu TIMELINE, TEAM_TIMELINE, .ai-sync/RELAY 갱신. 서버 실행/소스 변경 없음.
+다음: Claude 독립 리뷰 요청 프롬프트는 사용자에게 제공 예정(Claude에 자동 전송 아님). read-only pp1/pp2/pp6 SDE/CMD/PAR/LOG/PLT/TDR 교차검증, QW 영역/면적/재결합수지/전류 단위 및 matched-J 검증.
+
+---
+
+## 2026-10-23T09:12:43Z — TaekGyu0801
+
+[2026-10-23 KST]
+작업자: 이택규
+AI: Claude 검토 사용자 전달 → ChatGPT 기록
+구분: HANDOFF / RESEARCH REVIEW / CORRECTION
+상태: PROPOSED + DERIVED(Claude 주장); NO NEW RUN; QW4 PHYSICAL VALIDITY UNRESOLVED
+
+요약:
+- n2 3.6V n측 QW4의 4-QW 방사 재결합 적분 99.9688%는 기존 관측값. Claude는 nonoverlap 및 QW center n*p surrogate(99.973%)로 집계오류 가능성을 낮게 평가했지만 정상 물리 검증 불가.
+- 2026-10-22 Claude 역산 QW4 n~1.6e19/p~8e16 cm^-3 명시적으로 철회. 기존 SVisual 중심 probe n=1.35190e18/p=1.13508e18 cm^-3 우선. Claude의 center Auger/Rad~0.062 vs region-integrated~0.411, SRH/Rad~0.201 vs~0.082, effective n+p~1.6e19는 모델/가정 의존 파생값, 직접 측정 아님.
+- Claude 가설: classical DD+Thermionic/quantum-correction 부재에 의한 n측 첫 QW4 캐리어 집중. 분극 부호, QW의 실제 xMoleFraction/BandGap, quantum well 내 캐리어 peak로 반증 가능. 분극장 인과성 아직 미확인.
+- Claude 로컬 diff 주장: 첨부 SDevice 199행 원문 중 line 174 Iterations=12 vs SWB_PASTE 및 LOG#02 Iterations=20. 서버 deployed pp2/pp6와 동일 여부는 미검증. 코드/런 수정 없음.
+- q*QW RadiativeIntegral/I ~66.95% vs 3-channel QW Rad~66.96%의 근접성은 Claude의 잠정 전류 수지 해석이며 2D 단위/전 구간 누설 및 트랩 수지를 확인하기 전 완전 주입 보장 아님.
+- David 2008/Bojarska 2025 p측, Casu 2022 n측(상이 In 우물) 문헌만으로 동일조성 4QW n측 QW4 지배 99.97%를 검증할 수 없음. Claude는 Han 2018/Kou 원문 접근 미확인이라고 명시.
+- Baseline 물리 검증 및 freeze HOLD. 실행/코드 변경 없음.
+
+근거:
+- 사용자 전달 Claude 'V2.1 QW4 99.97% 집중 독립 검토' 인계 메시지 (2026-10-23; PROPOSED)
+- 기존 n2 SVisual probe와 CMP/current records; 원본 n2/n6 PLT/TDR, Claude 보고서/스크립트 원문 미제공
+- Claude UG 참고 페이지: 169,253,362+,473,580,870-871 (GPT 본문 직접 검증 안 함)
+
+변경:
+- LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md, LIVE_STATE.json, .ai-sync/RELAY.md에 출처/검증단계 구분 기록
+- TCAD 스크립트/SWB 설정/실행 결과 수정 없음
+
+다음:
+(1) read-only pp2/pp6 CMD/PAR 실제 소스와 Iterations diff, B/C/tau/BandGap 확인
+(2) Claude-proposed qw4_plt_audit.py 실제 코드 확보/검증 후 n2/n6 PLT QW별 4채널 및 2D current audit
+(3) Claude-proposed qw4cut.tcl 확보/검증 후 기존 n2 TDR xMoleFraction/BandGap, PE_Charge 부호, QF, well 내부 n/p CSV 비교
+
+
+---
+
+## 2026-10-23T09:36:20Z — TaekGyu0801
+
+[2026-10-23 KST]
+작업자: 이택규
+AI: Claude 해석 → ChatGPT GitHub 기록
+구분: RESULT / RESEARCH VALIDATION / HANDOFF
+상태: OBSERVED-user(이택규 서버 출력 보고) + DERIVED(Claude 계산) + HYPOTHESIS(원인); NO NEW RUN
+
+요약:
+- 기존 10/14 n2_eq_des.tdr, n2_end_des.tdr만 SVisual qw4cut.tcl로 y=1.0um depth/fine cut CSV 4개로 추출했다고 사용자/Claude 인계(10/23 17:27). 파일: qw4_eq_depth.csv, qw4_36_depth.csv, qw4_36_qw4fine.csv, qw4_36_qw1fine.csv. TDR/CSV/스크립트 원본은 GPT가 직접 받지 못해 독립 검산 아님.
+- [OBSERVED-user 보고] QW1..4 xMole=0.15, BandGap=2.8569eV (EBL=3.7564, GaN=3.4376); 평형 PE_Charge pGaN/EBL -5.50e20, EBL/B0 +5.50e20, QW p측 +1.23e21, n측 -1.23e21 cm^-3, B4/nGaN~0. QW4 n peak 9.14e19 cm^-3 (x=.263um, p계면), p peak 8.27e19 (x=.266um, n계면). x=.14um local J 1.8236A/cm²와 단자 정규화 J 일치 보고.
+- [DERIVED-Claude] QW4 미세 적분 QW 3채널 Rad~67.0%, Auger~27.6%, SRH~5.4%, Jrad~1.220A/cm²; 중심 Rrad/(np)=2.000e-11cm³/s. QW1/2/3/4 ΔQF =2.395/2.405/2.478/2.694eV, QW4-QW1 약 .30eV. 기존 QW4의 4QW 전체 방사 비중 99.9688%는 유지. Claude는 데이터 집계/조성 차이/예상 분극 부호 반전 가능성이 낮아졌다고 판정하나 재현성·절대 sheet charge·물리적 정확성까지 증명하지 않음.
+- [HYPOTHESIS] 계면 분극 + Thermionic-only classical DD (터널링/양자보정 없음) 때문에 QW4에 전자·정공이 계면별로 치우치며 QF step 및 높은 Vf가 함께 나타난다는 설명은 **미확정**. 모델 설정 오류를 찾지 못했다는 것이 '설정 오류가 없다'의 보편적 증명 아님.
+- [CORRECTION] Claude 10/22의 QW4 n>>p 균일 분포 역산은 철회, 원래 SVisual 중심 n,p 측정과 이번 미세 cutline 피크를 구분.
+- [UNRESOLVED] pp2_des.cmd/pp6_des.cmd 실행 Iterations=12 vs SWB_PASTE/LOG#02=20 출처 미확인; n6 오늘 미확인; PolAct=0.5 물리적 sheet 크기 미보정; raw CSV/mesh/junction current checks GPT 독립검증 전. Baseline B 판정, 물리적 고정 보류.
+
+근거:
+- 사용자 전달 2026-10-23 Claude 보고서(원본 CSV 없이 OBSERVED-user 표기)
+- 기존 기록: n2 QW4 99.9688% 및 기존 중심 n/p SVisual probe
+- UG 페이지 번호만: load_file p318, create_plot p231, create_cutline p224, export_variables p249; Thermionic p870–871; Density Gradient p362+; tunneling 예제 p1070 (원문 미업로드, 직접 재검증 아님)
+
+변경:
+- CMP/members/LeeTaekGyu/TIMELINE.md (사용자 요청 7절 그대로 수록 + 검증 범위 안내)
+- CMP/TEAM_TIMELINE.md, CMP/CURRENT_STATUS.md, CMP/NEXT_ACTIONS.md
+- CMP/.ai-sync/LIVE_STATE.md, LIVE_STATE.json, RELAY.md
+- TCAD 소스/파라미터/시뮬레이션 변경 없음.
+
+다음:
+- READ ONLY: 실제 pp2/pp6 CMD/PAR 소스/Iterations 확인, 가능하면 CSV와 n6 PLT 원본 감사
+- 새 실행은 이택규 승인 후에만: 보호된 복사본에서 계면 수송 모델 단일 변수 민감도(연속 QF Heterointerface 또는 터널링, 각각 별도)
+- Baseline 고정 보류, 절대 IQE/Vf/우물별 공간 분포 논문 주장 금지.
+
+
+---
