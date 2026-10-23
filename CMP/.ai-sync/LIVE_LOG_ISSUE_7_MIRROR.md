@@ -8008,3 +8008,58 @@ NEXT READ ONLY: compare equilibrium/final Ec-Ev, QF and polarization charge sign
 변경: LeeTaekGyu/TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json.
 
 ---
+
+## 2026-10-23T06:18:54Z — TaekGyu0801
+
+[2026-10-23 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED SCREENSHOT, NO NEW RUN
+
+요약:
+기존 SVisual n2_eq_des 평형(초록)과 n2_end_des 최종 3.6V(빨강) ConductionBandEnergy를 동일 X 약0.14–0.29um에 겹쳐 도시. 4개 QW 예상 위치의 notch형 밴드 구조 및 두 조건의 분포 차이는 보이나, 동일 Y 정확 좌표 및 polarization 부호·QW4 캐리어 집중 원인은 이 그림만으로 확정할 수 없음.
+근거: 사용자 제공 SVisual 스크린샷, 앞선 Y=1.0um 설정 대화.
+변경: LeeTaekGyu/TIMELINE.md 연구 관측 기록만 추가. TCAD 코드/서버 런 변경 없음.
+다음: 동일 Cut Y에서 n2_eq/n2_end ValenceBandEnergy 비교, 이어 준페르미/분극 물리 확인 (READ ONLY).
+
+---
+
+## 2026-10-23T06:26:13Z — TaekGyu0801
+
+[2026-10-23 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED SCREENSHOT, NO NEW RUN
+
+요약: 기존 n2_eq_des 평형(초록)과 n2_end_des 3.6V(빨강) SVisual ValenceBandEnergy overlay 확인. X 약0.14–0.29um; 평형 Ev는 깊이 증가에 따라 하강, 3.6V Ev는 상대적으로 완만하고 네 QW 인접 계단형 구조 관측. 정확한 polarization 부호, 내부 장벽 크기, QW4 캐리어 집중 원인은 이 그림만으로 검증 불가.
+근거: 사용자 제공 SVisual 그림, 앞선 Cutline Y=1.0um 셋업.
+변경: LeeTaekGyu/TIMELINE.md 기록 추가, 소자 코드/시뮬레이션 변경 없음.
+다음: n2_end_des eQuasiFermiEnergy 및 hQuasiFermiEnergy 같은 절단선에서 비교. 읽기 전용.
+
+---
+
+## 2026-10-23T06:29:39Z — TaekGyu0801
+
+[2026-10-23 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED SCREENSHOT, NO NEW RUN
+
+요약: SVisual n2_eq_des 및 n2_end_des 전자 준페르미 에너지(eQuasiFermiEnergy) 비교 cutline. 평형 녹색 곡선은 약 0 eV에서 거의 수평; 3.6V 빨강 곡선은 x 약0.14~0.29um에서 -1 eV에서 0 eV 방향으로 다단 계단형 상승하며 QW 근처 급변. 육안 대략값으로 정량적 barrier/physics 판정 불가; QW4 캐리어 집중, polarization sign 및 carrier-transport mechanism 여전히 UNRESOLVED.
+근거: 사용자 제공 SVisual screenshot. 이전 동일 Y=1um Cutline 설정(이번 좌표창은 미표시).
+변경: LeeTaekGyu/TIMELINE.md만 추가 기록. 코드/새 시뮬레이션 변경 없음.
+다음: 같은 절단선 n2_end_des hQuasiFermiEnergy 확인, 이후 Ec/Ev와 전자/정공 QF 병치하여 검토.
+
+---
+
+## 2026-10-23T06:32:06Z — TaekGyu0801
+
+[2026-10-23 KST] 이택규 / ChatGPT / OBSERVED SVisual / NO RUN. n2_end_des 3.6V에서 hQuasiFermiEnergy(파란색)를 기존 eQuasiFermiEnergy(빨간색), n2_eq_des 평형 기준(초록색)과 함께 도시. 깊이 X 약 0.14~0.29um에서 파란색은 약 -3.6→-3.0 eV, 빨간색은 약 -1→0 eV의 계단형 양상. 스크린샷 육안 판독이며 개별 Cutline Y 속성은 재확인 필요. QW4 농도 집중의 물리적 원인과 polarization 설정 타당성은 미해결. 코드와 시뮬레이션 변경 없음. 이택규 TIMELINE 기록 추가. NEXT: 같은 좌표에서 Ec/Ev와 전자·정공 준페르미를 비교(READ ONLY).
+
+---
+
+## 2026-10-23T06:34:53Z — TaekGyu0801
+
+[2026-10-23 KST] 이택규 / ChatGPT / RESULT / OBSERVED screenshot, NO RUN. SVisual n2_end_des 3.6V의 ValenceBandEnergy(하늘색)를 hQuasiFermiEnergy(파랑), eQuasiFermiEnergy(빨강) 및 n2_eq_des 평형 기준 준페르미(초록)와 동일 X 약0.14~0.29 um Cutline_Y plot에 겹쳐 표시. Valence band와 hole QF가 QW 인접 영역에서 계단형 양상; 정확한 에너지 간격과 QW4 캐리어 급증의 원인, polarization 타당성은 여전히 UNRESOLVED. 사용자 요청에 따라 GUI 반복 최소화: 다음 ConductionBandEnergy 추가 후 1차 그래프 점검 결론 정리. 기존 코드/서버 RUN 변경 없음. Lee TIMELINE 기록 완료.
+
+---
