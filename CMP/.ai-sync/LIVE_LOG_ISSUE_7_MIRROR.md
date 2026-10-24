@@ -8272,3 +8272,39 @@ AI: Claude 해석 → ChatGPT GitHub 기록
 
 
 ---
+
+## 2026-10-24T06:33:05Z — soybeanmilk0514-jpg
+
+[2026-10-24 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESEARCH / REVIEW PREPARATION
+상태: PROPOSED (논문 미확정; NO TCAD RUN)
+
+요약:
+- 사용자 일정: 10/26 월요일 프로젝트 진행상황 발표, 10/29 목요일 개인 논문리뷰. 이택규는 Kou 리뷰 예정.
+- 주수빈 Project B(AlGaN 측벽 Edge 치환) 연관 1순위 논문 제안: Zhao et al., Light Sci Appl 15,300 (2026), DOI 10.1038/s41377-026-02359-6. InGaN/AlGaN digital-alloy quantum barriers, lateral carrier confinement/size-effect. 대안 Gong et al. Photonics 2026 DOI 10.3390/photonics13090806 (5um QW-QD), Park et al. pss RRL 2025 DOI 10.1002/pssr.202500042 (ALD passivation).
+- 문헌들은 우리 4um AlGaN sidewall Edge material replacement와 동일 구조가 아니며 논문 EQE가 TCAD IQE 검증 근거는 아님. 사용자 논문 선택 여부 미확정.
+근거: 저널 원문·초록/DOI; 수빈 채팅 10/24 요청.
+변경: members/JuSubin/TIMELINE.md에 추천 후보/근거/제약 PROPOSED 기록. TCAD 소스·시뮬레이션·Baseline 현 상태 무변경.
+다음: 사용자 논문 선택 후 10/29 리뷰 준비 (핵심 Figure, 측벽 SRH와 lateral carriers, Project B 차이, matched-J 검증 계획).
+
+---
+
+## 2026-10-24T06:43:51Z — soybeanmilk0514-jpg
+
+[2026-10-24 KST]
+작업자: 주수빈 / AI: ChatGPT
+구분: RESEARCH / REVIEW SELECTION UPDATE / PRESENTATION PLAN
+상태: PROPOSED WORKING PAPER SELECTION; NO NEW RUN
+
+요약:
+- 사용자가 2주차 19장 PPT와 이택규 담당 Kou 2019 Optics Express 11쪽 원문을 업로드, 목요일 10/29 합동 14분 논문 리뷰(각 7분) 구성 요청. 월요일 10/26에는 별도의 CMP 진행상황 발표.
+- 주수빈의 1순위 선정 추천을 이전 Zhao 2026에서 Baek W.J. et al., Nature Communications 14, 1386 (2023), DOI 10.1038/s41467-023-36773-w로 갱신. 2주차 Project B 슬라이드에서 이미 Baek 2023, Chang 2020, Furtmayr 2011 인용. 아직 사용자 최종 승인 없음.
+- Baek: 실제 소자 6 QW, QB3.5/7.5/10.5nm + AlInGaN Balanced EBL, 10–80um; QB/EBL vertical epitaxy engineering, NOT CMP AlGaN lateral Edge material replacement. Surface current, injection balance, EQE 실험과 Silvaco TCAD를 중심으로 7분 구성. Baek 10um as-deposited QB10.5 peak EQE 3.12%, Balanced EBL 0.1A/cm² EQE 2.04% as-dep vs 3.00% sidewall-passivated, JmaxEQE shift 3.1->4.0 A/cm². These are paper published results, NOT CMP own results.
+- 합동 흐름: Kou 측벽 문제 및 모델 (7분) → Baek 장벽/주입 설계 및 측정 (7분) → CMP Bspan 물리적 적용은 추가 검증이 필요하다는 구분.
+근거: 첨부된 2주차 PPT (p4, p15-16) 및 Kou PDF, Baek 원문 Figs1–5 Methods, Chang 2020 original DOI 10.1186/s11671-020-03372-3.
+변경: JuSubin TIMELINE, TEAM_TIMELINE, NEXT_ACTIONS에 발표 준비 계획 추가. 기존 실험·소스·baseline freeze/QW4 blocker 무변경.
+다음: 두 연구원의 실제 PPT를 7분씩 맞추고 논문 Fig 1/2/3/4/5 발췌를 선정, 10/26 발표에는 검증된 Bspan 로그만 보고.
+
+---
