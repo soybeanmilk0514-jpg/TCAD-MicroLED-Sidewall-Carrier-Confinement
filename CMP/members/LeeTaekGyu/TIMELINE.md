@@ -1,3 +1,40 @@
+## 2026-10-31 — n2 로그에서 contact AreaFactor=1 확인 (OBSERVED, NO RUN)
+- 실제 학교 서버 `n2_des.log` lines237–238: anode (Ohmic) `area factor : 1`, cathode (Ohmic) `area factor : 1`. 기존 CMD/PAR `AreaFactor` grep 미검출과 상충하지 않음: 현재 **n2 런타임 접점 스케일 값**을 직접 확인했음.
+- n6는 이 출력에서 확인되지 않음. 출력에 pp1_dvs.cmd geometry/contact 정의가 없어 Half 폭/전류밀도 환산은 미완료. QW4 99.97% 집중의 물리적 원인과 Baseline freeze는 여전히 UNRESOLVED/HOLD.
+- 신규 SDevice RUN/코드 변경 없음. 다음 읽기 전용: n6 로그 `area factor`, SDE half lateral geometry/contacts 원문 검증.
+
+## 2026-10-31 — V2.1 전류 AreaFactor/단위 키워드 검색 (OBSERVED; 미해결)
+- 원본 학교 서버 터미널에서 n2/n6 LOG, pp2/pp6 CMD/PAR 6파일 검색. 검색 결과는 `eCurrentDensity/Vector`/`hCurrentDensity/Vector`/`TotalCurrentDensity/Vector` Plot 요청과 `CurrentPlot(IntegrationUnit=um)`뿐이며 `AreaFactor`, `A/cm`, `A/um`, `CurrentUnit` 직접 표기는 검출되지 않음.
+- 의미: 두 노드에서 동일한 출력 설정을 재확인했지만 `AreaFactor` 기본값/2D 유효 단자 전류 단위와 실제 전극 면적 **확정 불가**. QW4 집중 원인 및 Full/Half/물리 확정 보류. RUN/코드 수정 없음.
+- NEXT는 pp1_dvs.cmd 실제 half lateral 폭/접점 길이 읽기와 로그 헤더/공식 T-2022.03 UG 전류 스케일링 의미 검토. 플롯 요청을 물리적 면적 검증으로 오인하지 말 것.
+
+## 2026-10-31 — 기존 PLT로 동일 전류 범위 n2/n6 QW4 비교 (OBSERVED + DERIVED, NO RUN)
+- 사용자 직접 실행 `n2_des.plt`/ `n6_des.plt` 읽기 전용 Python: n6 3.6V target 9.21970771341943e−09, QW4 99.99294273758203%; n2 3.512V I=8.63290391977055e−09, QW4=99.97314950045252%; 3.528V I=1.10599185065263e−08, QW4=99.9725752700292%. n2의 목표 전류 대비 오차 각각 −6.36467%, +19.95954%; target을 감쌈.
+- **수학적 보간(실제 계산점 아님)**: alpha=0.2417800852, n2 추정 동일전류 V=3.51586848V, QW4 방사 집중=99.97301066%. n6 실제 99.99294274%, 차이 약 +0.01993207%p. 동일 native current 기준 근사 비교에서도 양쪽 모두 QW4 >99.97%. Trap이 현상의 유일한 원인이라는 설명과 불일치, 특정 전압에만 국한된 결과 아님.
+- Baseline 물리적 원인/절대 IQE/AreaFactor/Full-Half는 미검증. 원본 소스/계산 변경 없이 기존 PLT만 확인; 다음엔 반복 비율 확인보다 물리 설정/정규화 출처 및 단일 변수 민감도 설계에 집중.
+
+## 2026-10-31 — PLT 정확한 최종 행 추출 성공, n2/n6 QW4 수치 확정 (OBSERVED USER SERVER + DERIVED; NO RUN)
+- 앞선 tcsh `Unmatched '`/here-doc 문제를 `bash` 진입→`cd`→`python3 - <<'PY'` 정확한 종료로 해결. 원본 n2_des.plt와 n6_des.plt 읽기 전용 분석 수행.
+- 사용자 원본 파싱 결과: n2 3.6V `I_anode=3.64728524885323e-08`; Rad_all 1.52414203814656e23, SRH_all 1.25722226677967e22, Aug_all 6.26570284700597e22, Trap_all 1.17883032026416e6. QW1/2/3/4 Rad=1.88484712e18/2.71876253e18/4.29867210e19/1.52362488e23. QW4 비율 **99.96877481383976%**.
+- n6 3.6V `I_anode=9.21970771341943e-09`; Rad_all 2.55552035945039e22, SRH_all 4.32337288643595e21, Aug_all 7.83993596604716e21, Trap_all 1.98258247754075e22. QW1/2/3/4 Rad=2.52601416e15/5.97947823e16/1.74113011e18/2.55527360e22. QW4 비율 **99.99294273758203%**.
+- 연산: n6/n2 동전압 전류비 0.25278274; 글로벌 채널 재결합 비율 n2 Rad 66.9530%, SRH 5.5228%, Aug 27.5242%, Trap ~0%; n6 Rad 44.4096%, SRH 7.5131%, Aug 13.6242%, Trap 34.4531%. 조건부 `q×1e−12`을 적용하면 단자 전류 대비 4채널 합 n2=99.99904025%, n6=99.99904051%. 절대 IQE/2D 단위/AreaFactor 실증 아님.
+- 판정: QW4 지배는 Trap OFF에서도 존재하여 Trap만을 원인으로 볼 수 없음. 여전히 물리적 집중 원인 미해결; 실험 실행 없음, 물리 Baseline freeze HOLD. NEXT 기존 PLT에서 두 노드 동일 I 대상 비교, 이어 AreaFactor/모델 물리 민감도 결정.
+
+## 2026-10-31 — PLT parser 실행 중 tcsh 따옴표/Here-document 종료 문제 (OBSERVED, SHELL ONLY)
+- 사용자 터미널에서 외부 `bash -lc '` 명령이 닫히지 않아 `Unmatched '.` 표시. 이어 `python3 - <<"PY"`를 셸에서 입력하고 종료에 `PY'`를 사용하여 `?` continuation 프롬프트에서 멈춤. 실제 PLT 파싱 결과 없음.
+- ChatGPT가 `Ctrl+C` → Bash 진입(`bash`) → 프로젝트 디렉터리 이동 → `python3 - <<'PY'`와 종결 `PY`만 단독 입력하는 방법 제안. **실행 성공 아직 미확인**. 원본 n2/n6 PLT/TDR 및 소스 변경 없음; QW4 물리적 원인 미확정. Read-only PLT 감사 예정.
+
+## 2026-10-31 — n2/n6 실제 3.6V 완료·PLT 헤더/꼬리 재확인 (OBSERVED, NO RUN)
+- 학교 서버 터미널에서 `n2_des.sta`, `n6_des.sta` 둘 다 `done` 및 SDevice anode 최종 3.600V n2 `3.647E-08`, n6 `9.220E-09` 출력. 같은 전압의 원시 단자 전류는 ON/OFF=0.25281, 74.72% 감소. 전류 정규화/동일전류 IQE와 혼동 금지.
+- DF-ISE n2/n6 PLT 헤더에 12개 QW Clean/Edge/Dmg 방사·SRH·Auger 적분 및 global/Trap 데이터셋 존재. `head -25`·`tail -12`만으로 전체 마지막 값 위치를 독립 재매핑할 수 없으므로 다음엔 파일 자체를 읽기 전용으로 파싱해야 함. 꼬리에 n6 Trap-all `1.98258247754075e22`, n6 SRH-all `4.32337288643595e21`, n6 Aug-all `7.83993596604716e21`가 포함되어 이전 GitHub 연구 기록과 수치 일치. n2 SRH-all `1.25722226677967e22`, Aug-all `6.26570284700597e22`, Trap-all `1.17883032026416e6`도 기존 기록과 부합.
+- 기존 10/14 PLT 재확인, 새 시뮬레이션/수정 없음. QW4 ~99.97% 원인 여전히 검증되지 않음. NEXT 읽기 전용 정확한 PLT dataset별 최종 행 추출(2D 단위 확인), n2/n6 whole-device/QW 수지와 matched-current 타당성 검토.
+
+## 2026-10-31 — V2.1 pp2/pp6 설정 원문 재확인 (OBSERVED USER TERMINAL; READ-ONLY)
+- 본인이 2026-10-31 학교 서버 `/user/semi/semi437/CMP_BASELINE_2.0.0_V2`에서 Bash 읽기 전용 검사를 실행하여 출력 제공. `pp2_des.cmd:174`와 `pp6_des.cmd:174` 모두 `Iterations = 12`. 별도 초기화 Coupled 반복값 200 및 100과 구분. 이전 Claude SWB_PASTE의 20이라는 기록과 달리 **현재 확인 가능한 pp2/pp6 전처리 CMD 설정은 12**이며, 당시 solver LOG와의 이력 대조는 아직 남음.
+- 공통 CMD: 분극 strain activation=0.5, InGaN/GaN·AlGaN/GaN·AlGaN/InGaN Thermionic 선언, CurrentPlot IntegrationUnit=um. 공통 PAR: ThermionicEmission Formula=1. 물리적 정당성/최종 로그 모델은 이 grep만으로 확정 불가.
+- 기존 n2/n6 PLT 및 end TDR 네 파일 모두 존재(10/14 생성 시각, 크기 293K/295K/21M/23M). 새 RUN/소스 수정 없음. `AreaFactor` 검색 결과 없음; 실제 유효 전류 단위와 geometry scaling 미검증.
+- QW4 방사 비중 ~99.9688% 원인 여전히 UNRESOLVED; 물리적 Baseline freeze HOLD. NEXT는 로그/PLT 원자료(헤더와 최종 행) read-only 확인, full-device recombination·trap·전류 수지 및 matched-J 분석. 보호된 원본 파일 변경 금지.
+
 ## 2026-10-23 — V2.1 n2 QW4 fine cutline results (이택규 OBSERVED-user + Claude DERIVED/HYPOTHESIS; NO NEW RUN)
 
 > **아래는 사용자가 요청한 Claude 인계 원문 7절을 그대로 수록한 것임.** 서버 SVisual TDR→CSV 출력과 awk 판독은 사용자/Claude 보고이며, 원본 TDR·CSV·분석 스크립트 자체를 이 GPT 세션에서 확보하여 재계산하지 않았음. 원문의 "배제", "원인 특정", "집계 오류 아님" 등은 **Claude의 판정**으로 기록하며 독립적인 CONFIRMED 검증으로 격상하지 않음.

@@ -1,3 +1,36 @@
+## 2026-10-31 — 이택규 n2/n6 area factor 1 + V2.1 Half geometry verified (OBSERVED/DERIVED; NO RUN)
+- Actual n2 and n6 logs anode/cathode Ohmic contact `area factor : 1`. SDE Wm4→Xs2um half; edge Wedge0.1um, damage Wdmg0.005um, Xe1.895, Xd1.995, Xs2; Wshelf0, Bspan0, Cath0 bottom; anode across three segmented top edges per source.
+- Sentaurus public tutorial says 2D native current A/um, default 1um out-of-plane. Assuming this convention, I2 at3.6V / 2e-8cm² =1.8236426A/cm²; I6 / 2e-8=0.4609854A/cm². **Conditional 2D-slice J**, not physical 4x4 square pixel calibration or Full/Half proof; T-2022.03 original UG not rechecked.
+- QW4 OFF/ON >99.97% unresolved mechanism, Baseline physical FREEZE HOLD. NEXT read-only actual mesh/symmetry plus official 2D semantics before Full reference design or new controlled transport experiment. No source/run modifications.
+
+## 2026-10-31 — 이택규 n2 actual log anode/cathode area factor 1 (OBSERVED; NO RUN)
+- n2_des.log lines237/238 from direct user shell output: anode/cathode Ohmic `area factor : 1`. CMD/PAR grep previously yielded no explicit AreaFactor, but runtime contact factor now observed for **n2 only**; n6 still pending.
+- `AreaFactor=1` at contacts does NOT independently validate actual 2D current/out-of-plane scaling or full-vs-half effective area. No SDE geometry text supplied in this turn. QW4 physical cause and baseline freeze HOLD unchanged. NEXT READ ONLY n6 area-factor + pp1_dvs.cmd half width/contact geometry + official UG.
+
+## 2026-10-31 — 이택규 literal AreaFactor/current-unit grep: no match in 6 active files (OBSERVED; NO RUN)
+- n2/n6 LOG+pp CMD/PAR grep only matched e/h/total CurrentDensity Vector plot requests and CurrentPlot IntegrationUnit=um. **No explicit AreaFactor/current-unit string** in inspected six files; implicit/default 2D terminal-current scaling remains UNRESOLVED and must not be inferred from absent literal. QW4 >99.97% at near-matched I and q*1e-12 current closure unchanged.
+- NEXT READ ONLY inspect pp1_dvs.cmd real lateral width and electrode extent, check n2/n6 runtime log geometry/units, consult T-2022.03 UG current-unit/AreaFactor definitions; physical Baseline freeze HOLD and original TCAD untouched.
+
+## 2026-10-31 — 이택규 current-bracket QW4 validation from existing PLT (OBSERVED + LINEAR DERIVED; NO NEW RUN)
+- n6 3.6V I=9.21970771341943e−09, QW4 share=99.99294273758203%. Nearest n2 3.512V I=8.63290391977055e−09 QW4=99.97314950045252%; next 3.528V I=1.10599185065263e−08 QW4=99.9725752700292%; n6 I lies between.
+- Linear-in-current n2 estimate at n6 I: alpha=0.2417800852, V~3.51586848V, QW4 share~99.97301066%; difference from n6 +0.01993207%p. Interpolation is not a new matched-current solver point. Both Trap OFF and ON maintain >99.97% QW4 Radiative localization. Trap-only causal claim unsupported.
+- Physical QW4 mechanism, 2D/AreaFactor, experimental device calibration and Full/Half not validated; FREEZE HOLD. Next READ ONLY runtime current normalization/source provenance. Sensitivity RUN requires user approval.
+
+## 2026-10-31 — 이택규 full PLT parser SUCCESS: QW4 99.9688% OFF, 99.9929% ON (OBSERVED; NO RUN)
+- User executed in Bash read-only Python against existing 10/14 n2_des.plt/n6_des.plt. Final raw I: n2 3.64728524885323e-08, n6 9.21970771341943e-09. Four QW integrated Radiative QW4 fractions n2 **99.96877481383976%**, n6 **99.99294273758203%**. Thus OFF and ON both n-side QW4-dominated; not equal-current comparison.
+- Global 4-channel raw rates captured: n2 Rad 1.52414203814656e23 / SRH 1.25722226677967e22 / Aug 6.26570284700597e22 / Trap 1.17883032026416e6; n6 Rad 2.55552035945039e22 / SRH 4.32337288643595e21 / Aug 7.83993596604716e21 / Trap 1.98258247754075e22. Derived Radiative four-channel share n2~66.9530%, n6~44.4096%; n6 Trap~34.4531%. Numeric conditional q*1e-12 current closure ~99.99904% in each, physical calibration & effective unit still unresolved.
+- Previous tcsh heredoc quote prompt resolved via Bash and proper terminator. NO new model edit, solver run or outputs. Baseline physical FREEZE HOLD. Next READ ONLY compare at same current from PLT, 2D normalization/AreaFactor validation; QW4 physical cause UNRESOLVED.
+
+## 2026-10-31 — Lee n2/n6 direct terminal and PLT confirmation (OBSERVED; NO NEW RUN)
+- Original V2.1 n2_des.sta / n6_des.sta both done; at 3.600V anode currents n2=3.647e-08, n6=9.220e-09 (as displayed, native unit), ON/OFF ratio 0.25281 at **equal V, not equal current**.
+- DF-ISE PLT metadata confirms per QW1-4 Clean/Edge/Dmg Rad/SRH/Auger and global channels/Trap-all; user pasted head25 & tail12, not the full label-to-final-row field mapping. Existing n2/n6 old 10/14 outputs; no new simulation or source edit. Old n6 total Trap-all 1.98258247754075e22 reappears in tail, consistent with October 21-22 documented audit.
+- NEXT READ ONLY full PLT dataset-final-row extraction, global current budget including Trap, n2/n6 QW4 radiative shares, verify 2D unit/AreaFactor; baseline physical FREEZE HOLD, QW4~99.9688% cause unproven.
+
+## 2026-10-31 — 이택규 pp2/pp6 deployed source grep (OBSERVED USER TERMINAL; NO RUN)
+- Original V2.1 server pp2_des.cmd, pp6_des.cmd both show `Iterations=12` line174; separate Coupled initialization 200/100, not the main Iterations value. Earlier Claude SWB_PASTE 20 is *not* the verified preprocessed pp2/pp6 setting; full historic run-log linkage not independently rechecked.
+- Both CMD: Piezo strain activation0.5, three material-interface Thermionic declarations, IntegrationUnit=um. Both PAR: ThermionicEmission Formula1. Old n2/n6 .plt & end .tdr remain on disk dated Oct14. No new simulation or modification. Terminal grep does not establish effective AreaFactor.
+- PHYSICAL FREEZE HOLD. n-side QW4 ~99.9688% of QW radiative integral still UNRESOLVED. NEXT READ ONLY PLT/log structure + terminal/whole-device 4-channel current accounting, then matched-J comparison; no source edits/reruns.
+
 ## 2026-10-24 — JuSubin/Kou joint literature presentation plan (PROPOSED/WORKING SELECTION; NO TCAD RUN)
 - User uploaded 2nd-week 19-slide CMP presentation and Kou et al. (2019) Optics Express full 11-page PDF. For 2026-10-26 Monday CMP progress and 10/29 Thursday joint review (7 min each), 이택규 will cover Kou 2019. 주수빈 requests a complementary paper selection and PPT plan.
 - **Recommended working selection, not yet explicitly accepted by user:** Baek, W.J. et al., Nat Commun 14,1386 (2023), DOI 10.1038/s41467-023-36773-w. Updates earlier Zhao 2026 first-choice shortlist once Week-2 citations and uploaded Kou are considered. Joint narrative Kou sidewall problem -> Baek vertical QB/EBL mitigation -> CMP Project B lateral AlGaN edge is separate unvalidated design.

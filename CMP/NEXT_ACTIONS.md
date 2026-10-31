@@ -1,3 +1,29 @@
+## 2026-10-31 — Lee runtime n2 contact area-factor confirmed; geometry/2D normalization NEXT
+- DONE (OBSERVED n2_des.log 237–238): both `anode` and `cathode` Ohmic runtime `area factor : 1`. Prior no-match of literal `AreaFactor` in CMD/PAR never established defaults; actual log narrows **n2 contact scale** only.
+- READ ONLY FIRST: `grep -ni 'area factor' n6_des.log` for n6 runtime contact scaling. Then actual `pp1_dvs.cmd` lateral half-width and anode/cathode edge coordinates (`sed -n '20,68p' pp1_dvs.cmd`, relevant contact definitions). Consult version-matched SDevice UG to distinguish 2D total-current units / out-of-plane depth / current-density conversion.
+- Retain matched-current QW4 concentration and conditional q×1e−12 current budget; do not conflate `area factor=1` with physically calibrated 4um full device. Baseline physical FREEZE HOLD, no new run/edit.
+
+## 2026-10-31 — Lee after matched-current-bracketing from PLT (NO RUN)
+- DONE: n6 3.6V native current I=9.21970771341943e-09; n2 3.512V 8.63290391977055e-09 (QW4 99.9731495%) and 3.528V 1.10599185065263e-08 (99.9725753%) bracket target. By **linear interpolation only**, n2 matched-I QW4 ~99.97301066% at ~3.51586848V; n6 99.99294274%. Do not present interpolated n2 as an actual simulation or confuse same V with same I.
+- FIRST READ ONLY: verify active log/source effective 2D terminal current normalization and AreaFactor / width; check runtime linkage and device physics state. Earlier input had no explicit AreaFactor match in pp2/pp6, but that does not prove effective scaling.
+- THEN only with Lee permission, create separate protected-copy one-variable heterointerface transport sensitivity (Thermionic vs verified alternative, tunneling separately), with T-2022.03 UG/syntax check. QW4 physical calibration, polarity magnitude, Full vs Half unresolved; keep Baseline original intact and FREEZE HOLD.
+
+## 2026-10-31 — Lee after successful direct full-PLT audit (READ ONLY NEXT)
+- DONE: original full DF-ISE PLT final-row mapping; n2/n6 both terminal equal/opposite, global 4-channel rates and QW1–4 Radiative sums extracted. QW4 shares at 3.6V: n2 **99.96877481383976%**, n6 **99.99294273758203%**. Global channel sums recover each raw terminal current to ~99.99904% using **conditional** `q×1e−12` numeric factor; not independent proof physical validity. Shell here-doc error RESOLVED by interactive Bash.
+- **NEXT FIRST READ ONLY**: retrieve 3.6V n6 anode-current value (~9.2197077e-09) and find n2 history at closest / bracketing same terminal current in old n2_des.plt, extract matched-current QW shares and global channel proportions. Label nearest vs interpolated explicitly; ensure bias, current, row integrity.
+- NEXT: confirm 2D current units / AreaFactor and model geometry from official Sentaurus T-2022.03 docs+actual log; then controlled single-variable sensitivity of heterointerface transport only after Lee approval in protected copy. QW4 physical cause and Full/Half remain blocker; freeze HOLD. No new code/runs.
+
+## 2026-10-31 — Lee after n2/n6 STA/log/PLT head-tail (READ-ONLY NEXT; NO RUN)
+- DONE: n2/n6 status both `done`, at 3.600V anode log current n2 3.647e-08, n6 9.220e-09; ratio 0.25281. PLT DF-ISE includes per-QW Clean/Edge/Dmg Radiative/SRH/Auger, all-device channels and Trap-all. Tail is a *fragment of one last long numeric row*, not safely paired with truncated head; avoid field misalignment.
+- NEXT immediately: on server read-only parse `n2_des.plt` and `n6_des.plt` **full datasets + Data columns** and extract last-row precise `anode TotalCurrent`, `cathode TotalCurrent`, `IntegrRad_all`, `IntegrSRH_all`, `IntegrAug_all`, `IntegrTrap_all`, QW1-4 Radiative sum; check row-width and samples; compare global channels with conditional q×1e-12 conversion only after units/AreaFactor verification.
+- Then evaluate n2/n6 matched-J across bias; QW4 physical mechanism, model polarization magnitude, Full/Half baseline remain unresolved; no new simulation before user approval.
+
+## 2026-10-31 — Lee immediate NEXT after actual pp2/pp6 grep (NO RUN)
+- **DONE (user server output):** both preprocessed CMD line174 main `Iterations=12` (not SWB_PASTE 20); 200/100 are separate Coupled initialization iterations. Both CMD have PolAct strain activation0.5, three Thermionic interfaces, IntegrationUnit=um; both PAR Formula1. Four old n2/n6 .plt/.tdr files exist.
+- **FIRST READ ONLY:** examine exact n2/n6 `n2_des.plt` / `n6_des.plt` text structure (`head`, `tail`, relevant key strings) plus n2/n6 `.log` for actual run completion/parameters; retain native 2D current units and dimensions before converting to A/cm2. Check AreaFactor/source-level scaling beyond the filtered grep. Do not treat lack of literal AreaFactor match as proof of value.
+- **SECOND READ ONLY:** compare all-device + QW radiative/SRH/Auger/trap terms versus terminal anode/cathode current at shared bias and *matched J* where supported, with correct 2D conversion and trap accounting; verify QW4 concentration independence from aggregation.
+- **REMAINS BLOCKED:** exact QW4 physical cause, PolAct0.5 calibration, Full4um vs Half2um. New model sensitivity only in protected copy with user approval; baseline freeze HOLD. No new TCAD simulation/source changes.
+
 ## 2026-10-24 — Presentation tasks (주수빈 planning; not new device run)
 - 2026-10-26 Monday CMP progress: verify actual latest Bspan 0/1/3 SWB node statuses and only present OBSERVED mesh / finished logs; keep QW4 physics/baseline freeze disclaimer. Prepare distinct slides from Thursday paper review.
 - 2026-10-29 Thursday 14-minute joint PPT: 이택규 Kou 2019 7min, 주수빈 Baek W.J. et al., Nat Commun 14,1386 (2023), DOI 10.1038/s41467-023-36773-w, 7min (working selection; user approval pending). Use Baek Fig 1 structure, Fig 2 QB surface current/EQE, Fig 3 carrier/QW recombination Silvaco, Fig 4/5 EQE/Jmax metrics and constraints. State no direct proof of CMP AlGaN lateral Bspan benefit.

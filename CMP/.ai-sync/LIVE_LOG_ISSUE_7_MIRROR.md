@@ -8308,3 +8308,146 @@ AI: ChatGPT
 다음: 두 연구원의 실제 PPT를 7분씩 맞추고 논문 Fig 1/2/3/4/5 발췌를 선정, 10/26 발표에는 검증된 Bspan 로그만 보고.
 
 ---
+
+## 2026-10-31T11:58:32Z — TaekGyu0801
+
+[2026-10-31 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / SOURCE VERIFICATION
+상태: OBSERVED (사용자 제공 학교 서버 터미널 출력); NO NEW RUN
+
+요약:
+- 실제 V2.1 경로 /user/semi/semi437/CMP_BASELINE_2.0.0_V2 에서 pp2_des.cmd:174 및 pp6_des.cmd:174 모두 Iterations = 12 확인. 과거 Claude SWB_PASTE의 20은 이번 확인 대상 pp2/pp6 전처리 CMD 설정과 다름. Coupled 초기화 블록의 Iterations 200/100은 별도 값. 당시 실행로그까지 대조하여 run provenance를 확정하는 작업은 남음.
+- 양쪽 CMD 동일 설정: Piezoelectric_Polarization(strain activation=0.5), InGaN/GaN · AlGaN/GaN · AlGaN/InGaN Thermionic 선언, CurrentPlot(IntegrationUnit=um). pp2/pp6 PAR 모두 ThermionicEmission Formula=1.
+- n2_des.plt(293K), n6_des.plt(295K), n2_end_des.tdr(21M), n6_end_des.tdr(23M) 기존 2026-10-14 출력 존재 확인. 새 실행, 코드 변경 없음.
+- AreaFactor 검색 미검출은 단순 문자열 검색 결과이며 단자/2D 유효 전류 정규화를 확정하지 않음. QW4 ~99.9688% 재결합 집중의 물리적 원인 여전히 미해결, Baseline 물리 freeze HOLD.
+
+근거:
+- 사용자가 2026-10-31 채팅에 제공한 실제 bash -lc grep 및 ls 출력.
+변경:
+- LeeTaekGyu TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md, LIVE_STATE.json, RELAY.md 기록
+- 서버 소자 및 GitHub TCAD 코드 수정 없음.
+다음:
+- READ ONLY n2/n6 PLT 헤더/최종 데이터와 n2/n6 SDevice 로그 확인, 영역별 Rad/SRH/Auger/Trap vs 단자 전류 및 실제 2D 단위 수지 검산.
+- 새로운 수송 모델 실험은 사용자 승인 전 실행하지 않음.
+
+---
+
+## 2026-10-31T12:16:39Z — TaekGyu0801
+
+[2026-10-31 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / RESULT RE-VERIFICATION
+상태: OBSERVED (사용자가 올린 실제 학교 서버 n2/n6 STA·LOG·PLT 부분 출력); NO NEW RUN
+
+요약:
+- V2.1 /user/semi/semi437/CMP_BASELINE_2.0.0_V2: n2_des.sta / n6_des.sta 모두 done. 3.600V anode total-current 로그(표시 정밀도) n2=3.647E-08, n6=9.220E-09. 동일 전압 ON/OFF=0.25281 (약 74.72% 감소), 동일 전류 비교 아님. 실제 2D 정규화·AreaFactor 확인 전 단위 및 절대 J 검증 보류.
+- n2_des.plt/n6_des.plt DF-ISE xyplot 헤더에서 QW1~4 Clean/Edge/Dmg Radiative/SRH/Auger와 전소자 재결합·Trap 컬럼 존재 재확인. 현재 붙여넣은 head -25 및 tail -12는 전체 변수명과 마지막 데이터 레코드를 한 번에 매핑하기에 부족. Tail에 등장하는 n2 SRH_all=1.25722226677967e22, Aug_all=6.26570284700597e22, Trap_all~1.17883032e6; n6 SRH_all=4.32337288643595e21, Aug_all=7.83993596604716e21, Trap_all=1.98258247754075e22는 기존 full PLT 기록과 부합.
+- QW4 ~99.9688% QW-radiative share는 여전히 원인 미확정; Baseline 물리 고정 HOLD. 새 TCAD 실행·코드 변경 없음.
+
+근거: 사용자 2026-10-31 첨부 학교 서버 bash -lc 출력; 기존 10/21-22 full-PLT 기록은 별도.
+변경: CMP/members/LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md + .json, .ai-sync/RELAY.md.
+다음: READ ONLY로 n2/n6 DF-ISE PLT 전체 datasets 순서와 마지막 record를 정확히 연결해 global Rad/SRH/Aug/Trap + 각 QW Radiative와 precise I 추출; 2D 전류/면적 정규화 후 수지·matched-J 판단.
+
+---
+
+## 2026-10-31T13:11:57Z — TaekGyu0801
+
+[2026-10-31 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: BLOCKER (SHELL ONLY)
+상태: OBSERVED ERROR / FIX PROPOSED, NOT VERIFIED
+
+요약: 학교 터미널에서 불완전한 bash -lc 작은따옴표로 `Unmatched '.` 표시. 이어 Python here-doc `python3 - <<"PY"` 입력 후 종료 표식을 `PY'`로 잘못 입력해 tcsh `?` 입력 대기 지속. PLT 분석 명령은 아직 완료되지 않음. TCAD/PLT 오류가 아니며 소스 및 시뮬레이션 변경 없음.
+해결 안내: Ctrl+C → 인터랙티브 `bash` → 프로젝트 디렉터리 `cd` → `python3 - <<'PY'`로 시작, 마지막 `PY`를 따옴표 없이 단독 행으로 종료. 실제 해결 검증은 사용자 다음 실행 결과 대기.
+변경: CMP/ERROR_LOG.md 및 CMP/members/LeeTaekGyu/TIMELINE.md.
+다음: 기존 n2/n6 PLT를 읽기 전용으로 정확한 field mapping 추출. QW4 물리 검증 미완료, baseline FREEZE HOLD.
+
+---
+
+## 2026-10-31T13:33:26Z — TaekGyu0801
+
+[2026-10-31 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / VALIDATION / FIX
+상태: OBSERVED USER SERVER PLT PARSER + DERIVED CURRENT BUDGET; NO NEW RUN
+
+요약:
+- 기존 n2_des.plt/n6_des.plt 전체 DF-ISE header/last row Python 파싱 실행 성공. 이전 tcsh heredoc quoting BLOCKER는 interactive bash + 단독 PY terminator로 RESOLVED; 소자·파일 변경 없음.
+- n2 3.6V: anode 3.64728524885323e-08, cathode -3.64728524885323e-08. Raw global Rad=1.52414203814656e23, SRH=1.25722226677967e22, Auger=6.26570284700597e22, Trap=1.17883032026416e6. 4-QW Rad QW1=1.88484712e18, QW2=2.71876253e18, QW3=4.29867210e19, QW4=1.52362488e23 → QW4 99.96877481383976%.
+- n6 3.6V: anode 9.21970771341943e-09, cathode -9.21970771341943e-09. Raw global Rad=2.55552035945039e22, SRH=4.32337288643595e21, Auger=7.83993596604716e21, Trap=1.98258247754075e22. QW1=2.52601416e15, QW2=5.97947823e16, QW3=1.74113011e18, QW4=2.55527360e22 → QW4 99.99294273758203%.
+- 4 global channel shares (Rad/SRH/Auger/Trap): n2 66.9530/5.5228/27.5242/~0%; n6 44.4096/7.5131/13.6242/34.4531%. Equal-3.6V I(n6)/I(n2)=0.2527827; matched-current comparison 아직 아님, IQE 아님.
+- 조건부 환산 q=1.602176634e-19 ×1e-12 × 4채널 전체 적분 / |I|: n2=99.99904025%, n6=99.99904051%로 내부 수치 합치도 높음. 이 환산 계수의 2D 물리 단위/AreaFactor 검증은 남아 있으며 높은 합치도만으로 물리적 QW4 분포 정당화 불가.
+- Trap OFF부터 QW4 99.9688%이므로 Trap 활성화만 원인이라는 해석은 성립하지 않음. 분극/계면수송/클래식 DD 원인 가설 검증되지 않음. Baseline physical FREEZE HOLD, 새 시뮬레이션 없음.
+
+근거: 이택규 2026-10-31 직접 제공한 읽기 전용 Python PLT 파싱 결과.
+변경: LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md, ERROR_LOG.md(앞선 shell 오류 해결), CURRENT_STATUS.md, NEXT_ACTIONS.md, LIVE_STATE.md+json, RELAY.md.
+다음: 기존 PLT에서 두 노드 **동일 전류** 조건의 QW4 비율과 global recombination fraction 비교 후, 실제 2D 단위·AreaFactor·Full/Half 검증. 신규 물리 민감도 RUN은 이택규 승인 후 보호된 복사본에서만.
+
+---
+
+## 2026-10-31T13:41:32Z — TaekGyu0801
+
+[2026-10-31 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: RESULT / NUMERICAL CROSS-CHECK
+상태: OBSERVED USER PLT ROW EXTRACTION + DERIVED LINEAR INTERPOLATION; NO NEW RUN
+
+요약:
+- n6 Trap ON 3.600V I=9.21970771341943e-09 (native SDevice output unit), QW4 Radiative fraction among four QWs = 99.99294273758203%.
+- 실제 n2 Trap OFF PLT 샘플: 3.512V I=8.63290391977055e-09, QW4=99.97314950045252% (n6 목표 대비 전류 -6.364668%); 3.528V I=1.10599185065263e-08, QW4=99.9725752700292% (목표 대비 +19.959535%). 따라서 n6 전류가 n2 두 실제 계산점 사이에 존재.
+- DERIVED/INTERPOLATION ONLY (not another SDevice solution): alpha=(It-I1)/(I2-I1)=0.24178008523355246. N2 estimated same-I bias=3.51586848136V, QW4=99.97301066297%; n6 observed share와 차이 +0.01993207461%p. 두 조건 모두 99.97% 이상으로 QW4 집중. Trap ON 유무 단독으로 집중을 설명할 수 없음.
+- 특정 3.6V bias만의 이상도 아님. 그러나 선형보간과 동일 전류 정규화는 별도 물리 유효성/AreaFactor 검증과 구분해야 하며, 약 0.02%p 차이를 Trap 인과 효과로 단정 불가.
+- 기존 baseline physical FREEZE HOLD, QW4 근본 물리 원인 미규명, 코드·런 변경 없음.
+
+근거: 사용자 2026-10-31 학교 서버 read-only Python 출력.
+변경: CMP/members/LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md/.json, RELAY.md.
+다음: QW4 비율 반복 검증보다 2D 실제 단위/AreaFactor·runtime log provenance read-only 확인 후, 사용자 승인으로 별도 복사본 단일 변수 계면수송 민감도 실험 검토.
+
+---
+
+## 2026-10-31T13:49:09Z — TaekGyu0801
+
+[2026-10-31 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: PROGRESS / READ-ONLY CURRENT NORMALIZATION AUDIT
+상태: OBSERVED; effective 2D current units / AreaFactor UNRESOLVED; NO NEW TCAD RUN
+
+요약:
+- 학교 서버 실제 n2/n6 n2_des.log/n6_des.log, pp2_des.cmd/pp6_des.cmd, pp2_des.par/pp6_des.par 여섯 파일에서 AreaFactor|CurrentUnit|CurrentDensity|A/cm|A/um|IntegrationUnit|OutOfPlane|2D device grep 실행.
+- 일치 내용: n2/n6 LOG line696-698 eCurrentDensity/Vector, hCurrentDensity/Vector, TotalCurrentDensity/Vector; CMD line61 동일 Plot 요청, CMD line177 CurrentPlot(IntegrationUnit = um).
+- 해당 범위에서 `AreaFactor` 문자열, `A/cm`, `A/um`, `CurrentUnit`, `OutOfPlane`, `2D device` 직접 일치 없음. **검색 결과 없음은 AreaFactor default=1 또는 유효 단자 전류가 A/um임을 독립 증명하지 않음.** 현재 2D 전류/측벽 모델 물리적 기준 판단 HOLD 유지.
+- 기존 네 QW QW4 99.97%+ 및 q×1e−12 내부 수치 수지 검산은 그대로이며 이 grep로 물리적 유효성은 확정되지 않음. 새 RUN/코드 수정 없음.
+
+근거: 이택규 2026-10-31 직접 제공한 실제 서버 grep 결과.
+변경: LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, LIVE_STATE.md/json 기록 완료. NEXT_ACTIONS.md 쓰기 시 connector 안전 검사 차단으로 **미반영**; 기존 NEXT_ACTIONS의 AreaFactor/source verification 항목은 여전히 유효.
+다음: read-only pp1_dvs.cmd 실제 half 도메인 폭과 접점 범위 확인, n2 log 2D/runtime metadata 확인, 공식 Sentaurus T-2022.03 UG 전류 단위/AreaFactor 의미 대조. 물리 모델 변경/새 실행은 이택규 승인 전 불가.
+
+---
+
+## 2026-10-31T14:02:22Z — TaekGyu0801
+
+[2026-10-31 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: PROGRESS / RUNTIME CONFIG VERIFICATION
+상태: OBSERVED USER TERMINAL, 2D CURRENT SCALE UNRESOLVED; NO RUN
+
+요약:
+- 실제 n2_des.log grep에서 line237 "anode" : 0.0000e+00 V (Ohmic), area factor : 1; line238 "cathode" : 0.0000e+00 V (Ohmic), area factor : 1 직접 확인. 이것은 명시적 CMD/PAR AreaFactor grep 미검출과 별개로 runtime **n2 contact** area factor가 1임을 보여준다.
+- 아직 n6_des.log area factor 출력은 안 받았고, 요청한 pp1_dvs.cmd half width/contact 원문도 이번 메시지에는 포함되지 않았다. 이 값으로 실제 2D current/out-of-plane/half-to-full 4um normalization을 확정하거나 QW4 99.97%의 물리적 원인을 단정하지 않음.
+- 원본 소스/시뮬레이션 수정·새 RUN 없음. Baseline physical freeze HOLD.
+
+근거: 사용자 제공 2026-10-31 학교 서버 n2_des.log 237–238 직접 출력.
+변경: CMP/members/LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md/.json, RELAY.md 업데이트.
+다음: READ ONLY n6_des.log area factor + pp1_dvs.cmd lateral half 폭/접점 좌표 확인, 공식 T-2022.03 2D/current normalization 의미 확인.
+
+---
+
+## 2026-10-31T14:08:41Z — TaekGyu0801
+
+2026-10-31 이택규: n2/n6 로그에서 양 접점 area factor 1 확인. pp1_dvs.cmd: Wm 4um, Xs 2um, Wdmg 0.005um, Wedge 0.1um, Xe 1.895um, Xd 1.995um, Bspan0, Cath0. 관례적 2D 면외 1um 기준 J는 n2 약 1.82364A/cm2, n6 약 0.460985A/cm2 (조건부); 4um 전체 모델 검증 미완료. 신규 RUN/코드 변경 없음. 다음: Half 대칭 경계와 Full 비교 검증. 이택규 TIMELINE 및 일부 상태 파일 갱신은 안전 검사 차단됨.
+
+---
