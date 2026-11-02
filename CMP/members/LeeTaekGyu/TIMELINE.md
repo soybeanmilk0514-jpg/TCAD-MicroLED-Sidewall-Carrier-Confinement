@@ -1,3 +1,17 @@
+## 2026-11-02 — Lee reports new shelf-free clone PolAct parameter change; full SDevice source requested (USER-REPORTED, PRE-RUN)
+- 이택규는 잘못된 shelf-retained Copy를 중단 후 원본 V2.1 복사본의 SWB 파라미터를 변경했다고 보고; **새 복사본 코드/실효 pp/메시 검증 및 solver 실행은 미확인**.
+- ChatGPT가 요청에 따라 전체 `sdevice_des.cmd` 교체용 실행 코드 전달. 기존 사용자-provided V2 입력과 이전 원본/복사본 diff에 근거하여 분극 `activation=@PolAct@`, global Math Iterations12, 나머지 물리모델/Trap/Plot/CurrentPlot/Solve 제어를 원본 V2.1과 맞춘 버전; 독립적으로 새 프로젝트 디스크 파일의 정확한 byte equivalence를 검증한 것은 아님. SWB PolAct=0이면 자동 치환되므로 별도의 polarization 키워드 수정 불필요.
+- 다음: 실제 적용·shelf-free mesh·preprocessed pp 활성값/Iterations 검증 후 실행. 이전 물리 모델 판정 B/FREEZE HOLD 유지.
+
+## 2026-11-02 — Lee halted shelf clone and duplicated intended V2.1 (USER-REPORTED PROGRESS)
+- 사용자가 기존 shelf 포함 `CMP_BASELINE_2.1.0_POL0DIAG`을 멈추고, `CMP_BASELINE_2.0.0_V2_Copy`가 아닌 원본 `CMP_BASELINE_2.0.0_V2`를 다시 복사했다고 설명. 실제 SWB 새 프로젝트는 아직 rename/parameter/mesh 검증 전. 중단된 실행 결과/완료 상태 미제공, 과학적 결과 없음.
+- GPT 다음 제안: 별도 이름 `CMP_BASELINE_2.1.0_POL0NOSHELF`(제안, 미확인), 원본 코드/물성 보존, 양 노드 PolAct 0.5→0 파라미터만 변경 후 Parameters 화면, shelf 없는 n1_msh, pp activation=0/Iterations=12 확인. 원본 보호, Baseline B/FREEZE HOLD.
+
+## 2026-11-02 — Lee catches wrong shelf geometry lineage in POL0DIAG (USER-REPORTED + IMAGE; NO VALID PHYSICS RESULT)
+- 이택규가 SVisual `n1_msh` 캡처 후 lateral 오른쪽 돌출 '턱'이 있음을 지적. 화면은 2um half mesa 경계를 넘어 약 2.5um까지 red n-GaN-like 영역이 연장되는 shelf-like shape (Elements=124583, Points=60163); 이런 형상은 이전 작업용 V2.1 원본 `Wshelf=0`과 맞지 않음.
+- 사용자 본인 추정/설명: POL0DIAG을 제대로 된 `CMP_BASELINE_2.0.0_V2`가 아닌 예전 `CMP_BASELINE_2.0.0_V2_Copy`에서 복사한 것 같음. 기존 원본 V2.1이 shelf 제거 구조로 채택된 것은 이전 2026-10-15 보고/2026-10-22 실측 파일에 기록되어 있음. 정확한 clone SDE/mesh 경로는 아직 재검증 전.
+- GPT의 앞선 '해당 mesh 정상' 주장은 **정정/철회**. PolAct 물리 변수 변경과 구조 shelf 문제는 별개. 현재 복사본을 PolAct-only one-variable 대조의 유효 실험으로 간주하지 않고 중단 권고. 새로 *올바른 원본에서* 보호 복사본 제작 및 `Wshelf=0`, 메시/실효 pp 확인 후 재시작. 기존 프로젝트 삭제/덮어쓰기 금지. 새 SDevice run completion/result 미확인.
+
 ## 2026-11-02 — POL0DIAG stored SDevice grep confirms PolAct macro and Iterations12 (OBSERVED READ ONLY; NO RUN)
 - User terminal in `~/CMP_BASELINE_2.1.0_POL0DIAG` after manually pasting complete SDevice: `grep -nE 'Piezoelectric_Polarization|^[[:space:]]*Iterations[[:space:]]*=' sdevice_des.cmd` output: **line39** `Piezoelectric_Polarization( strain activation=@PolAct@ )`; **line276** `Iterations = 12`. This confirms saved SDevice source contains the macro and the restored global Math iteration count (previous copy 20 vs original 12).
 - **Not yet verified:** effective new preprocessed `pp2_des.cmd` / `pp6_des.cmd` activation=0; clone SDE/PAR/mesh equivalence; original vs clone effective input diff; same-current prior IQE_sim; user threshold lock; actual solver result. No new solver run reported. Baseline B physical FREEZE HOLD.

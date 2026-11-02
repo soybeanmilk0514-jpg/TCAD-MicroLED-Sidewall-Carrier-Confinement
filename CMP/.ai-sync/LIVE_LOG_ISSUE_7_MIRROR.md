@@ -9211,3 +9211,36 @@ PolAct 진단 실험 전 이택규 미선택 사항 2건:
 이택규가 보호 복사본 CMP_BASELINE_2.1.0_POL0DIAG을 직접 실행하려 한다고 밝히며 문제 여부 질문. 저장 SDevice의 `Piezoelectric_Polarization(strain activation=@PolAct@)` 및 Math `Iterations=12`, SWB PolAct=0 UI는 확인됨. 그러나 실제 SDE/PAR/mesh/노드/pp 동등성, 이전 n2/n6 동일 전류 IQE_sim, 판정 게이트 사전 채택 등 미검증으로 무오류를 보증할 수 없음. n2(NtSide=0) 먼저 실행해 생성된 pp activation=0/Iterations=12 및 n2_des.log 수렴 확인 후 n6 판단 권고. 새 실행 시작·완료 증거 아직 없음. PolAct=0은 global EBL 영향이 있는 진단 조건; 원본 Baseline B/FREEZE HOLD 유지. LIVE_STATE.md와 NEXT_ACTIONS.md 기록.
 
 ---
+
+## 2026-11-02T14:42:12Z — TaekGyu0801
+
+[2026-11-02 late KST]
+작업자 이택규 / ChatGPT — GEOMETRY BLOCKER (OBSERVED SCREENSHOT + USER REPORTED CLONE LINEAGE)
+
+이택규가 SVisual n1_msh에서 우측 n-GaN shelf/턱이 보인다고 지적. 메시에서 Y≈2.0~2.5um 영역이 X≈0.8um 아래로 돌출하며 Elements=124583, Points=60163. 기존 채택 V2.1 `CMP_BASELINE_2.0.0_V2`는 원본 pp1_dvs.cmd 실측상 Wshelf=0, Xs=2.0um, Xend=Xs라 shelf 없어야 함. 본인 설명으로는 잘못하여 `CMP_BASELINE_2.0.0_V2_Copy`의 구형 shelf 유지 모델을 복사해 `CMP_BASELINE_2.1.0_POL0DIAG`을 만들었을 가능성이 큼. 복제본 실제 SDE/mesh 경로는 미확인, 원인은 유력하지만 확정 아님.
+
+이전 GPT가 메시 형상을 정상으로 단정한 발언은 철회. PolAct=0은 SDevice 모델로 기하 형상을 바꾸지 않음. 따라서 현재 복사본의 결과를 PolAct-only 진단으로 사용하지 말고, 실행 중이면 중단하고 보존. 기존 _Copy가 아닌 shelf-free `CMP_BASELINE_2.0.0_V2` 원본에서 별도 보호 복사본을 만들어 PolAct만 0.5->0으로 수정, Wshelf0 및 메시 확인 후 전처리 pp activation0/Iterations12와 나머지 입력 동일성을 검증. 실제 새 SDevice 완료/결과 미확인. Baseline B/FREEZE HOLD.
+
+기록: LIVE_STATE, NEXT_ACTIONS, ERROR_LOG, Lee TIMELINE.
+
+---
+
+## 2026-11-02T14:44:16Z — TaekGyu0801
+
+[2026-11-02 KST] 이택규 — 사용자 보고: 잘못 복사한 shelf 포함 POL0DIAG 실험을 멈추고, `_Copy`가 아닌 원래 `CMP_BASELINE_2.0.0_V2`를 새로 복사함. 새 복사본 실제 SDE/mesh/실행 상태 미검증. 이름 제안 `CMP_BASELINE_2.1.0_POL0NOSHELF` (실제 이름 확정 전). 기존 원본 SDE/SDevice/par 그대로 두고 SWB PolAct=0.5→0만 변경, n2 NtSide0와 n6 NtSide1e18 유지. Run 전에 Wshelf=0 및 턱 없는 mesh, preprocess activation=0/Iterations=12 확인. 기존 잘못된 프로젝트 삭제 금지. Baseline B/FREEZE HOLD. 이택규 TIMELINE 파일 기록 성공; LIVE_STATE/NEXT_ACTIONS 업데이트는 도구 안전 검사로 미반영.
+
+---
+
+## 2026-11-02T14:47:59Z — TaekGyu0801
+
+[2026-11-02 KST] 이택규 / ChatGPT — SOURCE HANDOFF / USER-REPORTED PARAMETERS, NOT VERIFIED RUN
+이택규가 이전 오류 shelf Copy가 아닌 올바른 원본 `CMP_BASELINE_2.0.0_V2`에서 다시 만든 보호 복사본의 SWB 파라미터를 변경했다고 보고. 새 프로젝트의 실제 parameters/pp/mesh와 SDevice solver 실행은 미검증. 사용자의 명시적 전체 코드 복붙 요청에 따라 기존 original V2.1의 functional SDevice 설정에 맞춘 전체 SDevice 텍스트 제공: `Piezoelectric_Polarization(strain activation=@PolAct@)`, global Math `Iterations=12`, 기존 Trap/CurrentPlot/Solve 유지. SDE/.par 원본 유지 권고. NEXT: shelf-free geometry Wshelf=0 및 no-shelf mesh, effective pp activation=0 and Iterations=12, 다른 소스·mesh 동등성 확인 후 n2 먼저 시험, n6 후속. 원본 보호. Baseline B / FREEZE HOLD. LIVE_STATE, NEXT_ACTIONS, Lee TIMELINE 업데이트.
+
+---
+
+## 2026-11-02T14:55:45Z — TaekGyu0801
+
+[2026-11-02 KST] 이택규 / ChatGPT — USER-REPORTED CODE EDIT, NO SOLVER RESULT
+이택규가 `CMP_BASELINE_2.0.0_V2`(shelf-free, `_Copy` 아님)를 새로 복사한 프로젝트에서 SWB `PolAct=0`을 설정하고 GPT가 제공한 SDevice 전체 코드를 붙여넣었다고 보고함. GPT 제공 코드 의도는 activation=@PolAct@, Math Iterations=12 및 기존 물리/Trap/CurrentPlot/Solve 유지. SDE/par는 변경하지 않는 조건. 이 작업이 실제 디스크에 정확히 반영됐는지/새 메시가 shelf-free인지/PP 활성값이 0인지 및 solver 결과는 아직 직접 검증하지 못함. 다음은 복사본 n1_msh 턱 없음 확인 후 n2 우선 진단; run 후 pp activation=0/Iterations=12 검증. Original Baseline B/FREEZE HOLD 유지. LIVE_STATE와 NEXT_ACTIONS에 반영.
+
+---

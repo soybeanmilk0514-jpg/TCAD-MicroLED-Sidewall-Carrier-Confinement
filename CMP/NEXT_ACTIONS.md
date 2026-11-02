@@ -1,3 +1,17 @@
+## 2026-11-02 — Lee pasted full SDevice into new shelf-free POL0 clone (USER-REPORTED, NO RUN VERIFIED)
+- 사용자: 잘못된 shelf 포함 복사본을 중단하고 정확한 `CMP_BASELINE_2.0.0_V2`를 새 복사한 프로젝트에서 PolAct=0 SWB 파라미터 및 GPT 전체 SDevice 코드 붙여넣기까지 완료했다고 보고. 원본 SDE와 PAR는 수정 없이 유지한 것으로 설명. 실제 clone 유효 SDevice/geometry 증거는 추가 확인 전.
+- **NEXT MINIMAL:** 새 SDE mesh에 옆 턱이 없는지 확인 (올바른 원본에는 Wshelf=0). 그다음 n2 NtSide=0 우선 실행하여 pp `activation=0` / `Iterations=12` 및 solver convergence 확인; n6는 후속. PolAct=0은 진단 전용 (EBL 포함 global); 기존 baseline과 정확히 단일 변수 비교할 수 있는지는 소스/PP 동일성 검증 필요. 새로운 결과/성공은 아직 없음. Baseline B/FREEZE HOLD.
+
+## 2026-11-02 — Lee parameter changed on shelf-free clone; full copy-paste SDevice delivered (USER-REPORTED, NO RUN VERIFIED)
+- 올바른 shelf-free `CMP_BASELINE_2.0.0_V2`를 다시 복사한 후 이택규가 SWB **파라미터 변경 완료**라고 보고. 새 복사본 실제 폴더명/PolAct=0/다른 파라미터 동일성은 화면/pp로 재확인 필요.
+- 기존 V2.1 SDevice와 기능상 동일한 전체 복붙 텍스트 제공: `activation=@PolAct@`, Math `Iterations=12` 포함. 코드를 실제 편집기에 적용했다는 사용자 응답은 아직 없음. Original V2.1 수정 금지.
+- NEXT: SDE Wshelf=0, mesh에 우측 shelf 없는지 먼저 확인; SWB 새 파라미터/pp `activation=0`/`Iterations=12`, SDE/PAR/mesh/solver/contacts 동일성 검사; 그다음 n2 Trap OFF 진단 및 n6 follow-up. 사용자 사전 결과 판정 gate 및 기존 matched-current IQE_sim 기준 계속 보류. Physical Baseline B/FREEZE HOLD.
+
+## 2026-11-02 — POL0DIAG geometry blocker: likely copied shelf-retained V2_Copy (STOP/REBUILD CORRECT BASE)
+- User now states new POL0DIAG was copied from `CMP_BASELINE_2.0.0_V2_Copy` (or old Copy version) rather than shelf-free `CMP_BASELINE_2.0.0_V2`. SVisual `n1_msh` displayed right-side ledge/shelf Y≈2.0→2.5um; original V2.1 verified prior `Wshelf=0`, half lateral 2.0um. Wrong lineage is USER-REPORTED and image supports inconsistency; definitive new input code diff still pending.
+- **STOP** interpreting/scheduling this run as controlled PolAct diagnostic. Keep outputs for audit, **do not change frozen original**.
+- **NEXT:** choose **actual `CMP_BASELINE_2.0.0_V2` (without `_Copy`)** in SWB and create new safeguarded clone with distinct version-compliant name; do not overwrite mistaken POL0DIAG until archived. Clone SDE/PAR/SDevice/mesh and all settings, change only SWB `PolAct 0.5→0`, keep n2 first, n6 later. Check `Wshelf=0`, `Xend=Xs=2um`, no visual protrusion, preprocess activation=0 and Iterations=12 before solver. Predeclare heuristics and matched-current IQE_sim for comparison; no physical Baseline promotion. B/FREEZE HOLD.
+
 ## 2026-11-02 23:33 — Lee intends to run new POL0DIAG n2 (USER INTENT; NO EXECUTION VERIFIED)
 - User wants to start testing `CMP_BASELINE_2.1.0_POL0DIAG` without further preprocess steps and asks if safe. New clone SWB PolAct=0 and stored SDevice macro/Iterations12 observed; actual source/PAR/SDE/mesh equivalence and pp effective settings remain unverified. Do NOT claim simulation has run or guarantee scientific single-variable equivalence.
 - Recommended n2 (`NtSide=0`) first; once produced, check `pp2_des.cmd` for `activation=0` and `Iterations=12`, then `n2_des.log` convergence and file/parameter provenance, followed by n6 if appropriate. Missing preprocessed pp files before running is not an error by itself. Global PolAct=0 also modifies EBL heterointerface and cannot be adopted as physical Baseline. Prior same-current IQE_sim and H1/H2 thresholds still need sign-off before result interpretation. Original V2 baseline protected.
