@@ -8451,3 +8451,763 @@ AI: ChatGPT
 2026-10-31 이택규: n2/n6 로그에서 양 접점 area factor 1 확인. pp1_dvs.cmd: Wm 4um, Xs 2um, Wdmg 0.005um, Wedge 0.1um, Xe 1.895um, Xd 1.995um, Bspan0, Cath0. 관례적 2D 면외 1um 기준 J는 n2 약 1.82364A/cm2, n6 약 0.460985A/cm2 (조건부); 4um 전체 모델 검증 미완료. 신규 RUN/코드 변경 없음. 다음: Half 대칭 경계와 Full 비교 검증. 이택규 TIMELINE 및 일부 상태 파일 갱신은 안전 검사 차단됨.
 
 ---
+
+## 2026-11-02T08:40:44Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / CHECK
+상태: OBSERVED TERMINAL + CONDITIONAL DERIVED; NO NEW RUN
+
+요약:
+- n2/n6 anode/cathode 모두 runtime area factor 1 재확인. pp1_dvs.cmd Wm=4um, Half Xs=2um, Wdmg=0.005um, Wedge=0.1um 재확인.
+- 사용자 실제 python3 -c 수치 검산: 면외 폭 1um 가정 A=2e-8 cm²; 기존 3.6V I에 대한 n2 J=1.8236426244266148 A/cm², n6 J=0.4609853856709715 A/cm², 동일 전압 감소율=74.72172565521639%.
+- 이미 기록된 PLT 값을 사용한 산술 재현이며 신규 시뮬레이션/PLT 파싱 아님. Full/Half 메쉬 대칭 및 실제 4x4um pixel 정규화, T-2022.03 공식 원문 검증 미완료. Baseline freeze HOLD.
+
+근거: 2026-11-02 사용자 터미널.
+변경: CMP/members/LeeTaekGyu/TIMELINE.md (commit d983b3b6df0c16aa7d9f2ba7398c5760d091c492); TCAD 원본 수정 없음.
+다음: 읽기 전용 메시/대칭 경계 확인, 버전 일치 전류 단위 검증.
+
+---
+
+## 2026-11-02T08:43:25Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / SOURCE-LEVEL GEOMETRY VERIFICATION
+상태: OBSERVED USER TERMINAL; NO NEW RUN
+
+요약:
+- 실제 서버 pp1_dvs.cmd lines20–68, 145–170 출력으로 P(lat,dep)=(dep,lat) 좌표 정의, Wm=4um/Xs=2um half, Wshelf=0, Cath=0, Wdmg=5nm/Wedge=0.1um 재확인. 상단 Clean/Edge/Dmg 3분할 anode 및 전체 폭 하단 cathode 소스 지정 확인. 중심 y=0에는 해당 contacts 블록에서 접점이 없음.
+- ls -lh n1_msh.tdr => 기존 2.0M Oct 14 13:43 파일 존재 확인. 이는 내부 실제 mesh 품질이나 중심선 라벨/Full-Half 물리적 동등성 검증이 아님.
+- 기존 전류밀도 정규화 1.8236426244 / 0.4609853857 A/cm2 및 74.7217257% 동전압 감소는 2D 면외 1um 가정하의 조건부 산술 재현. 실제 4x4um pixel 검증 아니며 공식 T-2022.03 2D 정의 재확인 필요.
+근거: 이택규 2026-11-02 터미널 출력.
+변경: CMP/members/LeeTaekGyu/TIMELINE.md commit ca16ae724224ff7e763d476ccf186eb8d815e5c4, TCAD 원본 수정/신규 RUN 없음.
+다음: READ ONLY n1_msh.log 메시 품질 경고 및 SVisual에서 n1_msh.tdr 중심선/접점 라벨 확인; 기존 baseline freeze HOLD.
+
+---
+
+## 2026-11-02T08:45:17Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / READ-ONLY VERIFICATION
+상태: OBSERVED USER TERMINAL; NO NEW RUN
+
+요약:
+- 실제 서버 n1_msh.log grep 재확인: 62,533 vertices / 123,917 elements, minAngle=0.0167024°, maxAngle=128.367°, min edgeLength=1.95312e-05um=0.0195312nm near (xdepth=0.0041875um, ylateral=1.89501um).
+- Xe=1.895um Clean/Edge 경계 인접. 단, 최소 각도 위치가 최소 Edge와 동일하다는 근거는 없음. 이는 10/21 기존 ERROR_LOG 값 재확인이며 새 메시/시뮬레이션 실행, 새로운 모델 오류 발견 아님.
+- 지나치게 작은 요소의 정확도·conditioning 영향 가능성은 추가 확인 대상. QW4 집중이나 수렴 문제의 원인으로 단정 불가. Baseline HOLD.
+
+근거: 이택규 제공 n1_msh.log 터미널 출력.
+변경: CMP/members/LeeTaekGyu/TIMELINE.md commit 8553f64ee09aabe5e228430d6755dc7dc107dc6c. TCAD 파일 변경 없음.
+다음: SVisual에서 기존 n1_msh.tdr 중심 경계 및 Clean/Edge 전이 영역 메시의 실제 형상 시각 점검.
+
+---
+
+## 2026-11-02T09:18:06Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT (Claude 독립 검토 인계 수신)
+구분: HANDOFF / PROGRESS / PROPOSED
+상태: PROPOSED / DERIVED / UNRESOLVED; NO NEW SIMULATION
+
+요약:
+- 이택규가 Claude의 QW4 99.97% 집중 문제 독립 재평가를 전달. Claude는 GitHub main 8553f64까지 읽고 Issue #7 403으로 못 읽었다고 명시했으나, ChatGPT가 GitHub 최신 파일과 Issue #7 comments 486개를 실제로 확인함.
+- 기존 n2/n6 QW4 방사 비중 99.9688%/99.9929% 재사용(새 서버 run/PLT 추출 없음). Claude는 기존 10/23 QF표를 재해석하여 B0–B3 p/n 약 1e4~1e5, Ec-eQF 0.45~0.51eV, hQF-Ev 0.28~0.30eV에서 **전자 interwell transport bottleneck 가설**을 제안했음. raw CSV/current-flow 검증 또는 통제 실험으로 입증된 원인 아님.
+- Claude는 예전 '계면에서 1.6eV 소모' 이중 계산과 'QF 분리가 직접 원인' 설명을 철회. UG p58/120 2D A/um, p193 Iterations, p871 Fermi Formula1, p1003 activation, p1072 LED 예제 sheet값은 Claude가 공식 문서를 확인했다고 보고했으며 ChatGPT가 원문을 직접 재확인한 것은 아님.
+- 읽기 전용 먼저: 기존 CSV/PE_Charge sheet cm^-2 정합성, QW3/4 QF강하, 실제 PAR Chi0/Eg0/mumax와 n2 경고·effective physics 확인.
+- 별도 사용자 승인 뒤에만 원본 보존·복사본의 strain activation 0.5→0 단일 변수 진단 후보. 이 조절이 piezo만 변경하는지 전체 분극을 제거하는지 UG에서 먼저 명확히 해야 하며, QW4 80%/electron 100배는 탐색적 가설 기준일 뿐 인과 판정 규칙이 아님.
+- Baseline 판정 B, FREEZE HOLD 유지; 새로운 solver 실행·서버 원본 변경 없음.
+
+근거:
+- 사용자 제공 2026-11-02 Claude 인계 프롬프트 (DERIVED/PROPOSED).
+- 기존 GitHub 10/23~11/02 기록과 11/02 실제 사용자 로그.
+변경:
+- CMP/members/LeeTaekGyu/TIMELINE.md (Claude 6절 블록 원문 보존)
+- CMP/NEXT_ACTIONS.md
+- CMP/.ai-sync/LIVE_STATE.md 및 LIVE_STATE.json
+- CMP/.ai-sync/RELAY.md
+다음:
+- 스크립트/CSV 존재 확인 및 안전한 read-only 분석, 그 뒤 별도 승인 시 단일 변수 진단 실험 제안.
+
+
+---
+
+## 2026-11-02T09:25:26Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / READ-ONLY ARTIFACT DISCOVERY
+상태: OBSERVED USER TERMINAL; NO NEW RUN
+
+요약:
+- 기존 학교 서버 CMP_BASELINE_2.0.0_V2에서 find . -maxdepth 4 -type f -name 'qw4*.csv' 실행: qw4_eq_depth.csv, qw4_36_qw1fine.csv, qw4_36_depth.csv, qw4_36_qw4fine.csv 총 4개 파일 존재 확인.
+- 동일 검색 범위에서 Claude가 언급한 server_readonly_cmds_20261102.sh 미발견. 서버 전체에 파일이 없다는 주장이 아니며 script 실행 없음.
+- 파일명 존재만 검증; CSV 내용/단위/열 형식/PE_Charge sheet 적분/전자 병목 원인은 아직 미검증. 새로운 simulation 및 source edits 없음.
+근거: 이택규 2026-11-02 사용자 제공 터미널 출력.
+변경: LeeTaekGyu/TIMELINE.md, NEXT_ACTIONS.md, LIVE_STATE.md, LIVE_STATE.json에 발견/다음 확인 단계만 갱신.
+다음: wc -l qw4_*.csv 및 head -n 6 qw4_eq_depth.csv, qw4_36_depth.csv로 데이터 헤더와 좌표/변수 단위 확인. 원본 보존, FREEZE HOLD.
+
+---
+
+## 2026-11-02T09:28:29Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / CSV HEADER AND SAMPLE READ-ONLY AUDIT
+상태: OBSERVED USER TERMINAL; NO NEW RUN
+
+요약:
+- n2 old 3.6V cutline CSV 실제 파일 내용 일부 사용자 제공: qw4_eq_depth.csv 395 lines, qw4_36_depth.csv 395, qw4_36_qw1fine.csv 69, qw4_36_qw4fine.csv 65. 두 depth CSV는 1행 field header와 2행 none/SELECTED metadata 포함. 숫자 데이터행이 각 393/393, fine 67/63인지는 line-count에서 추산한 것으로 전체 파일 구조 직접 검증은 아직 미완료.
+- 검증된 field names: PE_Charge, PE_Polarization-X, ConductionBandEnergy, ValenceBandEnergy, eQuasiFermiEnergy, hQuasiFermiEnergy, eDensity, hDensity, eCurrentDensity-X, hCurrentDensity-X, TotalCurrentDensity-X, X, Y, Distance.
+- 3.6V CSV 첫 data sample X=0.14,Y=1, TotalCurrentDensity-X~1.8236326; 이전 조건부 2D J~1.8236426과 수치적 일치. PE_Charge=-5.5020169e20은 국소 값이며 면전하밀도 cm^-2 아님; 적분 범위와 단위 검증 없이 sheet로 이용 불가. 현재 QW3–QW4 수송 병목/분극 기전은 미검증.
+근거: 사용자가 붙여넣은 wc -l 및 head -n 6 실제 학교 서버 출력.
+변경: Lee TIMELINE, NEXT_ACTIONS, LIVE_STATE.md/json만 기존 기록 보존하며 새 관측을 상단에 추가. TCAD 원본 변경 및 새 시뮬레이션 없음.
+다음: 원본 pp1_dvs.cmd MQW stack 및 4 CSV X/Y 값 범위 확인. 메타데이터 행 제외, 컷라인 데이터 위치/단위 검토 후 QF/PE_Charge 진단. FREEZE HOLD.
+
+---
+
+## 2026-11-02T09:32:18Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / READ-ONLY CUTLINE COVERAGE + SOURCE STACK VERIFICATION
+상태: OBSERVED TERMINAL + DERIVED STACK POSITIONS; NO NEW RUN
+
+요약:
+- 사용자 실제 python3 DictReader 출력: qw4_eq_depth.csv 392 numeric rows, X0.13988867–0.2973125um/Y1.0um; qw4_36_depth.csv 392/same; qw4_36_qw1fine.csv 66 rows X0.1800625–0.19995312/Y1; qw4_36_qw4fine.csv 62 rows X0.25543749–0.27428126/Y1. 앞서 명령 3개가 붙어 Python SyntaxError 발생 후 즉시 단일 명령 재시도 성공; TCAD 오류 아님.
+- 실제 pp1_dvs.cmd top-down stack: pCap20nm/pGaN120nm/EBL26nm/B0..B4 each22nm/QW1..4 each3nm. SDE x=depth 정의에서 QW1 X0.188–0.191um, QW2 0.213–0.216, QW3 0.238–0.241, QW4 0.263–0.266, B0 0.166–0.188, B1 0.191–0.213, B2 0.216–0.238, B3 0.241–0.263, B4 0.266–0.288 (DERIVED).
+- 정밀 CSV가 각 우물과 양쪽 barrier 일부를 포함함. Claude 전자 수송 병목 및 분극 sheet 크기 아직 미검증; 과거 일부 레이어 좌표 보고와 20nm 차이 여부는 같은 모델/좌표 확인 필요.
+근거: 이택규 학교 서버 2026-11-02 sed / python3 출력.
+변경: CMP/members/LeeTaekGyu/TIMELINE.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md 및 LIVE_STATE.json 갱신. 기존 TCAD 원본 수정/시뮬레이션 없음.
+다음: READ ONLY 현재 3.6V depth CSV의 B0–B3/QW1–QW4 실제 최근접 중심 표본으로 eDensity/hDensity, Ec−eQF, hQF−Ev, e/hCurrentDensity-X 검증 후 인과 가설 평가. Baseline FREEZE HOLD.
+
+---
+
+## 2026-11-02T09:36:56Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / READ-ONLY QW4 LOCAL TRANSPORT CROSSCHECK
+상태: OBSERVED USER TERMINAL + DERIVED RATIOS, UNRESOLVED CAUSALITY; NO NEW RUN
+
+요약:
+- 사용자 제공 실제 n2 3.6V qw4_36_depth.csv Y=1um read-only Python 출력 B0/B1/B2/B3 p/n ratio 약 58994 / 100221 / 40357 / 14255. Ec−eQF 0.507 / 0.5144 / 0.4895 / 0.4449eV, hQF−Ev 0.3012 / 0.2948 / 0.2935 / 0.2758eV. Claude가 제시한 barrier 전자 부족 패턴은 수치 데이터로 corroborated.
+- QW3 n=2.3390056e16, p=1.5939417e16; QW4 n=1.0123225e18, p=1.5189656e18 cm^-3. QW4/QW3 n=43.28x, p=95.30x.
+- B3 midpoint JnX=0.0017767865, JpX=1.8218269 (Jn ~0.09743% of Jtotal); QW4 midpoint JnX=0.96137367, JpX=0.86228261 (~52.71682% electron). Both sums ~1.8236. Thus local carrier-current partition strongly changes near QW4, consistent with QW4 recombination sink.
+- LIMITATION: lower Jn on p-side barriers could be *consequence* of near-total electron consumption by QW4, and does NOT establish that B3 band offset/polarization/thermionic blocking is root cause. 2D lateral J divergence not yet integrated. QW4 radiative fraction >99.97% is separate prior QW-integrated quantity.
+근거: 2026-11-02 user pasted n2 qw4_36_depth.csv Python actual terminal extraction and pp1_dvs.cmd derived centers.
+변경: members/LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md, LIVE_STATE.json, RELAY.md; no actual deck/mesh/simulation changes.
+다음: read-only qw4_36_qw4fine.csv Jn/Jp and Ec/eQF/PE_Charge around B3→QW4→B4 to localize change before studying transport model; preserve baseline FREEZE HOLD.
+
+---
+
+## 2026-11-02T09:41:25Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / FINE QW4 LOCAL ELECTRON-HOLE CURRENT PROFILE
+상태: OBSERVED USER TERMINAL + DERIVED ARITHMETIC; UNRESOLVED CAUSALITY; NO RUN
+
+요약:
+- 이택규 학교 서버 `qw4_36_qw4fine.csv` 기존 3.6V, Y=1 µm cutline의 실제 7개 표본:
+  B3 x=.26250389: JnX=.0017779541, JpX=1.8218258, Jtotal=1.8236037, Ec−eQF=.3520 eV, Rad=9.6067543e14.
+  QW4 x=.26355079/.26459765/.26551366: JnX=.33616893/.96137367/1.5101376, JpX=1.4871776/.86228261/.31358008, Rad=2.4382434e25/3.075366e25/2.4777785e25.
+  B4 x=.26656055: JnX=1.8234614, JpX=.0003014948, Jtotal=1.8237629, Ec−eQF=.3675 eV, Rad=7.4700005e18.
+- DERIVED between near-boundary B4 and B3 JnX difference =1.8216834459 A/cm² or 99.90249565469277% of B4 JnX. 2D mid-lateral cutline current flow shows strong localized carrier current re-partition at QW4 and very high within-well radiative rates, compatible with strong QW4 recombination sink.
+- LIMITATION: This **does not prove** B3 barrier/PolAct/Thermionic as the causal blockade. Low Jn B3 can be *effect of* electron consumption in QW4; 2D lateral current divergence not included. 99.9025% is local Jn drop, distinct from earlier 99.9688% integrated QW-radiative fraction.
+근거: user 2026-11-02 read-only Python output of existing fine CSV.
+변경: CMP/members/LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md/json, RELAY.md. No simulator run or source change.
+다음: read-only trapezoid q∫TotalRecombination dx with channel decomposition within x=.263–.266um and compare same-sample ΔJn; then PE_Charge sheet audit. Baseline B FREEZE HOLD.
+
+---
+
+## 2026-11-02T09:47:13Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / QW4 LOCAL CONTINUITY NUMERICAL CHECK
+상태: OBSERVED USER TERMINAL + DERIVED ARITHMETIC; NO NEW RUN; PHYSICAL CAUSE UNRESOLVED
+
+요약:
+- 이택규가 기존 n2 3.6V `qw4_36_qw4fine.csv`에서 Y=1um, QW4 depth x=.26300001~.266um, N=24의 재결합률을 사다리꼴 적분 (q×1e−4=1.602176634e−23 for um→cm).
+- OBSERVED: ΔJnX=1.8216831695 A/cm². q∫Rad dx=1.2205564144284573, q∫Auger dx=.5018975294245672, q∫SRH dx=.09908575891169007, q∫TotalRecombination dx=1.8215397088407301 A/cm². 세 채널의 합≈1.8215397027647144 (Total과 6.076e−9 차이).
+- DERIVED local depthwise continuity closure=99.9921248293%; ΔJn−q∫TotalRdx=.0001434606593 A/cm², 0.0078751707% relative. Recomb shares within QW4 local depth integral Rad67.00685%, Auger27.55348%, SRH5.43967%.
+- 연구적 의미: QW4 영역 전자 전류 감소와 재결합 sink가 거의 정량적으로 일치하는 것이 확인됨. 그러나 단일 Y=1um cutline이므로 전자 연속방정식의 ∂JnY/∂Y는 미검증. 이 99.992% closure는 기존 4QW 방사 적분 중 QW4~99.9688%와 다른 개념. QW4 선호의 물리적 원인(분극/offset/thermionic)은 미확정. Baseline verdict B, physical FREEZE HOLD.
+근거: 2026-11-02 이택규 실제 학교 서버 Python 터미널 출력; 계산값은 표본 값으로 독립 산술 재검산.
+변경: CMP/members/LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md/.json, RELAY.md. TCAD 원본/메시/솔버 변경 없음.
+다음: READ ONLY `qw4_36_qw4fine.csv` PE_Charge/PE_Polarization-X 강한 signed peak 표본과 x≈.263/.266 interface 점검; units를 먼저 확인하고 sheet 적분 여부 결정. 별도 승인 없는 PolAct 실행 금지.
+
+---
+
+## 2026-11-02T10:02:19Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / READ-ONLY POLARIZATION-INTERFACE AUDIT
+상태: OBSERVED USER TERMINAL + CONDITIONAL DERIVED; CAUSALITY UNRESOLVED; NO NEW RUN
+
+요약:
+- User 기존 n2 3.6V `qw4_36_qw4fine.csv` read-only top |PE_Charge| 샘플: QW4 시작 B3/QW4 X=0.26300001µm 에서 `PE_Charge=+1.2297757e21` 두 점, 이때 `PE_Polarization-X` 3.4e-06 ↔ 8.2162955e-07. QW4 끝 QW4/B4 X=0.266µm에서 `PE_Charge=-1.2297757e21` 두 점, P_x 8.2162955e-07 ↔ 3.4e-06. 각 위치의 중복 X는 계면 불연속 샘플이므로 PE_Charge 단순 Trapezoid를 sheet charge 정답으로 쓰면 안 됨.
+- 공개 Sentaurus training Chapter16에서 P의 spontaneous+strain 구성 및 interface charge scaling activation 설명; ρ_pol=-∇·P 관계에 따른 x-depth 양쪽 peak의 부호 패턴이 정합적임.
+- CONDITIONAL: P_x 단위 C/cm² 적용한 nominal |ΔP|=2.57837045e-06 C/cm²; q로 나누면 양쪽 opposite-sign equivalent sheet magnitude ≈1.6092923e13 cm^-2. 이 값은 분극 vector jump로 산술 유도한 **명목 등가값**이며 실제 적용 활성화 후 interface charge를 직접 적분/검증한 값이 아님. `PE_Charge=1.2298e21` 자체는 local output; sheet cm^-2와 다름.
+- 이전 QW4 depthwise continuity closure 99.9921% 관찰과 서로 다른 검증이다. 분극 계면 존재는 검증되었으나 QW1–QW3 대비 QW4 유독 99.97% Rad 집중의 근본 기전은 여전히 미검증.
+근거: 2026-11-02 사용자 학교 서버 PE_Charge/PE_Polarization-X 상위 12점 실제 Python 출력; https://ghzphy.github.io/Sentaurus_Training/sd/sd_16.html
+변경: CMP/members/LeeTaekGyu/TIMELINE.md, CMP/TEAM_TIMELINE.md, CMP/NEXT_ACTIONS.md, CMP/.ai-sync/LIVE_STATE.json 갱신. CMP/.ai-sync/LIVE_STATE.md 갱신은 GitHub connector 안전 검사 차단되어 **미반영**. 새 solver/원본 수정 없음.
+다음: READ ONLY 다른 QW의 B0–B4 QW1–QW4 중심 P_x, xMoleFraction 교차비교 및 pp2 polarization activation/lattice 설정 검증. 실험적 PolAct 변경은 별도 승인 필요, FREEZE HOLD.
+
+---
+
+## 2026-11-02T10:05:43Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / ALL-QW POLARIZATION CENTER COMPARISON
+상태: OBSERVED USER TERMINAL + LIMITED DERIVED; NO RUN; CAUSALITY UNRESOLVED
+
+요약:
+- User n2 3.6V existing `qw4_36_depth.csv` Y=1um center-nearest samples: QW1 (X=.18948437), QW2 (.21460937), QW3 (.23947266), QW4 (.26459765) each xMoleFraction=.15, PE_Polarization-X=8.2162955e−7.
+- B0 (X=.17692187), B1 (.20204687), B2 (.22717187), B3 (.25229686), B4 (.27742186) each GaN xMoleFraction=0, PE_Polarization-X=3.4e−6. Center PE_Charge nearly zero (QW2=5755.116; B3=−5953.4439; QW4=−5758.722; B4=5953.4439), contrasted with QW4 interface local peaks ±1.2297757e21 previously observed.
+- CONCLUSION LIMITED: QW4-specific bulk polarization magnitude or In composition difference is NOT present in sampled centers. Nominal P difference identical across barrier and QW types. However actual 8 interface effective sheet densities, polarization activation effects, cumulative band bending and electron/hole transport remain unverified; unchanged polarization at QW centers does not rule out global polarization-mediated current crowding and high QW4 recombination.
+근거: 사용자 2026-11-02 학교 서버 read-only Python cutline output.
+변경: CMP/members/LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md, NEXT_ACTIONS.md, LIVE_STATE.md and LIVE_STATE.json. No TCAD source, mesh or solver execution.
+다음: READ ONLY actual `pp2_des.cmd` and `pp2_des.par` polarization activation, lattice/Fermi/Thermionic and material band parameter settings; then assess each QW interface charge. Baseline verdict B / physical FREEZE HOLD.
+
+---
+
+## 2026-11-02T10:08:52Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / ACTIVE PHYSICS SOURCE AUDIT
+상태: OBSERVED USER TERMINAL + DOCUMENTATION CROSS-CHECK; MODEL CAUSALITY UNRESOLVED; NO NEW RUN
+
+요약:
+- 사용자 실제 pp2_des.cmd grep: Physics Fermi (L15), DefaultParametersFromFile (L16), Recombination SRH/Radiative/Auger (L19), IncompleteIonization (L20), Piezoelectric_Polarization(strain activation=0.5) (L21); InGaN/GaN, AlGaN/GaN, AlGaN/InGaN material interfaces each Thermionic (L24-L26). pp2_des.par L1-L4 LatticeParameters X=(0,0,-1), Y=(1,0,0); L165-L173 each interface ThermionicEmission{Formula=1}. Source-level presence OBSERVED, not proof of physically appropriate selection.
+- Public Sentaurus Training Chapter 16 (https://ghzphy.github.io/Sentaurus_Training/sd/sd_16.html): §16.4.3 activation explicitly scales interface polarization charge arising from discontinuous polarization. Therefore proposed 0.5→0 diagnostic targets interface polarization charge scaling (not necessarily piezo-only); §16.7.5 documents Fermi pairing with Thermionic Formula=1; §16.3 lattice UCS X=(0,0,-1),Y=(1,0,0). Exact installed T-2022.03 UG and runtime interface effective sheet charge still not independently verified.
+- Earlier nominal full QW4 polarization jump ΔP/q≈1.6092923e13cm^-2. Applying factor .5 gives hypothetical effective ~8.04646e12cm^-2 ONLY IF global activation uniformly scales this entire interface jump; not measured actual sheet and no modification has occurred.
+- QW4 99.97% integrated radiative dominance remains unexplained. Source verifies modeling choices but does not prove polarization/thermionic causality. Baseline B / physical FREEZE HOLD.
+근거:
+- 이택규 2026-11-02 학교 서버 pp2_des.cmd/par grep output.
+- Public Sentaurus Training Ch16 §§16.3,16.4.3,16.7.5 as URL above.
+변경:
+- CMP/members/LeeTaekGyu/TIMELINE.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md/json; TCAD original/decks/solver untouched.
+다음:
+- READ ONLY pp2_des.par Chi0/Eg0/mumax and relevant polarization/strain sections, check material library defaults; consider protected-copy activation perturbation only after user approval.
+
+---
+
+## 2026-11-02T10:12:20Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / BAND-OFFSET ACTIVE PARAMETER AUDIT
+상태: OBSERVED USER TERMINAL + DERIVED; NEW SIMULATION NONE; CAUSALITY UNRESOLVED
+
+요약:
+- User school server `pp2_des.par` grep 실제 출력: GaN Eg0 3.4376/Chi0 4.1000eV, InGaN Eg0 2.8569/Chi0 4.5065eV, AlGaN Eg0 3.7564/Chi0 3.8768eV. All three `ConstantMobility mumax = 300, 10`; actual effective field-dependent mobility separately unverified.
+- Derived nominal GaN/InGaN flat-band material discontinuities: ΔEg=3.4376−2.8569=0.5807eV; ΔEc=4.5065−4.1000=0.4065eV; ΔEv=0.5807−0.4065=0.1742eV. Split ΔEc:ΔEv ≈70:30, corroborating Claude's claim that material offsets in source intentionally favor deeper electron wells.
+- Limitation: nominal heterojunction conduction step ΔEc=.4065eV is NOT the biased local Ec−eQuasiFermiEnergy=.445~.514eV observed in B0–B3. Nor can its presence by itself prove why QW4 has >99.97% of QW total radiative recombination. Actual polarization, transport and boundary band bending remain candidates.
+- Terminal `[1] + Done svisual n1_msh.tdr` indicates earlier GUI background job terminated; no SDevice solver run/source modification.
+
+근거:
+- 2026-11-02 사용자 pp2_des.par 실제 grep 출력.
+- General heterostructure Thermionic modeling reference: https://ghzphy.github.io/Sentaurus_Training/sd/sd_4.html
+
+변경:
+- CMP/members/LeeTaekGyu/TIMELINE.md, TEAM_TIMELINE.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md and LIVE_STATE.json updated.
+- No changes to actual deck, original mesh or simulation.
+
+다음:
+- Read-only pp2_des.par polarization/strain parameter locations and imported default provenance; if complete, decide approval-gated, single-variable protected copy polarization interface activation trial. Baseline verdict B, physical FREEZE HOLD.
+
+---
+
+## 2026-11-02T10:53:33Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / POLARIZATION PARAMETER PROVENANCE AUDIT
+상태: OBSERVED SOURCE GREP; DEFAULT LIBRARY NOT YET READ; NO RUN
+
+- 사용자 실제 학교 서버 `pp2_des.par`에 `Piezoelectric|Strain|e31|e33|Psp|Relax|Lattice|Polarization|a0` grep 실행, 결과 global LatticeParameters X=(0,0,-1), Y=(1,0,0) 외 분극 계수 정의 없음.
+- 동시 확인된 `pp2_des.cmd` global Physics에는 `DefaultParametersFromFile`, `Piezoelectric_Polarization(strain activation=0.5)` 있으며 기존 TDR cutline에서 PE_Polarization-X/PE_Charge 확인됨. 따라서 '분극 모델 없음'으로 오해하면 안 됨.
+- 공개 Sentaurus Training Ch16 §16.4.4 https://ghzphy.github.io/Sentaurus_Training/sd/sd_16.html 에 따르면 GaN, AlGaN, InGaN 계열 재료 분극 계수는 MaterialDB 기본 파라미터 파일에 포함되고 DefaultParametersFromFile 플래그로 사용됨. 서버 실제 T-2022.03 파일과 n2 runtime effective parameter origin은 아직 직접 확인 안 됨.
+- FIRST NEXT READ ONLY: STROOT/STRELEASE 환경, $STROOT/tcad/$STRELEASE/lib/sdevice/MaterialDB/의 GaN/InGaN/AlGaN 파라미터 파일 위치/해당 Piezoelectric_Polarization 블록과 n2_des.log 경고 확인. `sdevice -P`는 현 프로젝트 작업 폴더에 models.par 출력을 만들 수 있으니 원본 폴더에서 실행 지양.
+- 결과: QW4 99.97% concentration cause unresolved, baseline physical FREEZE HOLD, no TCAD simulation/deck edit.
+- GitHub updates: LeeTaekGyu/TIMELINE.md, NEXT_ACTIONS.md, LIVE_STATE.md, LIVE_STATE.json.
+
+---
+
+## 2026-11-02T10:57:55Z — TaekGyu0801
+
+[2026-11-02 19:51 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: FIX / Terminal shell syntax compatibility
+상태: OBSERVED ERROR / PROPOSED FIX (NOT YET VERIFIED)
+
+요약:
+- 학교 서버 CMP_BASELINE_2.0.0_V2에서 STROOT/STRELEASE 환경변수를 조회하려고 이전 GPT가 제안한 Bash 방식 fallback substitution 명령 실행 중 `Bad : modifier in $ (-).` 출력.
+- csh/tcsh 스타일 shell이 Bash `${VAR:-fallback}` 문법을 해석하지 못한 경우와 일치하며, 실제 shell 종류는 아직 확인 전. MaterialDB 부재나 SDevice 시뮬레이션 오류로 취급하지 않음.
+- 대체 읽기 전용 명령 제안: `env | grep -E '^(STROOT|STRELEASE)='`. 아직 실행 결과 없음. 출력이 없으면 `which sdevice` 등 경로를 확인할 계획.
+근거: 사용자가 제공한 terminal error text.
+변경: CMP/ERROR_LOG.md, CMP/members/LeeTaekGyu/TIMELINE.md 기록. TCAD 소스/메시/결과 파일 변경 및 새 solver run 없음.
+다음: 사용자 새 env 조회 출력 받아 설치 MaterialDB의 원본 분극 물성 파일 위치 조사. Baseline 판정 B/FREEZE HOLD 유지.
+
+---
+
+## 2026-11-02T11:03:25Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / Sentaurus executable path verification
+상태: OBSERVED / READ ONLY
+
+요약:
+- 학교 서버 `env | grep -E '^(STROOT|STRELEASE)='`는 출력 없음. Shell env에 export된 STROOT/STRELEASE 미확인.
+- User executed `which sdevice`, actual output `/user/tools/synopsys/sentaurus/T-2022.03/bin/sdevice`. Confirms executable location in PATH; does NOT confirm MaterialDB file location or active material constants.
+- No SDevice simulation or source change; current physical Baseline verdict B/FREEZE HOLD, cause QW4 concentration still unresolved.
+
+근거:
+- 이택규 2026-11-02 학교 서버 `which sdevice` terminal output.
+
+변경:
+- CMP/members/LeeTaekGyu/TIMELINE.md
+- CMP/NEXT_ACTIONS.md
+- CMP/.ai-sync/LIVE_STATE.md
+- CMP/.ai-sync/LIVE_STATE.json
+
+다음:
+- User to run READ ONLY `find /user/tools/synopsys/sentaurus/T-2022.03 -maxdepth 8 -type d -name MaterialDB -print` and return output; inspect actual GaN/InGaN default polarization coefficients without editing.
+
+---
+
+## 2026-11-02T11:06:41Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / Installed MaterialDB GaN-family file discovery
+상태: OBSERVED; NO NEW RUN
+
+요약:
+- 실제 서버 기존 설치 MaterialDB 경로 `/user/tools/synopsys/sentaurus/T-2022.03/tcad/T-2022.03/lib/sdevice/MaterialDB` 확인 후, 사용자 `find ... -maxdepth 1 -type f` 출력으로 `GaN.par`, `InGaN.par`, `AlGaN.par`, `AlInGaN.par` 네 파일 존재 확인.
+- MaterialDB 존재와 파일 이름만 검증됨; psp_z/e31/e33/a0/relax 값과 실제 n2 시뮬레이션의 effective runtime provenance는 아직 미검증. 재결합 QW4 ~99.97% 집중 원인 여전히 미확정.
+근거: 이택규 2026-11-02 학교 서버 find 출력.
+변경: LeeTaekGyu/TIMELINE.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md, LIVE_STATE.json 기록. 실제 TCAD 코드/파일 변경 또는 simulation run 없음.
+다음: 읽기 전용 `grep -nEi -C 2 'Piezoelectric|Polarization|psp_z|e31|e33|a0|relax' .../MaterialDB/*GaN.par | head -n 120` 으로 GaN, InGaN, AlGaN, AlInGaN 기본 분극 계수 블록 확인. Baseline B/FREEZE HOLD.
+
+---
+
+## 2026-11-02T11:14:23Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / installed polarization parameters
+상태: OBSERVED partial MaterialDB, NO RUN
+
+요약:
+- Worker 이택규 actual school-server read-only grep of installed T-2022.03 MaterialDB *GaN.par (output truncated by head -n 120): AlGaN.par Piezoelectric_polarization block line1017; formula=1 line1076; relax=0.0 line1078; psp_z(0)=-3.4000e-06, psp_z(1)=-9.0000e-06, B(psp_z(1))=-2.10e-06, C(psp_z(1))=0; e31(0)=-5.2740e-05, e33(0)=8.9460e-05 C/cm^2. GaN.par polarization section heading line737 observed but numeric coefficients not within pasted output; InGaN.par numeric coefficients not within pasted output.
+- Previous n2 3.6V barrier-center Px=+3.4e-06 C/cm^2 equals magnitude of AlGaN.par psp_z(0). Known lattice orientation plausibly reverses sign, but effective runtime source, InGaN polarization, activated interface sheet and QW4 cause remain UNVERIFIED. No new solver run or any source/mesh/material library edits; Baseline B physical FREEZE HOLD.
+
+근거:
+- 사용자 제공 학교 서버 grep 출력 (120 lines, truncated).
+
+변경:
+- GitHub 연구 기록만 변경; TCAD 물성 파일/코드 변경 없음.
+
+다음:
+- NEXT READ ONLY: grep assignment lines for psp_z, e31, e33, a0, a, relax and formula in GaN.par, InGaN.par, AlGaN.par WITHOUT head truncation; check InGaN x=0.15 and runtime provenance. No physics perturbation without approval.
+
+---
+
+## 2026-11-02T11:16:29Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / MaterialDB GaN polarization exact values
+상태: OBSERVED USER SERVER SOURCE; CAUSE UNRESOLVED; NO RUN
+
+요약:
+- OBSERVED USER SERVER grep (read only, no solver run): GaN.par Piezoelectric_Polarization block lines 793–869: formula=1 (793), relax=0.0 (795), psp_z=-3.4000e-06 C/cm^2 (820), e31=-5.2740e-05 C/cm^2 (861), e33=+8.9460e-05 C/cm^2 (863), piezo block a0=3.189 Å and a=3.189 Å (868–869). Distinguish from other GaN.par a0 lines 366/428 outside this block and unrelated model formula 1,1 line530. InGaN.par output only a0(0)=3.5480e-10 m (270), a0(1)=3.1890e-10 m (271), formula=2,2 (356; owning model block NOT established); grep yielded no anchored psp_z/e31/e33/relax assignments for InGaN. This does NOT prove InGaN lacks effective polarization coefficients or that formula=2,2 is polarization formula. AlGaN.par previously observed polar formula=1/relax=0 and psp_z(0)=-3.4e-06 etc.
+- DERIVED / LIMITED: archived n2 3.6V GaN barrier center Px=+3.4e-06 C/cm^2 has same magnitude as GaN.par psp_z=-3.4e-06 and sign is compatible with source lattice orientation X=(0,0,-1); this supports but does not independently prove effective runtime coefficient origin or all interface sheet charges. QW1–4 center Px previously matched +8.2162955e-07 and xMoleFraction 0.15, so a QW4-only DIFFERENT BULK polarization coefficient is not supported by center data. Physical QW4 ~99.97% radiative concentration causality remains UNRESOLVED. Baseline verdict B, physical FREEZE HOLD, no source/library edits.
+
+근거:
+- User pasted exact GaN.par/InGaN.par/AlGaN.par grep output, T-2022.03 installed MaterialDB.
+
+변경:
+- GitHub CMP records only. No solver run, installed MaterialDB or baseline deck changes.
+
+다음:
+- NEXT READ ONLY: inspect complete InGaN.par context to determine whether Piezoelectric_Polarization block/psp/e31/e33 data actually exist and how InGaN coefficients are inherited/interpolated; suggested grep -nEi -C 2 'Piezoelectric_Polarization|psp_|relax|e31|e33|d31|d33' .../MaterialDB/InGaN.par (no head) and targeted file section context. Only then compare QW center Px and runtime parameter inheritance; do not run source changes or 0.5→0 activation test without approval.
+
+---
+
+## 2026-11-02T11:22:05Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / installed InGaN default model inspection
+상태: OBSERVED; NO NEW RUN
+
+요약:
+- 이택규 학교 서버에서 설치된 T-2022.03 MaterialDB/InGaN.par를 읽기 전용 grep -nEi 'Piezoelectric_Polarization|psp_|relax|e31|e33|d31|d33|strain' 실행. 실제 출력은 line132 주석 EnergyRelaxationTime, line238 QWStrain, line242 주석 StrainConstant eps(formula=1) or lattice constant 3곳뿐이다. 검색어와 일치하는 명시적 Piezoelectric_Polarization/psp/e31/e33/relax 정의는 이 파일의 이번 검색에서 발견되지 않음 (OBSERVED). QWStrain의 구체 내용·분극 모델과의 연결은 아직 미확인.
+- InGaN.par 직접 정의 부재 != 실제 SDevice 런타임에서 InGaN 분극 비활성. 기존 n2 3.6V cutline QW1–QW4 모두 Px=+8.2162955e-07 C/cm2 관찰. 물성 상속, 혼합물 interpolation, 명령/기본 물성 중 어떤 출처인지는 아직 검증되지 않음; QW4 약99.97% 집중 원인은 UNRESOLVED. Baseline B physical FREEZE HOLD; 새 simulation 및 source 변경 없음.
+
+근거:
+- 사용자 제공 학교 서버 grep 원문.
+
+변경:
+- 연구 기록만 갱신. 실제 baseline/library/mesh 수정 없음.
+
+다음:
+- 다음 READ ONLY: sed -n '225,285p' /user/tools/synopsys/sentaurus/T-2022.03/tcad/T-2022.03/lib/sdevice/MaterialDB/InGaN.par 로 QWStrain 원문(블록 경계·의미) 확인. 이후 런타임 분극 파라미터 계승 출처 확인; 단일 변수 실험 승인 전 실시 금지.
+
+---
+
+## 2026-11-02T11:24:39Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / InGaN QWStrain block
+상태: OBSERVED + unresolved; NO RUN
+
+요약:
+- OBSERVED user pasted read-only `sed -n '225,285p'` installed Sentaurus T-2022.03 MaterialDB/InGaN.par. `QWStrain` block starts at line 238; comments state it models strain-dependent quantum-well subband energy shifts, and wurtzite lattice constants a0/c0 require formula 2. Reported `a0(0)=3.5480e-10 m`=3.548 Angstrom, `a0(1)=3.1890e-10 m`=3.189 Angstrom, `eps(0)=eps(1)=0`, and `a_c(0)=a_c(1)=-4.08 eV`. `* Default formula = 1` is a COMMENT, not proof of active formula. This QWStrain block is not the Piezoelectric_Polarization block; the output lacks polarization-specific psp/e31/e33. `eps=0` does NOT establish zero actual device strain without model and context.
+- Previous grep found no explicit InGaN.par Piezoelectric_Polarization section; nonzero InGaN QW Px=+8.2162955e-07 C/cm2 persists in existing n2 cutline (same all QWs). It is possible that model coefficients are inherited/interpolated from endpoint material files, but T-2022.03 actual implementation and provenance have NOT been verified. Do NOT confuse QWStrain parameter a0 with piezo polarization model a0, or assert QWStrain is necessarily enabled. QW4 ~99.97% radiative localization remains causally unresolved. No new TCAD run or source changes. Baseline B physical FREEZE HOLD.
+
+근거:
+- 사용자 제공 설치 T-2022.03 InGaN.par lines225–285 출력.
+
+변경:
+- 연구 기록만 변경; device deck / MaterialDB / solver run 변경 없음.
+
+다음:
+- NEXT READ ONLY: inspect InGaN.par top header for component material and molefraction interpolation convention, check availability of installed InN.par and its polarization block, and compare GaN.par counterpart. Determine actual runtime inherited coefficients/overrides before interpreting QW Px or proposing parameter sensitivity tests; no baseline modification.
+
+---
+
+## 2026-11-02T11:27:47Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT
+상태: OBSERVED / UNRESOLVED, NO RUN
+
+InGaN.par 헤더에서 x=0 GaN, x=1 InN, 기본 보간식 P=(1-x)P(GaN)+xP(InN)을 확인함. 이전 QWStrain a0(0)=3.548 Å, a0(1)=3.189 Å는 헤더 대응과 반대여서 블록별 규칙/실제 활성 여부 추가 확인 필요. QW4 재결합 집중 원인은 미확정. 소스 수정·시뮬레이션 없음.
+다음: InN.par 분극 계수 읽기 전용 확인.
+
+---
+
+## 2026-11-02T11:30:08Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / installed InN polarization coefficients
+상태: OBSERVED + CONDITIONAL DERIVED; NO RUN
+
+요약:
+- OBSERVED USER SERVER: read-only grep installed T-2022.03 MaterialDB/InN.par found Piezoelectric_Polarization block beginning line525; psp_z=-4.2000e-06 C/cm2 line622, e31=-4.8586e-05 C/cm2 line632, e33=+1.0629e-04 C/cm2 line634, a=3.54 Angstrom line640 and relax=0.1 line641. Previously independently read installed GaN.par piezo block: psp_z=-3.4000e-06, e31=-5.2740e-05, e33=+8.9460e-05 C/cm2, relax=0, a=3.189 Angstrom. InGaN.par header defines x=0 GaN, x=1 InN and describes default linear interpolation for some material-dependent models, with explicit overrides possible.
+- DERIVED CONDITIONAL: IF InGaN piezo-model spontaneous-polarization endpoint coefficients inherit linear GaN/InN values, at x=0.15 psp_z=0.85*(-3.4e-6)+0.15*(-4.2e-6)=-3.52e-6 C/cm2. Prior n2 QW1-4 center PE_Polarization-X=+8.2162955e-07 C/cm2 vs hypothetical orientation-flipped spontaneous-only +3.52e-6 gives magnitude difference 2.69837045e-6 C/cm2. This does not prove a specific piezoelectric contribution, runtime parameter origin, interface activation or physical cause; strain and activated polarization model need verification. Previous observed barrier-center Px=+3.4e-06. Do not assume QW4-specific material constants. Baseline B, physical FREEZE HOLD. NO NEW SDEVICE RUN, NO DECK OR LIBRARY EDIT.
+
+근거:
+- 사용자 제공 학교 서버 설치 InN.par grep 출력 및 앞선 GaN.par/기존 n2 cutline 기록.
+변경:
+- 연구 상태 기록만, baseline/lib/solver/mesh 변경 없음.
+다음:
+- NEXT READ ONLY: inspect installed InN.par polarization block around lines605–645 to identify formula/a0/a and strain model assumptions, then verify effective runtime InGaN polarization coefficients/strain/activation using n2 logs and available parameter sources; avoid new simulation or changing physical baseline without explicit user approval.
+
+---
+
+## 2026-11-02T11:33:01Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / Installed InN piezo strain parameters
+상태: OBSERVED; DERIVED CONDITIONALLY; NO RUN
+
+요약:
+- 사용자 서버 InN.par 600-645행에서 psp_z=-4.2e-6 C/cm², e31=-4.8586e-5, e33=1.0629e-4 C/cm², a0=3.189 Å, a=3.54 Å, relax=0.1, c11=2.23e11/c12=1.15e11/c13=9.2e10/c33=2.24e11 Pa 확인.
+- 순수 InN 계수와 단순 변형식 조건에서 strain 약 -0.08924이며, 이 값을 InGaN x=0.15에 직접 사용하면 안 됨.
+- InGaN QW 분극의 압전 상쇄 가능성은 가설이며 QW4 집중 원인 미확정.
+
+변경: 연구 로그만 갱신, 물성/덱/실행 변경 없음.
+다음: InN 분극 formula와 InGaN 실제 런타임 물성 출처 확인(읽기 전용).
+
+---
+
+## 2026-11-02T11:35:41Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / InN piezo docs
+상태: OBSERVED, NO RUN
+
+사용자 T-2022.03 InN.par 570–600행에서 stress→crystal 변환, strain/stress 분극 계산, crystal→simulation 변환 설명을 확인. 이 범위에는 formula 숫자 설정이 없으며, 예시 LatticeParameters는 실제 n2 설정이 아님. 이전 읽기 범위 제안을 정정함. 활성 formula 및 QW4 집중 원인 미확정.
+다음: InN.par Piezoelectric_Polarization 525–645행의 직접 formula 지정 여부를 읽기 전용 검사. Baseline B/FREEZE HOLD, 코드/실행 변경 없음.
+
+---
+
+## 2026-11-02T11:38:01Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / InN material formula assignment
+상태: OBSERVED; DEFAULT FORMULA UNRESOLVED; NO RUN
+
+학교 서버에서 InN.par Piezoelectric_Polarization 525–645행 대상으로 `formula|a0|a|relax`의 실제 대입문 검색 결과: 639행 a0=3.189 Å, 640행 a=3.54 Å, 641행 relax=0.1만 확인. 해당 블록에 formula 직접 지정 없음. 런타임 기본 formula 및 InGaN 상속 출처는 확인되지 않음. QW4 약99.97% 재결합 집중 원인 미확정, Baseline B FREEZE HOLD.
+변경: 연구 기록만. TCAD 코드·라이브러리·solver 실행 변경 없음.
+다음: 설치 InN.par 525–570행의 설명/기본값을 읽기 전용 확인.
+
+---
+
+## 2026-11-02T11:41:10Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: HANDOFF
+상태: OBSERVED, NO RUN
+
+InN.par 525–570행에서 strain 분극 계산식 확인. 실제 n2 적용 모델 및 QW4 원인은 미확정. 사용자 요청으로 반복 MaterialDB 검색은 중단하고 기존 n2 진단으로 넘어감. Baseline 변경 없음.
+
+---
+
+## 2026-11-02T11:47:24Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT
+상태: OBSERVED + DERIVED; NO RUN
+
+기존 n2 3.6V Y=1um QW1 fine CSV: deltaJn=0.0001961119898955, qIntR=0.0001961108057556653 A/cm2, closure 99.999396%. QW4 fine: deltaJn=1.8217438432, qIntR=1.8216004716537455 A/cm2, closure 99.992130%. QW4/QW1 deltaJn≈9289.30. 동일 명령 두 번 실행은 동일 결과일 뿐 새 시뮬레이션 아님. 비교 구간에 장벽 포함, 2D 횡방향 전류 미포함. 원인 미확정, baseline freeze 유지.
+다음: 기존 CSV에서 QW1/QW4 중심 전자·정공밀도와 준페르미/전류 비교(읽기 전용).
+
+---
+
+## 2026-11-02T11:50:24Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT
+상태: OBSERVED + DERIVED; NO RUN
+
+n2 3.6V Y=1um 기존 CSV 중심값 QW1 n=4.8448286e15,p=3.1562523e15, Ec-eQF=.22401485eV, hQF-Ev=.2376784eV, Jn=8.8535045e-5,Jp=1.823539 A/cm2. QW4 n=1.0123225e18,p=1.5189656e18, Ec-eQF=.08558352eV,hQF-Ev=.0775602eV, Jn=.96137367,Jp=.86228261. QW4/QW1 n=208.95x, p=481.26x, n*p=100558x. 국소 캐리어 집중 확인, 원인(수송 장벽 vs 재결합 sink)은 미확정. 새 실험/소스 수정 없음.
+다음: 기존 QW fine CSV에서 Radiative/(n*p) 비교 및 interwell 수송 프로파일 확인. Baseline B/FREEZE HOLD.
+
+---
+
+## 2026-11-02T11:53:15Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / QW1 vs QW4 Radiative/(n*p)
+상태: OBSERVED + DERIVED; NO RUN
+
+기존 3.6V n2 Y=1um QW1 중앙 Rad=3.0583003e20, Rad/(np)=2.000000011528524e-11; QW4 중앙 Rad=3.075366e25, Rad/(np)=1.999999930276919e-11 (cm3/s). QW4/QW1 Rad 비율 100558.0126, np 비율 100558.0167로 일치. 두 중심점에서 특별한 QW4 방사계수 증가 증거가 없고, 주된 차이는 캐리어 n*p. 왜 QW4에 n,p가 축적되는지는 미확정.
+
+근거: 사용자 제공 기존 CSV read-only Python 출력.
+변경: 연구 기록만 갱신, TCAD 소스/MaterialDB/solver 변경 없음.
+다음: 기존 n2 데이터로 우물간 밴드와 전류 수송 원인 검사. Baseline FREEZE HOLD.
+
+---
+
+## 2026-11-02T11:57:06Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / DECISION
+상태: OBSERVED + PROPOSED; NO RUN
+
+기존 n2 3.6V Y=1um QF window 확인: B1 ΔeQF=+0.01090327 eV, max(Ec-eQF)=0.61493831 eV; B2 ΔeQF=+0.25042766 eV, max=0.594776913 eV; B3 ΔeQF=+0.00991758 eV, max=0.55807997 eV. 수동 지정 X 범위가 엄격한 barrier 영역인지 미검증이고, 이것만으로 B2 병목 인과를 확정할 수 없음.
+중복된 읽기 전용 감사가 과도하여 이를 중단하기로 함. QW4 99.97% 재결합 집중, 국소 연속방정식 수지, n/p 밀도 집중, 두 중심점 Radiative/(np) 일치는 확보. 근본 원인 여전히 미확정. 다음은 모델 의미·변수 동결 확인 후 사용자가 승인할 경우에만 원본 보호 복사본에서 polarization activation 단일변수 대조 실험 검토. Baseline B physical FREEZE HOLD, 현재 새 코드·실행 없음.
+
+---
+
+## 2026-11-02T13:24:57Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: HANDOFF / DECISION REQUEST
+상태: PROPOSED (NOT SENT TO CLAUDE); NO RUN
+
+사용자가 반복적인 QW4 CSV 검증을 중단하고 Claude의 독립 검토를 요청. 기존 n2/n6 QW4 4QW 방사 비중 99.9688%/99.9929%, QW1/QW4 중심 Radiative/(np) 동일 약 2e-11 cm3/s, 양쪽 local continuity 폐합, QW4 n/p 집중은 확인됨. 근본 원인은 아직 미확정.
+Claude에게 요청할 것: 지금까지의 사실·추정 분리, 최소 1회 통제 대조실험의 필요성과 해석가능성, Project A의 Baseline 사용 go/no-go 기준. 복사본 분극 activation 0.5→0은 검토 후보일 뿐 실행 승인 아님. 물성/메시/덱 변경 및 새 simulation 없음.
+인수인계 요약: CMP/.ai-sync/RELAY.md
+
+---
+
+## 2026-11-02T13:41:49Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규
+AI: ChatGPT (Claude 인계 내용 기록)
+구분: DECISION / HANDOFF
+상태: PROPOSED / PENDING_USER_DECISION / NO RUN
+
+PolAct 진단 실험 전 이택규 미선택 사항 2건:
+1. 판정 기준을 Claude 제안 그대로 쓸지 수정할지: H1 QW1 JnX/J>=1% & QW4<80%; H2 JnX/J<0.1% & QW4>99%; Project A 동일 전류 IQE_sim Trap 감소효과 부호 일치/상대차 제안 +/-25%. 모두 heuristic이며 실험 전에 값 확정 필요.
+2. 실험 범위: n2 + n6 두 노드 또는 n2 먼저 (이후 n6 추가). 선택 전, 실행 승인 전.
+
+원본 Baseline 보호. PolAct 0.5->0 진단은 global activation 변경(EBL 영향도 있음), PolAct=0을 Baseline 후보로 보지 않음. 실행 전 기존 plt 동일 전류 IQE_sim READ ONLY 분석과 원본/복사본 pp diff 검증 필요. 기존 QW4 CSV sheet 적분은 이번 결정상 불필요. Baseline B / FREEZE HOLD 유지. 새 실행·코드 변경 없음.
+
+기록: CMP/NEXT_ACTIONS.md 및 CMP/.ai-sync/LIVE_STATE.md (최신본 재확인).
+
+---
+
+## 2026-11-02T13:48:14Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: PROGRESS / PRE-RUN HANDOFF
+상태: PROPOSED; NO RUN
+
+사용자가 PolAct 보호 복사본 진단을 시작할지 질문. ChatGPT는 원본 보존, 실제 덱 바인딩/기존 n2·n6 PLT 동일 전류 IQE_sim 선검증, SWB 복사본 PolAct 0.5→0만 변경 후 pp diff 확인, n2부터 실행해 n6로 이어지는 방식을 권고. Claude 판정 gate 최종 채택 및 n2/n6 범위는 사용자 최종 확정 전이다. 학교 서버 직접 접속/코드 변경/실험 실행 없음. Baseline B FREEZE HOLD 유지.
+
+기록: CMP/NEXT_ACTIONS.md, CMP/.ai-sync/LIVE_STATE.md
+
+---
+
+## 2026-11-02T13:50:33Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: NEXT_ACTION / HANDOFF
+상태: PROPOSED; NO RUN
+
+이택규가 신규 SWB 프로젝트를 수동으로 만들고 코드/파라미터를 직접 붙여넣는 방식으로 진행하겠다고 결정. 권고: 원본 CMP_BASELINE_2.0.0_V2 보호, 원본 전체 SDE/SDevice/.par 및 SWB 노드 파라미터를 동일하게 옮기고 PolAct 0.5→0만 변경. 새 이름 후보 CMP_BASELINE_2.1.0_POL0DIAG(학교 서버 중복 미확인). 수작업 복사 때문에 특히 node topology/mesh/reference 및 pp diff를 반드시 확인한 후에만 n2 진단 실행, 이후 n6 검토. 사용자 판정 기준값 확정 여부/실행 여부는 여전히 미확인. 실제 변경 및 solver run 확인 없음. Baseline B/FREEZE HOLD.
+
+변경: CMP/NEXT_ACTIONS.md, CMP/.ai-sync/LIVE_STATE.md
+
+---
+
+## 2026-11-02T13:55:35Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: PROGRESS / PRE-RUN
+상태: USER-REPORTED OBSERVED; NO RUN
+
+이택규가 SWB 원본 CMP_BASELINE_2.0.0_V2를 복사한 뒤 CMP_BASELINE_2.1.0_POL0DIAG으로 새 프로젝트를 만들었다고 보고. 학교 서버 실물 폴더/코드/파라미터 일치 여부 및 PolAct 값 변경 여부는 아직 직접 검증하지 못함.
+다음: 새 복사본 Parameters의 PolAct만 0.5→0으로 변경하고 값 스크린샷 확인; 이후 복제된 SDE/SDevice/PAR/SWB 노드 동일성 및 preprocessed pp diff, 기존 n2/n6 동일 전류 IQE_sim 기준 및 사전 판정 기준을 확인하기 전 Run 금지. 원본 보호, Baseline B/FREEZE HOLD. 신규 solver 실행 결과 없음.
+변경: LeeTaekGyu/TIMELINE.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md (상태 기록만).
+
+---
+
+## 2026-11-02T13:58:23Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: PROGRESS / PRE-RUN
+상태: OBSERVED (SWB UI only); NO RUN
+
+사용자가 새 SWB 프로젝트 CMP_BASELINE_2.1.0_POL0DIAG의 파라미터 표 스크린샷 제공. PolAct 값이 두 행 모두 0임을 확인: NtSide=0 / 1e18, Wedge=0.1, Bspan=0, NCEdge=0, V1=2.0, Vmax=3.6, NPlot=8/0. 사용자는 PolAct만 변경했다고 보고했지만 실제 원본-복사본 입력 비교나 preprocessed pp diff는 아직 미확인. solver run 및 새 결과 없음.
+
+다음 READ ONLY: 복사본 SDevice 소스에서 PolAct/activation 바인딩 확인 후 preprocess 실효값과 원본 diff 검증. 기존 n2/n6 동일전류 IQE_sim 및 Claude 판정 기준 사전 확정 필요. 원본 보호 및 B/FREEZE HOLD, global EBL 계면 영향 주의.
+기록: LeeTaekGyu/TIMELINE.md, NEXT_ACTIONS.md, LIVE_STATE.md
+
+---
+
+## 2026-11-02T14:05:27Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: PRE-RUN AUDIT / BLOCKER
+상태: OBSERVED uploaded code + prior server evidence; UNRESOLVED actual clone; NO RUN
+
+사용자가 SDevice 텍스트 파일을 업로드하여 코드 수정 필요 여부 검토 요청. 실제 파일 38행 Piezoelectric_Polarization(strain activation=@PolAct@)이므로 SWB PolAct=0 파라미터 연결 구문은 존재함. 다만 파일 헤더는 2026-10-13 PROPOSED/NOT RUN이고 Math Iterations=20 (275행). 반면 실제 기존 V2.1 학교 서버 pp2_des.cmd/pp6_des.cmd는 2026-10-31 관측된 global Iterations=12. **서로 다른 artifacts 간 불일치**이며 현재 복사본이 실제 20으로 설정됐는지는 미확인. 실험 전 원본/복사본 실제 SDevice 원본과 pp diff로 수치 설정 동일성 확인 필요. 신규 solver run·소스 수정 없음. Baseline B/FREEZE HOLD.
+
+기록: Lee TIMELINE, NEXT_ACTIONS, LIVE_STATE, ERROR_LOG.
+
+---
+
+## 2026-11-02T14:09:19Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: PRE-RUN AUDIT / FIX PROPOSED
+상태: OBSERVED actual school-server diff; NO RUN
+
+이택규가 직접 원본 V2 sdevice_des.cmd와 신규 CMP_BASELINE_2.1.0_POL0DIAG sdevice_des.cmd의 diff 제공. 원본 Math Iterations=12, clone=20으로 비교실험 통제 변수 위반 확인. Piezoelectric_Polarization(strain activation=@PolAct@) 매크로는 동일하며 나머지 diff는 출력상 주석 및 포맷 변화. 안전 조치 제안(미실행): 복사본 SDevice만 백업한 후 기존 원본 SDevice 입력 파일을 복사본으로 복사하고 cmp 확인. SWB PolAct=0 설정 유지, 이후 preprocess pp에서 activation=0, Iterations=12 및 다른 입력 동일성 확인. 원본 프로젝트 수정/새 solver 실행 없음; Baseline B / FREEZE HOLD.
+기록: Lee TIMELINE, ERROR_LOG, NEXT_ACTIONS, LIVE_STATE.
+
+---
+
+## 2026-11-02T14:19:58Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: PROGRESS / PRE-RUN
+상태: USER-REPORTED SOURCE EDIT; NOT VERIFIED; NO RUN
+
+이택규가 신규 CMP_BASELINE_2.1.0_POL0DIAG의 SDevice 전체 코드를 ChatGPT 제공 버전(업로드 SDevice 원문에서 Math Iterations 20→12, 다른 모델/수송/재결합/Solve 유지)으로 직접 교체했다고 보고. 이전 SWB screenshot에서 PolAct=0 양쪽 행 확인. 수정된 실제 서버 저장 파일과 pp, 다른 원본 대비 입력 동일성은 아직 다시 확인하지 않았으며 신규 solver run 없음.
+다음: 새 SDevice 저장 파일 읽기전용 grep → preprocess-only에서 activation=0 / Iterations=12 확인, SDE/PAR/mesh/다른 변수 검증, 기존 PLT 동일전류 IQE_sim 기준과 해석 gate 고정 후 solver 진행 검토. 원본 Baseline 보존, Baseline B/FREEZE HOLD.
+기록: LeeTaekGyu/TIMELINE.md, NEXT_ACTIONS.md, LIVE_STATE.md
+
+---
+
+## 2026-11-02T14:21:36Z — TaekGyu0801
+
+[2026-11-02 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: SOURCE VERIFICATION / PRE-RUN
+상태: OBSERVED user terminal; NO RUN
+
+새 프로젝트 ~/CMP_BASELINE_2.1.0_POL0DIAG 실제 sdevice_des.cmd 저장 파일에서 grep 검증 완료: line 39 Piezoelectric_Polarization( strain activation=@PolAct@ ), line 276 global Iterations = 12. 즉 PolAct SWB 매크로 연결 및 원본과 같은 Math iteration 횟수의 저장 입력이 확인됨. 기존 SWB 화면은 양 노드 PolAct=0이나 preprocess 된 pp의 실제 activation 값은 아직 미확인.
+
+다음 READ ONLY: 새 프로젝트의 pp2_des.cmd/pp6_des.cmd 존재 확인(ls), 이후 pp에서 activation=0 및 Iterations=12 검사(없다면 SWB preprocess-only). 원본/복제본 다른 SDE/PAR/mesh 등 유효 입력 비교, 기존 동일 전류 IQE_sim/사전 판정 임계값 채택이 남아 있음. No solver run, Baseline B physical FREEZE HOLD.
+기록: Lee TIMELINE, LIVE_STATE, NEXT_ACTIONS.
+
+---
+
+## 2026-11-02T14:27:22Z — TaekGyu0801
+
+[2026-11-02 KST] 이택규 / ChatGPT — SHELL COMMAND ERROR, NO RUN
+사용자가 POL0DIAG 서버 터미널에서 assistant가 제공한 Bash for/do/done을 실행했으나 `for: Command not found`, `do: Command not found`, `$f: Undefined variable` 및 `else?` 보조 프롬프트 관측. 학교 서버 로그인 쉘은 csh/tcsh 계열 동작이므로 assistant 명령이 비호환. TCAD 오류/실행/소스 수정 아님. 사용자에게 Ctrl+C로 현재 미완성 문법 종료 후 `find . -maxdepth 1 -name 'pp*_des.cmd' -print` 한 줄로 새 프로젝트의 전처리 파일 존재 여부를 읽기 전용 검사하도록 안내. 결과 미수신, Baseline B/FREEZE HOLD. GitHub ERROR_LOG, NEXT_ACTIONS, LIVE_STATE 갱신.
+
+---
+
+## 2026-11-02T14:28:36Z — TaekGyu0801
+
+[2026-11-02 KST] 이택규 — PRE-RUN clarification (NO RUN): User ran `find . -maxdepth 1 -name 'pp*_des.cmd' -print` at home directory (`[semi437@ssudisu3 ~]$`), not in `CMP_BASELINE_2.1.0_POL0DIAG`. Therefore the blank output does NOT prove project pp files are absent. Corrected next command: `cd ~/CMP_BASELINE_2.1.0_POL0DIAG && find . -maxdepth 1 -name 'pp*_des.cmd' -print`. Pending actual project-local output. No solver run. Baseline B/FREEZE HOLD. LIVE_STATE.md updated, NEXT_ACTIONS.md write attempted but blocked by tool safety check; no claim of save to NEXT_ACTIONS.
+
+---
+
+## 2026-11-02T14:35:03Z — TaekGyu0801
+
+[2026-11-02 23:33 KST] 이택규 / ChatGPT — PRE-RUN INTENT / NO RUN VERIFIED
+이택규가 보호 복사본 CMP_BASELINE_2.1.0_POL0DIAG을 직접 실행하려 한다고 밝히며 문제 여부 질문. 저장 SDevice의 `Piezoelectric_Polarization(strain activation=@PolAct@)` 및 Math `Iterations=12`, SWB PolAct=0 UI는 확인됨. 그러나 실제 SDE/PAR/mesh/노드/pp 동등성, 이전 n2/n6 동일 전류 IQE_sim, 판정 게이트 사전 채택 등 미검증으로 무오류를 보증할 수 없음. n2(NtSide=0) 먼저 실행해 생성된 pp activation=0/Iterations=12 및 n2_des.log 수렴 확인 후 n6 판단 권고. 새 실행 시작·완료 증거 아직 없음. PolAct=0은 global EBL 영향이 있는 진단 조건; 원본 Baseline B/FREEZE HOLD 유지. LIVE_STATE.md와 NEXT_ACTIONS.md 기록.
+
+---

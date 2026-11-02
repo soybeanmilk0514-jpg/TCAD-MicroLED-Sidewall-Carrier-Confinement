@@ -1,3 +1,24 @@
+## 2026-11-02 — ChatGPT bash for-loop incompatible with school csh/tcsh prompt (OBSERVED; GUIDANCE ERROR)
+- 이택규가 `CMP_BASELINE_2.1.0_POL0DIAG` 터미널에서 ChatGPT 제공 Bash `for f in ...; do ...; done`을 실행: `for: Command not found.`, `do: Command not found.`, `f: Undefined variable.`, 이후 `else?` 보조 프롬프트. 이 서버 로그인 쉘은 csh/tcsh 계열 문법으로 관측됨; 당시 ChatGPT 명령어가 호환되지 않았음. **TCAD solver 오류 아님**, 파일/파라미터 변경 및 새 시뮬레이션 없음.
+- CORRECTION: `Ctrl+C`로 미완성 `else?` 구문을 취소하고 정상 프롬프트 복귀. bash 문법 없이 읽기 전용 `find . -maxdepth 1 -name 'pp*_des.cmd' -print` 한 줄로 기존 전처리 파일 존재 여부 확인 요청. 결과 아직 미제공; 새 프로젝트 pp 파일 존재 여부 미확정.
+- FUTURE: 학교 서버에서는 Bash 반복문, `$f` 확장을 가정하지 말 것. 필요한 쉘 종류 확인 후 해당 쉘 문법 또는 공통 POSIX 실행 파일 단일 명령 사용.
+
+## 2026-11-02 — POL0DIAG live diff confirms unintended Math Iterations 20 (OBSERVED / PRE-RUN)
+- 이택규 실제 서버 `diff -u` 출력: 원본 `CMP_BASELINE_2.0.0_V2/sdevice_des.cmd` `Iterations = 12` vs 새 `CMP_BASELINE_2.1.0_POL0DIAG/sdevice_des.cmd` `Iterations = 20`. 분극 매크로 `activation=@PolAct@`는 동일. 나머지 출력 차이는 주석/개행 및 Trap 구문의 멀티라인 포맷이며 실행 모델 차이로 단정할 근거 없음.
+- **원인/상태:** 복제본이 원본과 byte-identical 코드가 아니라는 점 확인; 한 변수 실험 전 수정 필요. 솔버 오류 아님, 아직 새 실험 없음. **FIX PROPOSED (NOT APPLIED):** clone SDevice 파일 백업 후 원본 파일을 clone에 복사, `cmp` 및 preprocessed `pp`에서 Iterations=12/activation=0 검증. `PolAct=0`은 SWB table에 설정된 상태, 원본 유지.
+
+## 2026-11-02 — Potential PolAct diagnostic copy config mismatch (20 vs 12) (PRE-RUN, UNRESOLVED)
+- User-provided V2 SDevice text: source header `PROPOSED / NOT RUN` (2026-10-13); global Math `Iterations=20` at line275; `Piezoelectric_Polarization(strain activation=@PolAct@)` line38.
+- GitHub historic direct server read-only (2026-10-31): original V2.1 `pp2_des.cmd` and `pp6_des.cmd` global `Iterations=12` at line174. **Risk:** if user copies older unexecuted template to new POL0DIAG project, more than polarization changes; invalidates one-variable comparison. No proof live clone actually contains 20.
+- Resolution pending: compare actual old/new editable SDevice source and preprocessed values; enforce identical solver controls. This is **not a solver failure** and no new run is reported. Original Baseline B / FREEZE HOLD.
+
+## 2026-11-02 — Lee MaterialDB env lookup used Bash substitution in csh-like shell (OBSERVED CMD ERROR; FIX PROPOSED)
+- **Context:** 이택규, school server, `CMP_BASELINE_2.0.0_V2`; read-only checking `STROOT` and `STRELEASE` to locate material database.
+- **Error OBSERVED:** `Bad : modifier in $ (-).` after `printf 'STROOT=%s\nSTRELEASE=%s\n' "${STROOT:-미설정}" "${STRELEASE:-미설정}"`. User pasted escaped Korean replacement text but the syntax failure itself concerns `:-`.
+- **Cause/diagnosis:** Bash-style `${VAR:-fallback}` parameter substitution not accepted in csh/tcsh-style shell; shell family is a high-confidence interpretation of error message, not independently checked.
+- **Fix PROPOSED NOT YET VERIFIED:** `env | grep -E '^(STROOT|STRELEASE)='` (does not use `${...}`). If no output, check executable path separately. Error is **not** TCAD solver/physical baseline failure; no simulation or files were modified.
+- **Next:** user to return output from portable environment query, then inspect actual MaterialDB defaults without writing to source project.
+
 ## 2026-10-31 — RESOLVED: interactive Bash heredoc PLT parser succeeded (OBSERVED)
 - Prior `Unmatched '.` and tcsh `?` continuation were purely shell input/quote issues. User entered `bash`, changed directory, ran `python3 - <<'PY'` and ended with standalone `PY`; parser successfully printed n2/n6 final PLT values, including QW4 fractions 99.96877481383976%/99.99294273758203%. The error did not affect SDevice and no file was modified.
 

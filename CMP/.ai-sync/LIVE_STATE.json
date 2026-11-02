@@ -1,4 +1,107 @@
 {
+  "leeClaudeNightDecision20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "source": "User-forwarded Claude 2026-11-02 night independent decision; GPT has not independently read new UG or school-server output",
+    "status": "DECISION_RECORDED; PHYSICAL_CAUSE_UNRESOLVED; NO_NEW_RUN",
+    "decision": "Baseline B / physical FREEZE HOLD; numerical consistency, MQW carrier physics unvalidated",
+    "claudeRead": {
+      "main": "7a3cacd",
+      "issue7": "403_NOT_READ_BY_CLAUDE"
+    },
+    "measurementsFromPriorRuns": {
+      "qw1JnX_A_per_cm2": 0.0000885,
+      "localTotalJ_A_per_cm2": 1.82,
+      "qw1ElectronShareApproxPercent": 0.005,
+      "qwPx_C_per_cm2": 8.216e-7,
+      "barrierPx_C_per_cm2": 0.0000034
+    },
+    "derived": {
+      "interfacePolarizationSheet_cm2": "approx 8.0e12 (activation 0.5; UG eq.1085; not numerically integrated CSV)",
+      "provenance": "Claude calculation; conditional on interface convention"
+    },
+    "hypotheses": [
+      "H1 polarization interface sheet induces electron barrier",
+      "H2 classical drift-diffusion immediate capture + 70:30 offset"
+    ],
+    "superseded": "Earlier QW4_PLAN_20261102 PE_Charge CSV sheet integration step is not required for current decision; material inheritance chase paused",
+    "proposedExperiment": {
+      "type": "protected_copy_single_variable",
+      "polActChange": "0.5 to 0",
+      "nodes": [
+        "n2 Trap OFF first",
+        "n6 Trap ON second if feasible"
+      ],
+      "permission": "REQUIRES_EXPLICIT_LEE_APPROVAL; NOT RUN",
+      "caveat": "global activation also changes EBL interface charge; PolAct=0 diagnostic only"
+    },
+    "proposedHeuristicCriteria": {
+      "H1": "QW1 JnX/J >=1% AND QW4 share <80%",
+      "H2": "QW1 JnX/J <0.1% AND QW4 share >99%",
+      "limitations": "heuristics, not proven causality"
+    },
+    "projectAConditional": {
+      "compare": "same-current IQE_sim trap reduction at PolAct 0.5 and 0",
+      "gate": "same sign, proposed relative difference <=25%",
+      "outcome": "may discuss temporary Baseline C with caveats; no claims on QW distribution, absolute IQE, Vf",
+      "projectB": "separate validation"
+    },
+    "readOnlyNext": [
+      "same-current IQE_sim from pre-existing n2/n6 .plt",
+      "compare protected-copy pp diff; Claude's 21-line claim still unverified"
+    ],
+    "noCodeChanges": true,
+    "noNewSolverRun": true
+  },
+  "leeClaudeQW4Reassessment20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "source": "user-forwarded Claude reassessment, not original CSV/UG raw read by ChatGPT",
+    "status": "PROPOSED_DERIVED_HYPOTHESIS; NO_NEW_RUN",
+    "baselineFreeze": "HOLD",
+    "verdict": "B",
+    "previousResults": {
+      "n2QW4RadPct": 99.96877481383976,
+      "n6QW4RadPct": 99.99294273758203
+    },
+    "claudeReported": {
+      "githubReadUpTo": "8553f64",
+      "issue7": "403_UNREAD_BY_CLAUDE",
+      "officialUGPagesOnly": [
+        58,
+        120,
+        193,
+        871,
+        1003,
+        1072
+      ],
+      "barrierHoleElectronRatioRange": "1e4 to 1e5 (derived from 2026-10-23 table)",
+      "EcMinusEQF_eV": "0.45-0.51",
+      "HQFMinusEv_eV": "0.28-0.30",
+      "hypothesis": "electron transport interwell bottleneck; not experimentally verified",
+      "corrections": [
+        "withdraw old summed ~1.6eV interface loss as double counting",
+        "QF splitting alone is not a proven causal mechanism",
+        "hole transport also has QF drops"
+      ],
+      "proposedSensitivity": "strain activation 0.5->0 on protected copy, NtSide=0, same mesh, only after Lee approval and exact UG semantics check"
+    },
+    "readOnlyFirst": [
+      "verify source and provenance of old QF/polarization CSV",
+      "convert PE_Charge volumetric profile to interface sheet density with correct integration units",
+      "locate QW3/QW4 e/h QF drops",
+      "inspect actual PAR Chi0/Eg0/mumax and n2 runtime log warnings"
+    ],
+    "cautions": [
+      "native 2D A/um is Claude-reported official UG check, not independent verification here",
+      "setting strain activation to zero may not remove spontaneous polarization; validate before proposing full polarization off",
+      "Claude 80%-QW4 and 100x-electron thresholds are heuristic not evidence of causality",
+      "no permission granted to execute model change",
+      "Full/Half and real 4x4um pixel normalization remain unvalidated",
+      "Claude script server_readonly_cmds_20261102.sh not supplied/verified"
+    ],
+    "timelineSection": "CMP/members/LeeTaekGyu/TIMELINE.md 2026-11-02 Claude independent reassessment (verbatim section 6)"
+  },
   "leeN2RuntimeContactAreaFactor20261031": {
     "worker": "이택규",
     "date": "2026-10-31",
@@ -4661,5 +4764,1020 @@
     },
     "caveat": "Center-only Bnp proxy is not 2D recombination integral, causality or calibrated IQE. Nominal centers derived from source layering; GUI region label not re-probed.",
     "next": "Use existing equilibrium/bias Ec, Ev, quasi-Fermi and polarization charge profiles at matched Y=1.0um to investigate both-carrier accumulation toward QW4. No new run or code edits."
+  },
+  "leeQW4CsvFilesFound20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_TERMINAL_FILE_SEARCH; NO_RUN",
+    "project": "/user/semi/semi437/CMP_BASELINE_2.0.0_V2",
+    "filesFound": [
+      "qw4_eq_depth.csv",
+      "qw4_36_qw1fine.csv",
+      "qw4_36_depth.csv",
+      "qw4_36_qw4fine.csv"
+    ],
+    "notFoundWithinSearchScope": "server_readonly_cmds_20261102.sh (find maxdepth4)",
+    "verifiedOnly": "file paths in user terminal output",
+    "notVerified": [
+      "actual CSV schema",
+      "numeric values",
+      "unit mapping",
+      "provenance and completeness",
+      "server-wide script absence"
+    ],
+    "next": "Read-only wc -l and head -n 6 on eq/depth CSV before integration or QF computation",
+    "baselineFreeze": "HOLD",
+    "simulationRun": false,
+    "codeChanged": false
+  },
+  "leeQW4CsvSchemaObserved20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_PASTED_CSV_HEAD_AND_COUNTS; NO_RUN",
+    "run": false,
+    "files": {
+      "qw4_eq_depth.csv": {
+        "lines": 395
+      },
+      "qw4_36_depth.csv": {
+        "lines": 395,
+        "firstData": {
+          "X": 0.14,
+          "Y": 1,
+          "TotalCurrentDensity_X": 1.8236326,
+          "PE_Charge": -550201690000000000000
+        }
+      },
+      "qw4_36_qw1fine.csv": {
+        "lines": 69
+      },
+      "qw4_36_qw4fine.csv": {
+        "lines": 65
+      }
+    },
+    "format": "CSV first header row, second metadata/none row, subsequent numeric rows; 393/393/67/63 nominal rows pending total content validation",
+    "observedFields": [
+      "PE_Charge",
+      "PE_Polarization-X",
+      "ConductionBandEnergy",
+      "ValenceBandEnergy",
+      "eQuasiFermiEnergy",
+      "hQuasiFermiEnergy",
+      "eDensity",
+      "hDensity",
+      "eCurrentDensity-X",
+      "hCurrentDensity-X",
+      "TotalCurrentDensity-X",
+      "X",
+      "Y",
+      "Distance"
+    ],
+    "interpretation": "3.6V cutline Jx about 1.8236326 numerically consistent with previous conditional 1.8236426 A/cm². PE_Charge is local density, not interface sheet charge; unit and integration must be checked.",
+    "next": "Read-only csv numeric X/Y ranges, numerical row count, current pp1_dvs.cmd MQW stack to identify actual barrier/QW coordinates; then sample and integrate interface charge after unit audit",
+    "baselineFreeze": "HOLD",
+    "warning": "No new simulator run, no physical cause confirmed, Claude hypotheses not validated"
+  },
+  "leeQW4CutlineBoundsAndStack20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_TERMINAL_CSV_BOUNDS_PLUS_SOURCE_DERIVED_REGION_COORDINATES; NO_NEW_RUN",
+    "fileSearchResult": {
+      "eq_depth": {
+        "N": 392,
+        "X": [
+          0.13988867,
+          0.2973125
+        ],
+        "Y": 1
+      },
+      "bias36_depth": {
+        "N": 392,
+        "X": [
+          0.13988867,
+          0.2973125
+        ],
+        "Y": 1
+      },
+      "qw1fine": {
+        "N": 66,
+        "X": [
+          0.1800625,
+          0.19995312
+        ],
+        "Y": 1
+      },
+      "qw4fine": {
+        "N": 62,
+        "X": [
+          0.25543749,
+          0.27428126
+        ],
+        "Y": 1
+      }
+    },
+    "SDEStackSource": "pp1_dvs.cmd lines 60-100, P(lat,dep,z) => X is depth; stack top at 0",
+    "qwDepth_um": {
+      "QW1": [
+        0.188,
+        0.191
+      ],
+      "QW2": [
+        0.213,
+        0.216
+      ],
+      "QW3": [
+        0.238,
+        0.241
+      ],
+      "QW4": [
+        0.263,
+        0.266
+      ]
+    },
+    "barrierDepth_um": {
+      "B0": [
+        0.166,
+        0.188
+      ],
+      "B1": [
+        0.191,
+        0.213
+      ],
+      "B2": [
+        0.216,
+        0.238
+      ],
+      "B3": [
+        0.241,
+        0.263
+      ],
+      "B4": [
+        0.266,
+        0.288
+      ]
+    },
+    "terminalInputError": "Repeated concatenated python3 -c command produced SyntaxError, immediately rerun successful; not device error",
+    "caveats": [
+      "previous older cutline QW location reports could differ by 0.020um, verify source before comparing",
+      "no QW1-4 quasi-Fermi/current values were computed in current user output"
+    ],
+    "next": "Read-only nearest-center B0-B3/QW1-QW4 numerical values for n,p, Ec-eQF, hQF-Ev, JnX, JpX from qw4_36_depth.csv",
+    "baselineFreeze": "HOLD",
+    "newRun": false
+  },
+  "leeQW4BarrierCarrierCurrentSample20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_TERMINAL_PLUS_ARITHMETIC_DERIVED; NO_NEW_RUN",
+    "source": "read-only python3 -c sampling original qw4_36_depth.csv at pp1_dvs.cmd derived region centers; Y=1um",
+    "points": [
+      {
+        "region": "B0",
+        "X_um": 0.17692187,
+        "n": 6810877400,
+        "p": 401803130000000,
+        "EcMinusEFn_eV": 0.507,
+        "FHpMinusEv_eV": 0.3012,
+        "JnX": 3.7401938e-9,
+        "JpX": 1.8236277
+      },
+      {
+        "region": "QW1",
+        "X_um": 0.18948437,
+        "n": 4844828600000000,
+        "p": 3156252300000000,
+        "EcMinusEFn_eV": 0.224,
+        "FHpMinusEv_eV": 0.2377,
+        "JnX": 0.000088535045,
+        "JpX": 1.823539
+      },
+      {
+        "region": "B1",
+        "X_um": 0.20204687,
+        "n": 5127631500,
+        "p": 513897140000000,
+        "EcMinusEFn_eV": 0.5144,
+        "FHpMinusEv_eV": 0.2948,
+        "JnX": 0.00019612255,
+        "JpX": 1.8234322
+      },
+      {
+        "region": "QW2",
+        "X_um": 0.21460937,
+        "n": 2810508100000000,
+        "p": 7956578400000000,
+        "EcMinusEFn_eV": 0.2381,
+        "FHpMinusEv_eV": 0.2138,
+        "JnX": 0.0003501559,
+        "JpX": 1.823278
+      },
+      {
+        "region": "B2",
+        "X_um": 0.22717187,
+        "n": 13421744000,
+        "p": 541661350000000,
+        "EcMinusEFn_eV": 0.4895,
+        "FHpMinusEv_eV": 0.2935,
+        "JnX": 0.0004408187,
+        "JpX": 1.8231819
+      },
+      {
+        "region": "QW3",
+        "X_um": 0.23947266,
+        "n": 23390056000000000,
+        "p": 15939417000000000,
+        "EcMinusEFn_eV": 0.1833,
+        "FHpMinusEv_eV": 0.1958,
+        "JnX": 0.0010522837,
+        "JpX": 1.822569
+      },
+      {
+        "region": "B3",
+        "X_um": 0.25229686,
+        "n": 75388606000,
+        "p": 1074648200000000,
+        "EcMinusEFn_eV": 0.4449,
+        "FHpMinusEv_eV": 0.2758,
+        "JnX": 0.0017767865,
+        "JpX": 1.8218269
+      },
+      {
+        "region": "QW4",
+        "X_um": 0.26459765,
+        "n": 1012322500000000000,
+        "p": 1518965600000000000,
+        "EcMinusEFn_eV": 0.0856,
+        "FHpMinusEv_eV": 0.0776,
+        "JnX": 0.96137367,
+        "JpX": 0.86228261
+      }
+    ],
+    "derived": {
+      "barrier_pOverN": [
+        58994.33,
+        100221.15,
+        40357,
+        14254.78
+      ],
+      "QW4ToQW3ElectronDensity": 43.28004,
+      "QW4ToQW3HoleDensity": 95.29618,
+      "B3_JnFractionPct": 0.097433,
+      "QW4_JnFractionPct": 52.716824,
+      "B3Jtotal": 1.8236036865,
+      "QW4Jtotal": 1.82365628
+    },
+    "caveat": "Spatial Jn partition is compatible with strong QW4 recombination sink; concentration/current pattern alone does not prove B3 barrier-limited injection/polarization mechanism. Y lateral current divergence not yet checked. Jx local field and QW4 prior rad integral distinct.",
+    "next": "Read-only sample qw4_36_qw4fine.csv across B3/QW4/B4 to locate electron current transitions, band/QF before causal experiments",
+    "freeze": "HOLD",
+    "newRun": false
+  },
+  "leeQW4FineCutlineFluxRepartition20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_TERMINAL_SAMPLES_AND_ARITHMETIC_DERIVED; NO_NEW_RUN",
+    "model": "CMP_BASELINE_2.0.0_V2",
+    "file": "qw4_36_qw4fine.csv",
+    "bias_V": 3.6,
+    "lateralY_um": 1,
+    "sample": [
+      {
+        "x_um": 0.26014844,
+        "Jn": 0.0017772979,
+        "Jp": 1.8218264,
+        "Jtot": 1.8236037,
+        "EcMinusEFn_eV": 0.3734,
+        "Rad": 1347592500000000
+      },
+      {
+        "x_um": 0.26250389,
+        "Jn": 0.0017779541,
+        "Jp": 1.8218258,
+        "Jtot": 1.8236037,
+        "EcMinusEFn_eV": 0.352,
+        "Rad": 960675430000000
+      },
+      {
+        "x_um": 0.26355079,
+        "Jn": 0.33616893,
+        "Jp": 1.4871776,
+        "Jtot": 1.8233466,
+        "EcMinusEFn_eV": 0.0008,
+        "Rad": 2.4382434e+25
+      },
+      {
+        "x_um": 0.26459765,
+        "Jn": 0.96137367,
+        "Jp": 0.86228261,
+        "Jtot": 1.8236563,
+        "EcMinusEFn_eV": 0.0856,
+        "Rad": 3.075366e+25
+      },
+      {
+        "x_um": 0.26551366,
+        "Jn": 1.5101376,
+        "Jp": 0.31358008,
+        "Jtot": 1.8237176,
+        "EcMinusEFn_eV": 0.1603,
+        "Rad": 2.4777785e+25
+      },
+      {
+        "x_um": 0.26656055,
+        "Jn": 1.8234614,
+        "Jp": 0.0003014948,
+        "Jtot": 1.8237629,
+        "EcMinusEFn_eV": 0.3675,
+        "Rad": 7470000500000000000
+      },
+      {
+        "x_um": 0.27009374,
+        "Jn": 1.8234663,
+        "Jp": 0.00029702933,
+        "Jtot": 1.8237634,
+        "EcMinusEFn_eV": 0.3054,
+        "Rad": 8552720300000000000
+      }
+    ],
+    "derived": {
+      "B4minusB3_Jn": 1.8216834459,
+      "percentOfB4Jn": 99.90249565469277,
+      "localInterpretation": "compatible with concentrated QW4 recombination sink; does not isolate electron barrier root cause"
+    },
+    "caveat": "Single Y=1um cutline in 2D device. ∂JnY/∂Y and other transport effects not resolved. This is not integrated radiative QW4 share. Exact source T-2022.03 units not directly rechecked.",
+    "next": "Read-only trapezoidal q∫Rdx for QW4 and compare same-sample ∆JnX; then PE_Charge sheet audit",
+    "newRun": false,
+    "codeChanged": false,
+    "baselineFreeze": "HOLD"
+  },
+  "leeQW4DepthwiseContinuityClosure20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_TERMINAL_PLUS_DERIVED_ARITHMETIC; NO_NEW_RUN",
+    "source": "qw4_36_qw4fine.csv, existing 3.6V n2, Y=1um single depth cutline",
+    "x_um": [
+      0.26300001,
+      0.266
+    ],
+    "points": 24,
+    "qTimesUmToCm": 1.602176634e-23,
+    "deltaJn_A_per_cm2": 1.8216831695,
+    "channelQint_A_per_cm2": {
+      "Radiative": 1.2205564144284573,
+      "Auger": 0.5018975294245672,
+      "SRH": 0.09908575891169007,
+      "TotalRecombination": 1.8215397088407301
+    },
+    "derived": {
+      "channelSum": 1.8215397027647144,
+      "differenceTotalVsChannelSum": 6.076015690581471e-9,
+      "absoluteContinuityResidual_A_per_cm2": 0.00014346065926984508,
+      "relativeResidualPct": 0.007875170703214047,
+      "depthwiseClosurePct": 99.99212482929678,
+      "radiativeFractionPct": 67.0068518684804,
+      "augerFractionPct": 27.553477258202975,
+      "srhFractionPct": 5.439670539751808
+    },
+    "interpretation": "Observed local net recombination nearly equals depthwise electron current change in QW4, indicating strong local recombination sink but not proving root cause of QW4 preference or 2D global continuity (missing JnY divergence).",
+    "next": "Sample PE_Charge signed peaks and PE_Polarization-X near QW4 interfaces; audit physical units/position before sheet density integration; no polar run without approval.",
+    "physicalFreeze": "HOLD",
+    "newRun": false,
+    "sourceModified": false
+  },
+  "leeQW4PolarInterfaceChargeJump20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_PASTED_NUMERIC_CSV_SAMPLES_PLUS_CONDITIONAL_PHYSICAL_DERIVATION; NO_RUN",
+    "file": "qw4_36_qw4fine.csv",
+    "Y_um": 1,
+    "interfaces": [
+      {
+        "name": "B3/QW4",
+        "X_um": 0.26300001,
+        "PE_Charge_peak": 1.2297757e+21,
+        "Px_B3_C_per_cm2": 0.0000034,
+        "Px_QW4_C_per_cm2": 8.2162955e-7
+      },
+      {
+        "name": "QW4/B4",
+        "X_um": 0.266,
+        "PE_Charge_peak": -1.2297757e+21,
+        "Px_QW4_C_per_cm2": 8.2162955e-7,
+        "Px_B4_C_per_cm2": 0.0000034
+      }
+    ],
+    "derived": {
+      "nominalPolarizationJump_C_per_cm2": 0.00000257837045,
+      "nominalEquivalentSheet_Carriers_per_cm2": 16092922560996.48,
+      "charge_C": 1.602176634e-19,
+      "signs": "B3/QW4 positive, QW4/B4 negative under rho=-div(P)"
+    },
+    "interpretation": "Opposite signed polarization peaks at opposite QW4 interfaces and jump consistent with constitutive polarization; NOT independent measured/activated interface sheet density. Apparent repeated X discontinuity and activation scaling require source/model check; PE_Charge local spike cannot be read as sheet cm-2.",
+    "next": "Read only sample Px and material fraction at B0-B4/QW1-QW4 center positions and source activation; do not yet assign QW4 selective dominance to polarization",
+    "baselineFreeze": "HOLD",
+    "sourceModified": false,
+    "newRun": false
+  },
+  "leeQWAllCenterPolarizationComparison20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "source": "user's existing qw4_36_depth.csv nearest-center Python output",
+    "status": "OBSERVED_CENTER_SAMPLES; NO_NEW_RUN",
+    "qw": [
+      {
+        "id": "QW1",
+        "X_um": 0.18948437,
+        "Px": 8.2162955e-7,
+        "xMoleFraction": 0.15,
+        "PE_Charge": 0
+      },
+      {
+        "id": "QW2",
+        "X_um": 0.21460937,
+        "Px": 8.2162955e-7,
+        "xMoleFraction": 0.15,
+        "PE_Charge": 5755.116
+      },
+      {
+        "id": "QW3",
+        "X_um": 0.23947266,
+        "Px": 8.2162955e-7,
+        "xMoleFraction": 0.15,
+        "PE_Charge": 0
+      },
+      {
+        "id": "QW4",
+        "X_um": 0.26459765,
+        "Px": 8.2162955e-7,
+        "xMoleFraction": 0.15,
+        "PE_Charge": -5758.722
+      }
+    ],
+    "barriers": [
+      {
+        "id": "B0",
+        "X_um": 0.17692187,
+        "Px": 0.0000034,
+        "xMoleFraction": 0,
+        "PE_Charge": 0
+      },
+      {
+        "id": "B1",
+        "X_um": 0.20204687,
+        "Px": 0.0000034,
+        "xMoleFraction": 0,
+        "PE_Charge": 0
+      },
+      {
+        "id": "B2",
+        "X_um": 0.22717187,
+        "Px": 0.0000034,
+        "xMoleFraction": 0,
+        "PE_Charge": 0
+      },
+      {
+        "id": "B3",
+        "X_um": 0.25229686,
+        "Px": 0.0000034,
+        "xMoleFraction": 0,
+        "PE_Charge": -5953.4439
+      },
+      {
+        "id": "B4",
+        "X_um": 0.27742186,
+        "Px": 0.0000034,
+        "xMoleFraction": 0,
+        "PE_Charge": 5953.4439
+      }
+    ],
+    "derivedNominalDeltaP": 0.00000257837045,
+    "interpretation": "All four QW center composition and Px identical, all five GaN barrier centers identical. QW4-exclusive local material polarization is unsupported, but effective interface sheet and cumulative polarization-induced transport still not independently checked.",
+    "next": "Read-only pp2_des.cmd/par actual polarization activation and interface transport settings, then compare 8 QW interfaces",
+    "physicalFreeze": "HOLD",
+    "newRun": false
+  },
+  "leeN2SourcePhysicsVerified20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_TERMINAL_SOURCE_GREP_PLUS_PUBLIC_DOCUMENTATION; NO_RUN",
+    "cmd": "pp2_des.cmd",
+    "par": "pp2_des.par",
+    "sourceObserved": {
+      "Fermi": true,
+      "DefaultParametersFromFile": true,
+      "IncompleteIonization": true,
+      "Recombination": [
+        "SRH",
+        "Radiative",
+        "Auger"
+      ],
+      "Piezoelectric_Polarization": {
+        "mode": "strain",
+        "activation": 0.5
+      },
+      "ThermionicMaterialInterfaces": [
+        "InGaN/GaN",
+        "AlGaN/GaN",
+        "AlGaN/InGaN"
+      ],
+      "ThermionicEmissionFormula": 1,
+      "LatticeParameters": {
+        "X": [
+          0,
+          0,
+          -1
+        ],
+        "Y": [
+          1,
+          0,
+          0
+        ]
+      }
+    },
+    "publicTrainingContext": {
+      "url": "https://ghzphy.github.io/Sentaurus_Training/sd/sd_16.html",
+      "facts": [
+        "activation scales interface charge from abrupt polarization discontinuity, not merely piezoelectric strain component",
+        "Fermi statistics is paired with Thermionic Formula=1 in the tutorial",
+        "lattice UCS orientation X=(0,0,-1), Y=(1,0,0) is illustrated"
+      ],
+      "caveat": "Not independent check of proprietary installed T-2022.03 manual or actual effective n2 applied polarization sheet at each QW interface"
+    },
+    "derivedConditionalEffectiveSheet_cm2": 8046461280498.24,
+    "derivedCaveat": "Assumes uniform factor 0.5 acts on nominal full ΔP/q≈1.609292256099648e13cm-2 at QW4; not measured effective sheet",
+    "next": "Read-only extract Chi0 Eg0 mumax and material polarization parameter blocks from pp2_des.par; check imported defaults; do not run activation sweep without user approval",
+    "baselineFreeze": "HOLD",
+    "newRun": false,
+    "sourceModified": false
+  },
+  "leeBandOffsetsFromActivePar20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_TERMINAL_PAR_VALUES_PLUS_DERIVED_BAND_OFFSETS; NO_NEW_RUN",
+    "file": "pp2_des.par",
+    "materialParams": {
+      "GaN": {
+        "Eg0_eV": 3.4376,
+        "Chi0_eV": 4.1,
+        "mumax": [
+          300,
+          10
+        ]
+      },
+      "InGaN": {
+        "Eg0_eV": 2.8569,
+        "Chi0_eV": 4.5065,
+        "mumax": [
+          300,
+          10
+        ]
+      },
+      "AlGaN": {
+        "Eg0_eV": 3.7564,
+        "Chi0_eV": 3.8768,
+        "mumax": [
+          300,
+          10
+        ]
+      }
+    },
+    "derived": {
+      "DeltaEg_GaNMinusInGaN_eV": 0.5807,
+      "DeltaEc_GaNBarrier_eV": 0.4065,
+      "DeltaEv_GaNBarrier_eV": 0.1742,
+      "electronOffsetSharePct": 70.00172205958326,
+      "holeOffsetSharePct": 29.99827794041674
+    },
+    "interpretation": "Nominal material parameters give 70:30 conduction/valence band offset, corroborating Claude source-level claim. Distinct from bias-dependent Ec-eQF barrier values; cause of QW4 radiative concentration not proven.",
+    "jobExit": "svisual n1_msh.tdr background job finished; no device simulation triggered",
+    "next": "Read-only audit actual pp2_des.par polarization/strain material blocks or inherited defaults, then design controlled protected-copy activation sensitivity only if explicitly authorized",
+    "physicalFreeze": "HOLD",
+    "sourceChanged": false,
+    "newRun": false
+  },
+  "leePolarizationDefaultMaterialDBPending20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "source": "user server grep in pp2_des.par",
+    "status": "OBSERVED_NOT_EXPLICITLY_SPECIFIED; NO_RUN",
+    "materialParameterGrep": "Piezoelectric|Strain|e31|e33|Psp|Relax|Lattice|Polarization|a0",
+    "matches": [
+      "LatticeParameters X=(0,0,-1),Y=(1,0,0)"
+    ],
+    "physicalSource": "pp2_des.cmd: DefaultParametersFromFile and Piezoelectric_Polarization(strain activation=0.5)",
+    "publicDocumentation": "https://ghzphy.github.io/Sentaurus_Training/sd/sd_16.html §16.4.4: polarization model default material parameters loaded from $STROOT/tcad/$STRELEASE/lib/sdevice/MaterialDB/",
+    "interpretation": "Absent explicit polarization constants in user's preprocessed par does not mean polarization omitted; concrete actual material defaults not yet read. Existing simulated Px and PE_Charge nonzero.",
+    "next": "Read-only print STROOT STRELEASE then inspect installed GaN/InGaN MaterialDB polarization blocks and n2_des.log path/warnings",
+    "freeze": "HOLD",
+    "newRun": false,
+    "codeChanged": false
+  },
+  "leeSentaurusExecutablePath20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_TERMINAL_PATH; NO_NEW_RUN",
+    "envQuery": "env | grep -E '^(STROOT|STRELEASE)=' returned no output",
+    "command": "which sdevice",
+    "observedExecutable": "/user/tools/synopsys/sentaurus/T-2022.03/bin/sdevice",
+    "caveat": "Executable path confirmed, not MaterialDB library path; cannot infer physical coefficients or applied origin without opening defaults",
+    "next": "Read-only find under /user/tools/synopsys/sentaurus/T-2022.03 -maxdepth 8 -type d -name MaterialDB; then read actual GaN and InGaN polarization coefficients",
+    "freeze": "HOLD",
+    "sourceChanged": false,
+    "newRun": false
+  },
+  "leeMaterialDBRealPathConfirmed20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_TERMINAL_MATERIALDB_DIRECTORY_EXISTS; NO_NEW_RUN",
+    "observedExecutable": "/user/tools/synopsys/sentaurus/T-2022.03/bin/sdevice",
+    "observedMaterialDB": "/user/tools/synopsys/sentaurus/T-2022.03/tcad/T-2022.03/lib/sdevice/MaterialDB",
+    "command": "find /user/tools/synopsys/sentaurus/T-2022.03 -maxdepth 8 -type d -name MaterialDB -print",
+    "provenance": "user pasted exact school-server shell output",
+    "notYetVerified": [
+      "GaN/InGaN/AlGaN file names and contents",
+      "default polarization coefficients",
+      "effective active values in n2 run"
+    ],
+    "next": "Read-only find -maxdepth 1 for matching GaN/InGaN/AlGaN material files then inspect blocks without modifying library or baseline",
+    "freeze": "HOLD",
+    "newRun": false
+  },
+  "leeMaterialDBGaNFilesFound20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_TERMINAL_MATERIAL_FILE_PATHS; NO_RUN",
+    "materialDB": "/user/tools/synopsys/sentaurus/T-2022.03/tcad/T-2022.03/lib/sdevice/MaterialDB",
+    "filesFound": [
+      "AlGaN.par",
+      "InGaN.par",
+      "GaN.par",
+      "AlInGaN.par"
+    ],
+    "notYetRead": [
+      "piezoelectric material polarization coefficient blocks",
+      "psp_z/e31/e33/a0/relax actual numbers",
+      "runtime override/provenance"
+    ],
+    "next": "Read-only grep polarization constants in GaN.par/InGaN.par/AlGaN.par MaterialDB and reconcile with n2 output",
+    "newRun": false,
+    "sourceModified": false,
+    "baselineFreeze": "HOLD"
+  },
+  "leeMaterialDBPolarizationRead20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_TERMINAL; NO_NEW_RUN",
+    "source": "Installed T-2022.03 MaterialDB grep, head -n 120",
+    "AlGaN_par": {
+      "formula": 1,
+      "relax": 0,
+      "psp_z0_C_per_cm2": -0.0000034,
+      "psp_z1_C_per_cm2": -0.000009,
+      "bowingB_psp_z1": -0.0000021,
+      "e31_0_C_per_cm2": -0.00005274,
+      "e33_0_C_per_cm2": 0.00008946
+    },
+    "GaN_par": "Piezoelectric_Polarization section exists; coefficient values not read",
+    "InGaN_par": "not read due to truncated output",
+    "crosscheck": "GaN barrier center Px magnitude matches AlGaN.par psp_z(0); actual runtime origin unresolved",
+    "next": "selective grep of assignment lines from GaN/InGaN/AlGaN without head",
+    "blocker": "QW4 99.97% focus root cause unresolved",
+    "baselineFreeze": "HOLD"
+  },
+  "leeGaNPolar20261102": {
+    "worker": "이택규",
+    "status": "OBSERVED_NO_NEW_RUN",
+    "source": "User pasted 2026-11-02 grep of installed T-2022.03 GaN.par",
+    "gaN": {
+      "formula": 1,
+      "relax": 0,
+      "psp_z": -0.0000034,
+      "e31": -0.00005274,
+      "e33": 0.00008946,
+      "a0_A": 3.189,
+      "a_A": 3.189
+    },
+    "inGaNPolarCoefficients": "UNVERIFIED",
+    "n2GaNBarrierPx": "Previous +3.4e-6 magnitude matches default psp_z",
+    "blocker": "QW4 99.97% cause unresolved",
+    "baseline": "FREEZE_HOLD",
+    "next": "READ ONLY inspect InGaN.par polarization model blocks"
+  },
+  "leeInGaNMaterialDBGrep20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_TERMINAL; NO_NEW_RUN",
+    "source": "Installed Sentaurus T-2022.03 MaterialDB/InGaN.par read-only grep",
+    "matchedLines": [
+      132,
+      238,
+      242
+    ],
+    "matchedContent": [
+      "EnergyRelaxationTime comment",
+      "QWStrain section",
+      "StrainConstant eps or lattice constant comment"
+    ],
+    "directPolarizationModelCoefficients": "No grep matches to Piezoelectric_Polarization, psp_, e31, e33, d31, d33, relax in InGaN.par; not proof of runtime absence",
+    "existingQwPx_C_per_cm2": 8.2162955e-7,
+    "runtimePolarizationOrigin": "UNRESOLVED",
+    "QW4Causality": "UNRESOLVED",
+    "baselineFreeze": "HOLD",
+    "next": "Read only sed -n '225,285p' InGaN.par, inspect QWStrain context and defaults provenance"
+  },
+  "leeInGaNQWStrainAudit20261102": {
+    "worker": "이택규",
+    "status": "OBSERVED_USER_SOURCE; NO_RUN",
+    "date": "2026-11-02",
+    "source": "Installed T-2022.03 MaterialDB/InGaN.par lines225-285",
+    "model": "QWStrain: strain-dependent quantum-well subband energy shift, not Piezoelectric_Polarization",
+    "a0_endpoints_angstrom": [
+      3.548,
+      3.189
+    ],
+    "eps_endpoints": [
+      0,
+      0
+    ],
+    "a_c_endpoints_eV": [
+      -4.08,
+      -4.08
+    ],
+    "formula": "comment requires formula 2 for wurtzite; actual active value/model not verified",
+    "materialPolarizationCoefficients": "No InGaN explicit polarization assignment in prior grep, inherited/default origin not verified",
+    "QW4Causality": "UNRESOLVED",
+    "baselineFreeze": "HOLD",
+    "solverRun": false,
+    "sourceChange": false,
+    "next": "Inspect InGaN.par component/endpoint interpolation comments and installed InN.par Piezoelectric_Polarization read-only"
+  },
+  "leeInGaNEndpoints20261102": {
+    "worker": "이택규",
+    "status": "OBSERVED_SOURCE; QWStrain_MAPPING_UNRESOLVED; NO_RUN",
+    "file": "T-2022.03 MaterialDB/InGaN.par",
+    "endpoints": {
+      "x0": "GaN",
+      "x1": "InN"
+    },
+    "defaultInterpolation": "P(x)=(1-x)P(GaN)+xP(InN) where no explicit override",
+    "xMoleFraction_QW": 0.15,
+    "qwStrain_a0_Angstrom": {
+      "index0": 3.548,
+      "index1": 3.189
+    },
+    "discrepancy": "QWStrain a0 endpoints reverse GaN/InN header convention; source/model details and runtime activation unverified",
+    "runtimePolarizationOrigin": "UNRESOLVED",
+    "qw4RootCause": "UNRESOLVED",
+    "baselineFreeze": "HOLD",
+    "next": "read-only check InN.par polarization block and model inheritance"
+  },
+  "leeInNPolarCoefficients20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_SOURCE plus CONDITIONAL_DERIVED; NO_RUN",
+    "installedFile": "T-2022.03 MaterialDB/InN.par",
+    "inN": {
+      "psp_z_C_per_cm2": -0.0000042,
+      "e31_C_per_cm2": -0.000048586,
+      "e33_C_per_cm2": 0.00010629,
+      "a_Angstrom": 3.54,
+      "relax": 0.1
+    },
+    "gaNReference": {
+      "psp_z_C_per_cm2": -0.0000034,
+      "e31_C_per_cm2": -0.00005274,
+      "e33_C_per_cm2": 0.00008946
+    },
+    "qwInFraction": 0.15,
+    "interpolated_spontaneous_If_linear_C_per_cm2": -0.00000352,
+    "n2_observed_QW_Px_C_per_cm2": 8.2162955e-7,
+    "difference_If_orientation_flip_C_per_cm2": 0.00000269837045,
+    "caution": "Effective runtime InGaN interpolation/piezoelectric strain not verified; difference not confirmed piezo contribution; QW4 cause unresolved",
+    "baselineFreeze": "HOLD",
+    "newSimulation": false,
+    "codeChanged": false,
+    "next": "Read-only inspect InN.par piezo block 605–645 and runtime parameter provenance"
+  },
+  "leeInNPiezoStrainDefaults20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_SOURCE_AND_CONDITIONAL_DERIVED; NO_NEW_RUN",
+    "file": "Installed Sentaurus T-2022.03 MaterialDB/InN.par 600–645",
+    "polarization": {
+      "psp_z_C_per_cm2": -0.0000042,
+      "e31_C_per_cm2": -0.000048586,
+      "e33_C_per_cm2": 0.00010629
+    },
+    "piezoCoefficients": {
+      "d31_cm_per_V": -3.5e-10,
+      "d33_cm_per_V": 7.6e-10
+    },
+    "stiffness_Pa": {
+      "c11": 223000000000,
+      "c12": 115000000000,
+      "c13": 92000000000,
+      "c33": 224000000000
+    },
+    "simplifiedStrainParams": {
+      "a0_Angstrom": 3.189,
+      "a_Angstrom": 3.54,
+      "relax": 0.1
+    },
+    "inNOnly_strain_IfSimplifiedModel": -0.08923728813559323,
+    "caution": "Do not apply pure InN strain directly to InGaN x=0.15. Active runtime alloy interpolation / formula and overrides not yet verified. Piezo contribution may partly cancel spontaneous P but is not quantitatively verified. QW4 causality still UNRESOLVED.",
+    "baselineFreeze": "HOLD",
+    "newSolverRun": false,
+    "sourceEdit": false,
+    "next": "Read InN.par polarization formula and actual n2 effective InGaN piezo parameter sourcing read-only"
+  },
+  "leeInNPiezoCoordTransform20261102": {
+    "worker": "이택규",
+    "source": "InN.par lines 570-600 actual user server output",
+    "status": "OBSERVED_DOC_ONLY; NO_NEW_RUN",
+    "modelDescription": "stress system -> crystal system -> polarization via strain/stress -> simulation system",
+    "formulaAssignment": "NOT IN EXCERPT; NOT YET VERIFIED",
+    "activeN2LatticeOrientation": "X=(0,0,-1), Y=(1,0,0) from earlier pp2_des.par",
+    "next": "READ ONLY inspect formula assignments in InN.par polarization block 525-645",
+    "QW4Causality": "UNRESOLVED",
+    "baseline": "B/FREEZE_HOLD",
+    "newRun": false,
+    "sourceChanged": false
+  },
+  "leeInNFormulaAbsentAssignment20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_TERMINAL; NO_NEW_RUN",
+    "file": "T-2022.03 installed MaterialDB/InN.par Piezoelectric_Polarization NR 525..645",
+    "matchedAssignmentLines": {
+      "639": "a0=3.189 Angstrom",
+      "640": "a=3.54 Angstrom",
+      "641": "relax=0.1"
+    },
+    "formulaAssignment": "NOT PRESENT IN 525..645; effective default and runtime formula unknown",
+    "polarizationModelInactive": "NOT IMPLIED",
+    "runtimeInGaNProvenance": "UNRESOLVED",
+    "baselineFreeze": "HOLD",
+    "qw4RootCause": "UNRESOLVED",
+    "sourceChange": false,
+    "solverRun": false,
+    "next": "Read only InN.par lines 525..570 documentation of default formula, then effective runtime parameters"
+  },
+  "leeInNStrainEquationAndPause20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_SOURCE; NO_RUN",
+    "source": "User pasted InN.par lines 525–570",
+    "strainPzEquation": "psp_z + 2*d31*strain*(c11+c12-2*c13^2/c33)",
+    "strainEquation": "(1-relax)*(a0-a)/a",
+    "formulaAssignment": "not observed in inspected 525–645 block",
+    "inGaNRuntimeCoefficients": "UNVERIFIED",
+    "qw4RootCause": "UNRESOLVED",
+    "baselineFreeze": "HOLD",
+    "next": "Pause repeated material default greps; next session prioritize decisive read-only QW4 transport/root-cause verification and actual runtime model origin; sensitivity only with explicit approval",
+    "newSimulation": false,
+    "sourceEdit": false
+  },
+  "leeQW1QW4Continuity20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_CSV + DERIVED; NO_RUN",
+    "qw1": {
+      "N": 66,
+      "X_um": [
+        0.1800625,
+        0.19995312
+      ],
+      "deltaJn_A_per_cm2": 0.0001961119898955,
+      "qIntTotalR_A_per_cm2": 0.0001961108057556653,
+      "closurePercent": 99.99939619202512
+    },
+    "qw4": {
+      "N": 62,
+      "X_um": [
+        0.25543749,
+        0.27428126
+      ],
+      "deltaJn_A_per_cm2": 1.8217438432,
+      "qIntTotalR_A_per_cm2": 1.8216004716537455,
+      "closurePercent": 99.99212998321418
+    },
+    "deltaJnRatio": 9289.303750223187,
+    "caution": "Different windows include adjacent barriers; only Y=1um depthwise continuity tested, lateral divergence untested, causal mechanism unresolved.",
+    "rootCause": "UNRESOLVED",
+    "baseline": "B/FREEZE_HOLD",
+    "newRun": false,
+    "sourceChanged": false,
+    "next": "Read only compare center electron/hole densities, QF offsets, currents and recombination across QW1/QW4"
+  },
+  "leeQW1QW4CenterCarrierComparison20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_TERMINAL plus DERIVED; NO_NEW_RUN",
+    "model": "archived n2 3.6V Y=1um fine CSV",
+    "qw1": {
+      "x_um": 0.18948437,
+      "eDensity_cm3": 4844828600000000,
+      "hDensity_cm3": 3156252300000000,
+      "EcMinusEQF_eV": 0.22401485,
+      "HQFMinusEv_eV": 0.2376784,
+      "JnX_A_per_cm2": 0.000088535045,
+      "JpX_A_per_cm2": 1.823539
+    },
+    "qw4": {
+      "x_um": 0.26459765,
+      "eDensity_cm3": 1012322500000000000,
+      "hDensity_cm3": 1518965600000000000,
+      "EcMinusEQF_eV": 0.08558352,
+      "HQFMinusEv_eV": 0.0775602,
+      "JnX_A_per_cm2": 0.96137367,
+      "JpX_A_per_cm2": 0.86228261
+    },
+    "derived": {
+      "nRatioQW4overQW1": 208.9490843907254,
+      "pRatio": 481.2560770252746,
+      "nTimesPRatio": 100558.01665190354,
+      "EcMinusEQFDecrease_eV": 0.13843133,
+      "HQFMinusEvDecrease_eV": 0.1601182,
+      "JnFractionQW1_percent": 0.0048548863898249545,
+      "JnFractionQW4_percent": 52.71682391815633
+    },
+    "limitations": "local depthwise samples only; does not identify physical root cause of QW4 recombination concentration or prove 2D continuity",
+    "blocker": "QW4 physics causality unresolved",
+    "baselineFreeze": "HOLD",
+    "newSimulation": false,
+    "codeChanged": false,
+    "next": "read-only compare local radiative rate normalized by n*p and interwell transport profiles; approved protected sensitivity run only later"
+  },
+  "leeQW1QW4RadiativePerNp20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_TERMINAL_AND_DERIVED; NO_NEW_RUN",
+    "source": "Archived n2 3.6V at Y=1um: qw4_36_qw1fine.csv QW1 center and qw4_36_qw4fine.csv QW4 center",
+    "qw1": {
+      "radiative_cm3_per_s": 305830030000000000000,
+      "radiative_over_np_cm3_per_s": 2.000000011528524e-11
+    },
+    "qw4": {
+      "radiative_cm3_per_s": 3.075366e+25,
+      "radiative_over_np_cm3_per_s": 1.999999930276919e-11
+    },
+    "derived": {
+      "radiativeRatio": 100558.01256665344,
+      "npRatio": 100558.01665190354,
+      "normalizedRatio": 0.9999999593741977
+    },
+    "interpretation": "At the two central points high QW4 radiative rate is quantitatively consistent with much larger n*p, not increased pointwise radiative coefficient. Cause of carrier focusing not identified.",
+    "limitation": "Only two local center samples, not whole-well model coefficient validation or transport causation",
+    "baselineFreeze": "HOLD",
+    "newRun": false,
+    "sourceChanged": false,
+    "next": "Read-only compare interwell band and electron/hole transport profiles; sensitivity on protected copy only after explicit approval"
+  },
+  "leeTransportWindowReview20261102": {
+    "worker": "이택규",
+    "date": "2026-11-02",
+    "status": "OBSERVED_USER_CSV + PROPOSED_WORKFLOW; NO_NEW_RUN",
+    "input": "archived n2 3.6V depth CSV, Y=1um",
+    "ranges": {
+      "B1": {
+        "x_um": [
+          0.191,
+          0.213
+        ],
+        "N": 44,
+        "dEQF_eV": 0.01090327000000002,
+        "maxEcMinusEQF_eV": 0.61493831
+      },
+      "B2": {
+        "x_um": [
+          0.216,
+          0.238
+        ],
+        "N": 47,
+        "dEQF_eV": 0.25042766,
+        "maxEcMinusEQF_eV": 0.594776913
+      },
+      "B3": {
+        "x_um": [
+          0.241,
+          0.263
+        ],
+        "N": 43,
+        "dEQF_eV": 0.00991758000000001,
+        "maxEcMinusEQF_eV": 0.5580799700000001
+      }
+    },
+    "caveat": "Manually chosen intervals not region-bounded; dEQF is not direct transport barrier measurement; larger B2 delta does not prove B2 causes QW4 focusing",
+    "keyExistingFacts": "QW4 99.97% radiative concentration; QW1/QW4 local continuity closes; QW4 209x n and 481x p; both centers Rad/(np)~2e-11 cm3/s",
+    "workflowDecision": "Stop repetitive material/CSV greps; develop one decisive protected-copy single-parameter polarization activation sensitivity if user explicitly approves and tool semantics verified; no run currently",
+    "blocker": "QW4 localization physical cause unresolved; baseline physics not validated",
+    "baselineFreeze": "HOLD",
+    "sourceChanged": false,
+    "newSimulation": false
+  },
+  "leeClaudeReview20261102": {
+    "worker": "이택규",
+    "status": "PROPOSED_NOT_SENT; NO_RUN",
+    "currentBlocker": "QW4 four-QW radiative focusing root cause unresolved",
+    "next": "Claude independent GO/NO-GO review and one discriminating controlled-test design; do not run without permission",
+    "baselineFreeze": "HOLD"
   }
 }
