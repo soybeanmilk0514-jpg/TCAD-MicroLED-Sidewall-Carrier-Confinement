@@ -9753,3 +9753,1133 @@ AI: ChatGPT
 근거: Wu DOI 10.1016/j.micrna.2023.207542, project T-2022.03 reference index.
 
 ---
+
+## 2026-11-03T11:51:46Z — soybeanmilk0514-jpg
+
+[2026-11-03 ~20:46 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / BASELINE DESIGN
+상태: PROPOSED CODE CREATED; NOT RUN
+
+요약: Wu와 Kou 각각 독립 시뮬레이션 후 검증하여 최종 Baseline 선정하기로 작업 방향 설정. 새 Kou4 Full2D SDE-only 후보 CMP_BASELINE_3.1.0_KOU4FULL 작성 및 GitHub commit. 4um/In0.15/4QW3nm/5QB22nm/nGaN4um/dual5nm CMP-derived, NOT exact Kou publication recreation. No SDevice/solver/result. Pilot p/EBL/doping/contacts unresolved.
+
+근거: GitHub SDE and README commits 41899b0, 7cc44f0. Current Kou original V2.1 QW4 anomalous and not used as confirmed parent.
+
+변경: candidate sde_dvs.cmd, README.md, JuSubin TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE md/json.
+
+다음: school SWB independent project, SDE-only preprocess/mesh contact+geometry audit; after pass construct Kou-specific SDevice. Compare with Wu only at consistent 4um/matched-J with unit normalisation; no final baseline fixed.
+
+---
+
+## 2026-11-03T11:54:59Z — soybeanmilk0514-jpg
+
+[2026-11-03] 작업자: 주수빈 / AI: ChatGPT / PROGRESS — CODE COMMITTED, NOT RUN
+Kou4 Full2D independent SDevice pilot committed at CMP/tcad/candidates/CMP_BASELINE_3.1.0_KOU4FULL/sdevice_des.cmd; README updated. SWB params NtSide, PolAct, Vstop; initial clean 0/0/0.1V smoke only after SDE mesh verified. 5nm bulk-trap proxy is NOT Kou surface SRH recreation; p/EBL/contacts/MaterialDB remain unverified. No server run. TIMELINE/TEAM/CURRENT/NEXT/LIVE_STATE updated. Next: actual SDE then SDevice log/PP inspection.
+
+---
+
+## 2026-11-03T12:04:28Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: FIX / PROGRESS / DESIGN CORRECTION
+상태: PROPOSED CODE CREATED / NOT RUN
+
+요약:
+- 사용자 정정 수용: 기존 Kou4um/5nm는 원문 재현이 아닌 CMP 목표 형상. 논문 Kou (2019) Sec.2 Fig.1에는 20x20/60x60/100x100um2 및 4um 손상 링.
+- 새 20x20 square Full3D 독립 SDE code + README GitHub 생성, 12x12 clean 36%, nGaN4um, 4QW3nm In0.15, QB22nm, pAl0.15 EBL26nm, pGaN120nm, p+20nm. 13-layer×9 tiles=117 regions, 5QB 가정 및 4.288um vertical thickness.
+- Pilot-only p+Mg1e19, p-layers MgActive approximation3e17, contacts full Ohmic; Kou trap model/SDevice 없음. Not an exact APSYS physics reproduction. 3D Sentaurus parser/mesh not run.
+
+근거:
+- Kou Opt. Express 27 A643–A653 (2019) DOI 10.1364/OE.27.00A643 Sec 2 / Fig 1
+- `CMP/tcad/candidates/CMP_BASELINE_4.0.0_KOU20FULL3D/sde_dvs.cmd` (55d431d), README (9d9deba)
+
+변경:
+- 새 SDE/README 및 JuSubin TIMELINE, TEAM_TIMELINE, ERROR_LOG, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.md
+- 기존 Kou4, Wu10, Lee original files untouched.
+
+다음:
+- Kou20 project on school server, SDE node only preprocess/mesh audit and 3D elements/contacts inspection, then compatible Kou-specific SDevice.
+
+
+---
+
+## 2026-11-03T12:13:35Z — soybeanmilk0514-jpg
+
+[2026-11-03 ~21:09 KST]
+작업자: 주수빈 Wu10 workstream (screenshot of school CMP_WU; chat identity not independently reconfirmed)
+AI: ChatGPT
+구분: BLOCKER / FIX (proposed, not rerun)
+상태: OBSERVED runtime error + PROPOSED code fix
+
+요약:
+- School SWB /user/semi/semi437/tmp/myproject/CMP_WU SDevice n2 ran for NtSide=0, PolAct=0, Vstop=0.1. n2_des.out 2026-11-03 20:19:12 logs checkout return ('checked in') of sdevice and sdevice-traps licences; prior checkout waiting no longer blocks this execution.
+- n2_des.out and n2_des.err show GaN/InGaN regions with UNDEFINED Bandgap, eDOSMass, hDOSMass, Scharfetter, Auger, RadiativeRecombination, ConstantMobility, DopingDependence. No valid low-voltage current/result.
+- GitHub Wu10 SDevice pilot did not have DefaultParametersFromFile nor .par parameter override. Single-line addition to global Physics was committed in 066bbc312661703a9d5fae9ff1afb1db47fad031. It is PROPOSED and not yet tested on the school server; school SWB code is not changed by GitHub.
+
+근거: User screenshot of n2 output/error and SWB split parameters; GitHub latest Wu candidate source. Exact root cause still subject to installed MaterialDB check.
+
+변경: CMP/tcad/candidates/CMP_BASELINE_3.0.0_WU10FULL/sdevice_des.cmd; JuSubin timeline, TEAM_TIMELINE, ERROR_LOG, NEXT_ACTIONS, CURRENT_STATUS, LIVE_STATE.md/json, RELAY.md.
+
+다음: Check actual T-2022.03 MaterialDB GaN.par/InGaN.par, apply line inside school SDevice editor, preprocess and rerun 0.1V smoke. If error persists inspect first preceding parameter-file messages and pp2_des.cmd. Do NOT use -CheckUndefinedModels and do not modify SDE/other candidate decks.
+
+---
+
+## 2026-11-03T12:23:21Z — soybeanmilk0514-jpg
+
+[2026-11-03 ~21:20 KST]
+작업자: 주수빈 Wu10 작업 흐름 (CMP_WU screenshot; 채팅 작업자 신원 별도 미확인)
+AI: ChatGPT
+구분: RESULT / PARTIAL PASS / ANALYSIS CORRECTION
+상태: OBSERVED screenshot, UNRESOLVED physical verification, PROPOSED J correction
+
+요약:
+- 학교 CMP_WU에서 NtSide=0, PolAct=0, Vstop=0.1 SDevice→SVisual1 플롯(데이터셋 BaselineData 6) 표시. 그래프 x축 0~0.1 V, I~8.5e−31 A/um, 표시 J~2.1e−23 A/cm² (화면 읽기 근사치). 이전 라이선스 대기 및 UNDEFINED 모델 오류로부터 이번 low-bias smoke plot까지 진행됨. n2_des.log 성공 종료/물리적 성공은 별도 직접 검증 전.
+- 중요한 코드 후처리 불일치: 앞서 제공한 SVisual1은 Wmesa=4 um, 실제 Wu 후보는 10 um. 표시된 J/I scale 2.5e7은 4um 정규화와 일치. 2D 원시 전류 A/um, area factor1이 확인될 경우 J=abs(I)*1e8/10, 현재 표시값 대비 ×0.4. 0.1V 전류는 사실상 zero; LED 켜짐이나 baseline 물리 검증을 뜻하지 않음.
+- GitHub 후보 README 업데이트 commit 08a0208; 수정될 학교 SVisual1 파일은 원격으로 변경하지 않음. Wu와 Kou 후보, CMP4 공통 baseline, Lee 프로젝트 보호.
+
+다음:
+1) 학교 n2_des.log 끝부분에서 정상 종료와 목표 0.1V 확인
+2) Wu10 SVisual1의 Wmesa만 4→10 수정 후 SVisual만 재실행, 전류/AreaFactor 단위 검증
+3) NtSide=1e18 스모크 후 물리모델·고전압·QW 재결합 검증; 최종 baseline 미선정.
+
+---
+
+## 2026-11-03T12:31:08Z — soybeanmilk0514-jpg
+
+[2026-11-03, SDevice completed at 20:30:09 KST]
+작업자: 주수빈 Wu workstream (CMP_WU; current chat identity not independently reconfirmed)
+AI: ChatGPT
+구분: RESULT / BLOCKER UPDATE
+상태: OBSERVED — successful SDevice **0.1V smoke only**; physical baseline not validated
+
+요약:
+- User pasted actual CMP_WU/n2_des.log tail: final t 0.984303→1, contact anode 0.1000V (electron 7.544E−31, hole 8.430E−32, total +8.387E−31), cathode total −8.387E−31.
+- "Curve trace finished", "Writing plot 'n2_des.tdr' ... done", "Sentaurus Device simulation finished" 2026-11-03 20:30:09 KST. 423.72s wallclock, 41.39s CPU, peak 632MB. Prior SVisual1 graph shown up to 0.1V. Earlier UNDEFINED models no longer block smoke. License availability may recur.
+- 0.1V current essentially zero; this is NOT a verified working LED, Wu replication, physical IQE or final Baseline freeze.
+- Wu10 SVisual1's old 4um width normalization is inconsistent with 10um candidate geometry; 2D A/um and AreaFactor require log audit before numerical J claim. Do not modify protected 4um baseline.
+
+변경: Candidate Wu README + JuSubin TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE md/json. No live school codes changed in this turn.
+다음: update only Wu SVisual1 postprocess width 4→10, run SVisual without SDevice rerun, check dimensional current/AreaFactor; later NtSide=1e18 and higher-V physical tests.
+
+---
+
+## 2026-11-03T12:34:23Z — soybeanmilk0514-jpg
+
+[2026-11-03 ~21:30 KST]
+작업자: 주수빈 Wu10 작업 흐름 (현재 채팅 작업자 독립 확인 전)
+AI: ChatGPT
+구분: RESULT / INVESTIGATION
+상태: OBSERVED SVisual screenshot; SDevice ON log completion UNRESOLVED
+
+요약: school CMP_WU SVisual dataset BaselineData 12에서 NtSide=1e18, PolAct=0, Vstop=0.1의 I–V/J–V 0→0.1 V 그래프 확인. 화면 읽기 0.1V 전류 약 4e-22 A/um, J 약 1e-14 A/cm². 0 V 부근 수직 spike 약 6.5e-22 A/um 비정상 형상은 전압 중복/초기해/트랩수치 현상 중 무엇인지 미확인. NtSide0 branch의 확인된 0.1V raw current 8.387e-31과의 큰 비율을 물리적인 trap 개선/손실이라고 해석 금지 (둘 다 거의 zero at 0.1V).
+추가 주의: 표시 J/I 비율 약 2.5e7 = 4µm 분모로 보이며 Wu10 실제 10µm와 불일치. 단위 A/um 및 area factor 검증 후 SVISUAL1만 Wmesa=10.0으로 수정해야 함; 학교 코드는 ChatGPT가 변경하지 않음.
+다음: ON node SDevice log 정상종료와 초기 IV 데이터 점검; Wu10 SVisual 정규화 수정 후 저전압 비교 중단, 전류주입 유효영역/물리모델 검증 설계.
+GitHub 기록: 주수빈 TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE md/json, ERROR_LOG.
+
+---
+
+## 2026-11-03T12:42:40Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈 Wu10 workstream (actual chat worker identity not re-identified)
+AI: ChatGPT
+구분: FIX / CODE AUDIT / HANDOFF
+상태: PROPOSED CODE COMMITTED, MOCK TCL TEST PASSED; actual updated SVISUAL T-2022.03 run pending
+
+요약:
+- 과거 CMP4um SVisual1 J 정규화 `Wmesa=4.0`가 Wu10 Full2D 프로젝트에 잘못 적용됐음을 정정. Wu10 전용 Tcl `CMP/tcad/candidates/CMP_BASELINE_3.0.0_WU10FULL/svisual1_iv.tcl` 생성(실제 코드 commit a504f60). `Wmesa=10.0`, J=abs(I[A/um])*1e8/10 조건부 공식, 독립 node IV/JV/CSV, Trap-ON 0V 스파이크 원본 데이터 보존. Tcl mock parser/4 synthetic-point J 계산 검증; 실제 Sentaurus 새 SVisual 코드는 아직 미실행.
+- SDE GitHub 원문 정적 검토: Wm10um, 2×5nm sidewall, In0.08 QW4×3nm, GaN QB5×8nm, nGaN3.9um, pGaN0.12um -> total 4.072um, 36 intended subregions. EBL 없음/활성 Mg3e17/상하 전체 접촉 = PILOT, Wu 논문 완전 복제 아님. 2D는 10x10um² square 아님.
+- SDevice1 GitHub 원문: DefaultParametersFromFile, Fermi, SRH/Rad/Auger, mobility, PolAct and representative trap blocks. User actual OFF `n2_des.log`: NtSide0, PolAct0, Vstop0.1 reaches 0.100V, anode +8.387e-31/cathode -8.387e-31 raw, curve trace/TDR done and normal exit 20:30:09 KST. ON NtSide1e18 SVisual plot observed but solver-tail log and V~0 spike not analyzed. 0.1V nearly-zero injection is NOT working LED or validated IQE.
+- Real school SWB input may differ from GitHub; no school file modified remotely. Existing CMP4um/Kou/Lee input unchanged. Overall baseline not frozen.
+
+변경:
+- New candidate SVISUAL file a504f60
+- Updated candidate README 23b4eec, JuSubin TIMELINE, TEAM_TIMELINE, ERROR_LOG, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.md.
+
+다음:
+(1) Rerun SVisual1 ONLY with 10um code using saved PLT
+(2) check actual units AreaFactor and near-zero ON spike raw voltage/current points, ON run log
+(3) validate SDE doping/alloy/mesh & SDevice real Mg ionization, polarization, EBL/contacts and meaningful injection before Wu/Kou Baseline selection.
+
+---
+
+## 2026-11-03T12:48:49Z — soybeanmilk0514-jpg
+
+[2026-11-03 ~21:46 KST]
+작업자: 주수빈 Wu10 작업 흐름 (채팅 작업자 신원 별도 재확인 전)
+AI: ChatGPT
+구분: PROGRESS / RUN IN PROGRESS / NEXT ACTION
+상태: OBSERVED (screen), high-bias outcome UNRESOLVED
+
+요약: CMP_WU 학교 SWB에 NtSide 0,1e18,1e17 각각 PolAct0, Vstop 0.1과5 조건 6개 확인. 사용자 의도: 5V까지 우선 돌리고 너무 느리거나 수렴 문제 발생 시 로그 확인 후 4V 또는 3V 단축 시험 고려. Node n25_des.out이 진행 중이고, 표시 pseudo-time t0.203799->0.223799, 마지막 anode 약1.019 V, raw conduction current 5.602E-21, Newton 이전 step 수렴 후 계속 계산. 아직 3/4/5V 도달하거나 LED 전류 주입/방사 결과 검증된 바 없음; Node25 NtSide 매핑은 추가 확인 필요.
+
+가이드: 진행 중 코드/solver 임의 변경 금지. 지연 시 최근 수렴 전압/시간보폭/반복 실패를 확인하고 중단/재실행 선택. Vstop만 낮춘 새 작업은 기존 5V 해석을 자동으로 이어받지 않음. 라이선스 자원 제한 시 동시 5V 작업 회피. PolAct0 및 임시 Mg/EBL/전극/2D J 정규화 조건은 미검증.
+변경: GitHub JuSubin Timeline, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE md/json, RELAY만. 학교 코드 변경 없음.
+다음: 실제 n25_des.log 진행 및 완료 여부 점검, 상황에 따라 5/4/3V 범위 결정.
+
+---
+
+## 2026-11-03T12:51:33Z — soybeanmilk0514-jpg
+
+[2026-11-03 ~21:48 KST]
+작업자: 주수빈 Wu 후보 연구 흐름 (현재 채팅 신원 독립 재확인 전)
+AI: ChatGPT
+구분: RESULT / NEXT ACTION
+상태: OBSERVED SVisual 5V Plot / n25 SDevice runtime final log pending / physics UNRESOLVED
+
+요약:
+- 학교 CMP_WU Sentaurus Visual 화면 dataset BaselineData_26, legend NtSide=1e18, I–V/J–V curve가 5V까지 표시된 사실 확인. 5V 화면 근삿값 I~5.8e−19 A/um (assumed), width-normalized |J|~5.8e−12 A/cm2 (assumed). J/I=1e7은 Wu10 10um 정규화가 적용된 것과 일치하지만 실제 2D current unit 및 AreaFactor는 별도 확인 필요.
+- 0V 근처의 좁은 spike 지속, 기원 미확인. 전류는 5V에서도 극히 작아 동작 LED나 Wu baseline 물리 검증으로 판정 불가.
+- 사용자 말로 5V 작업이 끝났고 Plot도 나왔으나, 이번 화면만으로 Sentaurus solver가 5V 목표를 정상 종료했는지는 n25_des.log 끝부분을 아직 확인하지 않음. 노드 대응은 기존 n25 SDevice → n26 SVisual 구성에서 추정, PP/log로 확인 필요.
+- ChatGPT 학교 서버 코드를 수정하지 않음; 현재 Wu10 후보/기존 CMP4/Kou/Lee 프로젝트 보호.
+
+변경: JuSubin TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.md.
+다음: tail -n 45 /user/semi/semi437/tmp/myproject/CMP_WU/n25_des.log 로 정상 종료/최종값 확인; 이후 낮은 바이어스 spike 및 실제 주입/물리모델 검증.
+
+---
+
+## 2026-11-03T12:53:28Z — soybeanmilk0514-jpg
+
+[2026-11-03 ~21:49 KST] CMP_WU Wu10 clean-vs-damaged 5V plot comparison (OBSERVED screenshot; solver log still unverified)
+- Clean NtSide=0 dataset BaselineData_22 screen to 5V: I~3.0e-29 A/um assumed, J~3.0e-22 A/cm2 assumed.
+- Previously NtSide=1e18 dataset BaselineData_26 to 5V: I~5.8e-19, J~5.8e-12, screen-read approximations.
+- ON/OFF ratio ~1.9e10 but BOTH currents effectively zero. Do not interpret as physical trap-induced LED improvement/degradation, Wu paper verification or working baseline. PolAct=0, pilot Mg/EBL/contacts and 2D raw units remain unvalidated. 10um J scaling appears applied, true units/AreaFactor not independently checked. ON near-zero-V spike remains.
+- NEXT READ ONLY: tail n21_des.log and n25_des.log (check exact node mapping) for normal 5V completion/current; then inspect initial PLT V/I, later carriers, QW recombination and band profiles; no solver input edits.
+- GitHub JuSubin TIMELINE updated; attempts to update CURRENT_STATUS/NEXT_ACTIONS/LIVE_STATE.md blocked by safety checks. No server input changes.
+
+---
+
+## 2026-11-03T12:56:20Z — soybeanmilk0514-jpg
+
+[2026-11-03 20:58:41 KST] CMP_WU n25, Wu10 Trap ON Vstop5, OBSERVED school n25_des.log
+NtSide=1e18, PolAct=0; anode 5.000 V. Anode electron 1.722e-29, hole 5.810e-19, total 5.810e-19 (raw), cathode total -5.810e-19. Final Newton converged error 6.1829e-02 (<1), Curve trace finished, n25_des.tdr saved, SDevice finished at 20:58:41, wallclock 361.62s, CPU149.23s, peak640MB; licenses returned. This confirms numerical 5V solver completion. Low raw current and hole-dominated terminal current do not establish normal microLED injection or IQE; actual 2D J units/AreaFactor remain unverified. Physical model is provisional (PolAct0, EBL off, Mg-active pilot, contacts simplified). Next: n21 clean5V log and n25 TDR QW carrier/band analysis + near-0V spike. School decks unchanged.
+
+---
+
+## 2026-11-03T13:00:35Z — soybeanmilk0514-jpg
+
+[2026-11-03 21:00:31 KST]
+작업자: 주수빈 Wu10 연구 흐름
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED 5V OFF+ON SDevice 정상 종료; physical Baseline UNRESOLVED
+
+사용자가 직접 제공한 CMP_WU/n21_des.log:
+- Trap OFF NtSide=0, PolAct=0, Vstop5V. anode5.000V, electron2.596e-29, hole4.286e-30, total3.025e-29 (raw); cathode total-3.025e-29.
+- Curve trace finished, n21_des.tdr saved, normal finished at 2026-11-03 21:00:31 KST; wallclock56.91s, peak638MB.
+기존 실제 n25_des.log와 비교:
+- Trap ON NtSide=1e18, 5V total5.810e-19, electron1.722e-29, hole5.810e-19 (raw), cathode -5.810e-19; normal finished 20:58:41 KST, wallclock361.62s, peak640MB.
+- I_ON/I_OFF ~1.921e10 but both raw currents ~zero; ON hole dominated. This does NOT show healthy LED injection, trap-related efficiency change, Wu physical replication, or matched-current comparison. Postprocess J normalization assumes 2D A/um and AreaFactor1 still unverified.
+다음: reuse saved n21_des.tdr/n25_des.tdr to inspect QW e/hDensity, conduction/valence bands, radiative/SRH/trap distribution and ON near-zero V spike. Do not change physical models or launch new Vstop jobs until output diagnosis.
+GitHub updated: JuSubin Timeline, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE md/json. No school-server code changed.
+
+---
+
+## 2026-11-03T13:06:42Z — soybeanmilk0514-jpg
+
+[2026-11-03 ~22:00 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: INVESTIGATION / HANDOFF
+상태: OBSERVED previous run logs + STATIC CODE REVIEW; root cause UNRESOLVED
+
+요약:
+- 사용자 요청에 따라 Wu10 신규 SDE/SDevice 원문을 기존 CMP Common Baseline 및 이택규 V2.1 POL0NOSHELF 기록과 비교.
+- Wu10: PolAct0, 5V, Trap OFF raw total current 3.025e-29, ON 5.810e-19; 정상 수치 종료이나 주입 거의 없음. OFF에서도 발생하므로 trap 단독 원인으로 설명 불가.
+- V2.1 POL0NOSHELF: PolAct0, 3.6V OFF I=4.80713937e-6, ON=4.54183989e-6; QW4 Radiative share 99.889%/99.964%. 전압·구조·물성·정규화가 달라 이 값들과 Wu10 전류는 직접 정량 비교 불가. V2의 QW4 편중 문제와 Wu의 거의 zero-current 현상을 혼동하지 말 것.
+- 정적 코드 차이: CMP4/Half In0.15, 22nm barriers, 26nm EBL, custom par+IncompleteIonization history vs Wu10 Full2D 10um In0.08, 8nm barriers, EBL off, blanket top/bottom Ohmic, installed default MaterialDB, no incomplete ionization, PolAct0. 단일 root cause 미확정. SVisual J 변환 width mismatch는 raw current 원인 아님.
+- 기존 V2.1 원본 학교 server 전체 SDE/PP/PAR/mesh byte-level diff는 수행하지 않았음.
+
+근거: GitHub Wu10 sde_dvs.cmd/sdevice_des.cmd/README.md, COMMON_BASELINE.md, LeeTaekGyu/TIMELINE 2026-11-03 POL0, 이전 주수빈 n21/n25 5V 학교 로그.
+
+변경: 주수빈 TIMELINE 및 TEAM_TIMELINE에 진단 내용을 기록함. 새 시뮬레이션/학교 코드 변경 없음.
+다음: 저장된 Wu n21/n25 5V TDR에서 실제 활성 도핑, e/hDensity, bands, quasi-Fermi, MQW recombination을 확인. 학교 pp21_des.cmd, MaterialDB 런타임 확인 후 최소 단일변수 수정 검토.
+
+---
+
+## 2026-11-03T13:09:19Z — soybeanmilk0514-jpg
+
+[2026-11-03 ~22:10 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / INVESTIGATION
+상태: 사용자 연구방향 확정(의도) + PROPOSED 진단; 새 실행/물리검증 없음
+
+요약:
+- Wu 논문 기반 코드는 기존 Baseline의 수정판/해결판이 아니라 Wu를 출발점으로 **독립적으로 새로 설계하는 후보**임. 이전 Baseline에서 반복된 저전류 문제는 공통 코딩/물리 구현 방식이 원인일 가능성을 확인하기 위한 비교 단서에 한해 활용. 과거 코드를 가져오거나 과거 파라미터를 물리 근거로 삼지 않음.
+- 현재 Wu 코드의 도핑 species/실효 적용, 설치 MaterialDB 값, GaN/InGaN 이종접합 수송(기본 DD vs Thermionic), MQW 양자 구속 처리, 접촉 경계조건을 진단 후보로 구분. 어느 원인도 확인되지 않음. 전극 terminal electron current만으로 QW 전자밀도 부족은 단정 불가.
+- 현재 Wu에는 pMgActive3e17/EBL0/full-width Ohmic/Trap Et, sigma/PolAct0 등의 논문 미검증 pilot 선택이 남아 있음. Wu 기반 독립 모델로 계속 검증할 때는 원문/공식 T-2022.03 가이드/실제 런타임 근거로 결정하며 기존 Baseline 값을 복제하지 않음.
+
+근거:
+- Wu10 candidate SDE/SDevice GitHub 원문
+- 기존 n21/n25 Wu 5V 로그
+- 사용자 이번 연구 방향 설명
+- Sentaurus Training sd_4 heterostructure recommendation (for proposal, not validated fix)
+
+변경: 주수빈 TIMELINE 갱신. 학교 코드 변경/시뮬레이션 없음.
+
+다음: Wu clean n21_des.tdr의 도핑·carrier/bands·quasi-Fermi와 pp21/material values 읽기 전용 점검 → 독립 Wu 시험복사본에서 구현 방식 하나씩 바꾸는 A/B 진단. 기존 V2/Kou 및 현재 Wu 원본은 보호.
+
+---
+
+## 2026-11-03T13:12:25Z — soybeanmilk0514-jpg
+
+[2026-11-03 ~22:30 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: INVESTIGATION / BLOCKER
+상태: OBSERVED external paper preview; original simulation fidelity UNRESOLVED
+
+요약:
+- Wu 논문 식별: Lili Wu et al., J. Phys. D 59 (2026) 295102, DOI:10.1088/1361-6463/ae7c7d (2023 아닌 2026).
+- 논문 공개 그림 캡션에 2D axisymmetric, EBL Al 조성 0.150→0, MQW QW In 0.150→0.145 / QB In 0.050→0.055, r=480nm/50nm 위치가 명시됨. clean config 00 peak EQE 70% at 37 A/cm2 표시. 완전 소자 구조표/도핑/전극/재료 모델은 전체 PDF 확인 전 미확정.
+- 현재 Wu10 SDE 10um planar Full2D/In0.08/EBL0와 중요한 차이. 이 차이가 5V 극저전류의 *원인*이라고 확정할 수 없음.
+- Reference-list 후보 중 Yin 2024 MIS microLED은 10um, nGaN2um, superlattice0.3um, 9x 3/12nm MQW, AlGaN EBL30nm, pGaN40nm이지만 Wu 실제 기준 소자에 그대로 대입할 근거가 없음.
+근거: https://www.researchgate.net/publication/407015266_Theoretical_study_of_nanoscale_sidewall_damage_on_carrier_transport_and_recombination_in_InGaN_micro-LEDs ; https://pmc.ncbi.nlm.nih.gov/articles/PMC10973746/
+변경: JuSubin/TIMELINE.md commit 4712a0f. 학교 코드/새 실행 없음.
+다음: Wu 2026 full PDF+supplement/ref numbers 확인 → 원문 구조/transport/contact 추출. 동시에 기존 n21 TDR 주입 진단.
+
+---
+
+## 2026-11-03T13:14:59Z — soybeanmilk0514-jpg
+
+[2026-11-03 ~22:20 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: SOURCE AUDIT / DECISION / BLOCKER / HANDOFF
+상태: OBSERVED GitHub source & external publisher preview, PROPOSED redesign; NO NEW RUN
+
+요약:
+- User confirms Wu baseline is an independent paper-based implementation, NOT a correction/reuse of old V2. Deleting EBL and switching PolAct=0 to avoid V2's suspected issues without Wu paper basis is inappropriate.
+- **CRITICAL 2023 vs 2026 Wu distinction**: Existing CMP_BASELINE_3.0.0_WU10FULL README cites Zhuang Wu et al. 2023 (10.1016/j.micrna.2023.207542) and code makes EBL=0, PolAct=0, planar full10um, In0.08 QWs/GaN barriers, provisional Mg/contact/traps. Separately project work now examines Lili Wu et al. 2026 (10.1088/1361-6463/ae7c7d).
+- Publisher preview of Lili Wu 2026 specifically identifies undamaged **Configuration 00 with an EBL**, and a **separate no-EBL control**. Fig caption describes **2D axisymmetric** geometry, EBL Dam1 Al composition 0.150->0, MQW Dam2 well In0.150->0.145 and barrier In0.050->0.055. Therefore if Wu2026 is targeted, present Wu10 code is NOT a valid paper-faithful baseline; cannot delete EBL by default or reuse In0.08/GaN QB as though they came from Wu2026. Full EBL thickness, contacts, epi stack/physics still need full Methods/supplement; Kou EBL26nm must NOT be copied in. Wu2023 EBL status still not proven from accessible abstract.
+- Existing Wu10 5V OFF I=3.025e-29 / ON=5.810e-19 are numerical logs and do not establish that EBL omission or PolAct0 specifically caused low current. Current physical cause remains UNRESOLVED.
+
+변경:
+- Updated JuSubin TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.md. No school deck or SDevice simulation changed.
+
+다음:
+- Make reference paper unambiguous; preserve historical Wu10 for comparison, check saved n21/n25 TDR read-only; if Lili Wu2026 target, create separate EBL-present axisymmetric model using Wu2026 original methods/Fig1/supplemental for actual thickness/composition/contact/dopant, justified nonzero polarization, then clean current validation, then paper-specific defect models and splits. PolAct0 / EBL removal only separately labelled sensitivity controls.
+
+---
+
+## 2026-11-03T13:17:44Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: CORRECTION / RESEARCH
+상태: OBSERVED 2023 Wu publisher-exposed methods; reference connections partly verified; root cause UNRESOLVED
+
+CORRECTION: previous issue comment about Lili Wu 2026 axisymmetric/EBL/gradient/EQE was WRONG PAPER and must not be used for CMP_WU. Correct source is Zhuang Wu et al. (2023), Physical mechanisms on the size-effect in GaN-based Micro-LEDs, Micro and Nanostructures 177, 207542, DOI 10.1016/j.micrna.2023.207542.
+
+2023 direct publisher text: 10um device, nGaN3.9um Si5e18, 4 In0.08GaN QWs 3nm, GaN barriers8nm, pGaN Mg2e19 (chemical nominal), 5nm acceptor-like sidewall traps each side. Physics includes piezoelectric polarization, Mg incomplete ionization, local-electric-field-related trapping, Radiative/SRH/Auger. Our Wu10 PolAct0 + no Mg incomplete ionization + pilot active3e17, no verified contacts/EBL is not faithful to reported setup; not yet proven root of ultralow 5V current.
+
+Wu text directly mentions [11] Olivier 2017, [13] Konoplev modeling, [17] Shiqiang Lu 2021 low-J LED designs, [18] Luming Yu 2022 dead-zone measurements. Related same-research-group open 2022 model (Zhang et al., Electronics 11, 2044) simulates different 10um epistack, ~2.9V turn-on and 5V I88uA; do NOT transplant its 20nm EBL/300nm pGaN into Wu without Fig1 cross-check.
+
+Changed GitHub records: JuSubin TIMELINE commit 6b3cbce; TEAM_TIMELINE commit f1cce853. No school server run/code change.
+Next: paper figure1 exact pGaN/EBL/contact; inspect existing n21 5V doping/e/h/band profiles, then one-model-at-a-time correction.
+
+Refs: https://www.sciencedirect.com/science/article/abs/pii/S2773012323000390 ; https://www.mdpi.com/2079-9292/11/13/2044 ; https://link.springer.com/article/10.1186/s11671-021-03557-4 ; https://doi.org/10.1063/5.0099642 ; https://doi.org/10.1063/1.4993741
+
+---
+
+## 2026-11-03T13:19:30Z — soybeanmilk0514-jpg
+
+[2026-11-03 ~22:30 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: CORRECTION / SOURCE VERIFICATION / HANDOFF
+상태: OBSERVED (사용자 기준논문 확인 + 출판사 공개 Methods 발췌); no new simulations or school-code edits
+
+요약:
+- **CORRECTION/RETRACTION:** 이 ChatGPT가 직전에 다른 Wu 논문을 연결해 만든 EBL/2D-axisymmetric/조성 관련 Baseline 변경 권고를 철회한다. 기준은 유일하게 **Zhuang Wu et al. 2023**, Physical mechanisms on the size-effect in GaN-based Micro-LEDs, DOI 10.1016/j.micrna.2023.207542. 기존 Wu10 모델을 이 논문 기반으로 독립 설계하는 사용자의 의도 유지. 지난 V2 코드를 복사하거나 지난 EBL/분극 실패 추측을 새 구조 결정 근거로 사용하지 않는다.
+- **Original publisher indexed body text:** Wu2023 10um example, nGaN3.9um Si5e18 cm^-3, 4x InGaN/GaN MQWs In0.08, QW3nm, GaN barrier8nm, pGaN Mg doping2e19 cm^-3, acceptor-like traps within 5nm from both sidewalls. Physics includes piezoelectric polarization, incomplete ionization for Mg, local-electric-field-related trapping, Radiative/SRH/Auger recombination models.
+- **EBL unresolved:** the excerpt retrieved does not say whether there is an EBL or its thickness. Existing Wu10 code tEBL=0 is a provisional choice, NOT evidence Wu omitted EBL. Do NOT add Kou26nm or claim EBL is mandatory/absent before checking Wu2023 Fig1(a) / complete Methods.
+- **Code deviations:** SDevice PolAct=0, Mg incomplete ionization omitted; SDE pGaN MgActive3e17 pilot vs chemical Mg2e19 paper. Contacts, material defaults and trap capture implementation remain unverified. Existing clean n21 5V I3.025e-29, ON n25 I5.810e-19 are numerical finishes, not validated current injection. No root cause assigned to EBL.
+- **GitHub repair:** replaced erroneous recent notes with Wu2023 correction in JuSubin TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.md (other historical external research content preserved; no downstream code committed).
+- **NEXT:** protect existing school Wu10 outputs; obtain Wu2023 Fig1 and exact EBL/contact/stack; inspect n21/n25 5V e/hDensity, doping and bands and actual SDevice PP/MaterialDB; create independently controlled Wu2023 model with justified polarization and Mg incomplete ionization. Later check paper local-field-dependent trap model vs static bulk trap approximation.
+
+근거: https://www.sciencedirect.com/science/article/abs/pii/S2773012323000390 (DOI 10.1016/j.micrna.2023.207542), current GitHub Wu10 SDE/SDevice.
+
+
+---
+
+## 2026-11-03T13:27:02Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: CODE / HANDOFF / NEXT
+상태: PROPOSED — GITHUB SOURCE CREATED, SENTaurus T-2022.03 NO RUN
+
+요약:
+- User chose to completely revise the Wu2023 independent candidate toward actual paper physics, without importing old CMP4/Kou or unrelated 2026 Lili Wu structures.
+- New isolated directory CMP/tcad/candidates/CMP_BASELINE_3.2.0_WU2023PHY/ created on GitHub. Original CMP_BASELINE_3.0.0_WU10FULL and school CMP_WU results preserved.
+- New committed files: sde_dvs.cmd(b6acbf4), sdevice_des.cmd(570f1e2), sdevice.par(ebade69), svisual1_iv.tcl(760c570), README.md(0225a13).
+- Paper-backed geometry: W10um, nGaN3.9um / nSi5e18, 4xIn0.08 QW3nm, GaN QB8nm, Mg nominal2e19, bilateral5nm trap host. New IncompleteIonization Mg, polarization ON with assumed crystal orientation, trap params user-configurable.
+- Thermionic interface and PooleFrenkel field-dependent trapping are NEW MODEL CHOICES, NOT exact Wu-paper verified. Mg2e19 mapped to nominal active substitutional species (unverified chemical->active mapping); generic E0=0.15eV and PF eps9.5 are secondary-source provisional.
+- Full EBL status, pGaN thickness120nm, all-width Ohmic electrodes, trap 0.75eV/sigma1e-15, QB count5, lattice polarity and quantum/B/C models remain unverified and MUST not be presented as exact Wu data.
+- Static source audit: all 22 trap-region blocks present, balanced parens and SWB macros checked. NO real school SWB preprocess, mesh or solver execution; physical injection not validated.
+- Old clean 5V n21 current3.025e-29 raw and ON n25 current5.810e-19 raw belong to OLD candidate; cannot transfer to new code.
+
+변경:
+- JuSubin/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md/json, .ai-sync/RELAY.md updated.
+다음:
+- Create separate school SWB project; SDE mesh+contact+donor/acceptor check; sdevice.par and pp verify; clean 0.1V syntax then clean 5V QW e/h, band and I-V diagnostics before ANY trap-on run; obtain Wu2023 original Fig1/Methods to resolve EBL/contacts/trap.
+- No existing code/results overwritten.
+
+---
+
+## 2026-11-03T13:35:15Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / BLOCKER
+상태: USER REPORTED RUN + ERROR SCREENSHOT; UNRESOLVED / NOT VERIFIED
+
+User launched direct Vstop=5 instead of separate 0.1V smoke, then reported SWB error with screenshot. Vstop5 Quasistationary still ramps 0→5V through intermediate steps. Actual failing node, exact parser/solver error, preprocessed params and final voltage NOT yet independently verified. No evidence 5V solver completed. No file patch yet.
+
+Source in GitHub: CMP/tcad/candidates/CMP_BASELINE_3.2.0_WU2023PHY; old 3.0.0/older school results preserved.
+Potential diagnostic domains only (not asserted causes): Mg/nSi species, parameter file @parameter@, LatticeParameters, IncompleteIonization, Thermionic/PooleFrenkel.
+NEXT: inspect newest school SWB n*_des.log or n*_dvs.log/msh log and pp*_des.cmd/par to find first concrete error before editing source and rerunning.
+
+---
+
+## 2026-11-03T13:38:22Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER / DIAGNOSTIC
+상태: OBSERVED terminal file paths, SDevice failure root UNRESOLVED
+
+New-run path isolated: /user/semi/semi437/tmp/myproject/CMP_WU_Copy/n21_des.log (mtime 1793709944.632). SDE log files n1_dvs.log and n1_msh.log are present, but mesh success is not independently verified. Previous screenshot showed SWB n21 SDevice failed; no exact first fatal message in evidence yet.
+
+User broad grep tail was dominated by OLD CMP_WU normal "Error smaller than 1" convergence messages. NEW CMP_WU_Copy log matches shown in tail were only "Absolute error" / "RelErrControl" / "Relative error" setup text. Because grep was truncated with tail -n 40, absence of a fatal hit is not proven.
+
+Requested targeted output from user: cd /user/semi/semi437/tmp/myproject/CMP_WU_Copy; tail -n 100 n21_des.log; ls -lh *21*des*; grep -niE 'error:|fatal|undefined|unknown|syntax|cannot|warning|abort|failed' n21_des.log | head -n 30.
+
+No school code modification and no fix/5V success claim. Old CMP_WU and candidate GitHub original preserved.
+
+---
+
+## 2026-11-03T13:41:42Z — soybeanmilk0514-jpg
+
+[2026-11-03 21:45:44 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER / ROOT-CAUSE
+상태: OBSERVED cause CONFIRMED, FIX PROPOSED/NOT RUN
+
+Evidence from user-pasted CMP_WU_Copy/n21_des.log:
+- 33 semiconductor regions, 40006 triangles, mesh and doping n1_msh.tdr loaded successfully.
+- "Reading parameter file 'pp21_des.par' ..." then "Cannot open parameter file 'pp21_des.par' !"
+- Plot alias warning lines 653/656/658 are nonfatal.
+- Therefore SDevice stopped before 5V physics solve; issue is missing Workbench-preprocessed parameter input, NOT confirmed Mg/PF/thermal syntax error.
+
+Fix to apply in SCHOOL SWB: select FIRST SDevice tool -> Tool > Edit Input > Parameter (or right click SDevice icon), create/edit shared sdevice.par, paste current candidate companion sdevice.par and save. If using Individual File mode, ensure per-tool parameter filename. Check file and preprocessed pp21_des.par produced before retrying SDevice. There are two SDevice tool instances; verify parameter assignment for both if eventually ON run. No source code changed and no school run after diagnosis. Note mesh quality min angle 0.037° needs later attention, but is unrelated to missing file.
+
+---
+
+## 2026-11-03T13:45:24Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS
+상태: USER-REPORTED RUNNING; NOT YET VERIFIED 5V SOLVER FINISH
+
+After earlier failure to open pp21_des.par, user opened Create Parameter File dialog and subsequently reported CMP_WU_Copy SDevice is running. Parameter creation/paste was guided; exact final effective PP and log not yet independently confirmed. No solver final bias, terminal current, or TDR result available. No code changed. Next: read n21_des.log and confirm Curve trace finished, 5V terminal current and exit status before assessing whether LED actually injects carriers.
+
+---
+
+## 2026-11-03T13:51:30Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / RESULT (partial sweep)
+상태: OBSERVED 3.713V accepted step; 5V still RUNNING
+
+User log CMP_WU_Copy/n21_des.log: Quasistationary t=0.722621→0.742621 accepted, 3 iterations Bank/Rose, convergence error=0.17198; anode V=3.713V, electron current+1.374e-5, hole+1.885e-29, total+1.374e-5 raw. Cathode total-1.374e-5, electron-1.374e-5, hole2.334e-40 raw. Next t=0.762621 step started but not yet accepted in pasted output.
+
+Old CMP_WU clean 5V I3.025e-29 is different source/physics, cannot claim direct numerical physical improvement. Electron dominance signals need for checking pGaN actual Mg/acceptor/hole density and QW transport; contact partition alone does not prove no holes in QWs. 5V, TDR and scientific baseline NOT yet verified. No code change.
+NEXT: keep run, collect final 5V log/TDR, then pGaN/QW carrier-band/recombination audit.
+
+---
+
+## 2026-11-03T13:54:30Z — soybeanmilk0514-jpg
+
+[2026-11-03 22:02:35 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED / CONFIRMED NUMERICAL SWEEP, PHYSICAL LED UNRESOLVED
+
+New Wu 2023 physics-first candidate school CMP_WU_Copy n21 clean 0→5V SDevice log directly supplied. Final anode 5.000E+00 V, eCurrent +2.884E-05, hCurrent +3.696E-27, total +2.884E-05 raw; cathode total -2.884E-05. Last Newton error 0.20186 (<1), Curve trace finished; n21_des.tdr written; simulation finished 2026-11-03 22:02:35 KST, wallclock 460.97 s, CPU 460.19 s, peak memory 765MB.
+
+Interpretation: new candidate passes 5V numerical sweep and shows substantial finite terminal current, unlike older differently modeled Wu pilot, but cannot attribute causality or label as working calibrated microLED; contact current almost entirely electronic and actual QW hole injection and radiative recombination remain UNMEASURED. Raw 2D current units/AreaFactor not validated.
+
+NEXT: inspect saved n21_des.tdr at 5V for pGaN actual AcceptorConcentration, hDensity, valence bands and QW1-4 e/h densities, radiative/SRH spatial rates, and contacts; then decide clean physical validity before NtSide ON, model edits, or Baseline freeze.
+
+Source modifications: NONE. GitHub updates: JuSubin TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE md/json.
+
+---
+
+## 2026-11-03T13:55:42Z — soybeanmilk0514-jpg
+
+[2026-11-03 ~22:53 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED SCHOOL SVISUAL SCREENSHOT; PHYSICAL LED BASELINE UNRESOLVED
+
+User screen CMP_WU_Copy Sentaurus Visual: dataset BaselineData_22, NtSide=0, I-V 0–5V smoothly rising ~2.5–3V; 5V anode current ~2.884e-5 raw and 10um-width normalized |J| ~288 A/cm2 displayed. Accompanies already verified n21 log: 5V anode electron 2.884e-5; hole3.696e-27; n21_des.tdr successfully written. Plot does not establish calibrated 2D native current A/um or AreaFactor1, real 3D pixel J, correct p-hole injection, QW radiative recombination or Wu faithful baseline.
+
+NEXT first diagnostic (read-only): load saved clean n21_des.tdr in SVisual, inspect hDensity log map at pGaN/QWs, then AcceptorConcentration/eDensity/bands/quasi-Fermi/Radiative+SRH before running any trap-on split. No source edit/new server run.
+
+---
+
+## 2026-11-03T13:59:45Z — soybeanmilk0514-jpg
+
+[2026-11-03 ~22:57 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / BLOCKER
+상태: OBSERVED screenshot; physical cause UNRESOLVED
+
+New CMP_WU_Copy clean 5V n21_des.tdr hDensity logarithmic map shown, auto range approximately 3.79136e-39 to 1 cm^-3. Confirms plotted hole density is near zero across stack, consistent with earlier anode electron current 2.884e-5 vs hole 3.696e-27 raw. Real QW bipolar injection not established; do not assume I-V turn-on means LED works.
+NEXT read-only: display AcceptorConcentration in same SVisual dataset and inspect pGaN region before changing Mg ionization/contact/EBL. No new run/code change.
+GitHub timeline updated.
+
+---
+
+## 2026-11-03T14:02:47Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / BLOCKER
+상태: OBSERVED screenshot; cause UNRESOLVED
+
+CMP_WU_Copy n21_des.tdr 5V clean SVisual AcceptorConcentration shows min 0 max 0 cm^-3 and uniform blue in pGaN/MQW window. Prior 5V hDensity auto max ~1 cm^-3, anode electron2.884e-5, hole3.696e-27 raw. Strong evidence no effective acceptors in SDevice output; cannot yet conclude input Mg missing versus species recognition / incomplete-ionization issue.
+
+Official Sentaurus Mesh/Device guidance: dopant recognition depends on active species and datexcodes.txt material mapping. Next read-only: open n1_msh.tdr and plot MagnesiumActiveConcentration across pGaN, noting range; if missing check pp1_dvs.cmd profiles; if present2e19 check local/install datexcodes.txt GaN acceptor mapping and pp21_des.par. Do not rerun or run trap ON until diagnosed. No code edits.
+Refs: https://ghzphy.github.io/Sentaurus_Training/smesh/smesh_04.html and https://ghzphy.github.io/Sentaurus_Training/sd/sd_16.html
+
+---
+
+## 2026-11-03T14:06:29Z — soybeanmilk0514-jpg
+
+[2026-11-03 ~23:02 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / RESULT / BLOCKER
+상태: OBSERVED TRAP ON 5V SVISUAL screenshot; final solver log UNCONFIRMED
+
+User reports NtSide=1e18 5V finished; SVisual CMP_WU_Copy dataset BaselineData_26 plots 0–5V with anode raw I ~2.8e-5 and conditional width-normalized J ~280 A/cm2 at 5V. Very similar shape to previously confirmed clean n21 5V I2.884e-5. ON final SDevice contact currents and TDR completion still unverified; screenshot is not sufficient for calibrated trap effect.
+
+CRITICAL: clean n21_des.tdr AcceptorConcentration auto range0–0 and hDensity max~1 cm^-3. No physically valid bipolar LED injection yet, so no defensible sidewall IQE / trap-loss inference despite both IV plots. Original n1_msh.tdr Mg source field not checked yet.
+
+NEXT: tail -n 50 CMP_WU_Copy/n25_des.log for exact ON 5V e/h currents / Curve trace finished. Then open n1_msh.tdr in SVisual, select MagnesiumActiveConcentration and report min/max in top pGaN; diagnose missing Mg vs species mapping before reruns or trap claims. No code changes.
+
+---
+
+## 2026-11-03T14:09:03Z — soybeanmilk0514-jpg
+
+[2026-11-03 ~23:05 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / BLOCKER
+상태: OBSERVED Mg mesh profile; acceptor conversion UNRESOLVED
+
+User screenshot correctly shows CMP_WU_Copy n1_msh original SDE mesh with MagnesiumActiveConcentration concentrated across top pGaN x≈0–0.12um, max 2.000e+19 cm^-3, near-zero below pGaN. SDE Mg input and output field confirmed. Prior n21_des.tdr 5V AcceptorConcentration 0–0 and hDensity max ~1 cm^-3; terminal current strongly electron dominated. Root cause now narrowed to dopant recognition/net DopingConcentration conversion and SDevice ionization / local datexcodes mapping, not missing SDE Mg placement. Do not assert exact cause yet.
+
+NEXT READ-ONLY: in same n1_msh SVisual select DopingConcentration, inspect signed top-pGaN value. Check whether installed/local datexcodes.txt GaN mapping includes MagnesiumActiveConcentration as acceptor and pp21_des.par Mg ionization. No new solver/code changes.
+
+Ref: https://ghzphy.github.io/Sentaurus_Training/sd/sd_16.html
+
+---
+
+## 2026-11-03T14:16:35Z — soybeanmilk0514-jpg
+
+[2026-11-03 22:13:17 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / BLOCKER
+상태: OBSERVED ON n25 5V SDEVICE NORMAL FINISH; physical LED INVALID/UNRESOLVED
+
+User provided final CMP_WU_Copy/n25_des.log: 5.000 V, anode electron2.858e-05, hole2.384e-20, total2.858e-05 raw; cathode total-2.858e-05. Bank/Rose last error0.84932<1, Curve trace finished, n25_des.tdr saved, finish Nov3 22:13:17 KST, wallclock530.09s, peak757MB. Thus prior ON confirmation pending is resolved. OFF clean n21 5V 2.884e-05 raw. ON about 0.90% lower same-voltage terminal current only; NOT IQE/recombination effect.
+
+Critical blocker remains: SDE n1_msh pGaN MgActive2e19 exists, n21 5V SDevice AcceptorConcentration=0, hDensity max~1cm^-3 and OFF+ON contacts almost exclusively electronic. Next: inspect signed n1_msh DopingConcentration then GaN Mg datexcodes and pp21_des.par; examine QW bipolar injection before interpreting trap impact. No new code changes/simulations in this turn.
+
+---
+
+## 2026-11-03T14:22:29Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER / RESULT
+상태: OBSERVED n1_msh net doping missing in pGaN
+
+User SVisual original mesh n1_msh DopingConcentration shows pGaN at 0 cm^-3 and nGaN +5e18 cm^-3. Previous same mesh MagnesiumActiveConcentration is 2e19 cm^-3 pGaN. Thus Mg data is present but not mapped into negative net p-type doping. Earlier 5V SDevice AcceptorConcentration zero, hDensity near zero; ON/OFF I-V cannot yet be interpreted as working LED or trap efficiency.
+Next: inspect local/home/installed datexcodes.txt magnesium acceptor mapping and actual species registration before minimal correction; validate remeshed negative pGaN net doping BEFORE rerunning 5V. No code/solver changes.
+
+---
+
+## 2026-11-03T14:42:45Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / BLOCKER
+상태: OBSERVED example species entries; UNRESOLVED Wu acceptor mapping
+
+User shell grep found MagnesiumActiveConcentration/MagnesiumConcentration entries in installed Sentaurus T-2022.03 GaN datexcodes examples (GaN_AlGaN_Polarization, GaN_AlGaN_Polz_Calculated, GaN_Fin-HEMT, GaN_HEMT_FermiStat, pGate_HEMT_CC). pGate_HEMT example returned no Magnesium match. No example contents / doping=acceptor attributes inspected yet; no proof Wu project uses mappings. Next read-only action: sed -n '1,65p' installed GaN_AlGaN_Polarization/datexcodes.txt, then inspect active local/home mapping in CMP_WU_Copy. No code/run changes.
+
+---
+
+## 2026-11-03T14:44:12Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / BLOCKER
+상태: OBSERVED GaN example Mg acceptor mapping; UNRESOLVED Wu runtime mapping
+
+User provided first 65 lines of installed T-2022.03 GaN_AlGaN_Polarization/datexcodes.txt: MagnesiumConcentration/MagnesiumChemicalConcentration has doping=acceptor with active=MagnesiumActiveConcentration, ionized=MagnesiumMinusConcentration, material including GaN. This establishes official example's Mg acceptor mapping, NOT that CMP_WU_Copy actually loads it. User mesh pGaN MgActive2e19, net DopingConcentration~0 and SDevice AcceptorConcentration~0 still need diagnosis. Next check local/home datexcodes and actual SDE species mapping (read-only). No code changes or new simulations.
+
+---
+
+## 2026-11-03T14:45:53Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / BLOCKER
+상태: OBSERVED local/home datexcodes missing; unresolved effective mapping
+
+User shell ls confirms /user/semi/semi437/tmp/myproject/CMP_WU_Copy/datexcodes.txt and /user/semi/semi437/datexcodes.txt are absent. Does not prove runtime has no other override. Official GaN example Mg acceptor mapping exists but application to Wu remains unverified. Next read-only: grep Magnesium in installed default lib/datexcodes.txt; inspect pp1_dvs.cmd and SWB working directory if needed. No modifications or reruns.
+
+---
+
+## 2026-11-03T14:52:58Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / BLOCKER
+상태: OBSERVED school SDE MgActive-only, proposed fix NOT RUN
+
+New actual school server evidence: /user/semi/semi437/tmp/myproject/CMP_WU_Copy/pp1_dvs.cmd grep yields PMgActive=2e19 (line25), place-field MagnesiumActiveConcentration (line61), pGaN assignment (line68). No chemical MagnesiumConcentration or PDopant in matching lines. Installed default lib/datexcodes.txt Mg chemical→active acceptor declaration is commented; installed GaN example enables it. This strongly explains pGaN MgActive present but net doping zero and SDevice acceptor zero; effective runtime and ionization pp21_des.par still uninspected. Next read-only inspect school pp21_des.par, then isolated project-scoped mapping and re-mesh to test negative pGaN net doping. No global edit or rerun; previously finished n21/n25 preserved.
+
+---
+
+## 2026-11-03T14:56:59Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / BLOCKER
+상태: OBSERVED Mg ionization parameters; mapping blocker UNRESOLVED
+
+Actual school CMP_WU_Copy/pp21_des.par grep shows Material="GaN" Ionization Species("MagnesiumActiveConcentration") E_0=0.15, alpha=0.0, g=4.0 (labelled generic III-N, not Wu source parameter). Confirms SDevice ionization parameter exists; it does NOT itself register Mg as acceptor. Actual SDE pp1_dvs.cmd writes MgActive2e19; default datexcodes Mg acceptor mapping commented out, pGaN mesh signed net doping=0 and SDevice Acceptor=0. Next read school pp21_des.cmd for actual Physics IncompleteIonization; then controlled project-local Mg mapping, SDE mesh-only sign validation, and only then clean SDevice. No school code changes or new runs.
+
+---
+
+## 2026-11-03T15:00:55Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / BLOCKER
+상태: OBSERVED Mg incomplete-ionization switch matches Species; mapping fix NOT RUN
+
+School CMP_WU_Copy/pp21_des.cmd actually includes Physics IncompleteIonization(Dopants="MagnesiumActiveConcentration") at line29 and File Parameter="pp21_des.par" at line16. School pp21_des.par GaN Ionization Species("MagnesiumActiveConcentration") E0=0.15 alpha0 g4. Hence missing IncompleteIonization Physics switch and species mismatch are ruled out. Mesh pGaN MgActive2e19 but net doping0, SDevice acceptor0; default lib Mg chemical acceptor mapping commented. Next: isolated project-local datexcodes correction using official installed GaN example; SDE mesh-only and negative pGaN net doping first; then clean SDevice holes/QW. User has not edited school code or rerun.
+
+---
+
+## 2026-11-03T15:04:30Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / NEXT GATE
+상태: OBSERVED local Mg mapping and mesh backup; SDE application UNRESOLVED
+
+USER LS confirms CMP_WU_Copy/datexcodes.txt 3.5 KB and n1_msh_before_MgFix.tdr 962 KB. User grep displays uncommented MagnesiumConcentration doping=acceptor(active=MagnesiumActiveConcentration, ionized=MagnesiumMinusConcentration, material includes GaN), lines 35–39. This verifies local mapping content; does NOT prove SDE loaded it. Original pGaN net doping0, n21/n25 5V hole injection invalid pending retest. NEXT run SDE node ONLY, inspect new n1_msh.tdr pGaN signed negative net doping, nGaN positive; no downstream SDevice run yet. No further code/run evidence.
+
+---
+
+## 2026-11-03T15:07:36Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / VALIDATION GATE
+상태: USER-REPORTED SDE RERUN; MAGNESIUM NET ACCEPTOR FIX UNVERIFIED
+
+User states "SDE 새로 다 돌렸어" after setting local CMP_WU_Copy/datexcodes.txt GaN Mg acceptor mapping and backing up old n1_msh.tdr. No SDE log, refreshed mesh timestamp or new signed DopingConcentration supplied; cannot mark corrected yet. NEXT: open new n1_msh.tdr, inspect signed pGaN net doping (negative required), nGaN positive ~5e18; do not rerun SDevice prior to validation. If still zero, inspect SWB runtime mapping / chemical-active linkage.
+
+---
+
+## 2026-11-03T15:12:03Z — soybeanmilk0514-jpg
+
+[2026-11-04 ~00:09 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / FIX / NEXT
+상태: OBSERVED SDE mesh net p-doping restored; SDevice physical validity UNRESOLVED
+
+User supplied SVisual screenshot of CMP_WU_Copy n1_msh after rerunning SDE with project-local datexcodes.txt: Scalar DopingConcentration top pGaN dark blue at color scale min ~-2.000e19 cm^-3, lower nGaN red +5.000e18 cm^-3. Earlier pGaN was 0 despite MgActive=2e19; project-local GaN Mg doping=acceptor mapping now evidently works in SDE mesh. These values are visually inferred from legend, not point-probed, and -2e19 net doping does not establish free hole density. Old n21/n25 5V logs/TDR were before fix and are not physically validated; no post-fix SDevice output yet. Next preserve pre-fix n21/n25 files, then run only clean OFF SDevice n21 against corrected mesh; inspect pGaN AcceptorConcentration/hDensity, MQW carriers and Rad/SRH; ON later. No other epitaxy/physics modifications.
+
+---
+
+## 2026-11-03T15:14:32Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS
+상태: OBSERVED backup completed; post-fix SDevice pending
+
+User showed preMgFix_SDevice_backup listing with all six prior n21/n25 log/plt/tdr outputs (~15MB). These are pre-MgFix control data. Next: run only clean Trap OFF n21 against corrected SDE mesh, inspect SDevice holes and QW rates. No post-fix SDevice run observed.
+
+---
+
+## 2026-11-03T15:16:15Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: VALIDATION / NEXT
+상태: OBSERVED old n21 SDevice log; post-fix run pending
+
+User displayed CMP_WU_Copy/n21_des.log tail dated Tue Nov 3 22:02:35 KST with 5V electron=2.884e-05, hole=3.696e-27, matching pre-Mg-fix 5V result exactly. Thus no new n21 post-fix SDevice run is evidenced. Fresh n1_msh pGaN signed net doping≈-2e19 already verified; next explicitly rerun n21 OFF only and validate new log date, then pGaN holes and QW rates. Preserve n25 unchanged.
+
+---
+
+## 2026-11-03T15:38:42Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / NEXT
+상태: PROPOSED VALIDATION CHECKLIST (NOT NEW RUN)
+
+Post-MgFix clean n21 OFF acceptance gates: (1) fresh 5V solver completion and TDR/new log date; (2) SDevice acceptor, free pGaN hDensity and QW1–4 bipolar carriers/transport restored vs pre-fix acceptor=0, holes~1cm^-3; (3) QW-integrated Radiative/SRH/Auger and meaningful IQE if valid. Nominal Mg2e19 is not free holes; no justified required numeric 5V I or IQE. Pre-fix 5V all-electron 2.884e-5 raw not a calibration target. Only then n25 ON and matched-current loss evaluation; paper structure/transport pilot uncertainties remain. No post-fix SDevice result was provided in this turn.
+
+---
+
+## 2026-11-03T15:45:51Z — soybeanmilk0514-jpg
+
+[2026-11-04 ~00:43 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER / PROGRESS
+상태: OBSERVED post-Mg SDevice n21 local Newton nonconvergence; run still running
+
+User SWB screenshot shows SDevice n21 post-Mg run with '#iterations larger than 35', 'Newton didn't converge, trying again with smaller step', t=0.637961 to0.642158, step=0.004197, error ~3.44e3 at 5th iteration. This is step-level failure and backtracking, not yet confirmed fatal job failure or 5V finish. Error pane shows datexcodes.txt variables redefined incl magnesium/nSilicon species; duplicate definition warning from full official GaN example project-local override is possible, but unproven as convergence root. Next read-only inspect current n21_des.out and n21_des.err and log for t progress, last error. No source edits or ON run.
+
+---
+
+## 2026-11-03T15:50:01Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED post-Mg n21 intermediate convergence 4.332V; full 5V pending
+
+User live n21_des.out/log shows Newton converged at t=.866477 / anode4.332V, error=.24308<1. Terminal raw currents: anode electron7.286e-5, hole1.415e-3 (~95.1% of total), total1.488e-3; cathode total-1.488e-3. Thus previous step reduction near t=.64 was recovered. New step t=.886477, expected4.432V, only partial Newton iterations visible. Current is different voltage from old pre-fix 5V, not comparable as a factor. Hole contact current is encouraging but QW free holes/radiative recombination and full 5V completion not yet confirmed. Error tail shows InGaN e/h DOSMass computed using GaN/InN materials (not independently fatal); datexcodes redefined warnings earlier. NEXT leave run to continue while advancing, then inspect final log/date and pGaN+QW hDensity/Acceptor and QW Rad/SRH/Auger; no n25 yet.
+
+---
+
+## 2026-11-03T15:54:45Z — soybeanmilk0514-jpg
+
+[2026-11-04 ~00:47 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED SVisual post-MgFix NtSide=0 0–5V IV plot, final SDevice log pending
+
+User reports n21 clean Trap OFF run complete, showing CMP_WU_Copy SVisual BaselineData_22 red NtSide=0 IV curve from 0 to ~5V; current knee visually ~3.2-3.4V, endpoint raw graph ~2.6e-3 on anode current [A/um] (assumed). Graph right width-normalized J scale ~2.5e4 A/cm2 is explicitly ASSUMED and cannot be treated as actual current density before device width/AreaFactor audit. Last directly observed post-fix log confirmed 4.332V with anode e7.286e-5/h1.415e-3/total1.488e-3 raw. New 5V exact contact current and solver normal completion still need n21_des.log check; no QW e/h/Rad/SRH/Auger verified yet, so baseline not fixed and ON n25 deferred. Next tail final n21_des.log, then new n21_des.tdr pGaN acceptor/hDensity and QW recombination.
+
+---
+
+## 2026-11-03T16:01:33Z — soybeanmilk0514-jpg
+
+[2026-11-04 ~00:55 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED n21 SDevice pGaN acceptor + carriers + QW radiative; IQE UNRESOLVED
+
+User provided five SVisual n21_des.tdr screenshots after local Mg mapping correction and OFF run. pGaN AcceptorConcentration now up to 2.000e19 cm^-3 (was 0 pre-fix), global hDensity max1.165e20 cm^-3 and eDensity max1.359e20 cm^-3, and RadiativeRecombination global max3.434e29 cm^-3s^-1 with bright red QW stripes especially in deeper wells. Numbers are screenshot legend extrema, not QW-specific/integrated values. Restored acceptor recognition and nonzero QW radiative strongly supported, but relative per-well injection, Rad/SRH/Auger integrals, IQE and current normalization unverified; full newly dated 5V final solver log still needed. NEXT verify n21_des.log 5V currents/normal finish and analyze integrated QW rates before n25 ON. No new code modifications.
+
+---
+
+## 2026-11-03T16:05:26Z — soybeanmilk0514-jpg
+
+[2026-11-04 ~01:03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED SRH map; IQE UNRESOLVED
+
+CMP_WU_Copy n21_des (post-MgFix NtSide=0): user SVisual screenshot of srhRecombination shows global max 2.05925e28 cm^-3 s^-1 and thin red/orange MQW high-SRH bands around x~0.15–0.165um. Previous radiative global max 3.43425e29 cm^-3 s^-1. Peak ratios cannot establish IQE; no QW region integrals and 5V final solver log verification yet. Parameterized traps OFF does not disable intrinsic SRH. No new code/run. NEXT confirm fresh 5V log, QW Rad/SRH/Auger region integrals, matched-current ON later.
+
+---
+
+## 2026-11-03T16:07:56Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED n21 MgFix OFF 5V COMPLETED; QW IQE UNRESOLVED
+
+요약:
+- User-supplied fresh CMP_WU_Copy/n21_des.log after MgFix, NtSide=0 confirms final 5.000V, Bank/Rose error=6.9604E-01 (<1), "Curve trace finished", "Writing plot 'n21_des.tdr' ... done", Sentaurus Device normal finish Tue Nov 3 23:58:02 KST (wallclock 1589.90s).
+- Anode RAW electron1.695e-4, hole2.399e-3 (~93.4% of total), total2.569e-3. Cathode total-2.569e-3. Old intermediate 4.332V log tail superseded.
+- Prior updated TDR SVisual: p-GaN acceptor and e/h carriers restored, MQW Rad max3.43425e29 and SRH max2.05925e28 cm^-3s^-1 as GLOBAL visual maxima, NOT region integrals.
+- No proof of QW IQE, paper-faithful operation or current normalization. Old preMgFix ON n25 invalid comparator against corrected OFF.
+
+변경: no source or simulator changes this turn; GitHub status and timeline updated.
+다음: QW1–4 Clean/Dmg regionwise Radiative/SRH/Auger integrals, QW carrier densities; audit 2D AreaFactor; then fresh fixed-Mg ON NtSide1e18 and matched-current analysis.
+
+---
+
+## 2026-11-03T16:13:02Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED SRH region integrals; DERIVED percentages; IQE UNRESOLVED
+
+요약:
+- User SVisual Field Integration for post-MgFix OFF CMP_WU_Copy/n21_des, srhRecombination, Clean_QW1–4 + DmgL_QW1–4 + DmgR_QW1–4: Total Integral 6.102184e14 s^-1 um^-1, Total Domain 1.199999e-1 um^2.
+- Summed QW totals: QW1 6.425083825e11 (0.10529%), QW2 6.059848698e11 (0.09931%), QW3 1.2020424023e14 (19.69856%), QW4 4.887657161e14 (80.09684%). QW4 strongly dominates SRH; carrier distribution needs verification, no cause proven.
+- DmgL+R SRH 6.122045823e11 (0.100325% of integral), close to their ~0.1% cross-sectional area fraction. NtSide=0 trap OFF means these values do not establish active sidewall trap loss.
+- No radiative or Auger region integrals, so IQE not computable yet. Previous pixel-peak ratios are invalid for IQE. No code or new simulation executed.
+
+다음: In same saved 5V n21_des.tdr, integrate RadiativeRecombination then AugerRecombination across the same 12 regions, evaluate QW-specific IQE and transport, audit current normalization. Old pre-fix n25 ON cannot compare to corrected clean n21; new ON after acceptance.
+
+---
+
+## 2026-11-03T16:15:19Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED 5V OFF 12-region Radiative integrals; DERIVED Rad/(Rad+SRH); AUGER PENDING
+
+User SVisual n21_des CMP_WU_Copy post-MgFix NtSide=0: RadiativeRecombination 12 QW regions Clean_QW1-4, DmgL_QW1-4, DmgR_QW1-4 Total Integral 9.902518e15 s^-1 um^-1, domain1.199999e-1 um2. Derived QW Rad sums QW1 7.395981904e11, QW2 1.0810392696e12, QW3 8.860310308e14, QW4 9.014665915e15; QW4 accounts for 91.0341% Rad, QW3+4 ~99.9816%. Earlier identical 12-region SRH = 6.102184e14 s^-1 um^-1, so TWO-CHANNEL Rad/(Rad+SRH)=94.1954%, QW1 53.51%, QW2 64.08%, QW3 88.05%, QW4 94.86%. This is NOT final IQE; Auger still unmeasured. High QW4 localization demands check e/h carrier profiles and physical transport. No code or new simulator execution.
+
+NEXT integrate AugerRecombination over identical 12 regions; calculate full Rad/(Rad+SRH+Auger) and investigate nonuniform QW emission. Keep current normalization and fixed-Mg ON split unresolved.
+
+---
+
+## 2026-11-03T16:20:10Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED 5V OFF QW Auger integrals, DERIVED internal IQE, PHYSICAL VALIDATION UNRESOLVED
+
+User SVisual n21_des on post-MgFix CMP_WU_Copy NtSide=0 at 5V: 12 selected Clean/DmgL/DmgR QW1-4 regions, AugerRecombination Total Integral 4.442221e15 s^-1 um^-1, domain1.199999e-1 um2. Previous identical regions Rad9.902518e15, SRH6.102184e14. Calculated IQE (Rad/(Rad+SRH+Auger)) = 66.2156%, Rad share66.22%, SRH4.08%, Auger29.70%. QW1 48.13%, QW2 59.03%, QW3 73.27%, QW4 65.60%. QW4 contains 91.034% of Rad and 95.425% of Auger, indicating highly uneven recombination, not a proven root cause. 2D raw current normalization and Wu paper reproduction unresolved; model 5V IQE not final calibrated LED. Old pre-MgFix ON n25 is invalid comparison.
+
+Changes: research status and calculated outputs recorded; no code edit or school simulation.
+Next: inspect QW eDensity/hDensity spatial cutlines and 2D AreaFactor/current density; then new post-MgFix NtSide1e18 ON and matched-current comparison.
+
+---
+
+## 2026-11-03T16:37:09Z — soybeanmilk0514-jpg
+
+[2026-11-04 ~01:35 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED image, QW assignment/cause pending
+
+SVisual post-MgFix OFF CMP_WU_Copy n21_des: C1 cutline at lateral Y≈5 um across X depth, log eDensity curve now visible with several strong MQW peaks x≈0.12–0.17 um, some at order 1e20 cm^-3. No pointwise QW numbers or definitive carrier balance from the image. Rad/Auger QW4 localization seen in prior integration still requires QW e/h profiles. Next zoom depth x≈0.115–0.175 um then inspect hDensity on same cutline. No simulator or source changes.
+
+---
+
+## 2026-11-03T16:43:25Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED SVisual hDensity central cutline; QW overlap/physical mechanism UNRESOLVED
+
+User supplied screenshot post-MgFix CMP_WU_Copy n21_des 5V NtSide=0: C1 at Y~5um, hDensity log scale across depth. Peaks at x~0.132/.143/.153/.164um, approximate 4e19/6e19/7e19/1e20 cm^-3. These values read visually, not point-extracted. Earlier eDensity also had four peaks increasing toward deeper QW. Prior 12-region Rad/SRH/Auger internal 5V IQE=66.2156%; QW4 has ~91.03% Rad / 95.42% Auger but peaked carrier density does not prove why. Spatial e-h overlap and 2D current density not validated.
+
+No new school code/simulation. Next overlay eDensity+hDensity on same C1, compare against QW boundaries, then check current density/AreaFactor before deciding fixed-Mg ON n25 matched-current run.
+
+---
+
+## 2026-11-03T16:47:45Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED e/h cutline overlay; mechanism UNRESOLVED
+
+Post-MgFix CMP_WU_Copy n21_des at 5V, NtSide=0 SVisual central Y~5µm depth cutline. User explicitly clarified blue=hDensity and red=eDensity. Four QW peaks: hole peaks shift to smaller X (p-GaN side) and electron peaks to larger X (n-GaN side) in each well; concentrations approach order1e20 cm^-3 near QW4. Visible spatial peak separation is not a quantitative overlap calculation; possible polarization/internal fields require actual preprocessed physics confirmation (PolAct/Polarization) before interpretation. Previous 3-channel model IQE66.22%, QW4 Radiative91.03% / Auger95.42%; mechanism unresolved, 2D current normalization remains pending. No code/simulation changes. NEXT inspect pp21_des.cmd/.par active physics and AreaFactor, then quantitative well e/h overlap/operating-current gate before fresh fixed-Mg NtSide=1e18 ON.
+
+---
+
+## 2026-11-03T16:50:11Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED preprocessed polarization/Mg declarations; orientation and normalization UNRESOLVED
+
+Evidence from user's read-only grep on school CMP_WU_Copy/pp21_des.cmd and pp21_des.par: cmd line6 source comment 'Full polarization ON; orientation in sdevice.par'; cmd line28 Piezoelectric_Polarization( strain ), line29 IncompleteIonization( Dopants="MagnesiumActiveConcentration" ), line213 Potential SpaceCharge ElectricField/Vector. No matches for PolAct or AreaFactor in searched two files. Thus declared strain polarization and Mg ionization are observed; field output declaration does not confirm actual field polarity, and source comment is not independent proof of full polarization orientation. Carrier peak spatial separation persists as observed but QCSE cause unconfirmed. 2D current density scaling still unresolved; old Baseline PolAct parameter must not be imported to this Wu pilot.
+
+NEXT read-only inspect pp21_des.cmd active Physics/Electrode context, pp21_des.par LatticeParameters/Polarization orientation and n21_des.log output unit/dimension/AreaFactor; then gate new post-MgFix trap ON run. No new code/simulation.
+
+---
+
+## 2026-11-03T16:52:39Z — soybeanmilk0514-jpg
+
+[2026-11-04 ~01:49 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED SVisual 5V ON I–V; user reports complete; FRESH NEW POST-MG ON FINAL LOG UNVERIFIED
+
+User showed CMP_WU_Copy SVisual BaselineData_26 graph labeled NtSide=1e18, extending to 5V, anode current roughly order 2.5e-3 raw on 'A/um (assumed)' label, J computed as 'A/cm2 (assumed)'. User says ON run completed. Screen does not show exact terminal current, new n25_des.log finish timestamp, or whether the dataset is freshly refreshed after MgFix versus older pre-fix n25. Existing confirmed post-MgFix OFF n21 5V raw current2.569e-3 and 12-region model IQE 66.2156%; do not claim a matched ON/OFF comparison without verifying new ON.
+NEXT user stat n25/n21 files and tail 45 n25_des.log, pp25 trap Conc, 5V numerical end and pGaN Acceptor/hDensity; then 12-region Rad/SRH/Auger and matched-current comparison. No new code or simulation by assistant.
+
+---
+
+## 2026-11-03T16:57:38Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT
+상태: OBSERVED n25 ON 5V normal finish
+
+CMP_WU_Copy n25_des.log post-MgFix changed 2026-11-04 01:00:20 KST after OFF n21 23:58:02. SDevice 5V error1.1827e-03, Curve trace finished, n25_des.tdr saved. ON NtSide1e18 anode raw electron1.690e-4, hole2.397e-3, total2.566e-3; OFF n21 raw total2.569e-3; same-voltage relative current delta approx -0.1168% from rounded outputs. Not IQE or SRH loss. Trap ON pp25 shows Conc1e18 in multiple regions; list truncated. Physics has strain polarization and Mg ionization. n21 area factor1, actual 2D J scaling pending. Next verify trap count, ON n25 12-QW Rad/SRH/Auger integration and same-current comparison. No code edits this turn.
+
+---
+
+## 2026-11-03T17:00:37Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT
+상태: OBSERVED ON n25 Radiative integrated; ON IQE UNRESOLVED
+
+SVisual fresh post-MgFix NtSide=1e18 n25_des, same 12 Clean/DmgL/DmgR QW regions: Radiative total9.869850e15 s^-1 um^-1 vs OFF n21 9.902518e15, reduction0.32990% at 5V. Per QW Rad change -0.140%, -1.305%, -1.066%, -0.2575%. Damaged L+R Rad9.441488e12 vs OFF9.826764e12 (-3.921% local), Clean Rad decreases0.326%. Anode raw terminal I ON2.566e-3 vs OFF2.569e-3 (-0.1168% rounded log), hence not exactly matched J. Radiative change alone is NOT IQE nor direct trap-induced SRH quantification.
+
+No new code or simulator run by assistant. NEXT integrate SRH and Auger in same n25 QW regions, calculate IQE and sidewall effects, then matched-current comparison and 2D current normalization.
+
+---
+
+## 2026-11-03T17:04:12Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / VALIDATION
+상태: OBSERVED ON n25 SRH; trap-specific gap-state rates NOT YET MEASURED
+
+New SVisual n25_des 5V ON srhRecombination same 12 QW clean+DmgL/R regions: total6.086824e14 s^-1 um^-1 vs OFF6.102184e14, -0.251713%. Per well QW1 -0.48757%, QW2 -1.33900%, QW3 -0.64292%, QW4 -0.15386%. Clean QW ON6.080848183e14 vs OFF6.09606245e14 (-0.24958%). Sidewall DmgL+R QW ON5.975499136e11 vs OFF6.122045823e11 (-2.39375%). This is ordinary SRH field, NOT proof that explicit NtSide traps suppress net recombination.
+
+Critical diagnostic: Sentaurus trap-model docs list eGapStatesRecombination and hGapStatesRecombination as separate carrier recombination rates through gap-state traps. Check n25 TDR field availability and integrate each separately (do not simply add both together), first Dmg QWs and ideally all 22 sidewall trap regions. ON Auger 12-region integral still pending. Previous OFF 66.2156% is three-term Rad/(Rad+SRH+Auger) metric; full ON trap-inclusive IQE cannot be claimed yet. Same 5V currents differ ~0.12%; matched-current/2D J normalization pending. No code or school simulator changes.
+
+---
+
+## 2026-11-03T17:10:41Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST] 주수빈 / ChatGPT / VALIDATION / OBSERVED(USER REPORT)
+Wu n25_des SVisual: eGapStatesRecombination selectable, hGapStatesRecombination not shown. This does NOT imply zero hole-trap recombination; output selection/model support not yet verified. Next: integrate available eGapStates field separately for DmgL/R QW1–4, confirm result field label; read-only inspect pp25_des.cmd Plot list. Do not call 3-term 66.2270% trap-inclusive IQE. No code/run changes.
+
+---
+
+## 2026-11-03T17:13:37Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈 | AI: ChatGPT | 구분: RESULT / VALIDATION | 상태: OBSERVED / DERIVED; complete trap IQE UNRESOLVED
+
+근거: Wu n25 post-MgFix NtSide1e18 at 5V SVisual eGapStatesRecombination on DmgL/R_QW1-4 (8 regions) total 4.148388e13 s^-1 um^-1, domain 1.200013e-4 um2. Per-QW L+R: QW1 1.3607449e12, QW2 1.3948305e12, QW3 1.1418713e13, QW4 2.7309600e13. User's pp25_des.cmd grep line 219: eGapStatesRecombination eTrappedCharge TotalTrapConcentration. hGapStatesRecombination is NOT requested in preprocessed Plot; its absence from SVisual is not evidence of zero hole-trap recombination.
+
+DERIVED: ON eGapStates 8 damaged QW total about 69.42x conventional SRH in those same damaged QWs, and about 0.2784% of ON 12-QW three-term sum. Existing ON 66.227019% is only a three-term IQE proxy; do not announce true trap-inclusive IQE without rate accounting across all trap regions and field definitions. A single-additive-rate illustrative estimate would be 66.0432% ON, strictly unverified.
+
+변경: no TCAD code/solver run. 다음: inspect OFF n21 eGapStates same 8 regions if saved; inspect ON n25 all trap-bearing regions and preprocessed Plot/Physics, then matched-current and normalization.
+
+---
+
+## 2026-11-03T17:14:50Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST] 주수빈 / ChatGPT / VALIDATION / OBSERVED
+User grep pp21_des.cmd line219: eGapStatesRecombination eTrappedCharge TotalTrapConcentration. Combined with earlier pp25_des.cmd same line, both Wu NtSide OFF n21 and ON n25 request eGapStates output. This does NOT yet show OFF rate=0; next integrate eGapStates in OFF n21 TDR on exactly 8 DmgL/R_QW1-4 regions, then compare with ON 4.148388e13 s^-1 um^-1. Neither run nor code changed.
+
+---
+
+## 2026-11-03T17:17:03Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈 | AI: ChatGPT | 구분: CODE / HANDOFF | 상태: PROPOSED (GitHub source patched; SCHOOL NOT RUN)
+
+요약: User requested hGapStatesRecombination output. Modified only one Plot line in CMP/tcad/candidates/CMP_BASELINE_3.2.0_WU2023PHY/sdevice_des.cmd: `eGapStatesRecombination eTrappedCharge TotalTrapConcentration` -> `eGapStatesRecombination hGapStatesRecombination eTrappedCharge TotalTrapConcentration`. GitHub commit f457da1b5ad17ab080038e9813a748b791c64f7b. Sentaurus trap output docs support this name.
+
+근거: pp21_des.cmd and pp25_des.cmd both requested eGapStates only, hGapStates missing in saved SVisual; ON eGapStates over 8 damaged QW regions 4.148388e13 [s^-1 um^-1].
+변경: GitHub Wu candidate source only; school CMP_WU_Copy SWB source, generated pp files, old n21/n25 TDRs NOT modified. No new simulator run.
+다음: Apply same one-line Plot change in school SWB original SDevice editor; backup old TDRs or create new nodes, rerun OFF and ON SDevice, verify pp*_des.cmd and SVisual. Do not edit generated pp*_des.cmd nor claim trap-inclusive IQE until separately integrated e/h rates are interpreted.
+
+---
+
+## 2026-11-03T17:18:56Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈 | AI: ChatGPT | 구분: DECISION / FIX | 상태: REJECTED (rerun), CONFIRMED (GitHub revert)
+
+사용자가 hGapStatesRecombination 출력을 위한 SDevice 재실행은 시간이 너무 오래 걸려 진행하지 않기로 결정. GitHub Wu 후보 소스 CMP/tcad/candidates/CMP_BASELINE_3.2.0_WU2023PHY/sdevice_des.cmd 에 직전에 추가한 hGapStates Plot 항목을 원복함 (commit c3fb0806a2961d65cdcc647a8ebeea76e4367999). 학교 SWB 원본과 n21/n25 기존 TDR은 변경하지 않았으며 새로운 run 없음.
+
+다음: 기존 데이터에서 OFF n21 eGapStatesRecombination을 ON과 동일한 8개 손상 QW 영역에 대해 적분, ON n25의 QW 외 손상 영역까지 조사. hGapStates 재결합 미측정, trap-inclusive 최종 IQE 및 2D current normalization은 미해결로 유지.
+
+---
+
+## 2026-11-03T17:20:49Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈 | AI: ChatGPT | 구분: RESULT / VALIDATION | 상태: OBSERVED OFF-integrals, DERIVED ON/OFF comparison
+
+USER SVisual n21 OFF 5V eGapStatesRecombination, same 8 DmgL/R_QW1-4 regions as n25 ON, Total Integral 4.230682e-05 [s^-1*um^-1], Total Domain 1.200013e-04 um². Per-QW L+R OFF QW1 1.4610022e-6, QW2 1.417785e-6, QW3 1.1672545e-5, QW4 2.775549e-5. Previously ON n25 same regions 4.148388e13 [s^-1*um^-1]; ON/OFF ratio ~9.80548e17 (~18 orders). Strong response of the eGapStates output to activated NtSide in damaged QWs confirmed (same 5V, not precisely matched current).
+
+IMPORTANT: OFF not mathematically zero. eGapStates alone is not yet established independent full-device net nonradiative rate or trap-inclusive IQE; hGapStates not saved; ON/OFF raw I at 5V 2.566e-3 vs2.569e-3. No SDevice rerun, no school or GitHub deck modification this turn, prior requested h Plot change remains reverted.
+
+NEXT: Integrate ON n25 eGapStates in other 14 damaged pGaN, barriers0-4, nGaN segments (or all 22) with signs, compare MQW subtotal; optionally OFF same segments; audit rate-accounting and 2D normalized injection before final baseline claims.
+
+---
+
+## 2026-11-03T17:26:04Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈 | AI: ChatGPT | 구분: RESULT / VALIDATION | 상태: OBSERVED / DERIVED
+
+요약: Saved Wu n25_des, post-MgFix NtSide=1e18 ON, 5V SVisual eGapStatesRecombination on 14 non-QW damaged sidewall regions (DmgL/R_Barrier0-4, DmgL/R_nGaN, DmgL/R_pGaN) total 3.950639e11 [s^-1 um^-1], Domain4.060046e-2 um2. Subtotals L+R barriers 2.1801203e11, nGaN1.585714e11, pGaN1.848049e10; Barrier4 alone 1.8768246e11. Earlier ON 8 damaged QWs eGapStates total4.148388e13, Domain1.200013e-4 um2. Combining all 22 damaged regions: total 4.18789439e13 [s^-1 um^-1], with ~99.05665% from damaged QWs and ~0.94335% from non-QW damaged GaN. This is a share OF the eGapStates electron-associated integral, not all recombination or definitive nonradiative efficiency loss.
+
+제약: OFF n21 8 damaged-QW field4.230682e-05, OFF non-QW 14-region integration still pending. hGapStates not saved, user chose NO SDevice reruns. ON/OFF raw current at 5V slightly unequal; current density units and full trap-inclusive IQE unverified. No code edits/simulator runs.
+
+다음: OFF n21 same 14 non-QW regions eGapStates integration, then all-22 ON/OFF rate comparison; preserve results and avoid overclaim.
+
+---
+
+## 2026-11-03T17:27:36Z — soybeanmilk0514-jpg
+
+[2026-11-04 02:26 KST]
+작업자: 주수빈 | AI: ChatGPT | 구분: BLOCKER | 상태: OBSERVED (로그 화면) / UNRESOLVED (근본 원인)
+
+요약: 학교 SWB `/user/semi/semi437/tmp/myproject/CMP_WU_Copy`에서 NtSide=1e17 조건으로 표시된 n29_des.out 종료 화면에 `Newton didn't converge, trying again with smaller step` 및 `Step-size less than MinStep (step-size = 7.9926e-11)`가 나타남. NtSide=1e17 자체의 입력 오류는 확인되지 않았고 Quasistationary/Transient 어느 전압 지점에서 발생했는지 아직 미확인. n29_des.err 아래쪽에 MagnesiumActiveConcentration 재정의 경고가 보이나 이번 수렴 실패와의 인과 관계 미확정.
+
+근거: 사용자가 제공한 2026-11-04 02:26 KST SWB n29_des.out/n29_des.err 스크린샷. 실제 전체 로그/소스는 미제공.
+
+변경: 학교 SWB 코드 변경 없음. 기존 Wu n21 NtSide=0, n25 NtSide=1e18 산출물 보존.
+
+다음: n29_des.out의 마지막 accepted anode 전압 및 Computing step, 마지막 100줄과 n29_des.err 마지막 25줄 확인. 이후 PP deck trap 설정/step parameters 검토. 새 rerun은 아직 제안 단계이며 수행하지 않음.
+
+---
+
+## 2026-11-03T17:34:10Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈 | AI: ChatGPT | 구분: RESULT / NEXT | 상태: OBSERVED / UNRESOLVED
+
+New SVisual n21_des result is DopingConcentration, NOT the requested eGapStatesRecombination. It integrates all 33 device regions, total 1.939846e8 [um^-1], area 40.72 um². Signed doping integrals: Clean_pGaN -1.014793e6 (1.1988 um²), Clean_nGaN +1.948050e8 (38.961 um²); damaged pGaN negative, damaged nGaN positive, barriers positive, all QW regions zero. Polarity qualitatively consistent with intended p/n structure but this is not trap rate, ionization or free-hole validation. No code edits/new SDevice run.
+
+NEXT: In n21_des SVisual switch Field to eGapStatesRecombination, reset all 33 region selections, select precisely 14 DmgL/R_pGaN, DmgL/R_Barrier0-4, DmgL/R_nGaN regions, integrate and compare same 14-region ON 3.950639e11 [s^-1 um^-1]. Previously OFF 8 damaged QWs 4.230682e-05, ON 8 damaged QWs 4.148388e13. No rerun.
+
+---
+
+## 2026-11-03T17:36:50Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈 | AI: ChatGPT | 구분: RESULT / VALIDATION | 상태: OBSERVED / DERIVED, full trap-inclusive IQE UNRESOLVED
+
+New SVisual n21_des OFF 5V eGapStatesRecombination on 14 damaged non-QW regions (DmgL/R_Barrier0..4, DmgL/R_nGaN, DmgL/R_pGaN): Total Integral 3.798444e-7 [s^-1*um^-1], Domain 4.060046e-2 um2. Earlier n21 same eight damaged QWs 4.230682e-5; OFF total 22 damaged regions 4.26866644e-5. ON n25 non-QW14 3.950639e11 and QW8 4.148388e13; ON all22 4.18789439e13. ON/OFF all22 ratio ~9.8107792e17, because OFF NtSide=0 gives near-zero electron gap-state recombination; NOT LED efficiency ratio. ON QW fraction of eGapStates 99.05665% (OFF 99.11016%).
+
+Interpretation: Sidewall acceptor traps activate a significant plotted electron gap-state recombination term concentrated in damaged QWs. Its exact relation to net trap-induced nonradiative recombination and full-device IQE remains unverified; hGapStates was not saved. Previously calculated 3-term 5V MQW IQE OFF 66.215622%, ON 66.227019% excludes unverified separate gap-state accounting. The same-V terminal raw I differs ON2.566e-3 vs OFF2.569e-3; current normalization also unvalidated.
+
+No new SDevice runs nor code edits; user previously declined costly rerun and GitHub one-line hGapStates Plot proposal was reverted. Next: use saved n21/n25 TDR to review eTrappedCharge and TotalTrapConcentration maps/field definition if needed, synthesize results with clearly stated unresolved assumptions; no final trap-inclusive IQE assertion.
+
+---
+
+## 2026-11-03T17:39:48Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST] 주수빈 / ChatGPT / OBSERVED / UNRESOLVED
+New Sentaurus Visual screenshot is n21_des (OFF NtSide=0), NOT requested n25 ON; scalar TotalTrapConcentration legend max 2e19 cm^-3, high red values appear in broad non-sidewall regions in visible crop (lateral Y ~0-0.32um). Thus the TotalTrapConcentration scalar cannot yet be attributed exclusively to the intentional NtSide=1e18 sidewall traps. Potential dopant/incomplete-ionization contributions are unverified hypotheses. Previous 22-region eGapStates ON/OFF measured results remain unchanged. NEXT: compare n25_des same field under fixed viewport/range, inspect eTrappedCharge and preprocessed pp25 trap definitions if necessary. No code or solver run.
+
+---
+
+## 2026-11-03T17:41:59Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST] 주수빈 / ChatGPT / OBSERVED / VALIDATION PENDING
+New Sentaurus Visual screenshot is n25_des (Trap ON NtSide=1e18) TotalTrapConcentration, displayed legend max ~2.100e19 cm^-3; earlier n21 OFF showed 2.000e19. Although delta is 1e18 cm^-3, displayed color-range maxima and broad red area do not prove spatial sidewall-trap placement; color bounds differ and field semantics other than intentional sidewall traps remain unverified. No code/solver changes.
+NEXT: Integrate n25 TotalTrapConcentration in DmgL_QW1 and Clean_QW1 separately (integral + domain); calculate each integral/area and assess local 1e18-scale excess; optionally compare same n21 OFF. Avoid interpreting broad red map as measured sidewall-only trap.
+
+---
+
+## 2026-11-03T17:44:30Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈 | AI: ChatGPT | 구분: RESULT / VALIDATION | 상태: OBSERVED + DERIVED, no rerun
+
+n25_des (Wu post-MgFix NtSide=1e18 ON) SVisual TotalTrapConcentration region integrals: Clean_QW1 0.000000e0 um^-1 over Domain2.996991e-2 um2; DmgL_QW1 1.499996e+1 um^-1 over Domain1.499996e-5 um2. Average plotted trap density in DmgL_QW1 = 14.99996 / 1.499996e-5 = 1e6 um^-3 = 1.000e18 cm^-3, exactly target NtSide. Clean_QW1 = 0 cm^-3. Hence direct numeric validation of ON sidewall trap concentration/localization for ONE sampled damaged QW region relative to clean region. Not yet proven for all 22 damaged sidewall regions or OFF same region.
+
+Already observed all-22 eGapStates ON vs OFF large contrast; net trap-inclusive IQE not established because hGapStates not saved/rate accounting unresolved. No new SDevice run or code edits. NEXT optional OFF DmgL_QW1 and ON DmgR_QW1/repr barrier concentration checks to extend placement validation.
+
+---
+
+## 2026-11-03T17:46:43Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST] 주수빈 OBSERVED: OFF n21 TotalTrapConcentration DmgL_QW1 integral 1.499996e-17 um^-1, domain 1.499996e-5 um2 -> mean 1 cm^-3. Clean_QW1=0. Earlier ON n25 DmgL_QW1 mean 1e18 cm^-3, Clean_QW1=0. Local NtSide OFF/ON concentration contrast verified for left QW1 only; the OFF 1 cm^-3 residual is nonzero and its origin unverified. No rerun/code changes. Next optional right DmgR_QW1 ON local concentration check. Complete trap-inclusive IQE unresolved.
+
+---
+
+## 2026-11-03T17:51:05Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST] 주수빈 / ChatGPT / RESULT+VALIDATION, OBSERVED/DERIVED. Saved Wu n25 ON TotalTrapConcentration DmgR_QW1 region integral 15.00030 [um^-1], domain 1.500030e-5 [um²], regional mean = 1e6 um^-3 = 1e18 cm^-3, matching NtSide ON. Previously n25 DmgL_QW1 = 1e18, Clean_QW1=0; n21 OFF DmgL_QW1 ~1 cm^-3, Clean_QW1=0. Thus symmetric left/right ON damage-QW1 trap concentrations and clean-region exclusion sampled. Remaining 21 damage regions not individually verified; hGapStates unavailable and full trap-inclusive IQE still unresolved. No SDevice rerun or code change. Next: consolidate demonstrated spatial trap placement with all-22 eGapStates ON/OFF comparison and limitations.
+
+---
+
+## 2026-11-03T17:54:25Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈 | AI: ChatGPT | 구분: HANDOFF | 상태: PROPOSED (no new runs)
+
+이택규가 2026-11-05 Wu 작업을 이어받기로 함. 기존 post-MgFix CMP_WU_Copy n21(OFF), n25(ON) 5V 결과 및 국소 trap 농도/22영역 eGapStates 적분은 보존. Full trap-inclusive IQE는 hGapStates 미저장·재결합 항 회계 미검증으로 UNRESOLVED. n29 NtSide1e17 2.420V Newton 수렴 실패 원인 미해결.
+
+내일 우선순위: 1) 최신 GitHub와 학교 pp21/pp25/log 대조, 2) 기존 TDR에서 QW4·Barrier4 등 trap 국소 농도 spot check, 3) Sentaurus 공식 근거로 eGap/SRH/hGap 합산 및 이중계산 가능성 검토, 4) 전류 정규화·Wu 논문 구조/분극/캐리어 검증, 5) Wu/Kou baseline 선정 판단. 사용자의 현재 no-rerun 결정 존중. RELAY.md 및 NEXT_ACTIONS.md 갱신.
+
+---
+
+## 2026-11-03T17:57:00Z — soybeanmilk0514-jpg
+
+[2026-11-04 KST]
+작업자: 주수빈 | AI: ChatGPT | 구분: DECISION / HANDOFF | 상태: REJECTED (NOT RUN)
+
+사용자 명시 결정: 직전 야간 hGapStatesRecombination Plot 추가 재실행 제안을 취소. 어떤 신규 SDevice 실행·예약·학교 서버 코드 변경도 하지 않았음. 기존 CMP_WU_Copy n21 OFF/n25 ON 5V 결과 보존. n29 재실행도 하지 않음.
+
+이택규의 2026-11-05 다음 작업은 기존 TDR/로그를 읽고 trap 적용, 재결합 항 회계, 전류 정규화, 논문 구조 충실도를 검토하는 **read-only 분석**. 추가 실행은 별도 결정 전까지 없음. NEXT_ACTIONS / RELAY / JuSubin TIMELINE에 취소를 명시.
+
+---

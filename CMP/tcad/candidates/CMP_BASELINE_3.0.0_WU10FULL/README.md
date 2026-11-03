@@ -1,8 +1,31 @@
-# CMP_BASELINE_3.0.0_WU10FULL — Wu-inspired candidate, **PROPOSED / NOT RUN**
+# CMP_BASELINE_3.0.0_WU10FULL — Wu-inspired candidate, **0.1V NtSide0 solver smoke finish observed; physics unvalidated**
 
 **This code is an original clean-sheet structure and model-integration smoke-test candidate. It is NOT a verified reproduction of Wu et al. 2023 and NOT the adopted CMP Common Baseline.**
 
 Paper: Wu et al., *Physical mechanisms on the size-effect in GaN-based Micro-LEDs*, Micro and Nanostructures 177, 207542 (2023), DOI https://doi.org/10.1016/j.micrna.2023.207542 .
+
+## 2026-11-03 — Wu10 SVisual1 geometry-normalization correction, SDE/SDevice source audit (PROPOSED POSTPROCESS FIX)
+
+- **Code added:** `svisual1_iv.tcl` under this Wu10 candidate, commit `a504f60`. Derived from user-visible previously plotted SVisual1 v1.0, setting only the actual Wu10 `Wmesa=10.0 um` (the old CMP4 postprocessor erroneously used 4.0). Retains 1D IV/|JV| display, exact raw voltage/current CSV export, unique node names and low-voltage points including the `NtSide=1e18` near-0V spike for later investigation. Filenames explicitly indicate Wu10.
+- **Test level:** Tcl syntax and formula tested with a mocked SVisual command interface and 4 synthetic points; no target T-2022.03 execution by GPT. `0.1V NtSide=0` SDevice/old SVisual has already been *observed on the school server*, but this NEW replacement is NOT yet server-tested.
+- **Conditional units:** `J[A/cm2] = abs(I_2D[A/um])*1e8/10` applies only when `AreaFactor=1` and raw 2D current in A/um are actually verified in installed runtime. A 10um normalization rescale is ×0.4 vs erroneous 4um plots; DO NOT interpret as 10×10um² physical square pixel current-density calibration.
+- **SDE static audit (no edit):** Wm=10um, Wdamage=0.005um each side, 4×3nm InGaN xIn0.08 QWs, 5×8nm GaN barriers, nGaN 3.9um, total vertical depth 4.072um, 3 lateral subregions per semiconductor layer. Contact, p=0.120um, EBL=0, MgActive3e17, barrier background1e15 and 5 barrier count remain **PILOT/partly assumed**. School mesh/region doping maps have NOT independently been audited. Full 2D stripe != 3D square.
+- **SDevice source audit (no edit):** `DefaultParametersFromFile` added in earlier commit `066bbc3`. Global Fermi, mobility, SRH/Radiative/Auger and piezo with `PolAct`; every Dmg sidewall partition has assumed acceptor trap `Et=Ev+0.75`, `sigma_n=p=1e-15`, `NtSide`. Full SDevice `NtSide=0/PolAct=0/Vstop=0.1` completed per user log on Nov 3 20:30:09 KST; `NtSide=1e18` low-bias SVisual plot observed, but actual ON solver log still not inspected, and apparent near-zero-V spike remains unresolved. `PolAct=0` and omitted Mg incomplete ionization are **smoke-only choices**, not Wu physics. No evidence of true operating-voltage injection, IQE or calibrated Wu reproduction.
+- **Decision:** Preserve SDE/SDevice source pending targeted parameter/mesh/physics audit, DO NOT declare physical baseline validated. Re-run only SVisual1 with proposed width fix; then inspect ON solver log, contact current unit/AreaFactor and 0V PLT points. Do not overwrite CMP4/Kou/Lee code.
+
+## 2026-11-03 20:30:09 KST — confirmed SDevice low-bias completion (verified user terminal log)
+
+`n2_des.log` final 35 lines supplied by user: step `t=0.984303 -> 1`, anode `0.1 V`, electron `7.544E-31`, hole `8.430E-32`, total current `+8.387E-31`, cathode `-8.387E-31` (raw output units); `Curve trace finished`; `n2_des.tdr` written; `Sentaurus Device simulation finished` Tue Nov 3 20:30:09 KST. Memory 632 MB; 423.72 s wallclock; 41.39 s CPU. This **confirms solver finished the clean 0.1V smoke**, but not LED injection, NtSide1e18, physical Wu reproduction or reliable J units.
+
+SVisual1 screenshot displayed plotting; previously shared script used 4um normalization, which is incorrect for Wu10 10um width if A/um and AreaFactor=1 (needs 10um, and independent unit audit). School SVisual code update not yet independently confirmed.
+
+## 2026-11-03 21:20 KST — school CMP_WU low-bias smoke observation
+
+**OBSERVED (user screenshot, school SWB; not an independent server log audit):** `/user/semi/semi437/tmp/myproject/CMP_WU` with `NtSide=0, PolAct=0, Vstop=0.1` produced a plotted SVisual1 I–V and J–V curve to ~0.1 V after the school's SDevice command was re-preprocessed to include `DefaultParametersFromFile`. Screenshot shows `BaselineData 6`, a red `NtSide=0` curve, and ~8.5e-31 A/um output at 0.1 V (approximate visual reading). Initial `UNDEFINED model` and licence-checkout roadblocks no longer prevented **this** smoke stage. Full SDevice success/solver completion, physical validity, high-bias transport, matched-current trap loss, `NtSide=1e18` branch and valid IQE are **NOT established** by the plot alone. The low-bias ~zero current is expected to be uninformative for LED turn-on.
+
+**Normalization problem (PROPOSED correction, no SWB file changed by GitHub):** the SVisual1 script shared earlier in chat uses `set Wmesa 4.0`, while Wu10 SDE mesa width is **10.0 um**. Under a validated `A/um` raw 2D current, `AreaFactor=1` and uniform stripe-depth convention, physical area-normalized J should use `Wmesa=10.0`: `J[A/cm2]=abs(I_2D[A/um])*1e8/10.0`. The currently displayed J curve (~2.1e-23 A/cm2 at 0.1V) scales like 4um normalization; if those assumptions hold it is 2.5x too high and corrected estimated J ~8.5e-24 A/cm2. Verify actual dimensional units/output/log before scientific use. Only SVisual postprocess requires update, not SDE or SDevice. This Wu-specific fix must **not** change the separately protected common CMP4um baseline's width. No Wu paper equivalence or Baseline Freeze claim.
+
+NEXT: (1) check the school's SDevice log finish/0.1 V completion, (2) correct Wu SVisual1 `Wmesa` 4→10 and rerun **only SVisual** (no additional SDevice licence), (3) once relevant, run `NtSide=1e18` matched pilot smoke and gradual higher-bias physical validation, and inspect meaningful QW injection/recombination before adopting a baseline.
 
 ## 1. Files and SWB roles
 
