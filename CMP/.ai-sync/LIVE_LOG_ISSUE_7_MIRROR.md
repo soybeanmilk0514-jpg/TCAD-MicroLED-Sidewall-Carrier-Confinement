@@ -9401,3 +9401,355 @@ AI: Claude (독립 검토, user-forwarded) → ChatGPT (GitHub 기록)
 - 학교 서버 Bash READ ONLY: parent/clone mesh md5, pp1_dvs.cmd diff, pp2/pp6_des.par diff, pp2/pp6_des.cmd diff -w -B. 유효성 확인 후 중복 전류 범위에서 polact_compare.py를 통한 QW 분포, IQE_sim 및 Trap 손실 비교. 단일 변수 밴드오프셋 새 실험은 사용자 별도 승인 필요.
 
 ---
+
+## 2026-11-03T06:28:01Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / DESIGN PROPOSAL
+상태: PROPOSED / UNRESOLVED (새 소자 코드·실행·검증 결과 없음)
+
+요약:
+- 주수빈은 현재 Baseline 구현이 연구 목적과 완전히 맞지 않을 가능성을 제기하고, 원래 합의된 기준소자 조건에 맞춘 새 SDE/SDevice clean-sheet 작성을 검토하겠다고 밝힘.
+- GPT는 GitHub COMMON_BASELINE, JuSubin Project B plan, reference index, 기존 CURRENT partial deck을 대조. 이전 V2.1 QW4 집중, 2D current normalization 및 Full/Half 미검증은 실제 blocker이나 코드가 원천적으로 잘못되었다는 증거는 아님.
+- 새 후보는 원본 보호·별도 버전으로 설계; 4um representative mesa != JBD 4um pitch, Kou vertical 4QW, 5nm damaged semiconductor, fixed Nt/Et/sigma, 동일-current A/B 비교를 유지.
+- Existing Project B Bspan>0 models AlGaN replacement of selected near-edge QW/Barrier host material, NOT necessarily a deposited exterior film. Intended physical barrier concept to be settled before coding.
+
+근거:
+- CMP/COMMON_BASELINE.md, CMP/PROJECT_NAMING_CONVENTION.md, CMP/references/TCAD_REFERENCE_INDEX.md, CMP/members/JuSubin/PROJECT_B_PLAN_20261022.md, previous 11/03 PolAct0 logs summarized in GitHub.
+
+변경:
+- CMP/members/JuSubin/BASELINE_REBUILD_PROPOSAL_20261103.md (new design memo)
+- CMP/members/JuSubin/TIMELINE.md (personal event)
+- 기존 TCAD, COMMON_BASELINE, NEXT_ACTIONS, LIVE_STATE 및 서버 시뮬레이션 결과: 변경 없음.
+
+다음:
+- 새 기준소자의 층/도핑/메사/양쪽 손상/접촉/Project A-B 측벽 개념을 연구자와 명세로 먼저 확정.
+- 그 뒤 T-2022.03 공식 매뉴얼과 실효 pp 기준으로 SDE-only 설계 후보 작성, mesh/material 검증; SDevice 및 장시간 run은 후속.
+- 기존 Baseline B/FREEZE HOLD 및 다른 작업자의 진행을 대체하거나 중단한 것으로 해석하지 말 것.
+
+---
+
+## 2026-11-03T06:37:40Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / RETROSPECTIVE / DESIGN-GATE PROPOSAL
+상태: OBSERVED historical evidence + PROPOSED prevention; new run/code NONE
+
+요약:
+- 주수빈은 Baseline을 여러 차례 수정했음에도 문제가 반복된 이유와 새 코드에서 방지할 방법을 요청.
+- GitHub 역사 검토: (1) Kou vertical stack/Wu sidewall 가정의 4um 대표 소자 calibration 부족, (2) 9/26 Node6/12 effective pp CMD/PAR drift 및 InGaN Mg incomplete ionization species warning (sole crash cause unproven), (3) V2 shelf/cathode geometry change 후 3.6V 수렴 개선 (single-variable causation unproven), (4) 10/13 SRH Scharfetter parameter vs effective SRH(DopingDependence) 착각 교정, (5) 10/21 minAngle0.0167 deg, edge0.0195nm mesh quality issue, (6) raw 2D/Full-Half and matched-current/IQE trap channels unverified, (7) SWB done without final goal (V2 ~2.07V), fresh PolAct copy source/provenance mismatch.
+- QW4 >99.88% concentration is observed; not proven to be caused by one specific model, quantum omission, polarization, or geometry alone.
+- Proposed prevention: immutable project/provenance; geometry/contact/mesh validation; actual preprocessed PP/PAR and active model species validation; target bias and clean Nt0 physical I-V; sidewall Nt sensitivity; Full/Half + current density mapping; matched-current all-channel recombination and exact one-variable comparisons. Preserve COMMON_BASELINE and old runs; code generation and new test not yet performed.
+
+근거:
+- CMP/ERROR_LOG.md; CMP/tcad/P3_BASELINE_MICROLED/README.md; CMP/COMMON_BASELINE.md; Lee LOG_20261015_02_baseline_v2_1_shelf_removal.md; TEAM_TIMELINE history.
+
+변경:
+- CMP/members/JuSubin/BASELINE_REBUILD_PROPOSAL_20261103.md: detailed audit appended
+- CMP/members/JuSubin/TIMELINE.md
+- CMP/TEAM_TIMELINE.md
+
+다음:
+- 새 프로젝트에서 어떤 물리 모델이 실제로 필요한지 reference-device specification first; 검증 게이트 통과 후 SDE/SDevice code creation. 현재 팀 baseline B/FREEZE HOLD 및 Lee 수행 중인 검증 경로 변경 없음.
+
+---
+
+## 2026-11-03T06:49:41Z — soybeanmilk0514-jpg
+
+[2026-11-03] 주수빈 / ChatGPT — RESEARCH, SOURCE-VERIFIED, NO RUN. Kou et al. Optics Express 2019 (DOI:10.1364/OE.27.00A643) used APSYS device simulation for 20, 60, 100 um microLEDs, clean/damaged pairs. Its 4 um figure is damaged-region width, not a 4 um mesa. CMP 4 um mesa and 5 nm damage remain distinct representative modeling assumptions. Personal JuSubin TIMELINE and BASELINE_REBUILD_PROPOSAL updated; no TCAD code change. Next: compare vertical epitaxy and simulator-specific material/defect model choices before new geometry.
+
+---
+
+## 2026-11-03T06:53:33Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST] 주수빈 / ChatGPT — SOURCE-VERIFIED RESEARCH, NO RUN. Kou et al. (2019), Optics Express DOI 10.1364/OE.27.00A643 Section 2/Fig1 has APSYS simulated 20/60/100um square devices, 4um damaged edge per side (smallest 20um good area 12x12um=36%). CMP representative 4um mesa/5nm sidewall damage is not direct Kou reproduction; ideal square geometry good area ~99.500625%. Kou separate electron/hole traps Ec-0.24 / Ev+0.46eV (text also inconsistently says 0.6eV), sigma 3.4e-17 / 2.1e-15, N 1e13 / 1.6e13 versus CMP single acceptor-like Ev+0.75, sigma1e-15, Nt1e18. Vertical Kou 4QW/3nm/22nm/EBL26nm epi substantially matches CMP target. Different defect geometry/model could invalidate numerical replication or sidewall-loss assumptions, but NOT proven cause of previous convergence or >99.9% QW4 share; QW4 concentration present even NtSide=0. Proposed next: Nt0 vertical-only or wide reference versus Nt0 4um at matched current to isolate vertical from lateral origin, no automatic change to common baseline. Updated JuSubin proposal/TIMELINE and TEAM_TIMELINE, no TCAD changes.
+
+---
+
+## 2026-11-03T06:58:21Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST] 주수빈 / ChatGPT — sidewall damage width evidence check (SOURCE VERIFIED + DERIVED; NO TCAD RUN). Wu et al. 2023 Micro and Nanostructures DOI 10.1016/j.micrna.2023.207542 explicitly models acceptor-like traps within 5nm of both sidewall edges in a 10um example. Therefore CMP's Wdmg=5nm came from a documented TCAD trap-placement assumption, not the Kou 4um effective damaged zone, and NOT a universal measured etch-depth/electrically affected width. Fixed 5nm on ideal squares yields damaged fraction L4um 0.499375%, L10um 0.1999%, L20um 0.099975% (4um 5x 20um), confirming geometric size-dependence despite small absolute fraction. Planar 2D strip at L4um has only 0.25% cross-section width damaged, not the square's four-edge ratio. Wu's depletion/lateral carrier capture means electrical suppression can reach well beyond 5nm; Liu 2025 review DOI 10.1038/s41377-025-01751-y and Wang 2023 FLIM DOI 10.1364/OL.501546 support separation of structural damage and effective area. CMP nominal 5nm, Nt1e18, EtEv+0.75, sigma1e-15 remains UNCALIBRATED; Nt*d=5e11cm^-2 per edge is an illustrative sheet-density conversion, not calibrated SRV. RECOMMENDED, NOT RUN: retain 5nm as control while testing matched-current trap ON/OFF, size W4/10/20um at fixed damage physics and 5/20/50nm optional width sensitivity, separating fixed Nt vs fixed sheet trap density. No protected baseline parameter, physical approval or simulator files changed. Records: CMP/members/JuSubin/BASELINE_REBUILD_PROPOSAL_20261103.md and TIMELINE.md.
+
+---
+
+## 2026-11-03T07:01:39Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST] JuSubin / ChatGPT — research audit; no new run/code. Question: in the 4um mesa how large and how active is the 5nm sidewall damaged region? OBSERVED prior geometry: 4um mesa, 2um Half, 5nm trap strip on the exposed edge; its 2D lateral width fraction is 0.25%. DERIVED ideal four-side square footprint: 4x4um area16um2, good region(3.99um)^2=15.9201um2, damaged border0.0799um2=0.499375% (not actual solved 3D model). OBSERVED previous V2.1 at 3.6V: NtSide OFF anode I=3.64728525e-8 and ON I=9.21970771e-9 raw 2D units; n6 eGapStates trap recombination equivalent current 3.17644732e-9 =34.4528% of n6 terminal current, with all-channel current closure ~99.99904% conditional on previously documented units. This supports TRAP RECOMBINATION ACTIVATION despite small 5nm physical footprint, but is NOT a 34.45% damaged spatial area or matched-current IQE. Wu 2023 DOI 10.1016/j.micrna.2023.207542 placed acceptor-like traps within 5nm; Wang2023 FLIM 10.1364/OL.501546 found process-dependent effective area far beyond microscopic defect layer, and Chen2024 10.1021/acsaelm.4c01540 found 4um sidewall treatment effects. Unknown: actual lateral electrical/optical affected penetration in current CMP device. Illustrative four-edge area values for assumed affected penetration 0.1um=9.75%, 0.2um=19%, 0.5um=43.75%,1um=75%, NOT observed. Proposed next: compare saved OFF/ON spatial profiles at same current, per-region trap-integrals and electron/hole lateral currents and size 4/10/20um, not just boost d arbitrarily. Updated CMP/members/JuSubin/TIMELINE.md and BASELINE_REBUILD_PROPOSAL_20261103.md. Existing Wdmg5nm and TCAD untouched.
+
+---
+
+## 2026-11-03T07:07:11Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST] 주수빈 / ChatGPT — literature-transfer audit (RESEARCH ANALYSIS / NO RUN, NO SOURCE CHANGE). Kou 2019 used APSYS for 20/60/100um blue In0.15GaN / 22nm QB 4-QW and modeled a 4um sidewall dead zone; Wu 2023 analyzed size-dependent sidewall acceptor traps and lateral carrier depletion, with prior CMP source notes stating a 10um example, 5nm trap placement and different In0.08GaN/8nm QB. The CMP 4um Kou-epi + Wu-inspired 5nm/nominal Nt1e18 Trap model is a scientifically plausible new hypothesis, not a reproduction or a calibrated 4um reference. Primary methodological gap is lack of 4um cross-study transfer validation, rather than any inherent impossibility from different device sizes. Existing 3.6V V2.1 Trap ON shows ~34.45% current-equivalent trap-channel recombination (2D interpretation conditional), while QW4 ~99.97% in trap OFF, so sidewall trap cannot alone explain QW4 localization. Proposed separate gates: 4um clean Nt0 injection/physics; fixed-physics matched-current Nt ON/OFF 4um; fixed-Wdmg/Nt/Et/sigma size 4/10/20um; separate damage-width and sheet-dose sensitivities; 2D versus square limitations; then A/B. Do not silently change protected COMMON_BASELINE. Updated CMP/members/JuSubin/TIMELINE.md, BASELINE_REBUILD_PROPOSAL_20261103.md, TEAM_TIMELINE.md. No new simulation performed. Sources: DOI 10.1364/OE.27.00A643 and 10.1016/j.micrna.2023.207542.
+
+---
+
+## 2026-11-03T07:25:13Z — soybeanmilk0514-jpg
+
+[2026-11-03 16:22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DESIGN / RESEARCH-SCOPE PROPOSAL
+상태: PROPOSED (NOT APPROVED; NO CODE OR RUN)
+
+요약:
+- 주수빈은 실제 CMP 목표가 CES JBD 4um 모델 재현 자체가 아니라 Project A(GaN:C edge resistive block), Project B(AlGaN lateral barrier)의 적용 가능성 평가라고 명시. Kou et al. 2019의 소자 크기/파라미터를 우선 재현하고 같은 결함 조건에서 A/B 비교로 진행하는 대안 제시.
+- GPT 권고: Kou 최소 크기 20um clean LED III와 damaged LED C를 Sentaurus로 독립 복원 및 검증한 후 물리/결함/전류 정규화 동일한 damaged reference에서 A/B 독립 비교. 가능한 경우 60um 크기 민감도를 추가하고 4um은 별도 확장 과제로 구분.
+- Kou의 4um dead-zone(모델 유효 손상 영역)과 Wu의 5nm 얇은 측벽 trap region은 등가가 아님. APSYS 원문과 Sentaurus 적용 모델, 접촉·밴드·이온화·양자 효과, 장치 면적을 확인해야 함. Project B의 기존 QW-edge AlGaN 치환은 발광 부피를 바꾸므로 실제 보호 메커니즘과 emission volume penalty를 분리해야 함. A는 GaN에 국한한 보상/저항 모델의 근거와 trapping downside가 필요.
+- 20um TCAD에서 개선 관찰은 model-level proof of concept; 실제 공정 가능성, 4um JBD 성능, 보편적 개선을 증명하지 않음. 기존 4um 소자를 소급하여 실패로 판정하거나 Common Baseline을 무단 변경하지 않음.
+
+근거:
+- Kou DOI https://doi.org/10.1364/OE.27.00A643; 2025 LSA review DOI 10.1038/s41377-025-01751-y
+- CMP/COMMON_BASELINE.md, CMP/.ai-sync/LIVE_STATE.md, project historical logs
+
+변경:
+- CMP/members/JuSubin/BASELINE_REBUILD_PROPOSAL_20261103.md
+- CMP/members/JuSubin/TIMELINE.md
+- CMP/TEAM_TIMELINE.md
+- COMMON_BASELINE/TEAM NEXT_ACTIONS/CURRENT_STATUS/AI-sync/TCAD files unchanged.
+
+다음:
+- Researcher/team explicit adoption of study scope before changing shared source-of-truth; if approved, create independent new versioned Kou 20um reconstruction and systematic parameter provenance/matched-current gates, preserve old result files.
+
+---
+
+## 2026-11-03T07:40:41Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESEARCH / SOURCE CORRECTION / DESIGN PROPOSAL
+상태: SOURCE-VERIFIED WIDTH, RESEARCH PROPOSAL, NO RUN
+
+요약:
+- Kou et al. 2019 Optics Express Section 2 p.A645 explicitly states modeled damaged-region width is **4um per sidewall**, Fig1 20um LED C has center Good width12um and area36%, modeled damaged area64%. Prior suggestion that width was unspecified is incorrect and corrected. This 4um is the *modeled damage region*, not confirmed experimentally measured physical etching penetration.
+- Electron trap Ec-0.24eV, sigma3.4e-17cm2, N1e13cm-3; hole trap sigma2.1e-15cm2, N1.6e13cm-3, energy inconsistency paper text 0.6eV vs Ev+0.46eV must be resolved/documented. Kou original APSYS model full detailed source not public.
+- Proposed (not approved): reconstruct Kou 20um clean LED III and damaged LED C using explicitly modeled 4um border and Kou trap settings; use as first A/B POC control and compare at matched current including absolute QW radiation, trap loss, injection, voltage & emitting volume penalty. Stress test Kou-model damaged widths e.g. 4um (reference),1um,0.5um (hypothetical assumptions) to verify robustness. Wu-inspired 5nm trap region is separately calibrated alternative, not a direct Kou replica or physically equivalent to 4um dead zone.
+- Do not infer manufacturability or 4um JBD improvement from 20um model. Keep existing 4um/5nm common Baseline protected pending formal team approval.
+
+근거:
+- Kou primary https://doi.org/10.1364/OE.27.00A643 Section2/Fig1; corroboration LSA review https://doi.org/10.1038/s41377-025-01751-y
+변경:
+- CMP/members/JuSubin/BASELINE_REBUILD_PROPOSAL_20261103.md
+- CMP/members/JuSubin/TIMELINE.md
+- CMP/TEAM_TIMELINE.md
+- No TCAD code/run, COMMON_BASELINE, CURRENT_STATUS or NEXT_ACTIONS changes
+다음:
+- Complete exact Kou 20um reference parameter/geometry/cross-simulator table before drafting new SDE; compare 4um modeled damaged baseline versus narrower damage-width controls and each A/B identical damaged parent.
+
+---
+
+## 2026-11-03T07:47:53Z — soybeanmilk0514-jpg
+
+[2026-11-03 16:22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESEARCH / DESIGN ALTERNATIVE
+상태: USER-PROPOSED / SOURCE-CHECKED; NOT IMPLEMENTED
+
+요약:
+- 주수빈이 Kou 20um가 아닌 Wu et al. (2023) 원 논문의 TCAD 소자 전체를 독립 Baseline으로 사용해 GaN:C Project A와 AlGaN Project B의 적용성을 검증하는 대안 제시.
+- 원문 확인: Wu는 10um 사례, nGaN 3.9um/Si 5e18, 4개 In0.08GaN 3nm QW, GaN barrier 8nm, pGaN Mg 2e19, 측벽 양쪽 5nm acceptor-like traps 사용. 분극, Mg incomplete ionization, local electric-field trapping, SRH/Rad/Auger 물리와 측벽 공핍·측면 전류 영향을 연구; C-shaped anode 개선 구조는 Wu가 별도로 제안한 방법.
+- Kou 역시 TCAD(APSYS) 연구. Wu 논문의 **특정 TCAD 제품명**이 Sentaurus인지는 검증되지 않았고 원본 SDE/SDevice 소스도 확인되지 않아, Wu 선택만으로 구현이 자동 간편하다는 주장은 불가. Wu 원문의 전체 층 두께(EBL 등), contacts, traps/물성/모델 설정은 신규 기준으로 사용하기 전 별도 완전성 감사 필요.
+- GPT 조건부 권고: 측벽 trap+캐리어 주입 개선 메커니즘을 연구한다면 Wu의 10um **기본 전극** clean/damaged 모델이 Kou보다 더 맞는 후보. 이미 개선된 C-shaped anode를 untreated baseline으로 가져오지 말고, 동일 damaged control에 A/B만 각각 적용해 same-current trap recombination, current-spreading, radiative photon yield, QW volume, voltage penalty를 비교. 4um 확장은 후속 별도 검증.
+- Wu In0.08/8nm 구조는 Kou In0.15/22nm와 달라 원래 445nm blue target 등 광학적 결과를 그대로 전제할 수 없음. 4um 공통 Baseline의 보호된 구조·최신 Lee 작업 변경 없음.
+
+근거:
+- Wu primary https://doi.org/10.1016/j.micrna.2023.207542
+- Kou primary https://doi.org/10.1364/OE.27.00A643
+
+변경:
+- CMP/members/JuSubin/BASELINE_REBUILD_PROPOSAL_20261103.md
+- CMP/members/JuSubin/TIMELINE.md
+- CMP/TEAM_TIMELINE.md
+- CMP/COMMON_BASELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE, existing TCAD code/results unchanged.
+
+다음:
+- Original Wu full-text Fig1 and Methods with material/geometry/contacts/trap defaults, original TCAD product and transferable Sentaurus physics audit; make separate 10um reference after researcher approves scope.
+
+---
+
+## 2026-11-03T07:58:12Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESEARCH / SOURCE-AUDIT / BASELINE SELECTION
+상태: PRIMARY PAPER VERIFIED + GPT RECOMMENDATION PROPOSED; NO RUN/CODE/TEAM DECISION
+
+요약:
+- 주수빈 요청: Kou 2019과 Wu 2023의 핵심 연구 내용, 공개 수치, 구현 재현성, GaN:C Project A와 AlGaN 측벽 장벽 Project B 비교의 공정성을 독립적으로 비교하고 Baseline 논문을 객관적으로 선정.
+- 원문 검증: Kou APSYS 사용, 20/60/100um 소자, 4개 QW In15%/3nm + GaN QB22nm, EBL Al15%26nm, pGaN120nm, nGaN4um, 측벽당 모델 damaged zone4um (20um에서 면적64%), 전자·정공 trap 값 제시, J20A/cm2에서 LED III/C 3.33V/3.23V 등 I-V/EQE reference 공개. 하지만 전체 APSYS 코드 및 일부 물성 없음; hole trap level text Ev+0.6/Ev+0.46 contradiction.
+- Wu TCAD는 10um 사례 4QW In8%/3nm, GaN QB8nm, nGaN3.9um, pGaN Mg2e19, 양측 5nm acceptor-like trap, field-capture/sidewall depletion/lateral current와 C-shaped anode 개선 제안으로 A/B 측벽 차단 메커니즘 직접 관련. 정확한 TCAD 제품(Sentaurus 여부), 모든 EBL/pGaN/접촉 파라미터, Trap Et/Nt/sigma, 원 실행 deck은 현재 확인 가능한 출처에서 미확인.
+- 객관적 판단: **연구 목적 적합성: Wu 우세**, **문헌 수치·I-V 재현 검증 가능성: Kou 우세**. Wu는 구현 자동 용이하다고 주장 불가; 5nm mesh와 구체적인 전계-트랩 물리가 요구됨. Kou 4um effective dead zone은 Wu 5nm physical trap strip과 같지 않아 A/B 이익/발광부피 판단 왜곡 위험.
+- GPT 조건부 추천: Wu 10um **기본 전극** 기반 전체 소자를 A/B mechanism Proof-of-Concept 1순위 후보로 두되, 논문의 누락 핵심값을 원문에서 확보하고 PP/PAR/solver 비교 유효성 통과 전 확정·코드화 보류. 핵심 수치 미확보 시 공개 구조·I-V가 더 명확한 Kou 20um LED III/C를 대체 benchmark로 선택. 둘의 QW/Barrier/Trap 모델을 몰래 결합해 Wu/Kou 정확 재현이라고 부르지 않는다.
+- A/B는 동일 damaged parent, 동일 전류와 전류밀도 환산·공통 physics, QW 총방사율/측벽손실/전압/발광부피 및 size sensitivity 비교. 기존 QW4 trapOFF 문제는 별도 physical gate, 변경한 크기로 자동 해결된다고 보지 않는다.
+
+근거:
+- https://doi.org/10.1364/OE.27.00A643
+- https://doi.org/10.1016/j.micrna.2023.207542
+- 기존 COMMON_BASELINE, 개인/팀 타임라인, Wdmg와 QW4 자료.
+
+변경:
+- CMP/members/JuSubin/BASELINE_REBUILD_PROPOSAL_20261103.md
+- CMP/members/JuSubin/TIMELINE.md
+- CMP/TEAM_TIMELINE.md
+- 물리 코드, COMMON_BASELINE, 팀 NEXT_ACTIONS/LIVE_STATE 변경 없음.
+다음:
+- Wu 원문 파라미터 결손표 완성 -> 필요한 자료 확보 또는 missing values 불확실성 공개 -> 연구자/팀 명시 승인 후 분리 신규 Baseline 버전 설계.
+
+---
+
+## 2026-11-03T08:03:38Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESEARCH / BASELINE DESIGN REASSESSMENT
+상태: SOURCE-VERIFIED + DERIVED / PROPOSED, NO CODE OR RUN
+
+질문:
+- 왜 Kou20um (modeled damaged width4um, large percentage)보다 Wu10um (trap placement 5nm, smaller relative percentage) baseline을 선호하나? 기존 CMP4um/5nm가 Wu10um/5nm보다 손상 기하 비중이 큰데, A/B 측벽 결함 억제 효과 검증에 Wu10um은 오히려 약하지 않나?
+
+분석:
+- 이상적 정사각형 네 측벽의 기하학적 손상 비율 f=1-(1-2d/L)^2. CMP4um+5nm=0.499375%, Wu10um+5nm=0.1999%, Kou20um+4um=64.0%. 4um physical-strip model의 비율이 Wu10um보다 약2.5배 크다는 사용자 지적은 정확. 기존 2D planar half/full strip에서는 이 비율과 별개로 측벽 2개인 단면 폭비 0.25%, 0.10%, 40%이고 3D 4벽 효과는 미구현.
+- 동등 물리량이 아님. Wu 5nm는 acceptor trap *배치 폭*, 유효 공핍/전류·발광 손실 범위는 훨씬 넓을 수 있음. Kou의 4um은 equivalent-model *dead zone*, 실제 재료 식각 결함 4um 침투 측정값 아님. 2025 LSA review DOI 10.1038/s41377-025-01751-y 설명과 일치. Wu publisher Methods: 10um는 'as an example'이며 저자들은 size sweep을 수행함, 10um만 연구한 것이 아님.
+- 예전 CMP4um/5nm n6 trapON 3.6V에서 GapStates trap recombination equivalent current가 단자 전류의 ~34.45% (2D unit conversion assumption), n2 OFF 대비 equal-V 전류 ~74.72% 감소. 좁은 5nm 트랩이 무시되지는 않았다는 OBSERVED 수치이나 손상된 공간 면적/IQE/물리 정확성 확정 수치 아님. 기존 trapOFF에서도 QW4 ~99.97% 재결합 집중되어 별도 blocker.
+- Kou의64%만을 A/B signal 최대화 목적으로 선택하면 지나치게 큰 모델된 loss와 발광영역/구조 보상으로 유리한 결과가 보일 위험. Wu10um이 상대적 트랩 비율은 작더라도 실제 전기적 영향이 작다고 단정할 수 없음. 효과 크기는 trap 에너지·밀도·포획, 표면/면적, 캐리어 수송 및 전류 분포로 정함.
+
+제안:
+- 1순위: Wu의 *전체 원래 에피택시 및 5nm trap 모델*을 먼저 10um 일반 전극 clean/ON 소자로 재현해 입력·수치·전류·QW 분포 확인하고, **동일 물리 모델을 4um 별도 소자로 스케일해 주된 A/B 효과 비교**. Wu10um은 재현/크기대조군; 4um은 향상된 P/A에서의 A/B 효과 대조. 양쪽 모두 동일 전류 기준 방사재결합, trap 손실, 전압 penalty, QW volume, 실제 결함 영향 폭을 검증. Wu TCAD 실제 제품명 및 전체 원문 누락 파라미터 확보는 선행 필수.
+- Kou20um 4um-wide dead zone은 별도 논문 복원 모델로 가능하되, 64% 비율 하나만으로 더 타당한 공통 A/B baseline으로 결정하지 않음.
+- 보호된 CMP/COMMON_BASELINE.md를 변경하거나 기존 Lee PolAct 작업을 대체한 것으로 간주하지 않음.
+
+근거:
+- Wu https://doi.org/10.1016/j.micrna.2023.207542
+- Kou https://doi.org/10.1364/OE.27.00A643
+- Review https://doi.org/10.1038/s41377-025-01751-y
+- CMP/TEAM_TIMELINE.md previously 10/21 measured PLT
+
+변경:
+- CMP/members/JuSubin/BASELINE_REBUILD_PROPOSAL_20261103.md
+- CMP/members/JuSubin/TIMELINE.md
+- CMP/TEAM_TIMELINE.md
+- No simulation, code, COMMON_BASELINE, NEXT_ACTIONS, LIVE_STATE changes.
+다음:
+- Wu paper full Fig1/Methods materials, contact, trap values source-evidence matrix and separate 10/4um input-equivalence/mesh specification for researcher approval.
+
+---
+
+## 2026-11-03T08:11:03Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESEARCH / BASELINE DESIGN REVIEW
+상태: ANALYSIS + PROPOSED, NO RUN
+
+질문: Wu 모델로 재구현하면 기존 CMP4um Kou epi + Wu5nm hybrid와 무엇이 달라지고 실제로 오류가 해결될까?
+
+확인:
+- 기존 V2.1: 4um Kou-based 4QW In15%/3nm; GaN QB22nm; nGaN4.0um; Wu-inspired 5nm acceptor trap with CMP-calibrated inputs; 2um Half and original mesh/contact/physics.
+- 제안 Wu: 첫 10um exemplar In8%/3nm QW, GaN barrier8nm, nGaN3.9um, Mg chemical input2e19, 5nm sidewall acceptor region; all Wu p-/EBL/contact/trap energy,density,cross section and original software equivalence still need source verification.
+- Wu10um physical damage fraction (ideal square)0.1999%, existing CMP4um+5nm0.499375%; Wu reference scaled to4um with unchanged 5nm gives SAME 0.499375%, so user's original damage-fraction concern will not be resolved by source replacement.
+- Potential improvements: one-paper source consistency; 8nm barriers may alter interwell transport and QW4 distribution (hypothesis untested). Previous QW4 share >99.9% in Trap OFF, even PolAct0, original shelf/contact Newton and near-degenerate mesh, 2D normalization, Full/Half and matched-current trap effects will NOT automatically resolve by Wu replacement.
+- PROPOSED: source completeness / actual Sentaurus T-2022.03 equivalents FIRST; SDE-only geometry-material-contact-mesh quality; small clean Wu10um NtOFF run and QW1-4 carrier/transport at attained bias; add ON with current-matched maps; only then Wu4um scaling and separate GaN:C/AlGaN cloned damaged controls. Kou20um still benchmark fallback if Wu source insufficient. No success prediction/claim without actual run.
+- No updates to CMP/COMMON_BASELINE, CURRENT_STATUS, NEXT_ACTIONS or ongoing Lee work; no server code/run.
+
+Recorded:
+- CMP/members/JuSubin/BASELINE_REBUILD_PROPOSAL_20261103.md
+- CMP/members/JuSubin/TIMELINE.md
+- CMP/TEAM_TIMELINE.md
+Sources: Wu DOI 10.1016/j.micrna.2023.207542 and Kou DOI 10.1364/OE.27.00A643.
+
+---
+
+## 2026-11-03T08:14:00Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESEARCH DESIGN / FULL-HALF DECISION GATE
+상태: PROPOSED, NO NEW TCAD CODE OR RUN
+
+질문: 새 Wu 전체 구조 10um 후보를 FULL로 짤지 HALF로 짤지?
+
+권고:
+- **처음은 Full 2D** 폭10um, 양쪽 5nm trap/damage strip을 가진 소자를 설계하여 geometry/material/contact/mesh, 전류 분포와 양쪽 측벽 대칭성까지 확인. 가능한 원문 전극 배치가 비대칭이면 해당 비대칭 그대로 Full 유지. Full 2D는 10x10um 실물 정사각형의 3D 4면 모델과 다름.
+- Full의 Nt=0 짧은 pilot과 실제 접촉, 유효 CMD/PAR, 전류/캐리어/QW 재결합·Mesh 확인이 끝난 뒤 동일 물리의 Half(10um 기준5um; Wu 모델4um 확장 시2um)를 생성해 Full vs Half **실제 수치 동등성** 확인 후 대규모 DOE/민감도 계산에 사용.
+- 동일 2D 면외폭/AreaFactor 정의와 전극 좌우 대칭, 중심선의 실제 zero-normal-flux 대칭 BC 하에 Full total current≈2×Half total current, regionwise total recombination≈2×Half; 일관된 J, QW share/전위/캐리어 공간 맵이 일치해야 함. 전류 2배 인위 재보정 중복 주의.
+- Project A GaN:C 또는 B AlGaN 장벽이 **양쪽 대칭**이면 검증된 Half 허용. 한쪽만 처리, Wu 최적화 C형 anode, 비대칭 contact/etch/current paths 등은 Half 불가. Full을 써도 기존 QW4 집중/수송 물리나 mesh 품질 문제를 자동 해결하지 않음.
+
+근거:
+- 기존 CMP4um V2.1은 Half2um만 실행되었고 Full/Half 동등성 아직 미완료; old shelf/cathode and 2D current unit questions unresolved.
+- CMP/COMMON_BASELINE.md, team history, documented T-2022.03 pending manual check.
+
+변경:
+- CMP/members/JuSubin/BASELINE_REBUILD_PROPOSAL_20261103.md
+- CMP/members/JuSubin/TIMELINE.md
+- CMP/TEAM_TIMELINE.md
+- Protected COMMON_BASELINE/LEE current project unchanged; no source/runtime results
+
+다음:
+- Full 10um Wu reference geometry/contact/edge trap input specification and controlled mesh, then clean-only pilot and documented Full/Half equivalence before DOE.
+
+---
+
+## 2026-11-03T08:18:39Z — soybeanmilk0514-jpg
+
+[2026-11-03 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DESIGN CRITERIA / RESEARCH DECISION
+상태: USER PRIORITY AGREED; METRIC & NUMERIC GATES PROPOSED / NO RUN
+
+사용자 의사:
+- 'Damaged Region의 기하학적 %가 아니라, 어느 정도의 측벽 비방사 재결합 손실을 발생시키는 Baseline을 검증 기준으로 사용할지 먼저 확정'을 요청.
+- 문헌 선택(Kou/Wu) 또는 Wdmg, Nt를 임의로 확정하기 전에 물리적 평가 지표와 비교 전류를 명시하는 것이 핵심.
+
+검증 지표 초안 (GPT proposed; 수치 구간의 사용자/팀 최종 승인 아님):
+1) 같은 J, T300K, 동일 구조/재료/전극/physics 조건에서 QW 전체 전류당 방사생성 ηrad,current = q∫QW Rrad dV / Iterminal (적분과 2D width/AreaFactor 검증 필수).
+2) 측벽 활성화 상대 발광 손실 Lsw=(ηOFF−ηON)/ηOFF×100%; Trap이 주입/누설 및 발광에 모두 미치는 효과 포괄, QW rad/(rad+SRH+Auger), 실제 EQE와 구분.
+3) Damaged ROI trap recombination 전류 등가 비중 Fgap,Dmg=q∫Dmg Rgap,net dV / Iterminal,net×100%; e/h trap double-count, full ROI 영역 attribution과 2D 단위 확인. Lsw ≠ Fgap,Dmg.
+4) Jref=20A/cm² at 300K (Kou has J20 reference); optional J=5A/cm² for low-current SRH when both clean/damaged reach it; no unsupported extrapolation.
+5) Proposed research discriminability window: relative Lsw 20–40% preferred; 10–20% still usable, <10% assess numerical distinguishability, >40% assess injection collapse/overdamage, >60% caution. These values are **not Kou/Wu data or a physical validity proof**; never tune Nt/Etrap/σ/Wdmg solely to reach target. Use document-reproducible source values first; a credible model outside the window is not automatically invalid. Require mesh convergence, conservation, Clean physics, QW4 anomaly assessment, matched current and A/B intervention parity.
+
+실제 상태:
+- No new J-matched ηOFF/ηON extracted yet. Previous n2/n6 at same3.6V cannot yield Lsw; previous n6 34.45% gap-state equivalent terminal fraction is NOT the requested sidewall loss efficiency metric.
+- No code/TCAD run/physical Common Baseline revision. Full scientific note in CMP/members/JuSubin/BASELINE_REBUILD_PROPOSAL_20261103.md and worker+team TIMELINE.
+다음:
+- Audit physical paper model and effective Sentaurus units; extract matched-current OFF/ON ηrad/current & Dmg trap recombination with defined J before adopting new Baseline.
+
+---
+
+## 2026-11-03T08:51:43Z — soybeanmilk0514-jpg
+
+[2026-11-03 17:43 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: CODE / PROPOSED IMPLEMENTATION
+상태: CODE WRITTEN + STATIC CHECKED, NOT RUN / NOT WU REPRODUCTION
+
+요약:
+- 사용자 "우선 Wu 논문 기반으로 코드 짜자"에 따라 독립 신규 GitHub 후보 `CMP/tcad/candidates/CMP_BASELINE_3.0.0_WU10FULL/` 실제 생성.
+- 새 오리지널 SDE Scheme `sde_dvs.cmd` (Full 2D width 10um, GaN n 3.9um/Si 5e18, 4x In0.08 QW 3nm, 5x GaN QB 8nm, 양측 5nm DmgL/R 별도 region, xMoleFraction, p/n 도핑, QW/sidewall mesh, 두 contact), 새 SDevice `sdevice_des.cmd` (22 unique DmgL/R trap regions, NtSide OFF/ON, PolAct, Vstop, Radiative/SRH/Auger plots, numerical sweep), 상세 README.
+- GitHub 실제 생성 커밋: sde 0172cf2704c956be8269d6dc3c744bf4fcc24d08, sdevice a5346d68b4b4822b4ce1a916e374844b064ac77e, README 557c5618dfdb2672bdd4e4255cc113d76113b075. 이후 GitHub fetch로 Scheme 괄호 균형, SDevice 중괄호 균형, Dmg region 22/중복0, Xend 예상4.072um 등을 **정적 검사만** 수행.
+- 엄격한 한계: 공개 Wu 원문에서 pGaN thickness/EBL/contact details/Trap Nt-E-sigma/TCAD product 아직 완전 확인되지 않아 코드는 `Wu-inspired numerical smoke`일 뿐 정확 논문 재현이 아님. pGaN0.12um, Mg active3e17 (Wu Mg chemical2e19와 별개), EBL disabled, 상하 전체 전극, Trap Ev+0.75/Nt1e18/σ1e-15는 모두 명시적 PILOT. No etched n-contact mesa shelf or full fabricated geometry; paper geometry/chemistry/quantum not claimed. PolAct0, Vstop0.1 are parser/mesh/low-bias smoke only. Incomplete ionization intentionally omitted until Mg species/MaterialDB verification; no physical IQE claim.
+- 핵심: **GitHub에서 코드가 만들어졌을 뿐 학교 Sentaurus T-2022.03 서버에서 preprocess, SDE build, SDevice run을 한 적 없음.** Code syntax and convergence unverified. Keep OLD 4um CMP baseline and Lee's PolAct study untouched and physical B/FREEZE HOLD.
+
+파일:
+- CMP/tcad/candidates/CMP_BASELINE_3.0.0_WU10FULL/sde_dvs.cmd
+- CMP/tcad/candidates/CMP_BASELINE_3.0.0_WU10FULL/sdevice_des.cmd
+- CMP/tcad/candidates/CMP_BASELINE_3.0.0_WU10FULL/README.md
+- CMP/members/JuSubin/TIMELINE.md, CMP/TEAM_TIMELINE.md
+- CMP/CURRENT_STATUS.md, CMP/NEXT_ACTIONS.md, CMP/.ai-sync/LIVE_STATE.md and LIVE_STATE.json
+
+다음:
+- 주수빈 학교 서버에서 원본 보호하며 신규 SWB 프로젝트를 만든 다음 SDE만 붙여서 preprocess/build하고 `pp1_dvs.cmd`, SDE mesh log/visual screen을 공유. 실제 SDE 확인 후에도 물리/전극/Trap 매핑 완성 전 SDevice 광효율 또는 Project A/B 평가 금지.
+근거: Wu DOI 10.1016/j.micrna.2023.207542, project T-2022.03 reference index.
+
+---
