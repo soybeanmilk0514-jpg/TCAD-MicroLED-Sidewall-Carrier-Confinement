@@ -9244,3 +9244,160 @@ PolAct 진단 실험 전 이택규 미선택 사항 2건:
 이택규가 `CMP_BASELINE_2.0.0_V2`(shelf-free, `_Copy` 아님)를 새로 복사한 프로젝트에서 SWB `PolAct=0`을 설정하고 GPT가 제공한 SDevice 전체 코드를 붙여넣었다고 보고함. GPT 제공 코드 의도는 activation=@PolAct@, Math Iterations=12 및 기존 물리/Trap/CurrentPlot/Solve 유지. SDE/par는 변경하지 않는 조건. 이 작업이 실제 디스크에 정확히 반영됐는지/새 메시가 shelf-free인지/PP 활성값이 0인지 및 solver 결과는 아직 직접 검증하지 못함. 다음은 복사본 n1_msh 턱 없음 확인 후 n2 우선 진단; run 후 pp activation=0/Iterations=12 검증. Original Baseline B/FREEZE HOLD 유지. LIVE_STATE와 NEXT_ACTIONS에 반영.
 
 ---
+
+## 2026-11-03T00:38:24Z — TaekGyu0801
+
+[2026-11-03 09:36 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS
+상태: OBSERVED (사용자 보고; 로그 직접 미검증)
+
+요약:
+- 이택규: 신규 shelf-free 복사본에서 실행한 PolAct=0 실험이 '다 돌아갔다'고 보고.
+- n2/n6 별 정상 수렴 여부, 최종 전압, 전류, QW별 재결합 수치, pp activation=0/Iterations=12 및 shelf-free mesh는 현 세션 직접 검증 전.
+
+근거:
+- 2026-11-03 사용자 채팅 보고. 실제 서버 n2/n6 로그·PLT 아직 미제공.
+
+변경:
+- CMP/members/LeeTaekGyu/TIMELINE.md 기록; 원본 코드/물리 baseline 무변경.
+
+다음:
+- 새 복제 프로젝트의 pwd, n2/n6 로그 및 plt 파일 존재, finished/Good Bye/convergence 확인.
+- pp 조건과 mesh 검증 후 PolAct 0.5 vs 0 QW1–4 발광 분포 및 동일 전류 비교.
+- Physical baseline FREEZE HOLD 유지.
+
+---
+
+## 2026-11-03T00:50:20Z — TaekGyu0801
+
+[2026-11-03 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED (학교 서버에서 사용자 제공 실출력; n6 종료 확인 / n2 미확인)
+
+요약:
+- 정확한 새 진단 폴더: /user/semi/semi437/CMP_BASELINE_2.1.0_POL0NOSHELF
+- n2_des.log 338K (Nov 3 01:52), n2_des.plt 293K (01:52) 존재; 정상 종료는 아직 미확인
+- n6_des.log 340K (04:38), n6_des.plt 293K (04:38) 존재
+- n6_des.log tail: Curve trace finished; Sentaurus Device simulation finished Tue Nov 3 04:38:53 2026 KST; Good Bye!
+- grep 결과 끝부분은 n6만 나오므로 n2 정상 완료, 3.6V 도달, 활성 PolAct=0의 PP 실제값, QW4 재결합 분포 검증을 생략하면 안 됨.
+
+근거:
+- 사용자 터미널 ls -lh 및 grep | tail -25 본문
+
+변경:
+- Lee TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md, LIVE_STATE.json 기록. TCAD 소스 변경 없음.
+
+다음:
+- 새 프로젝트에서 tail -n 12 n2_des.log / n6_des.log, pp2/pp6 Piezoelectric_Polarization 및 Iterations 값 읽기
+- 입력의 shelf-free/동일 조건 확인한 뒤 원본 PolAct=0.5 대 새 PolAct=0의 QW별 방사재결합/전류/동일전류 IQE_sim 비교
+- Common Baseline physical B/FREEZE HOLD 유지
+
+---
+
+## 2026-11-03T00:56:35Z — TaekGyu0801
+
+[2026-11-03 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT
+상태: OBSERVED (사용자 제공 학교 서버 직접 로그/실효 pp)
+
+요약:
+- /user/semi/semi437/CMP_BASELINE_2.1.0_POL0NOSHELF
+- n2_des.log 끝: Sentaurus Device simulation finished (Tue Nov 3 01:52:08 2026 KST), Good Bye! wallclock 9809.91s (2h43m29s); peak memory 2.41GB
+- 이전 확인된 n6_des.log 끝: Curve trace finished; Sentaurus Device simulation finished (Tue Nov 3 04:38:53 2026 KST), Good Bye!
+- pp2_des.cmd, pp6_des.cmd 실제 line22: Piezoelectric_Polarization( strain activation=0 )
+- 두 pp global Math line175 Iterations=12; 초기 Poisson Coupled(Iterations=200)/all-carrier Coupled(Iterations=100)은 다른 scope이며 충돌 아님
+- n2/n6 PLT 파일 모두 확인됨. 아직 bias 3.6V, I-V, QW1–4 재결합, 입력 geometry/mesh 및 원본 대비 단일 변수 차이 검증은 수행하지 않음.
+
+근거:
+- 2026-11-03 사용자 제공 실제 tail n2_des.log, grep pp2_des.cmd pp6_des.cmd; 앞선 ls/n6 grep.
+
+변경:
+- 개인/팀 타임라인, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md + LIVE_STATE.json 기록. 소자 소스 변경 없음.
+
+다음:
+- 새/기존 PLT 재결합 적분 기반 QW1–4 방사 share, IV 최종 전압/전류 및 동일 전류 비교
+- 활성화=0의 영향은 EBL까지 global임에 유의. physical baseline B/FREEZE HOLD 유지.
+
+---
+
+## 2026-11-03T00:59:13Z — TaekGyu0801
+
+[2026-11-03 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / FIX GUIDANCE
+상태: OBSERVED instruction error; FIX PROPOSED
+
+요약:
+- POL0NOSHELF 프로젝트 tcsh 셸에서 GPT가 제공한 python3 - <<'PY' heredoc이 `?` continuation prompt에 걸렸고, 끝의 PY 입력 후에도 실행되지 않음.
+- 동일 셸 함정이 과거 기록에 있었는데 ChatGPT가 선행 bash 진입을 안내하지 않아 재발함. Python/PLT/SDevice solver 오류로 판단하지 말 것.
+- Ctrl+C로 취소하고 bash로 진입한 다음, 간단한 head/tail로 PLT 형식 먼저 확인하는 수정 절차 제시. 사용자 해결 확인 전.
+
+변경: ERROR_LOG.md, LeeTaekGyu/TIMELINE.md; TCAD 파일 변경 없음.
+다음: 사용자 bash prompt/PLT header-tail 확인 후 검증된 parser로 QW1~4 Rad 및 I-V 비교.
+
+---
+
+## 2026-11-03T01:08:26Z — TaekGyu0801
+
+[2026-11-03 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / DECISION (physical status unchanged)
+상태: OBSERVED PLT final row + DERIVED comparison
+
+요약:
+- 프로젝트 /user/semi/semi437/CMP_BASELINE_2.1.0_POL0NOSHELF, PolAct=0, SDevice n2/n6 모두 3.600000 V 완료.
+- Trap OFF n2 raw anode I=4.80713937e-06, QW1/2/3/4 Rad=7.53686944e18 / 4.48979847e20 / 1.98055890e22 / 1.82316579e25. QW4 share=99.88898644%.
+- Trap ON n6 raw anode I=4.54183989e-06, QW1/2/3/4 Rad=4.28900936e17 / 5.25004116e19 / 5.92590845e21 / 1.66646275e25. QW4 share=99.96413545%.
+- Old PolAct=0.5 3.6V n2 I=3.64728524885323e-08/QW4 share=99.96877481383976%, n6 I=9.21970771341943e-09/share=99.99294273758203% (2026-10-31 prior verified PLT).
+- Derived at SAME voltage: I ratios n2=131.8005x, n6=492.623x. QW4 share change -0.07978837 pp / -0.02880729 pp. Calculated share=100 QW4/sum(QW1..4). Polarization setting substantially alters I, yet severe n-side QW4 concentration persists. This does not identify the sole physical mechanism or verify the classical DD capture hypothesis.
+
+근거:
+- 사용자 직접 실행 DF-ISE PLT 최종행 Python 결과와 앞선 실효 pp PolAct=0, Math=12; 기존 PolAct0.5 PLT audit.
+
+변경:
+- Lee TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/.json. 원본 TCAD 코드/서버 결과 불변.
+
+다음:
+- 기존/신규 PLT에서 겹치는 전류 범위가 있다면 동일 전류 QW4 share 및 IQE_sim proxy 비교(내삽은 DERIVED 표시); fresh clone shelf-free geometry, pp/source/mesh 동등성 검증.
+- PolAct=0 global includes EBL; 3.6V 같은 전압 비교를 동일 전류 비교처럼 쓰지 말 것. QW4 share는 IQE 아님. Physical baseline verdict B/FREEZE HOLD.
+
+---
+
+## 2026-11-03T01:42:09Z — TaekGyu0801
+
+[2026-11-03 KST]
+작업자: 이택규
+AI: Claude (독립 검토, user-forwarded) → ChatGPT (GitHub 기록)
+구분: DECISION / HANDOFF
+상태: PROPOSED / UNRESOLVED (새 실행·코드 변경 없음)
+
+요약:
+- Claude 독립 검토 2026-11-03: PolAct0 관련 Project A CONDITIONAL GO 인계
+- Claude는 main 817fa2d (11/03 10:08 KST) 및 Issue #7 최신까지 읽었다고 보고. 직접 GitHub push는 권한 거부로 실패했다고 보고했으며, 이 내용을 ChatGPT가 전달받아 기록함.
+- 이전 실제 3.6V PLT 결과: PolAct0.5→0 전류 약 132배 OFF/493배 ON 증가, QW4 집중 PolAct0에서도 OFF 99.88898644%, ON 99.96413545%. 이에 Claude는 분극만으로 QW4 분포를 설명하는 H1이 조건부 약화, 고전 DD/3nm QW 첫 우물 포획 H2는 미검증이라고 판정.
+- GPT가 제공한 전체 SDevice 복붙 및 activation 행 위치 변화 원인으로 원본-복제본 PP/PAR/mesh 동일성 미검증. 3.6V 전류 비교는 동일 전류가 아니며, J≈240/227 A/cm2는 2D 폭 환산 가정에 의존. Claude의 1%/80%/±25% 임계값은 물리 상수가 아닌 작업 기준.
+- Claude 권고: 기존 PolAct0.5를 제한적으로 사용하는 임시 Baseline B (physical FREEZE HOLD), Project A는 덱 준비 한정 CONDITIONAL GO. 해석/보고는 유효성 게이트, 같은전류 Trap loss가 같은 부호/제안 ±25% 이내, QW4 집중 모델 한계 명시 후. 최종 연구 채택 및 H2 물리 인과는 미확정.
+
+근거:
+- 이택규 제공 Claude 검토 원문(동일 날짜, LeeTaekGyu/TIMELINE.md에 verbatim 저장)
+- 기존 11/03 n2/n6 PolAct0 유효 pp/log/PLT, 10/31 원본 PLT 관측; Claude 검토 이후 새 run 없음.
+
+변경:
+- CMP/members/LeeTaekGyu/TIMELINE.md (verbatim)
+- CMP/TEAM_TIMELINE.md, CMP/CURRENT_STATUS.md
+- CMP/NEXT_ACTIONS.md
+- CMP/.ai-sync/LIVE_STATE.md, LIVE_STATE.json, RELAY.md
+- 소자/코드 및 원본 Baseline 변경 없음.
+
+다음:
+- 학교 서버 Bash READ ONLY: parent/clone mesh md5, pp1_dvs.cmd diff, pp2/pp6_des.par diff, pp2/pp6_des.cmd diff -w -B. 유효성 확인 후 중복 전류 범위에서 polact_compare.py를 통한 QW 분포, IQE_sim 및 Trap 손실 비교. 단일 변수 밴드오프셋 새 실험은 사용자 별도 승인 필요.
+
+---

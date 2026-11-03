@@ -1,3 +1,51 @@
+2026-11-03 (Claude 독립 검토, 새 실행 없음) PolAct=0 결과 판정과 Baseline/Project A 결정
+- 유효성 단서: POL0NOSHELF는 GPT 전체 SDevice 코드를 붙여 넣은 덱(activation 줄이 원본 21행 → 새 22행). 원본 대비 pp/par/메시 diff 미실시 → 단일 변수 실험으로 확정 불가. 아래 판정은 조건부.
+- 조건부 판정: 분극은 주입·Vf를 지배(3.6V 전류 132x/493x, J≈240/227 A/cm2)하지만 QW4 집중의 필요조건은 아님(99.89/99.96%). 우물 간 감소비 OFF: QW3/QW4 1.1e-3, QW2/QW3 2.3e-2, QW1/QW2 1.7e-2(DERIVED).
+- H1(분극이 분포 원인): 대부분 반증(조건부). H1(분극이 Vf 원인): 강하게 지지. H2(고전 DD): 강화됐지만 직접 검증 없음. 구체화 가설: 양자 보정 없는 고전 DD가 3 nm 우물의 전자 깊이를 과대평가(ΔEc≈0.41 eV) → 첫 우물 포획.
+- 정정: 11/02 Claude 문턱값(1%, 80%, ±25%)은 작업 기준이지 물리값 아님. 분포가 안 바뀌었으므로 ±25% 비교는 "QW 분포 민감도"가 아니라 "분극·Vf 민감도"만 시험함.
+- 같은 전압 Trap 손실(POL0 3.3% vs PolAct0.5 약 34%)은 전류가 100배 이상 달라 비교 불가 → 같은 전류 비교 필수.
+- 권고: 선택지 B(제한사항 명시, PolAct 0.5 임시 Baseline으로 Project A 병행). Project A = CONDITIONAL GO: 덱 준비는 지금, 해석·보고는 (1) 유효성 게이트 통과 (2) 같은 전류 Trap 손실이 PolAct 0.5/0에서 같은 부호·±25% 이내 (3) QW4 집중을 모델 한계로 명시 후.
+- 다음 하나: 유효성 게이트(읽기 전용, bash): 메시 md5, pp1_dvs diff, pp2/pp6 par diff, pp2/pp6 cmd diff -w -B. 통과 시 polact_compare.py로 같은 전류 비교(우물 간 감소비, IQE_sim, Trap 손실).
+- 나중(승인 필요): H2 직접 시험으로 밴드 오프셋 비율 단일 변수. FREEZE HOLD, 판정 B 유지.
+
+## 2026-11-03 — PolAct=0 both PLTs parsed: QW4 still >99.88% while current rises strongly (OBSERVED + DERIVED)
+- **작업자:** 이택규. **Source:** user pasted real Bash/Python DF-ISE `n2_des.plt`/`n6_des.plt` final-row extraction in `/user/semi/semi437/CMP_BASELINE_2.1.0_POL0NOSHELF` (2026-11-03, pp previously verified `activation=0`, global Iterations12, both runs finished). Final `anode OuterVoltage=3.600000 V` for both.
+- **OBSERVED PolAct=0, Trap OFF n2:** native anode current `4.80713937e-06`; total QW integrated radiative rates: QW1 `7.53686944e18`, QW2 `4.48979847e20`, QW3 `1.98055890e22`, QW4 `1.82316579e25`; QW4 fraction `99.88898644%`.
+- **OBSERVED PolAct=0, Trap ON n6:** native anode current `4.54183989e-06`; rates: QW1 `4.28900936e17`, QW2 `5.25004116e19`, QW3 `5.92590845e21`, QW4 `1.66646275e25`; QW4 fraction `99.96413545%`.
+- **OLD OBSERVED reference:** original PolAct=0.5 3.6V n2 current `3.64728524885323e-08`, QW4 share `99.96877481383976%`; n6 current `9.21970771341943e-09`, share `99.99294273758203%` (prior 2026-10-31 PLT audit).
+- **DERIVED at same voltage, NOT matched current:** change QW4 share n2 `-0.07978837384 percentage points`, n6 `-0.02880728758 pp`; current ratios n2 `131.8004774×`, n6 `492.6229802×`. Formula QW4 share = 100×QW4 Rad / sum(QW1..QW4 Rad). PolAct=0 changes total transport/current dramatically yet QW4 radiative localization remains >99.88%: simple 'polarization-only' cause is **not supported** as sole explanation. NOT proof of classical-DD capture as root cause, since local QW1 JnX/J and matched-current distribution not yet assessed.
+- **INTERPRETATION LIMITS:** `strain activation=0` is global (including EBL) and not a physical baseline. Old/new are same-V, very different-I; raw 2D current not independently calibrated as square-pixel A/cm². QW4 fraction ≠ IQE. Need fresh shelfless geometry, SDE/par/mesh, source/PP diff except polarization verified before claiming a strict one-variable sensitivity. Physical Baseline B/FREEZE HOLD; no device code changed.
+- **NEXT priority:** using existing PLT histories, compare QW shares and IQE_sim proxy at **matched anode current** where interpolation overlap exists, plus verify geometry/input provenance. If no current overlap, state cannot compare. No further blind re-runs.
+
+## 2026-11-03 — POL0NOSHELF n2 PLT DF-ISE header/footer confirmed (OBSERVED READ ONLY)
+- 이택규 사용자 제공 학교 서버 출력, 현재 Bash 셸에서 `/user/semi/semi437/CMP_BASELINE_2.1.0_POL0NOSHELF` 경로로 이동한 뒤 `head -n 28 n2_des.plt; tail -n 8 n2_des.plt` 성공. `DF-ISE text`, `Info {type=xyplot, datasets=[...]}` 구문과 마지막 데이터 구간 `Data` 숫자 및 `}` 닫힘 확인.
+- 헤더에 `anode OuterVoltage`, `anode TotalCurrent`, `IntegrRad_Clean_QW1`/Edge/Dmg 등 QW1–4 별 세 영역 방사재결합 필드, `IntegrSRH_*`, `IntegrAug_*`, `IntegrTrap_*` 실제 존재 확인. 이전 홈 디렉터리에서의 No such file 오류는 경로 문제였고 파일 부재나 TCAD 오류가 아니었음.
+- **아직 QW1–4 비율, 전류값 미산출.** 해당 PLT의 전체 컬럼 이름과 `Data` 숫자 갯수 나눗셈이 일치하는지 검증하며 마지막 레코드 합산하도록 Bash heredoc 파서 제안. 사용자 실행 및 출력 대기. 원본 TCAD 변경 없음. Baseline physical FREEZE HOLD.
+
+## 2026-11-03 — POL0NOSHELF Python here-document failed in tcsh prompt (OBSERVED; GPT INSTRUCTION ERROR)
+- **OBSERVED:** 이택규는 `/user/semi/semi437/CMP_BASELINE_2.1.0_POL0NOSHELF` 에서 GPT가 준 `python3 - <<'PY'`와 다중행 Python 코드를 그대로 붙여넣었고, `tcsh/csh` 스타일 `?` continuation prompt가 모든 줄과 종결 `PY` 후에도 지속됨. 따라서 Python PLT 파서 **실행 완료/결과 출력 증거 없음**. 이는 SDevice solver 오류 또는 PLT 파일 손상 증거가 아님.
+- **CAUSE/RESPONSIBILITY:** 과거 동일 `?`/here-doc 입력 문제를 기록했는데도 GPT가 Bash 셸 진입 확인 없이 Bash 지향 heredoc을 제공한 안내 오류. Python 구문 자체의 오류로 단정할 수 없음.
+- **FIX GUIDANCE (NOT YET USER-VERIFIED):** `Ctrl+C`로 dangling shell 입력 취소, `bash` 단독 입력 후 Bash prompt를 확인. 다시 복잡한 parser를 무작정 실행하기 전에 `head -n 28 n2_des.plt; tail -n 8 n2_des.plt`로 실제 DF-ISE PLT 형태 확인하여 올바른 파서를 제공. 이후 Bash에서 heredoc 사용하거나 단순 호환 명령 제공.
+- **NO TCAD CHANGE:** 기존 PolAct=0의 n2/n6 종료·pp activation=0/Iterations12 OBSERVED 상태 유지. QW 수치 아직 새로 얻지 않음.
+
+## 2026-11-03 — POL0NOSHELF n2/n6 both finished; PolAct=0, global Iterations=12 confirmed (OBSERVED)
+- **Worker:** 이택규, school-server output in `/user/semi/semi437/CMP_BASELINE_2.1.0_POL0NOSHELF`. `n2_des.log` tail shows `Sentaurus Device simulation finished (Tue Nov 3 01:52:08 2026 KST)` and `Good Bye!`. n2 wallclock=9809.91s (2h43m29s), peak memory=2.41GB. Prior user output confirmed n6 `Curve trace finished`, `Sentaurus Device simulation finished (Tue Nov 3 04:38:53 2026 KST)` and `Good Bye!`. Both `n2_des.plt` and `n6_des.plt` exist.
+- **Effective input OBSERVED:** `pp2_des.cmd:22` and `pp6_des.cmd:22` `Piezoelectric_Polarization(strain activation=0)`. Both lines 175 `Iterations=12`, independent initial Coupled scopes lines 182 (`Iterations=200`) and 183 (`Iterations=100`) unchanged. This resolves previous n2-finished and effective-PolAct uncertainties.
+- **Remaining verification:** successful termination ≠ proven 3.6V bias achieved or physical model validity. Fresh mesh `Wshelf=0` and original-vs-copy source/PP equivalence except activation unverified; no new QW-specific Rad integrals or same-current IQE_sim. Comparing `PolAct=0.5` old QW4 shares n2 99.9687748%, n6 99.9929427% to PolAct=0 new values is next. Global PolAct test also affects EBL (not pure MQW polarization). Physical Baseline B / FREEZE HOLD.
+- **NEXT:** read-only `grep`/PLT parse confirm actual final anode voltage/current and QW1–4 Rad per n2/n6, then compare QW4 fractions at same terminal current where possible; never label QW4 fraction itself as IQE. Avoid changing original source.
+
+## 2026-11-03 — PolAct=0 POL0NOSHELF n6 finished; n2 output exists (OBSERVED terminal, NOT YET VALIDATED n2)
+- 작업자: 이택규 / AI: ChatGPT. 학교 서버의 실제 디렉터리 `/user/semi/semi437/CMP_BASELINE_2.1.0_POL0NOSHELF`를 `find`로 확인한 뒤 해당 디렉터리에서 출력 확인.
+- **OBSERVED:** `n2_des.log` 338K (2026-11-03 01:52), `n2_des.plt` 293K (01:52); `n6_des.log` 340K (04:38), `n6_des.plt` 293K (04:38), 모두 실제 `ls -lh`에 존재. `n6_des.log`는 `Curve trace finished.`, `Sentaurus Device simulation finished (Date: Tue Nov 3 04:38:53 2026 KST)`, `Good Bye!` 출력으로 solver 정상 종료 직접 확인.
+- **UNRESOLVED:** `grep ... | tail -25`는 n6 최후 부분만 보여 `n2`의 정상 종료를 입증하지 않음. 두 노드 최종 전압 3.6V/전류/재결합 및 실제 pp `activation=0`, `Iterations=12`, 메시 `Wshelf=0`, 원본과 단일변수 일치 모두 검증 전. n6 완료는 물리적 타당성 검증 완료가 아님.
+- **NEXT READ ONLY:** `tail -n 12 n2_des.log; tail -n 12 n6_des.log; grep -nE 'Piezoelectric_Polarization|Iterations[[:space:]]*=' pp2_des.cmd pp6_des.cmd` 확인. 이후 원본 PolAct=0.5와 비교해 QW1–4 Rad share, 단자 전류 및 가능한 동일 전류 재결합 비율 평가. Common Baseline physical B/FREEZE HOLD; 서버 원본 소자 무변경.
+
+## 2026-11-03 — Lee reports PolAct=0 simulation runs finished (USER-REPORTED, RESULTS UNVERIFIED)
+- 작업자: 이택규. 사용자 직접 보고: "그 우리 polact 0 했던거 다 돌아갔어". 전날 shelf-free `CMP_BASELINE_2.0.0_V2`로부터 새 복사하고 PolAct=0 / SDevice Iterations=12 적용했다고 보고한 진단 시험을 가리킴.
+- **검증 수준:** USER-REPORTED run completion. 현재 세션에서 학교 서버 `n2/n6` 로그/PLT, 실제 복사본 이름, shelf-free 메시 형상, 실효 pp activation=0 및 Iterations=12 직접 확인하지 못함. 정상 수렴/3.6V 도달/재결합 분포/결과 수치는 아직 미확정.
+- **NEXT (read-only):** 새 프로젝트 루트에서 `pwd; ls -lh n2_des.log n6_des.log n2_des.plt n6_des.plt 2>&1; grep -iE 'finished|good bye|didn.t converge|error' n2_des.log n6_des.log | tail -25` 실행 결과 받아 완료 여부 확인. pp2/pp6의 activation=0, Iterations=12 및 shelf-free 구조를 검증한 후 0.5 대 0의 QW1–QW4 재결합 비율, 단자 전류 및 동일 전류 IQE_sim 비교.
+- baseline physical FREEZE HOLD 유지. 원본 소자/코드 변경 없음.
+
 ## 2026-11-02 — Lee reports new shelf-free clone PolAct parameter change; full SDevice source requested (USER-REPORTED, PRE-RUN)
 - 이택규는 잘못된 shelf-retained Copy를 중단 후 원본 V2.1 복사본의 SWB 파라미터를 변경했다고 보고; **새 복사본 코드/실효 pp/메시 검증 및 solver 실행은 미확인**.
 - ChatGPT가 요청에 따라 전체 `sdevice_des.cmd` 교체용 실행 코드 전달. 기존 사용자-provided V2 입력과 이전 원본/복사본 diff에 근거하여 분극 `activation=@PolAct@`, global Math Iterations12, 나머지 물리모델/Trap/Plot/CurrentPlot/Solve 제어를 원본 V2.1과 맞춘 버전; 독립적으로 새 프로젝트 디스크 파일의 정확한 byte equivalence를 검증한 것은 아님. SWB PolAct=0이면 자동 치환되므로 별도의 polarization 키워드 수정 불필요.
