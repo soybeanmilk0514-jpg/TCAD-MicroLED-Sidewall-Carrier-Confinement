@@ -1,3 +1,158 @@
+## 2026-11-04 — Wu pp25 22-region trap settings verified (OBSERVED)
+- 이택규 actual school `CMP_WU_Copy/pp25_des.cmd` grep: all 22 DmgL/DmgR sidewall region trap blocks (pGaN, Barrier0–4, QW1–4, nGaN) share `Acceptor Level FromValBand EnergyMid=0.75`, `Conc=1e18`, `eXsection=1e-15`, `hXsection=1e-15`, `PooleFrenkel`. This verifies declared settings, not every output value or paper fidelity. No new simulation/code edit. Duplicate pasted grep command caused a harmless missing file error, but subsequent correct matches listed all 22.
+- NEXT: review actual T-2022.03 e/h trap versus SRH accounting; 12-QW 5V proxy is not validated IQE. Preserve n21/n25 and do not restart canceled hGap rerun. Issue #7 comment 6625502078.
+
+## 2026-11-04 — Lee Wu actual pp25 Physics/Trap grep and remaining validation gates (OBSERVED / UNRESOLVED)
+- Worker 이택규; direct school CMP_WU_Copy command: `grep -nEi '^[[:space:]]*Physics|Recombination[[:space:]]*\(|Traps[[:space:]]*\(|PooleFrenkel|Tunneling|TrapFilling|AreaFactor' pp25_des.cmd | head -n 90`.
+- OBSERVED: `Physics {` line22, global `Recombination( SRH Radiative Auger )` line27; 22 separate regional `Physics (Region="DmgL/R_*") { Traps( ... PooleFrenkel)` groups for pGaN, Barrier0..4, QW1..4, nGaN (11 left/right pairs). Representative lines DmgL_QW4 163–167; DmgR_QW4 171–175. Header line7 itself states Thermionic and PooleFrenkel are motivated numerical proxies, not evidence of exact paper fidelity; full header not yet read.
+- The grep output has no matched `Tunneling`, `TrapFilling`, `AreaFactor` lines, but grep is not a proof of total absence of related physics elsewhere. It does not expose complete trap type/energy/Conc/capture cross sections or establish trap net pair recombination and IQE; actual T-2022.03 manual remains unverified in current context.
+- Current gate: distinguish bulk `SRHRecombination` from explicit trap e/h rates, validate full trap spec and electron-versus-hole net accounting, ensure reportable QW-only proxy vs physical IQE, and assess Wu approximation and QW4 radiative concentration (~91% OFF). No new simulation, solver failure, source change or user-approved model alteration. Canceled rerun remains canceled.
+- NEXT READ ONLY, one short terminal command: `sed -n '1,48p;159,177p' pp25_des.cmd` (source header, global Physics, representative QW4 trap); then if needed exact installed T-2022.03 reference and existing logs. Avoid redundant 12-QW integrations.
+
+## 2026-11-04 — Wu Trap/SRH rate accounting literature audit and provisional IQE sensitivities (DOCUMENTED / DERIVED; NO RUN)
+- Worker 이택규, ChatGPT read-only research. Historical official Synopsys Device User Guide O-2018.06, chapters 16 (SRH) and 17 (Traps), distinguishes SRH lifetime-based field and trap-level electron/hole recombination output. Official guide K-2015.06 chapter 9 rate/heat terms writes separate SRH net rate and electron/hole trap net rates. Synopsys Sentaurus Training sdevice/13.9 defines eGapStatesRecombination as electron trap recombination and hGapStatesRecombination as hole trap recombination. Sources: https://studylib.net/doc/27467177/sdevice-ug---%E5%89%AF%E6%9C%AC ; https://studylib.net/doc/27205378/synopsis-sentaurus-user-manual ; https://ghzphy.github.io/Sentaurus_Training/sd/sd_13.html .
+- FINDING (DOCUMENTED, not T-2022.03 confirmed): `SRHRecombination` and explicit trap-level e/h rates are distinct model/output terms in earlier official guides, so complete overlap is not presumed; cannot equate electron trap rate alone to net electron-hole trap recombination without confirming steady-state e/h balance, relevant model options and exact installed-version definitions. Source index `CMP/references/TCAD_REFERENCE_INDEX.md` says actual T-2022.03 sdevice_ug.pdf was uploaded to another chat but is not stored in public repo. We have not inspected that original PDF here. Local school `pp21/25_des.cmd` Plot excerpt lists eGap but omits hGap. No solver rerun or source change.
+- Conditional illustrative QW-only proxies from saved same-5V 12-QW totals [s^-1 um^-1]: OFF Rad 9.902518e15, SRH 6.102184e14, Auger 4.442221e15; ON Rad 9.869850e15, SRH 6.086824e14, Auger 4.424524e15, eGap 4.148388e13. Formula `Rad/(Rad+SRH+Auger)` gives OFF 66.2156216%, ON 66.2270190%; purely illustrative `Rad/(Rad+SRH+Auger+eGap)` gives ON 66.0431824%, a difference -0.172439 percentage points versus OFF 3-channel value. This is NOT validated IQE, the OFF all-QW eGap integral was not measured, other areas not included and ON hGap not saved. Electron-only trap rate may not equal net pair loss.
+- NEXT (READ-ONLY) validate exact T-2022.03 reference and inspect actual Wu `pp21_des.cmd`/`pp25_des.cmd` global Physics/Traps and saved log for capture/tunneling/steady-state assumptions. Do not modify source or rerun previously canceled hGap case. Only then select supported rate equation and QW-only IQE proxy.
+
+## 2026-11-04 — Wu n25 Trap ON 12-QW Radiative/SRH/Auger/eGap batches complete (OBSERVED / DERIVED)
+- Worker 이택규, source actual SVisual screenshots from saved `CMP_WU_Copy/n25_des` (5 V); each Field Integration selected the exact 12 Clean_QW1–4 / DmgL_QW1–4 / DmgR_QW1–4 regions without composite '+' entries. Auger screenshot duplicated, counted once. Integral units for all fields: s^-1*um^-1; total domain 1.199999e-01 um2.
+- n25 OBSERVED RadiativeRecombination, [QW1,QW2,QW3,QW4]:
+  Clean [7.378876e11,1.065895e12,8.757452e14,8.982859e15]; DmgL [3.361238e8,5.199892e8,4.222072e11,4.297888e12]; DmgR [3.363697e8,5.197135e8,4.222218e11,4.297459e12]. SVisual Total=9.869850e15.
+- n25 OBSERVED srhRecombination:
+  Clean [6.387366e11,5.972817e11,1.193145e14,4.875343e14]; DmgL [3.195595e8,2.945850e8,5.846074e10,2.397133e11]; DmgR [3.195690e8,2.944301e8,5.846283e10,2.396849e11]. Total=6.086824e14.
+- n25 OBSERVED AugerRecombination:
+  Clean [1.542005e11,1.427702e11,2.000612e14,4.219999e15]; DmgL [6.835321e7,6.674554e7,9.525221e10,1.988205e12]; DmgR [6.842993e7,6.680390e7,9.525406e10,1.988158e12]. Total=4.424524e15.
+- n25 OBSERVED eGapStatesRecombination:
+  Clean [0,0,0,0]; DmgL [6.802490e11,6.973104e11,5.709345e12,1.365525e13]; DmgR [6.804959e11,6.975201e11,5.709368e12,1.365435e13]. Total=4.148388e13.
+- Prior n21 OBSERVED totals: Radiative 9.902518e15; SRH 6.102184e14; Auger 4.442221e15. n21 eGapStates total over all 12 QW regions has NOT been sampled (only DmgL/R_QW4 individually). DERIVED displayed-total change percentages n25 ON vs n21 OFF: Radiative -0.329896%, SRH -0.251713%, Auger -0.398382%. n25 eGapStates QW distribution shares: QW1 3.2802%, QW2 3.3623%, QW3 27.5257%, QW4 65.8318%.
+- These are 5-V comparisons of 12-QW saved field integrals, not whole-device recombination sums, calibrated current density, measured IQE or full trap-mediated loss. `SRHRecombination` vs `eGapStatesRecombination` overlap/definitions, `hGapStatesRecombination` absence, and other non-QW recombination remain unresolved. No new solver execution or code modifications. NEXT prioritize authoritative T-2022.03 rate-field definitions and non-double-counting audit; then decide supported conditional IQE proxy, with no previously canceled overnight hGap rerun.
+
+## 2026-11-04 — Lee Wu n21 12-QW SRH and Auger field integrations completed (OBSERVED / DERIVED)
+- Worker: 이택규. SVisual screenshots of saved `CMP_WU_Copy/n21_des` Trap OFF (5 V); selected 12 non-composite QW regions Clean_QW1..4, DmgL_QW1..4, DmgR_QW1..4, no "+" unions.
+- OBSERVED `srhRecombination` integrals [s^-1*um^-1], by QW1/QW2/QW3/QW4:
+  - Clean: 6.418660e11 / 6.053790e11 / 1.200834e14 / 4.882756e14
+  - DmgL: 3.211880e8 / 3.029955e8 / 6.041855e10 / 2.450705e11
+  - DmgR: 3.211945e8 / 3.028743e8 / 6.042168e10 / 2.450456e11
+  - SVisual Total Integral=6.102184e14 [s^-1*um^-1]; Total Domain approximately 1.199999e-01 um2.
+- OBSERVED `AugerRecombination` integrals [s^-1*um^-1], QW1..4:
+  - Clean: 1.544212e11 / 1.440866e11 / 2.027492e14 / 4.234775e15
+  - DmgL: 7.726844e7 / 7.095381e7 / 1.022639e11 / 2.096926e12
+  - DmgR: 7.727060e7 / 7.099971e7 / 1.022650e11 / 2.096875e12
+  - SVisual Total Integral=4.442221e15 [s^-1*um^-1]; total domain not fully visible in Auger screenshot.
+- Previously n21 12-QW `RadiativeRecombination` SVisual Total Integral=9.902518e15 [s^-1*um^-1].
+- DERIVED (using rounded region values): QW4 share SRH = 80.09684%; Auger = 95.42453%; Radiative = 91.03408%. These fractions describe spatial distribution of each saved rate field, not IQE. No valid trap-inclusive IQE yet: SRH/eGap overlap, missing hGapStates, full rate accounting and current normalization unresolved.
+- User requested efficient workflow: n21 Radiative/SRH/Auger 12-QW batches now finished; next switch to n25 ON once and repeat three fields over exact same 12 QW regions, preserving existing n25 DmgL_QW4 measurements.
+- No new SDevice run or code edit; canceled optional hGapStates rerun remains canceled.
+
+## 2026-11-04 — Lee Wu n21 12 QW region RadiativeRecombination batch (OBSERVED, DERIVED)
+- Worker: 이택규. School SVisual n21_des Trap OFF (5 V) Field Integration RadiativeRecombination, 12 *distinct* regions (Clean/DmgL/DmgR QW1–4; no composite '+' regions).
+- OBSERVED integrals [s^-1*um^-1] by QW, in Clean / DmgL / DmgR order:
+  - QW1: 7.388587e11 / 3.697408e8 / 3.697496e8
+  - QW2: 1.079961e12 / 5.392654e8 / 5.390042e8
+  - QW3: 8.851380e14 / 4.465055e11 / 4.465253e11
+  - QW4: 9.005734e15 / 4.466154e12 / 4.465761e12
+- OBSERVED Total Integral 9.902518e15 [s^-1*um^-1], Total Domain 1.199999e-01 um2. Displayed clean domain areas near 2.997e-02 um2 each and each damaged area near 1.5e-05 um2.
+- DERIVED using displayed rounded regional values: summed 9.90251758326e15 s^-1 um^-1; QW4 sum 9.014665915e15; QW4 share 91.03408% and QW3 share 8.94753%. These are fractions of integrated *radiative field over all twelve QWs*, NOT IQE. Wu model is distinct from prior V2.1 baseline with its own QW4 concentration observation.
+- No rerun/source edit. User asked to complete saved n21 before switching to n25; next batch n21 srhRecombination in same 12 distinct regions, then AugerRecombination, followed by corresponding n25. Before any IQE interpret rate overlap/term definitions and missing hGapStates.
+
+## 2026-11-04 — Wu n21 OFF DmgL_QW4 RadiativeRecombination (OBSERVED / DERIVED)
+- Worker 이택규; saved school SVisual n21_des (Trap OFF), RadiativeRecombination for DmgL_QW4 only: Integral +4.466154e12 [s^-1*um^-1], Domain 1.500003e-05 [um^2]. Earlier n25_des Trap ON identical region/field: +4.297888e12, same Domain. DERIVED ON-OFF=-1.68266e11, relative ON change -3.77% versus OFF at 5 V. This is a single-region radiative-field change, not IQE. No simulation or code modifications. User requested efficient data collection: finish remaining n21 saved-file fields before switching back to n25. Next collect per-region n21 radiative integrals for exact QW regions using multi-select, not combined region names containing '+'.
+
+## 2026-11-04 — Wu ON n25 DmgL_QW4 radiative field integration (OBSERVED)
+- Worker: 이택규. School SVisual saved n25_des (Trap ON, 5 V), Field RadiativeRecombination, selected only DmgL_QW4 (InGaN): Integral +4.297888e12 s^-1 um^-1, Domain 1.500003e-05 um2 (screenshot).
+- Same saved dataset/region previously: srhRecombination +2.397133e11 and eGapStatesRecombination +1.365525e13 s^-1 um^-1. These are three separately displayed output fields; valid total recombination and double-counting rules are NOT yet established, so no IQE or trap-loss percentage should be derived from their naive sum.
+- No new simulation, code change or experimental physics interpretation. NEXT read-only measure n21 OFF RadiativeRecombination for DmgL_QW4 at saved 5 V; then verify rate term definitions and validity of any IQE accounting.
+
+## 2026-11-04 — Lee Wu n21 OFF versus n25 ON DmgL_QW4 SRH field (OBSERVED / DERIVED)
+- Worker: 이택규. Direct school SVisual screenshot: saved n21_des (Trap OFF), Field srhRecombination, DmgL_QW4 only; Integral +2.450705e11 s^-1 um^-1, Domain 1.500003e-05 um2. Earlier screenshot of saved n25_des (Trap ON), same field/region/domain: +2.397133e11 s^-1 um^-1.
+- DERIVED ON minus OFF = -5.3572e9 s^-1 um^-1, relative to OFF about -2.186%. This is a lower displayed SRH field integral at fixed 5.0 V, not evidence that total nonradiative recombination or trap-mediated IQE loss decreased. In this same region the eGapStatesRecombination field changes from about 1.387832e-05 OFF to 1.365525e13 ON; field overlap and complete hole-trap contribution remain unresolved.
+- Both were saved 5-V results; n21/n25 anode total currents differ approximately 0.0856%. No new solver run or code edit. NEXT read-only check official T-2022.03 definitions of SRHRecombination and eGapStatesRecombination and identify double-counting risks; use saved Radiative/Auger fields if needed, do not compute IQE from unverified sums or rerun the canceled case.
+
+## 2026-11-04 — Wu n25 ON DmgL_QW4 srhRecombination integral (OBSERVED / DERIVED)
+- 이택규 SVisual Field Integration screenshot of existing CMP_WU_Copy/n25_des: field `srhRecombination`, only region `DmgL_QW4 (InGaN)` selected. Integral +2.397133e11 s^-1 um^-1, Domain 1.500003e-05 um2 (OBSERVED).
+- In the same saved dataset/region, prior `eGapStatesRecombination` Integral was +1.365525e13 s^-1 um^-1. Their numerical ratio is approximately 56.96 (DERIVED), but field definitions and overlap are unverified. Do NOT assert trap physical loss exceeds SRH by 57x or sum them into IQE without accounting verification. No new solver run or code change.
+- NEXT read-only compare n21_des (Trap OFF) `srhRecombination` in DmgL_QW4 using same Field Integration, then consult T-2022.03 references for field meanings and double-counting before computing IQE.
+
+## 2026-11-04 — Wu OFF/ON QW4 left/right eGapStates comparison complete (OBSERVED / DERIVED)
+- Worker: 이택규. School SVisual saved n21_des screenshot: eGapStatesRecombination, DmgR_QW4 (InGaN) exclusively selected; integral +1.387717e-05 s^-1 um^-1, domain 1.500037e-05 um2. This is the OFF/right measurement, not a rerun.
+- Prior saved n21 OFF/left DmgL_QW4: +1.387832e-05, domain 1.500003e-05. Prior n25 ON/left: +1.365525e13, same left domain; ON/right: +1.365435e13, same right domain. All integrals in s^-1 um^-1.
+- DERIVED left+right OFF sum 2.775549e-05, ON sum 2.730960e13 s^-1 um^-1. ON values much larger, both left/right similar. ON/OFF ratios are unstable physical metrics because OFF is extremely close to zero. This eGapStates field alone is NOT total net trap recombination or trap-inclusive IQE; do not infer IQE drop or add to SRH without validating definitions and double counting.
+- QW4 bilateral sampled comparison finished; no new solver run or code edits. NEXT read-only examine actual saved SRH/Radiative/Auger rate integrals, bias and the physical model definitions. Respect cancellation of overnight hGap rerun. Keep n21/n25 intact.
+
+## 2026-11-04 — Wu OFF n21 left QW4 eGapStates integral (OBSERVED / DERIVED)
+- Worker 이택규. School SVisual screenshot saved n21_des Trap OFF, eGapStatesRecombination, exclusively DmgL_QW4 (InGaN): Integral +1.387832e-05 s^-1 um^-1 and Domain 1.500003e-05 um2.
+- Prior ON n25 same selected DmgL_QW4: +1.365525e13 s^-1 um^-1 and identical Domain. DERIVED ON/OFF about 9.84e17 times, but OFF is a tiny nonzero value and multiplier does NOT represent measured IQE deterioration or full trap nonradiative recombination.
+- Prior screenshot ON right QW4: DmgR_QW4 Integral +1.365435e13 s^-1 um^-1, Domain 1.500037e-05 um2. QW4 sides ON sum 2.730960e13 s^-1 um^-1, with 0.00659 percent left-right difference in integrals.
+- No SDevice rerun or code edits. Next n21 OFF DmgR_QW4 read-only, then total rate accounting and double-counting verification before IQE.
+
+## 2026-11-04 — Lee Wu n25 DmgL_QW4 eGapStates integration (OBSERVED)
+- Worker 이택규. Screenshot SVisual n25_des, Field eGapStatesRecombination, only DmgL_QW4 selected: Integral +1.365525e13 s^-1 um^-1; Domain 1.500003e-05 um2. Prior Clean_QW4 same field integral 0. Positive left-side damaged-region electron gap-state recombination integral observed, but not proof of whole trap nonradiative loss or IQE. No new simulations or code changes. Next read-only measure DmgR_QW4 in same saved n25 TDR.
+
+## 2026-11-04 — Lee Wu pp21/pp25 Plot and Math block spot check (OBSERVED)
+- Worker: 이택규. School CMP_WU_Copy terminal `sed -n '210,230p' pp21_des.cmd` and `sed -n '210,230p' pp25_des.cmd` provided directly. Two excerpts are text-identical: `Plot` lists eDensity/hDensity, potentials, currents, quasi-Fermi/bands, doping, and RadiativeRecombination, SRHRecombination, AugerRecombination, eGapStatesRecombination, eTrappedCharge, TotalTrapConcentration. `hGapStatesRecombination` is not in the Plot block. Visible Math block parameters are also identical through `NotDamped=100`; no claim about omitted Math lines.
+- This proves identical output requests for selected fields and shown solver Math settings, not that every requested field was written to each saved TDR, nor that eGapStates equals full trap net recombination or is nonoverlapping with SRH. Previous command/parameter comparisons still need physical interpretation.
+- Next OBSERVATION: inspect already saved n25_des.tdr in SVisual, choose eGapStatesRecombination, Field Integration only DmgL_QW4, capture Integral/Domain/units and sign. No rerun or source changes; do not calculate trap-inclusive IQE before rate accounting verification.
+
+## 2026-11-04 — Lee Wu recombination Plot declarations inspected (OBSERVED, read-only)
+- Worker 이택규. User school `grep -niE 'eGapStatesRecombination|hGapStatesRecombination|SRHRecombination|RadiativeRecombination|AugerRecombination|CurrentPlot|Integr' pp21_des.cmd pp25_des.cmd | head -n 80` in CMP_WU_Copy.
+- OBSERVED: both preprocessed CMDs line 218: `RadiativeRecombination SRHRecombination AugerRecombination`; line 219: `eGapStatesRecombination eTrappedCharge TotalTrapConcentration`. No `hGapStatesRecombination`, `CurrentPlot`, or `Integr*` appeared in the grep output. Both have the same listed rate output requests, but this does not itself confirm each field exists in saved TDR or establish correct recombination accounting.
+- INTERPRETATION: `eGapStatesRecombination` alone must not be treated as full trap-inclusive nonradiative loss; `SRHRecombination` plus `eGapStatesRecombination` may not be summed for an IQE calculation until definitions and double-counting are verified. No school rerun or code change. Respect cancellation of extra hGap rerun.
+- NEXT read-only: inspect full Plot block context and saved n21/n25 TDR fields in SVisual. Identify availability/units before region-integrating and assessing trap contributions, with no code changes.
+
+## 2026-11-04 — Lee Wu n21/n25 5.0 V PLT final-row current comparison (OBSERVED / DERIVED)
+- Worker: 이택규. Direct school CMP_WU_Copy terminal evidence: `tail -n 12 n21_des.plt`, `tail -n 12 n25_des.plt`. Both files end at `time=1` and `anode OuterVoltage=5.00000000000000 V` with 17-column DF-ISE datasets including time and anode/cathode terminal values.
+- OBSERVED OFF n21 (5 V): anode TotalCurrent=2.56859586549120e-03, eCurrent=1.69539310159551e-04, hCurrent=2.39905655533165e-03; corresponding cathode TotalCurrent=-2.56859586549119e-03.
+- OBSERVED ON n25 (5 V): anode TotalCurrent=2.56639709344131e-03, eCurrent=1.68952709999954e-04, hCurrent=2.39744438344136e-03; corresponding cathode TotalCurrent=-2.56639709344130e-03.
+- DERIVED: 5V fixed-voltage absolute TotalCurrent reduction OFF-ON=2.19877204989e-6, relative reduction 100*(OFF-ON)/OFF=0.085602%. Data are raw 2D PLT terminal-current numbers; physical current-density scaling/units not validated. 5 V near-equal current is not an exact matched-current extraction, and low total-current change does not validate IQE or trap-mediated recombination.
+- PLT dataset list lacks recombination integrals (IntegrRad, IntegrSRH, IntegrTrap). Further rate accounting needs saved TDR and authoritative definitions. No new runs, no source edits. Respect JuSubin's cancellation of an overnight hGap rerun; next is read-only review of existing fields and recombination definitions.
+
+## 2026-11-04 — Lee Wu n21/n25 PLT headers verified (OBSERVED; read-only)
+- Worker: 이택규. Actual school shell in CMP_WU_Copy: `ls -lh n21_des.plt n25_des.plt; head -n 15 n21_des.plt; head -n 15 n25_des.plt`.
+- OBSERVED: n21_des.plt exists (41K, Nov 3 23:58); n25_des.plt exists (70K, Nov 4 01:00). Both are DF-ISE text xyplot with the visible complete `datasets` list of time, cathode/anode voltage, potentials, displacement/electron/hole/total currents, and charge. Neither listed recombination integration columns such as IntegrRad/IntegrSRH/IntegrTrap in its displayed dataset header.
+- INTERPRETATION: these PLTs can support inspection of bias and terminal currents, but alone cannot provide trap-inclusive IQE or recombination-rate decomposition. No simulation rerun, source edit, current values, or current-overlap proof in this step.
+- NEXT: inspect saved PLT ending/data syntax and terminal current-vs-voltage overlap read-only, then source recombination integrals from saved TDR/other verified datasets. Keep original files unchanged.
+
+## 2026-11-04 Lee Wu right Barrier4 observation
+- User SVisual n25 ON TotalTrapConcentration, DmgR_Barrier4: Integral 3.996092e+01 um^-1, Domain 4.000092e-05 um2. Mean 9.990e17 cm^-3 (about 0.1 percent below ON nominal 1e18). Left Barrier4 had similar average. Representative QW1/QW4 left and right traps and clean QW centers had already been checked. This is not a complete IQE or full 22-region uniformity proof. No new runs or source edits. Next investigate recombination accounting and trap-inclusive IQE with saved data only.
+
+## 2026-11-04 — Lee Wu n25 DmgL_Barrier4 trap regional mean (OBSERVED / DERIVED)
+- Worker: 이택규. Saved `CMP_WU_Copy/n25_des` Field Integration screenshot, `TotalTrapConcentration` selected only `DmgL_Barrier4 (GaN)`. OBSERVED Integral = `3.996001e+01 [um^-1]`, Domain = `4.000001e-05 [um^2]`. DERIVED regional mean = (39.96001 / 4.000001e-5) * 1e12 = approx `9.990e17 cm^-3`, 0.1% below nominal ON NtSide=1e18 cm^-3. Reason for difference NOT confirmed; avoid exact-equality claims.
+- The ON left Barrier4 has near-target local average trap concentration, extending prior QW1/QW4 trap spot checks. This does NOT prove within-region uniformity, all 22 regions, or trap-inclusive IQE. No solver rerun or school code edit.
+- NEXT read-only: saved n25 DmgR_Barrier4 regional Integral/Domain; afterward stop repetitive trap placement checks and focus on trap vs SRH rate accounting and current normalization.
+
+## 2026-11-04 — Lee Wu n25 Clean_QW4 trap concentration zero (OBSERVED / DERIVED)
+- Worker: 이택규. Screenshot of school saved `CMP_WU_Copy/n25_des` Field Integration, `TotalTrapConcentration`, only `Clean_QW4 (InGaN)` selected. Integral = **0.000000e+00 [um^-1]**; Domain = **2.997006e-02 [um^2]**. Regional mean = 0 cm^-3.
+- Alongside previously measured `DmgL_QW4` mean=1e18 and `DmgR_QW4` mean=1e18 cm^-3, the measured **QW4 left-damaged / clean-center / right-damaged regional averages** match the intended ON trap placement. Earlier QW1 left/right and clean spot checks agree. Other damaged layers, within-region uniformity and full trap-inclusive IQE remain unverified.
+- No school code edit or SDevice rerun. Next saved n25 `DmgL_Barrier4` and `DmgR_Barrier4` spot checks (if still needed), then focus on rate accounting, matched-current and model fidelity.
+
+## 2026-11-04 — Lee Wu ON DmgR_QW4 trap density checked (OBSERVED / DERIVED)
+- Worker: 이택규. Actual saved `CMP_WU_Copy/n25_des` SVisual Field Integration, Field `TotalTrapConcentration`, selected region `DmgR_QW4 (InGaN)`. Screenshot shows Integral=1.500037e+01 [um^-1], Domain=1.500037e-05 [um^2]. Mean = 15.00037 / 0.00001500037 = 1e6 [um^-3] = **1e18 cm^-3**, matching ON NtSide. Earlier DmgL_QW4 region also 1e18 cm^-3; both left and right QW4 regional averages verified. This does NOT establish uniformity inside each region, all 22 damaged regions, recombination loss, or trap-inclusive IQE.
+- No rerun or school code edit. NEXT read-only `Clean_QW4` in same n25 TotalTrapConcentration to confirm clean center vs both sidewalls; then sample Barrier4 and review trap-rate accounting.
+
+## 2026-11-04 — Lee Wu Trap ON DmgL_QW4 average Nt verified in saved SVisual (OBSERVED / DERIVED)
+- Worker 이택규, school saved `CMP_WU_Copy/n25_des` Trap ON. User screenshot of Sentaurus Field Integration: Field `TotalTrapConcentration`, only Region `DmgL_QW4 (InGaN)` selected. OBSERVED Integral = 1.500003e+01 [um^-1]; Domain = 1.500003e-05 [um^2].
+- DERIVED mean = 15.00003 / 1.500003e-5 = 1.000000e6 um^-3 = **1.000000e18 cm^-3**, consistent with target `NtSide=1e18`. This extends earlier direct ON QW1 left/right region checks to ON QW4 LEFT. It is an area-average; no proof of region-wise uniformity beyond this average. QW4 right / clean and Barrier4 remain unmeasured in this turn. This is trap CONCENTRATION evidence, not proof of trap-caused net recombination or complete IQE.
+- No SDevice rerun, input edit or output modification. NEXT read-only SVisual saved n25 `DmgR_QW4` `TotalTrapConcentration` Integral/Domain; optionally `Clean_QW4` and `DmgL/R_Barrier4` before moving to rate accounting.
+
+## 2026-11-04 — Lee Wu n21/n25 runtime grid and doping reads confirmed (OBSERVED)
+- Worker: 이택규, school `/user/semi/semi437/tmp/myproject/CMP_WU_Copy`. Direct read-only `grep -niE 'n1_msh.tdr|reading grid|grid file|reading mesh' n21_des.log n25_des.log | head -n 30` supplied.
+- Both `n21_des.log` and `n25_des.log` show at line 241 `Grid file: n1_msh.tdr`, line 697 `Reading grid 'n1_msh.tdr' ...`, and line 805 `Reading doping 'n1_msh.tdr' (TDR format) ...`. Thus BOTH solver logs confirm loading mesh and doping from the same *file pathname*. Prior `stat` showed mesh mtime 2026-11-03 23:17:11 before OFF/ON solver completions (23:58:02 / 2026-11-04 01:00:20); both log runs finished normally.
+- CMD level: after run-output filename and intended Conc normalization, complete `pp21_des.cmd` vs `pp25_des.cmd` diff exit 0, `pp21_des.par` vs `pp25_des.par` byte cmp exit 0. This supports a controlled Trap concentration comparison. IMPORTANT: same pathname/mtime alone do NOT cryptographically prove identical runtime mesh byte snapshot if changed between starts. Physics validity, matched-current, and trap-inclusive IQE remain UNRESOLVED.
+- No code changes or new solver runs; next read saved `n25_des.tdr` in SVisual and measure `TotalTrapConcentration` separately for `DmgL_QW4`, `DmgR_QW4`, `Clean_QW4`, and optionally `DmgL/R_Barrier4`. Record each Integral/Domain to calculate cm^-3. Preserve all files.
+
+## 2026-11-04 — Lee Wu n21/n25 solver completion and mesh mtime validated (OBSERVED / read-only)
+- Worker: 이택규. Actual school Bash command under `/user/semi/semi437/tmp/myproject/CMP_WU_Copy`: `stat -c '%n | %s bytes | %y' n1_msh.tdr n21_des.log n25_des.log; grep -E 'Curve trace finished|Sentaurus Device simulation finished|Good Bye' n21_des.log n25_des.log | tail -n 10`.
+- `n1_msh.tdr`: 984164 bytes, last modified 2026-11-03 23:17:11.223700114 +0900. `n21_des.log` 284309 bytes, mtime 2026-11-03 23:58:02.616861738 +0900. `n25_des.log` 441702 bytes, mtime 2026-11-04 01:00:20.441108178 +0900.
+- `n21_des.log`: `Curve trace finished.`, `Sentaurus Device simulation finished (Date: Tue Nov 3 23:58:02 2026 (KST)).`, `Good Bye !`. `n25_des.log`: same three completion signatures, finished Wed Nov 4 01:00:20 2026 (KST). Confirms **both full solver runs terminated normally and curve traces finished**, not physical/LED or IQE validation, and does not prove actual final bias if log details not reread.
+- Earlier full normalized `pp21_des.cmd` vs `pp25_des.cmd` diff=0 and `cmp -s pp21_des.par pp25_des.par` exit=0. Both effective CMDs name `n1_msh.tdr` as input grid. Mesh mtime precedes both completion logs, supporting common-source hypothesis, but **same exact mesh snapshot used at both execution instants is not proved by mtime alone**. Need mesh load/log evidence and provenance if necessary.
+- No new simulation, no code or output modifications. Preserve both TDRs. NEXT: read-only grep n21/n25 log for mesh file load and grid/region warnings, then existing saved TDR field integration `TotalTrapConcentration` in QW4/Barrier4 (ON and OFF) before trap-inclusive IQE work.
+
+## 2026-11-04 — Lee Wu n21/n25 parameter-file byte equality (OBSERVED)
+- Worker 이택규; school directory `/user/semi/semi437/tmp/myproject/CMP_WU_Copy` in Bash, read-only command `cmp -s pp21_des.par pp25_des.par; echo "PAR_CMP_EXIT=$?"` returned **PAR_CMP_EXIT=0**. Thus full preprocessed parameter files are byte-identical in the observed school directory.
+- Combined with earlier complete normalized `pp21_des.cmd`/`pp25_des.cmd` diff `CMD_DIFF_EXIT=0`, OFF/ON CMD and parameter content equivalence is supported, after excluding run-specific filenames and intentional trap Conc=0 vs 1e18 cm^-3. This is **not** yet the complete same-mesh-at-run-time or same-current validation.
+- NEXT read-only: inspect `n1_msh.tdr` timestamps and n21/n25 completed logs, plus explicit same input grid file in pp; ensure no mesh regeneration between runs before considering controlled Trap study. No solver/code edits; trap-inclusive IQE remains UNRESOLVED.
+
 ## 2026-11-04 — Lee Wu OFF/ON pp21 vs pp25 partial diff (OBSERVED / PARTIAL ONLY)
 - Worker: 이택규. User read-only command in school's `/user/semi/semi437/tmp/myproject/CMP_WU_Copy`: `diff -u pp21_des.cmd pp25_des.cmd | head -n 120`. Because `head` truncated at 120 lines, this is ONLY a partial diff, NOT proof all differences are known.
 - OBSERVED in shown diff: `Grid="n1_msh.tdr"` remains same in context; File output/current/log/parameter filenames differ as expected (n21 vs n25). Sampled trap-region blocks include same Acceptor Level FromValBand EnergyMid=0.75, eXsection=hXsection=1e-15, PooleFrenkel, with OFF `Conc=0` vs ON `Conc=1e18`. Previous full matching grep separately counted 22 identical-form concentration declarations in each preprocessed CMD.

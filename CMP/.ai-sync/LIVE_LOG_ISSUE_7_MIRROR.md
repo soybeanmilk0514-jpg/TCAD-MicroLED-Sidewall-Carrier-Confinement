@@ -10907,3 +10907,339 @@ School CMP_WU_Copy read-only `diff -u pp21_des.cmd pp25_des.cmd | head -n 120` o
 NEXT: normalize run-specific file labels and Conc values and compare complete pp21/25 command files, then inspect `.par` and mesh provenance, read-only.
 
 ---
+
+## 2026-11-04T03:28:08Z — TaekGyu0801
+
+[2026-11-04 KST]
+작업자: 이택규 | AI: ChatGPT | 구분: RESULT / VALIDATION | 상태: OBSERVED
+
+학교 서버 `CMP_WU_Copy`에서 `pp21_des.cmd`(Trap OFF)와 `pp25_des.cmd`(ON) 전체를 비교. run별 출력/parameter 파일명과 지정된 Trap Conc 값 0/1e18만 정규화한 뒤 완전 비교 결과 `CMD_DIFF_EXIT=0`이며 diff 출력 없음. **전체 전처리 SDevice CMD 동일성 검증 통과** (정규화한 항목 제외). 앞선 grep으로 두 덱의 22개 trap 선언 및 동일 분극/Mg 모델 확인. 이 검증은 `.par` 파일의 내용, 실제 Mesh 동일성, 전류·IQE 타당성까지 증명하는 것은 아님. 새 solver 실행 또는 소스 수정 없음.
+
+다음: 학교 Bash에서 `cmp -s pp21_des.par pp25_des.par; echo PAR_CMP_EXIT=$?`를 실행해 물성 파라미터 동일성 확인. 차이가 있으면 read-only diff 확인.
+
+---
+
+## 2026-11-04T03:31:08Z — TaekGyu0801
+
+[2026-11-04 KST]
+작업자: 이택규 | AI: ChatGPT | 구분: RESULT / VALIDATION | 상태: OBSERVED
+
+학교 서버 `CMP_WU_Copy`에서 Bash read-only `cmp -s pp21_des.par pp25_des.par; echo "PAR_CMP_EXIT=$?"` 결과 **PAR_CMP_EXIT=0**. 실효 SDevice 파라미터 파일은 byte-identical. 이전 전체 CMD 정규화 비교도 **CMD_DIFF_EXIT=0**, Trap OFF/ON CMD 및 PAR 수준의 동등성 검증 통과. 다만 `n1_msh.tdr` 실행 당시 동일성/재생성 이력, 실제 완료 로그, matched current 및 trap-inclusive IQE는 미검증. 새 시뮬레이션, 코드 변경 없음.
+
+NEXT read-only: mesh 파일 timestamp vs node run timestamps, n21/n25 final log status / mesh reports. 원래 TDR 보존.
+
+---
+
+## 2026-11-04T03:35:56Z — TaekGyu0801
+
+[2026-11-04 KST]
+작업자: 이택규 | AI: ChatGPT | 구분: RESULT / VALIDATION | 상태: OBSERVED (read-only)
+
+School `CMP_WU_Copy`: `n1_msh.tdr` 984164 bytes last mtime Nov 3 23:17:11.2237 KST; `n21_des.log` 284309 bytes at Nov 3 23:58:02.6169; `n25_des.log` 441702 bytes at Nov 4 01:00:20.4411. Both logs directly report `Curve trace finished`, `Sentaurus Device simulation finished` and `Good Bye!` (OFF n21 23:58:02 KST, ON n25 01:00:20 KST). Solver completion CONFIRMED from output, not physical LED validity. Previously full normalized CMD diff exit=0 and pp PAR identical; both CMD specify common `n1_msh.tdr`. Mesh mtime predates both log endings but does not by itself prove runtime snapshot identity. No new simulation or files changed on school server.
+
+NEXT: inspect log evidence of common grid loading; then saved TDR QW4/Barrier4 trap concentration spot checks and rate accounting, no rerun.
+
+---
+
+## 2026-11-04T03:39:25Z — TaekGyu0801
+
+2026-11-04 이택규 / ChatGPT / OBSERVED / read-only: School Wu n21 and n25 solver logs both report Grid file n1_msh.tdr, Reading grid n1_msh.tdr, Reading doping n1_msh.tdr at lines 241/697/805. Thus same grid and doping path loaded. Runtime byte-level mesh identity is not fully proven. Earlier normalized CMD equality, PAR equality and successful terminations remain supported. No rerun or source changes. Next: saved n25 TDR QW4/Barrier4 TotalTrapConcentration region integration.
+
+---
+
+## 2026-11-04T03:47:04Z — TaekGyu0801
+
+2026-11-04 Lee TaekGyu OBSERVED: saved n25_des ON TotalTrapConcentration Field Integration DmgL_QW4: Integral 15.00003 um^-1; Domain 0.00001500003 um2. Regional mean = 1e18 cm^-3, matches Trap ON setting. No rerun or code change. Only sampled left QW4 confirmed; next right QW4 and clean QW4; full IQE unverified.
+
+---
+
+## 2026-11-04T04:05:00Z — TaekGyu0801
+
+2026-11-04 이택규 / ChatGPT / OBSERVED+DERIVED. Saved Wu ON n25_des Field Integration TotalTrapConcentration DmgR_QW4: Integral 1.500037e+01 um^-1; Domain 1.500037e-05 um2; area mean 1e18 cm^-3, matches NtSide setting. Earlier DmgL_QW4 area mean also 1e18 cm^-3, so both QW4 sidewall sample averages verified. Not full-region uniformity or trap-inclusive IQE. No new solver or source edits. Next read saved n25 Clean_QW4 Integral/Domain.
+
+---
+
+## 2026-11-04T04:09:55Z — TaekGyu0801
+
+2026-11-04 Lee TaekGyu / ChatGPT / OBSERVED+DERIVED. Saved CMP_WU_Copy/n25_des (ON) SVisual TotalTrapConcentration Clean_QW4 integral 0.000000e+00 um^-1 over domain 2.997006e-02 um2 -> average 0 cm^-3. Combined with earlier sampled left and right damaged QW4 average 1e18 cm^-3 each, the QW4 sidewall-clean-sidewall placement agrees with intended trap setup. This does not prove every damaged layer nor trap-mediated IQE degradation. No rerun or code change. Next consider Barrier4 samples then trap-rate accounting.
+
+---
+
+## 2026-11-04T04:28:14Z — TaekGyu0801
+
+2026-11-04 이택규 / ChatGPT / OBSERVED+DERIVED. Existing n25_des ON TotalTrapConcentration for DmgL_Barrier4 GaN: Integral=3.996001e+01 um^-1; Domain=4.000001e-05 um2; mean=9.990e17 cm^-3. Difference from ON nominal NtSide 1e18 is -0.1%; cause unverified. Confirms near-target left Barrier4 region-average concentration, NOT full 22-region verification or trap-inclusive IQE. No new solver run or code change. Next right Barrier4 then shift to rate accounting.
+
+---
+
+## 2026-11-04T04:33:33Z — TaekGyu0801
+
+2026-11-04 Lee TaekGyu / ChatGPT / OBSERVED+DERIVED. Wu saved ON n25_des TotalTrapConcentration right Barrier4 region: Integral=39.96092 um^-1 and Domain=4.000092e-5 um2; average=9.990e17 cm^-3, approx 0.1% below NtSide nominal 1e18. Left Barrier4 also ~9.990e17; QW4 both sides 1e18, center Clean QW4 zero. Representative trap placement validation now sufficient for next analysis, but whole 22-region uniformity and trap-inclusive IQE not proven. No new solver run/code change. Next examine eGap/SRH rate accounting and normalization with saved data.
+
+---
+
+## 2026-11-04T04:47:18Z — TaekGyu0801
+
+[2026-11-04] Worker 이택규 / ChatGPT / RESULT / OBSERVED (read-only)
+Actual school CMP_WU_Copy: n21_des.plt 41K (Nov 3 23:58), n25_des.plt 70K (Nov 4 01:00). Both DF-ISE xyplot dataset headers list time and anode/cathode voltages, potentials, currents and charge; no IntegrRad/IntegrSRH/IntegrTrap columns in the displayed complete dataset lists. Thus PLT supplies terminal bias/current, not recombination integrals or IQE. No runs or code edits. Next inspect PLT data/footer and current overlap; obtain recombination from saved TDR or separately verified rate datasets.
+
+---
+
+## 2026-11-04T04:52:09Z — TaekGyu0801
+
+[2026-11-04] 작업자 이택규 / ChatGPT / RESULT / OBSERVED+DERIVED. School CMP_WU_Copy saved PLT final records: both `time=1` and anode OuterVoltage 5.0 V. n21 OFF anode TotalCurrent=2.56859586549120e-03 (e=1.69539310159551e-04; h=2.39905655533165e-03); n25 ON anode TotalCurrent=2.56639709344131e-03 (e=1.68952709999954e-04; h=2.39744438344136e-03). Derived OFF-ON reduction=2.19877204989e-6 (0.085602% of OFF). These are raw 2D PLT values with unconfirmed A/cm² scaling. No recombination integral columns in displayed PLT header; small same-voltage current shift does not establish trap loss or IQE. No rerun/edit. Next saved-TDR rate accounting read-only; honor cancellation of overnight hGap rerun.
+
+---
+
+## 2026-11-04T04:57:51Z — TaekGyu0801
+
+[2026-11-04] 이택규 / ChatGPT / RESULT / OBSERVED: Actual school CMP_WU_Copy grep confirms pp21 and pp25 identical recombination field declarations (lines 218–219): RadiativeRecombination, SRHRecombination, AugerRecombination, eGapStatesRecombination, eTrappedCharge, TotalTrapConcentration. No hGapStatesRecombination, CurrentPlot or Integr* in grep output. These are output requests, not proof of saved field presence or non-double-counted IQE. Do not rerun; next inspect full Plot block and saved TDR fields read-only, then rate accounting.
+
+---
+
+## 2026-11-04T04:58:50Z — TaekGyu0801
+
+[2026-11-04] 이택규 / ChatGPT / RESULT / OBSERVED. School pp21_des.cmd and pp25_des.cmd sed 210–230 excerpts show identical Plot output requests (Rad, SRH, Auger, eGapStates, eTrappedCharge, TotalTrapConcentration, no hGapStates) and identical visible Math settings through NotDamped=100. This does not prove actual saved TDR field presence or rate accounting. Next read-only SVisual n25_des.tdr eGapStatesRecombination DmgL_QW4 Field Integration (Integral/Domain/units/sign). No new run/edit.
+
+---
+
+## 2026-11-04T05:01:02Z — TaekGyu0801
+
+2026-11-04 이택규 / ChatGPT / OBSERVED. SVisual screenshot from n25_des shows eGapStatesRecombination available, with Clean_QW4 selected: Integral 0.000000e+00 s^-1 um^-1, Domain 2.997006e-02 um2. This is Clean_QW4, not requested DmgL_QW4. Next select only DmgL_QW4 and repeat integration. No run or edit.
+
+---
+
+## 2026-11-04T05:17:14Z — TaekGyu0801
+
+2026-11-04 이택규 / ChatGPT / OBSERVED. SVisual screenshot of saved CMP_WU_Copy n25_des Field Integration with eGapStatesRecombination, selected DmgL_QW4 only: Integral +1.365525e13 s^-1 um^-1, Domain 1.500003e-05 um2. Earlier Clean_QW4 same field integral 0. This confirms a positive saved electron gap-states recombination field integral in the damaged QW4-left region; NOT proof of full trap loss, IQE, or non-double-counted rate accounting. No solver rerun or code changes. Next inspect DmgR_QW4 same field in n25.
+
+---
+
+## 2026-11-04T05:45:02Z — TaekGyu0801
+
+[2026-11-04] 이택규 / ChatGPT / OBSERVED. SVisual saved n21_des Trap OFF Field Integration: eGapStatesRecombination DmgL_QW4 Integral +1.387832e-05 s^-1 um^-1, Domain 1.500003e-05 um^2. Previous n25_des ON same region Integral +1.365525e13, same Domain. DERIVED ON/OFF ratio about 9.84e17; OFF numerical value is not exactly zero. This demonstrates a large difference in the saved electron gap-state field but is not an IQE or total nonradiative loss calculation. No rerun or code edit. Next verify right OFF same field, then rate-accounting with SRH.
+
+---
+
+## 2026-11-04T05:46:04Z — TaekGyu0801
+
+[2026-11-04] Backfilled 이택규 OBSERVED n25 ON DmgR_QW4 eGapStatesRecombination screenshot: integral +1.365435e13 s^-1 um^-1, Domain 1.500037e-05 um2. Previous DmgL_QW4 ON +1.365525e13, Domain 1.500003e-05. Derived ON QW4 left+right = 2.730960e13 and left-right discrepancy approx 0.00659 percent of left. Current n21 OFF left-QW4 value logged separately. Neither rate-field integral nor ON/OFF ratio is established total trap loss or IQE. No new run or edit.
+
+---
+
+## 2026-11-04T05:48:33Z — TaekGyu0801
+
+[2026-11-04 14:44 KST] 이택규 / ChatGPT / RESULT / OBSERVED+DERIVED. School n21_des (Trap OFF) saved SVisual eGapStatesRecombination, DmgR_QW4 only: Integral +1.387717e-05 s^-1 um^-1, Domain 1.500037e-05 um2. Earlier n21 OFF left DmgL_QW4 +1.387832e-05. Earlier n25 ON left +1.365525e13 and right +1.365435e13 in same field and areas. DERIVED OFF bilateral sum 2.775549e-05; ON sum 2.730960e13 s^-1 um^-1. Large field contrast, but not a validated full trap-rate or IQE comparison: SRH/trap accounting and hGap field are unresolved. No new simulation or code edits. Next inspect saved Radiative/SRH/Auger integration and official rate definitions; preserve old runs.
+
+---
+
+## 2026-11-04T05:53:18Z — TaekGyu0801
+
+[2026-11-04] 이택규 / ChatGPT / OBSERVED+DERIVED. Existing n25_des (Trap ON) SVisual Field Integration: `srhRecombination` at DmgL_QW4 alone: Integral +2.397133e11 s^-1 um^-1; Domain 1.500003e-05 um2. Prior n25 same area eGapStatesRecombination +1.365525e13, numerical ratio 56.96. Rate definitions/possible overlap have not been verified, so no trap versus SRH physical loss ranking or IQE inference. No new simulation/code edit. NEXT read-only n21 OFF same-area srhRecombination integral, then verify rate accounting from official manual.
+
+---
+
+## 2026-11-04T06:09:12Z — TaekGyu0801
+
+[2026-11-04] 이택규 / ChatGPT / RESULT / OBSERVED+DERIVED. Saved n21_des Trap OFF SVisual Field Integration, srhRecombination, DmgL_QW4 (InGaN): Integral +2.450705e11 s^-1 um^-1, Domain 1.500003e-05 um2. Earlier n25_des Trap ON same field/region: +2.397133e11, same Domain. Calculated ON-OFF -5.3572e9 s^-1 um^-1 or about -2.19% relative to OFF. Meanwhile same-region eGapStatesRecombination increases sharply in ON case. Do not interpret SRH decrease as reduction in total nonradiative loss or higher IQE without validating SRH versus trap accounting, and missing hGapStates field. No new simulation or code edit. NEXT read-only official rate definitions and saved Radiative/Auger comparison; no rerun of canceled overnight case.
+
+---
+
+## 2026-11-04T06:15:20Z — TaekGyu0801
+
+[2026-11-04] 이택규 / ChatGPT / RESULT / OBSERVED. School saved CMP_WU_Copy n25_des (Trap ON, 5 V) SVisual Field Integration, RadiativeRecombination, DmgL_QW4 (InGaN): Integral +4.297888e12 s^-1 um^-1, Domain 1.500003e-05 um2. Existing same-region n25 srhRecombination +2.397133e11 and eGapStatesRecombination +1.365525e13 are separately observed; do not sum to obtain total nonradiative or IQE before verifying overlapping rate definitions and missing hGap component. No new solver runs or code edits. NEXT measure n21 OFF same-region RadiativeRecombination from saved TDR, then review official rate accounting.
+
+---
+
+## 2026-11-04T06:19:46Z — TaekGyu0801
+
+[2026-11-04] 이택규 / ChatGPT / RESULT / OBSERVED+DERIVED. Saved n21_des Trap OFF SVisual RadiativeRecombination Field Integration, DmgL_QW4 only: Integral +4.466154e12 s^-1 um^-1, Domain 1.500003e-05 um2. Earlier n25_des Trap ON same field/region integral +4.297888e12 with identical domain. DERIVED ON vs OFF -1.68266e11 s^-1 um^-1, or -3.77% at 5V. This one-region radiative change is not full IQE. No solver run or code changes. User requested efficiency: finish necessary n21 fields in batches before revisiting n25; preserve completed results and canceled hGap rerun. NEXT read-only gather exact Clean/DmgL/DmgR QW1–4 region radiative, SRH and Auger integrals and verify rate definitions.
+
+---
+
+## 2026-11-04T06:25:19Z — TaekGyu0801
+
+[2026-11-04] 이택규 / ChatGPT / RESULT / OBSERVED+DERIVED: School SVisual n21_des (Trap OFF, 5 V) RadiativeRecombination Field Integration for 12 exact QW regions (Clean/DmgL/DmgR QW1–4), no '+' composite regions. Integral units s^-1 um^-1. Clean_QW1=7.388587e11, QW2=1.079961e12, QW3=8.851380e14, QW4=9.005734e15; DmgL_QW1=3.697408e8, QW2=5.392654e8, QW3=4.465055e11, QW4=4.466154e12; DmgR_QW1=3.697496e8, QW2=5.390042e8, QW3=4.465253e11, QW4=4.465761e12. SVisual total integral=9.902518e15; total domain=1.199999e-01 um2. Derived QW4 share=91.0341% and QW3 share=8.9475% of selected 12-region radiative integral, NOT IQE. No new TCAD runs or code changes. Next leave n21 open: same 12 exact QW regions SRH, then Auger integrals before switching to n25. Rate overlap/IQE remains unverified.
+
+---
+
+## 2026-11-04T06:52:10Z — TaekGyu0801
+
+[2026-11-04 15:49 KST] 이택규 / ChatGPT / RESULT / OBSERVED+DERIVED. Existing saved n21_des (Trap OFF, 5V), SVisual 12 separate QW regions (Clean, DmgL, DmgR QW1-4): srhRecombination total integral 6.102184e14 s^-1 um^-1; AugerRecombination 4.442221e15. Earlier RadiativeRecombination 9.902518e15. Derived QW4 percentage within each 12-region field total: SRH 80.10%, Auger 95.42%, Radiative 91.03%. All individual SRH/Auger region values archived in Lee TIMELINE and LIVE_STATE.json. No new solver or deck changes. These field shares are not IQE. NEXT switch to saved n25 ON and measure same 12 distinct regions for Radiative, SRH, Auger in one dataset session. Rate overlap and absent hGap output unresolved; canceled overnight rerun remains canceled.
+
+---
+
+## 2026-11-04T07:01:55Z — TaekGyu0801
+
+[2026-11-04] 이택규 / ChatGPT / RESULT / OBSERVED+DERIVED: All n25_des Trap ON saved 5V SVisual Field Integration done for 12 exact Clean/DmgL/DmgR QW1-4 regions. Total integrals [s^-1 um^-1]: Radiative 9.869850e15, SRH 6.086824e14, Auger 4.424524e15, eGapStates 4.148388e13. Prior n21 OFF totals: Radiative 9.902518e15, SRH 6.102184e14, Auger 4.442221e15. Derived n25 vs n21 changes -0.329896%, -0.251713%, -0.398382%. ON eGapState clean QWs all zero, QW1/QW2/QW3/QW4 contributions 3.2802%/3.3623%/27.5257%/65.8318% of QW eGap total. All per-region integrals recorded in Lee TIMELINE and LIVE_STATE.json. Total 12-region OFF eGap not observed. These are same-V QW field integrals, not validated total trap nonradiative loss or IQE; SRH/eGap overlap, missing hGapStates, whole-device accounting unresolved. No new simulation/code edit. NEXT audit version-matched official Sentaurus field/rate definitions; canceled extra hGap run remains canceled.
+
+---
+
+## 2026-11-04T07:24:14Z — TaekGyu0801
+
+[2026-11-04] Worker 이택규 / ChatGPT / RESEARCH-AUDIT / DOCUMENTED older guides + DERIVED conditional calculation. Synopsys Sentaurus Device K-2015.06 UG Chapter 9 heat terms treats lifetime SRH net recombination separately from explicit electron/hole trap net rates. O-2018.06 UG Chapters 16–17 and Sentaurus Device Training 13.9 also distinguish SRH vs eGapStates/hGapStates trap output fields. Exact installed T-2022.03 original not directly read; net electron-hole trap accounting and any double-count-free full IQE remain UNRESOLVED. 12-QW same 5V algebraic proxies: OFF Rad/(Rad+SRH+Auger)=66.2156%, ON same three terms=66.2270%, and hypothetical ON +(measured eGapStates)=66.0432% (difference from OFF 3-term -0.1724 percentage points). These are scenario calculations, NOT validated IQE: ON hGap missing, OFF all-QW eGap not measured, non-QW contributions and current matching outstanding. No new solver run or code changes. Next read-only inspect school actual Wu pp21/pp25 global Physics/Traps and version-matched manual. Canceled hGap rerun remains canceled. Sources: https://ghzphy.github.io/Sentaurus_Training/sd/sd_13.html ; https://studylib.net/doc/27467177/sdevice-ug---%E5%89%AF%E6%9C%AC ; https://studylib.net/doc/27205378/synopsis-sentaurus-user-manual .
+
+---
+
+## 2026-11-04T07:33:08Z — TaekGyu0801
+
+[2026-11-04] 작업자 이택규 / ChatGPT / RESULT / OBSERVED + UNRESOLVED. School saved Wu `pp25_des.cmd` grep shows global Physics Recombination(SRH Radiative Auger) (line27) and 22 region-scoped Traps(...PooleFrenkel) blocks (11 DmgL/DmgR pairs for pGaN, Barrier0–4, QW1–4, nGaN). File header line7 labels Thermionic and PooleFrenkel motivated numerical proxies. This confirms model configuration, NOT actual net trap pair recombination, true Wu paper fidelity, or validated physical IQE. Training sd_13 distinguishes electron/hole trap rates and field-dependent PF emission; Wu Plot has eGap but no hGap field. No new solver runs or code changes. NEXT read-only inspect header and representative QW4 trap block via `sed -n '1,48p;159,177p' pp25_des.cmd`, then verify exact T-2022.03 definitions and limits of 12-QW IQE proxy. Existing canceled hGap rerun remains canceled.
+
+---
+
+## 2026-11-04T07:44:51Z — TaekGyu0801
+
+2026-11-04 이택규 (OBSERVED): 학교 pp25_des.cmd grep 결과 22개 DmgL/R 영역의 Trap 선언에 Acceptor Level FromValBand EnergyMid=0.75, Conc=1e18, eXsection=hXsection=1e-15, PooleFrenkel 설정이 모두 동일하게 표시됨. 검증 범위는 출력된 설정이며 trap-inclusive IQE와 Wu 논문 충실도는 미확정. 새 실행·코드 수정 없음. 다음은 저장 결과의 trap e/h rate 회계 검증; 취소한 hGap rerun은 유지.
+
+---
+
+## 2026-11-04T09:18:41Z — soybeanmilk0514-jpg
+
+[2026-11-04]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED + UNRESOLVED
+
+요약:
+학교 CMP_WU_Copy/pp25_des.cmd 실제 1-48,159-177행 확인: global SRH/Radiative/Auger, polarization(strain), Mg incomplete ionization, Thermionic ON. DmgL/R_QW4 are region-specific bulk Acceptor traps (FromValBand 0.75 eV, Conc=1e18 cm^-3, e/h Xsections 1e-15 cm2, PooleFrenkel), NOT explicit RegionInterface trap. Header PROPOSED/NOT RUN conflicts with independently observed successful n25 5-V log and must not supersede run record. Two sed ranges concatenate nonadjacent lines; printed stray closures are not proof of syntax error.
+근거: user school terminal pp25 excerpt; existing Lee run logs; Synopsys Training sd_13 for e/h gap-state fields. T-2022.03 manual exact rate definitions not read.
+변경: No solver run or school code edits. GitHub worker/team/live state updated.
+다음: T-2022.03 rate accounting and trap e/h balance; assess 2D J, Wu fidelity. Keep n21/n25 and canceled hGap rerun unchanged.
+
+---
+
+## 2026-11-04T09:21:54Z — soybeanmilk0514-jpg
+
+[2026-11-04]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS
+상태: OBSERVED
+
+요약:
+학교 T-2022.03 실제 설치 경로에서 sdevice_ug.pdf 발견: /user/tools/synopsys/sentaurus/T-2022.03/tcad/T-2022.03/manuals/PDFManual/data/sdevice_ug.pdf. 기존 GitHub TCAD_REFERENCE_INDEX의 매뉴얼과 대조할 로컬 원본 경로가 확인되었음. PDF 원문과 페이지별 rate field 정의는 아직 읽지 않았으므로 eGapStates/hGapStates/SRH 합산 규칙 및 IQE는 UNRESOLVED.
+
+근거: 사용자가 제공한 학교 Bash find 결과.
+변경: 학교 코드·시뮬레이션 변경 없음. 공식 PDF는 GitHub에 업로드하지 않음.
+다음: pdftotext/pdfgrep/pdfinfo 설치 여부 확인 후 해당 T-2022.03 PDF에서 핵심 필드 정의를 짧게 검증. n21/n25 및 취소된 hGap rerun 보존.
+
+---
+
+## 2026-11-04T09:24:42Z — soybeanmilk0514-jpg
+
+[2026-11-04] 작업자: 주수빈 | AI: ChatGPT | 구분: RESULT / REFERENCE CHECK | 상태: OBSERVED + UNRESOLVED
+학교 설치 T-2022.03 SDevice UG에서 사용자가 실제 실행한 pdftotext grep 확인: 24512–24518줄 SRH model activation + SRHRecombination Plot; 83190줄 srhRecombination은 Shockley–Read–Hall net R_net. 30517–30523줄은 명시적으로 eGapStatesRecombination=trap에 의한 conduction-band 재결합률, hGapStatesRecombination=valence-band 재결합률. eSRH/hSRH/tSRH 표기는 별도 dynamic nonlocal path trap-assisted tunneling 항목(매뉴얼 25140–25146 및 용어집)과 혼동 금지. 이 증거는 필드의 구별을 확정하지만, Wu 실제 모델에서 e/h trap net pair loss 계산, SRH 중복 여부, 전체 IQE는 여전히 UNRESOLVED. 기존 n25 Plot에는 eGap만 있음. 새 실행/코드 변경 없음; hGap rerun 취소 상태 유지.
+NEXT read-only manual contiguous 24505–24521, 30496–30545 인접 설명 확인 후 신뢰 가능한 재결합 회계 방식을 판단.
+
+---
+
+## 2026-11-04T09:26:44Z — soybeanmilk0514-jpg
+
+[2026-11-04] 작업자 주수빈 / ChatGPT / RESULT / OBSERVED+UNRESOLVED. School terminal read-only pdftotext of installed T-2022.03 SDevice UG Chapter 17 p.580 (text lines 30495–30545). Manual specifies eGapStatesRecombination and hGapStatesRecombination as conduction/valence-band trap-related recombination rates; TrappingRates yields local/inelastic/elastic capture/emission rates. Acceptor/eNeutral trap capture is electron capture. The preceding insulator-interface charge visualization paragraph is general, not evidence of interface traps in Wu region-specific volume model. Still no official proof of summing e+h rates or combining with ordinary SRH without double count; IQE unresolved. No code edits/reruns, no request to restart canceled hGap. NEXT read-only inspect local capture/emission rate definitions.
+
+---
+
+## 2026-11-04T09:27:59Z — soybeanmilk0514-jpg
+
+[2026-11-04] 작업자 주수빈 / ChatGPT / PROGRESS / OBSERVED. 학교 설치 T-2022.03 SDevice UG에 대해 pdftotext grep 실행 결과: "Local Capture and Emission Rates"는 인쇄 매뉴얼 p.555 (목차 text line 774), 실제 본문 텍스트 약 29195행에서 시작. 29180–29195에 capture/emission과 occupancy 문맥 존재. 수식 원문/Trap net e-h pair rate 아직 읽지 않았으며 SRH와 합산/최종 IQE 미확정. NEXT read-only sed -n '29175,29255p' 로 공식 정의 검토. n21/n25 보존, 취소된 hGap rerun 유지; 실행/코드 변경 없음.
+
+---
+
+## 2026-11-04T09:30:01Z — soybeanmilk0514-jpg
+
+[2026-11-04] 작업자 주수빈 / ChatGPT / RESULT / OBSERVED + UNRESOLVED.
+실제 학교 T-2022.03 SDevice UG Chapter 17 p.555 (user pdftotext 29175–29255)에서 Local Capture and Emission Rates 공식 확인. Eq. 531은 전도대 전자 포획률, Eq. 532는 가전자대 정공 포획률. 전자/정공 방출과 detailed balance 조건 및 σ, thermal velocity, carrier density 관련 설명이 있음. Trap occupancy 계산 자체는 Nt와 독립이나 trap charge는 occupancy × Nt. 따라서 Nt=1e18 cm^-3가 같은 위치라도 순 재결합률이 자동으로 정해지는 것은 아님. 이 포획식만으로 net electron-hole trap pair loss, SRH+eGap/hGap 합산 규칙 또는 최종 IQE를 확정할 수 없음. 학교 n21/n25 보존, 추가 실행/코드 수정 없음, 취소한 hGap rerun 유지. 다음은 공식 매뉴얼의 점유율 균형/순 포획·방출 항 확인(READ-ONLY).
+
+---
+
+## 2026-11-04T09:32:06Z — soybeanmilk0514-jpg
+
+[2026-11-04] 작업자 주수빈 / ChatGPT / RESULT / OBSERVED + INTERPRETATION (UNRESOLVED for actual PF run). 학교 원본 T-2022.03 SDevice UG p.554, 사용자 pdftotext 29105–29175행: stationary V-model Trap 농도 N0의 net SRH-form recombination Eq(529), capture/emission detailed balance Eq(530). 전자와 정공 capture channels를 각각 독립적인 전자–정공 쌍손실로 합산하면 안 됨. 하지만 학교 pp25는 PooleFrenkel 포함: Eq(529)를 그대로 실효 PF rate나 SRH/eGap/hGap 합산 공식으로 간주할 수 없음. ON hGap 미저장, OFF eGap 전체 미측정, QW 3-channel ~66.2%는 제한적 proxy이지 최종 trap-inclusive IQE 아님. No new run/code edits. NEXT 중복 PDF 검색을 마치고 2D 전류 정규화와 QW4 주입 집중을 저장 자료로 검토, Baseline 적합성 판단. Canceled hGap rerun remains canceled.
+
+---
+
+## 2026-11-04T09:34:53Z — soybeanmilk0514-jpg
+
+[2026-11-04] 작업자 주수빈 / ChatGPT / RESULT / OBSERVED+UNRESOLVED. Wu CMP_WU_Copy pp25_des.cmd, pp25_des.par, n25_des.log grep for AreaFactor|CurrentUnit|CurrentDensity|2-D|2D|dimension only matched eCurrentDensity/Vector and hCurrentDensity/Vector Plot entries (pp25 line 214, n25 log lines 643-644). No explicit AreaFactor or current unit/dimension lines matched by this search. Plot output vectors are NOT proof of terminal-current normalization; do not assume 2D physical J or contact area factor default. Preserved n21/n25 5V raw terminal totals n21=2.56859586549120e-03 and n25=2.56639709344131e-03, actual 2D-to-physical scaling UNRESOLVED. NEXT read-only inspect n25 log electrode/contact area description and local T-2022.03 AreaFactor/current unit documentation, then geometry. No new run/source edit; canceled hGap rerun remains canceled.
+
+---
+
+## 2026-11-04T09:37:21Z — soybeanmilk0514-jpg
+
+[2026-11-04] 작업자: 주수빈 | AI: ChatGPT | 구분: RESULT | 상태: OBSERVED + UNRESOLVED
+학교 CMP_WU_Copy/n25_des.log lines 215–270 직접 출력: Default device parameters / Electrodes show anode and cathode (Ohmic), **area factor: 1** each. Grid n1_msh.tdr; ModelParameters pp25_des.par; Current n25_des.plt. Previous grep did not explicitly match AreaFactor in CMD/PAR; this runtime log settles actual electrode factor but NOT 2D terminal-current units/out-of-plane scaling or calibrated 4 µm mesa A/cm2. Prior raw 5V ON current 2.56639709344131e-03 remains unnormalized. No rerun/code edit. NEXT inspect T-2022.03 SDevice UG on 2D current units, AreaFactor, area geometry; preserve canceled hGap rerun.
+
+---
+
+## 2026-11-04T09:39:19Z — soybeanmilk0514-jpg
+
+[2026-11-04] 작업자: 주수빈 | AI: ChatGPT | 구분: REFERENCE/RESULT | 상태: OBSERVED + UNRESOLVED
+학교 설치 T-2022.03 SDevice User Guide 공식 pdftotext AreaFactor 설명 직접 확인: global Physics AreaFactor는 current/charge multiplier, 1D/2D에서는 시뮬레이션에서 생략된 방향의 폭을 나타내는 데 사용하며 대칭 영역 스케일에도 사용; Electrode/Thermode factor가 함께 있다면 multiply. 2D trap concentration model의 z 방향 폭에도 Physics AreaFactor 활용(텍스트 28835–28836).
+기존 n25_des.log의 anode/cathode area factor 1 OBSERVED. 이 사실만으로 실제 4 um mesa 단면적이나 2D raw terminal current->A/cm² 변환이 확정되지는 않음. n21/n25 같은 5 V raw-current 약 0.0856% 차이는 모델 내부 비교 유지, 실소자 J는 미확정.
+학교 코드/새 solver 실행 없음; 취소 hGap rerun 유지. NEXT read-only SDE 실제 lateral extent/contact width와 local manual의 2D current units 확인.
+
+---
+
+## 2026-11-04T09:42:47Z — soybeanmilk0514-jpg
+
+[2026-11-04] 작업자: 주수빈 | AI: ChatGPT | 구분: RESULT / BLOCKER | 상태: OBSERVED + UNRESOLVED
+
+학교 실제 CMP_WU_Copy/pp1_dvs.cmd lines 1–140 읽기 전용 출력으로 SDE 구현 형상 확인. Wm=10.0 um, Wdmg=0.005 um 양쪽, 2D Cartesian stripe (주석: 측정된 10x10 um 정사각형 아님). pGaN 0.120 um (PILOT), EBL tEBL=0 (Wu 원 논문 부재 미증명), 4개 InGaN QW 각 0.003 um xIn=0.08, 5개 GaN Barrier 각 0.008 um, nGaN 3.900 um ND=5e18. Xend=4.072 um은 수직 깊이이며 4 um mesa 폭이 아님. 좌우 damage 전체의 lateral fraction=0.1% (반응 손실 % 아님). QW4는 nGaN에 가까운 QW. MgActive=2e19는 명목 농도의 활성종 매핑 가정. Anode x=0, cathode x=Xend 전체폭 planar Ohmic은 SDE 주석상 잠정 구조. Wu original geometry/EBL/contact fidelity 미확인.
+중요한 결정 보류: 이 10 um Wu 검증용 stripe를 기존 보호된 4 um Common Baseline으로 간주하거나 실소자 4 um A/cm2로 즉시 정규화하면 안 됨. 기존 5V n21/n25 결과는 동일 구현 조건 비교로 보존; 재실행/코드 수정 없음. 다음은 저장 n25_des.tdr의 QW1–4 carrier n/p 분포를 read-only 분석하여 n-side QW4 방사재결합 ~91% 집중을 검토. 취소된 hGap rerun 재시작 금지.
+
+---
+
+## 2026-11-04T09:46:34Z — soybeanmilk0514-jpg
+
+[2026-11-04] 작업자 주수빈 | ChatGPT | RESULT | OBSERVED+INTERPRETATION PENDING
+SVisual n25_des saved hDensity screenshot. Axes are vertical X ~0.12–0.17 um, horizontal Y ~0–0.07 um, hence screenshot samples near *left sidewall*, not intended central Y=5 um. hDensity selected correctly; plot colorbar extends about 1e-30 to 1.165e20 cm^-3, too wide for qualitative QW concentration comparison from color alone. Elements=44842/Points=20434 shown. No evidence yet of central QW4 carrier enrichment or physical cause of ~91% QW4 radiative share. NEXT inspect Plot Properties axis controls, move display to X=0.120–0.172 and Y=4.95–5.05 um, then compare eDensity/hDensity or fixed-Y cutline with numeric values. No solver/code edits, canceled hGap rerun preserved.
+
+---
+
+## 2026-11-04T09:48:23Z — soybeanmilk0514-jpg
+
+[2026-11-04] 작업자 주수빈 / ChatGPT / RESULT / OBSERVED. School SVisual n25_des Trap ON screenshot now shows central Y≈4.94–5.03 um and vertical X≈0.11–0.172 um, QW1–QW4 stack; previous left sidewall viewport correctly corrected. hDensity plot color scale ~1e-30..1.165e20 cm^-3 makes predominantly orange map nonquantitative; no QW4 carrier concentration conclusion. NEXT read-only inspect SVisual Tools menu then Y=5um X-directed hDensity cutline; compare eDensity, no school code/rerun. Existing canceled hGap case remains canceled.
+
+---
+
+## 2026-11-04T09:50:27Z — soybeanmilk0514-jpg
+
+[2026-11-04] 작업자 주수빈 / ChatGPT / RESULT / OBSERVED. School SVisual n25_des Trap ON screenshot: C1 cutline now spans vertical X (0–4.072 um) near lateral Y≈5 um, 1D `Cutline_Y Plot` shows eDensity(C1(n25_des)). The 1D horizontal axis covers full X≈0–4.1 um, compressing QW1–QW4 x≈0.128–0.164 um against left boundary. No resolved QW-specific carrier values or reason for QW4 91% radiative share can be concluded. NEXT read-only use right 1D Plot Properties to set x range 0.12–0.175 um; then compare eDensity and hDensity along same C1. No SDevice run/code change; canceled hGap run preserved.
+
+---
+
+## 2026-11-04T09:52:26Z — soybeanmilk0514-jpg
+
+[2026-11-04] 작업자 주수빈 / ChatGPT / RESULT / OBSERVED. School SVisual n25_des saved Trap ON C1 central cutline eDensity 1D plot zoom now X≈0.12–0.175 µm. Four electron-density peaks near x≈0.129/0.140/0.151/0.162 µm correspond to QW1–4. Pixel screenshot only, not quantitative peak values; no proof of QW4 electron enrichment or causal explanation of ~91% radiative share. NEXT add/inspect hDensity on the same C1, then compare peak or region data. No new run/code edit; canceled hGap rerun remains canceled.
+
+---
+
+## 2026-11-04T09:53:49Z — soybeanmilk0514-jpg
+
+[2026-11-04] 주수빈 / ChatGPT / OBSERVED: 학교 SVisual n25_des (Trap ON), 중앙 Y≈5 µm C1 cutline의 hDensity 1D 그래프에서 QW1–4 위치(약 X=0.129, 0.140, 0.151, 0.162 µm)에 네 정공 피크 확인. 로그 스케일 이미지라 QW별 피크 정량치는 아직 미확정이며 QW4 방사재결합 91% 원인도 검증되지 않음. NEXT: 저장된 C1의 eDensity/hDensity QW별 정량 비교. 신규 실행이나 코드 변경 없음.
+
+---
+
+## 2026-11-04T09:56:29Z — soybeanmilk0514-jpg
+
+[2026-11-04] 주수빈 / ChatGPT / PROPOSED (not exported): 중앙 Y≈5µm SVisual C1(n25_des) cutline의 hDensity 그래프가 표시된 상태. 기존 SDE 구조로 계산된 QW x 범위: QW1 .128-.131µm, QW2 .139-.142µm, QW3 .150-.153µm, QW4 .161-.164µm. 정량적인 QW n/p 비교를 위해 오른쪽 XY plot에서 Data > Export XY Data 메뉴의 Variables 탭을 확인하고 eDensity/hDensity CSV 내보내기를 제안함. 아직 파일 내보내기/수치 확인/시뮬레이션/코드 변경 없음. 취소된 hGap rerun 유지.
+
+---
+
+## 2026-11-04T10:03:11Z — soybeanmilk0514-jpg
+
+[2026-11-04] 작업자 주수빈 / ChatGPT / RESULT / OBSERVED: 학교 SVisual saved n25_des (Trap ON) central C1 CSV `WU_n25_C1_QW_carrier_rad.csv` export completed. User `head -n 12` shows header `X,eDensity,hDensity,RadiativeRecombination`, one nonnumeric `none` row to skip, followed by numeric samples X=0..0.12um. QW1–4 x ranges .128–.131/.139–.142/.150–.153/.161–.164um are downstream in CSV and NOT yet numerically measured or analyzed. NEXT read-only per-QW CSV samples stats (n, e/h density means/peaks, radiative means, n*p); 1D cutline != full 2D integration/IQE. No solver/code edits and canceled hGap rerun untouched.
+
+---
+
+## 2026-11-04T10:05:36Z — soybeanmilk0514-jpg
+
+[2026-11-04] 작업자 주수빈 / ChatGPT / BLOCKER+FIX / OBSERVED+PROPOSED. 학교 csh/tcsh 터미널에서 여러 줄로 된 awk 스크립트를 입력했으나 `Unmatched '.`, `NR: Command not found`, `if: Expression Syntax`, `else?` 오류가 나와 QW별 수치 분석은 실행되지 않았음. 이는 입력/셸 명령 구문 오류이며 CSV 내용/TCAD 모델 오류의 증거가 아님. 대응: Ctrl+C로 else? 상태 종료 후 awk를 한 물리적 행으로 복사/실행하도록 지시. 사용자 결과 수신 전이므로 아직 계산 완료라고 기록하지 않음. No solver run/source edit. Next confirm four QW rows and compare carrier/radiative terms.
+
+---
+
+## 2026-11-04T10:10:28Z — soybeanmilk0514-jpg
+
+[2026-11-04] 작업자 주수빈 / ChatGPT / RESULT / OBSERVED+DERIVED. School saved n25_des Trap ON 5V central Y≈5um C1 CSV AWK successfully ran. QW1–4 rows (sample N=3/4/3/4): eMean=1.572e19/2.053e19/3.644e19/5.493e19 cm^-3; hMean=2.857e16/1.089e18/3.712e18/1.874e19 cm^-3; RadMean=3.611e25/8.874e25/1.812e28/2.150e29 cm^-3 s^-1; npMean=1.806e35/4.437e35/9.062e37/1.075e39 cm^-6. QW4/QW3: e≈1.51x, h≈5.05x, np≈11.86x, Rad≈11.87x. RadMean/npMean≈2.0e-10 cm^3/s for all wells (empirical from this dataset; not separately validated model parameter). Thus QW4 local Rad concentration numerically tracks local np, especially high holes, but no physical cause or valid IQE proven. Earlier n21 Trap OFF also QW4 91.03% of 12-QW integrated Rad, so QW4 dominance not uniquely due to Trap ON. These are 1D cutline simple sample means, not 2D integrals. No new solver/code edit. NEXT saved n21 central C1 e/h comparison at same coordinates and band/quasiFermi inspection; preserve canceled hGap rerun.
+
+---
