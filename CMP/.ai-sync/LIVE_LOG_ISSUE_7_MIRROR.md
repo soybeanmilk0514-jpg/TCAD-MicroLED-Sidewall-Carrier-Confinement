@@ -11243,3 +11243,59 @@ SVisual n25_des saved hDensity screenshot. Axes are vertical X ~0.12–0.17 um, 
 [2026-11-04] 작업자 주수빈 / ChatGPT / RESULT / OBSERVED+DERIVED. School saved n25_des Trap ON 5V central Y≈5um C1 CSV AWK successfully ran. QW1–4 rows (sample N=3/4/3/4): eMean=1.572e19/2.053e19/3.644e19/5.493e19 cm^-3; hMean=2.857e16/1.089e18/3.712e18/1.874e19 cm^-3; RadMean=3.611e25/8.874e25/1.812e28/2.150e29 cm^-3 s^-1; npMean=1.806e35/4.437e35/9.062e37/1.075e39 cm^-6. QW4/QW3: e≈1.51x, h≈5.05x, np≈11.86x, Rad≈11.87x. RadMean/npMean≈2.0e-10 cm^3/s for all wells (empirical from this dataset; not separately validated model parameter). Thus QW4 local Rad concentration numerically tracks local np, especially high holes, but no physical cause or valid IQE proven. Earlier n21 Trap OFF also QW4 91.03% of 12-QW integrated Rad, so QW4 dominance not uniquely due to Trap ON. These are 1D cutline simple sample means, not 2D integrals. No new solver/code edit. NEXT saved n21 central C1 e/h comparison at same coordinates and band/quasiFermi inspection; preserve canceled hGap rerun.
 
 ---
+
+## 2026-11-04T16:50:30Z — TaekGyu0801
+
+[2026-11-05]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED / DERIVED; physical root cause UNRESOLVED
+
+요약:
+School saved Trap OFF n21_des 5V central Y=5um C1 CSV `WU_n21_C1_QW_carrier_rad.csv` exported and one-line AWK per-QW stats observed. X=[.128,.131)/[.139,.142)/[.150,.153)/[.161,.164); N=[3,4,3,4]. OFF eMean=[1.574e19,2.056e19,3.645e19,5.493e19]; hMean=[2.866e16,1.093e18,3.720e18,1.874e19] cm^-3; RadMean=[3.612e25,8.874e25,1.818e28,2.151e29] cm^-3 s^-1; npMean=[1.806e35,4.437e35,9.090e37,1.075e39]. Compared to JuSubin n25 ON central values, differences are very small at shown precision; QW4 accumulation already exists OFF. 1D means are not 2D integrals or IQE, spatial pair alignment not yet verified. Physical QW4 cause and sidewall loss remain unresolved.
+
+근거:
+- User screenshot SVisual Cut Y n21 C1 Y=5um X=.12-.18um
+- User terminal `head -n 8` confirms CSV header and metadata row; user actual AWK four QW lines
+- Prior recorded JuSubin n25 ON CSV summary
+
+변경:
+- School user exported new CSV only; no SDevice run/code change.
+- GitHub timelines/current actions/live state updated.
+
+다음:
+- Saved n21 central band-edge/e-h quasi-Fermi profiles read-only; then compare to n25. Do not rerun canceled hGap or overwrite completed n21/n25.
+
+---
+
+## 2026-11-04T16:54:29Z — TaekGyu0801
+
+[2026-11-05]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS
+상태: OBSERVED CSV EXPORT / QW STATS PENDING
+
+요약: Saved n21_des 5 V Trap OFF center Y=5um C1 band CSV `WU_n21_C1_QW_band.csv` exported. Terminal head confirms columns X, ConductionBandEnergy, ValenceBandEnergy, eQuasiFermiEnergy, hQuasiFermiEnergy, and row2 all `none` metadata. Numeric lines shown through X=.12725um; not enough to determine QW1-QW4 band offsets or physical origin of QW4 carrier enrichment.
+근거: User terminal `head -n 8 WU_n21_C1_QW_band.csv`.
+변경: Only school CSV export; no solver rerun or code edit. GitHub state/timeline updated.
+다음: User execute read-only per-QW AWK for Ec,Ev,EFn,EFp and corresponding energy gaps. Preserve canceled hGap rerun.
+
+---
+
+## 2026-11-04T16:59:43Z — TaekGyu0801
+
+[2026-11-05]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED + DERIVED; physical cause UNRESOLVED
+
+요약: school saved n21 Trap OFF 5V Y=5um C1 CSV WU_n21_C1_QW_band.csv AWK produced QW 1/2/3/4 means. N=3/4/3/4; Ec-EFn=0.0813/0.0727/0.0272/-0.0009 eV, EFp-Ev=0.1877/0.1612/0.0994/0.0410 eV. QW3->QW4 gaps decrease by 0.0281 eV (electron) and 0.0584 eV (hole). This correlates with measured OFF center QW4/QW3 e≈1.51x, h≈5.04x, Radiative≈11.83x, and similar n25 ON central profile. Slightly negative QW4 Ec-EFn means simple nondegenerate electron estimate unsafe. Means from a 1D cutline only; do NOT assert causation by polarization, barrier, contacts, or trap before full barrier profile/physics fidelity checks. No validated trap-inclusive IQE.
+
+근거: user terminal actual AWK four QW lines, saved n21 CSV, earlier measured n21/n25 carrier samples.
+변경: no school SDevice execution or code changes; GitHub timeline/current/next/live state updated.
+다음: read-only inspect full saved cutline band and quasi-Fermi curves including barrier locations or export matched n25; preserve canceled hGap rerun.
+
+---
