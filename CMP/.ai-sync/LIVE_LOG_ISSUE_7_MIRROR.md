@@ -10883,3 +10883,27 @@ Already observed all-22 eGapStates ON vs OFF large contrast; net trap-inclusive 
 이택규의 2026-11-05 다음 작업은 기존 TDR/로그를 읽고 trap 적용, 재결합 항 회계, 전류 정규화, 논문 구조 충실도를 검토하는 **read-only 분석**. 추가 실행은 별도 결정 전까지 없음. NEXT_ACTIONS / RELAY / JuSubin TIMELINE에 취소를 명시.
 
 ---
+
+## 2026-11-04T03:05:58Z — TaekGyu0801
+
+[2026-11-04 KST]
+작업자: 이택규 | AI: ChatGPT | 구분: RESULT / VALIDATION | 상태: OBSERVED (read-only)
+
+School `/user/semi/semi437/tmp/myproject/CMP_WU_Copy`: actual n21 OFF and n25 ON TDR/log/pp cmd files observed by ls. pp21/pp25 each include `Piezoelectric_Polarization(strain)`, `IncompleteIonization(Dopants="MagnesiumActiveConcentration")`; 22 trap declarations each, OFF Conc=0 versus ON Conc=1e18 cm^-3; both eXsection/hXsection=1e-15 cm2. Plot lists eGapStatesRecombination, eTrappedCharge, TotalTrapConcentration; no hGapStatesRecombination.
+
+This proves effective preprocessed declarations, not every region's calculated TDR trap density or that NtSide is the ONLY difference. No full pp21/pp25 diff yet; `.par` and mesh also need comparison. Source/solver/outputs unchanged. Initial tcsh `bash -lc` quotation guidance error resolved by entering standalone `bash`.
+
+NEXT: `diff -u pp21_des.cmd pp25_des.cmd | head -n 120`, read-only, and then compare pp par/mesh provenance. No simulation rerun.
+
+---
+
+## 2026-11-04T03:15:31Z — TaekGyu0801
+
+[2026-11-04 KST]
+작업자: 이택규 | AI: ChatGPT | 구분: RESULT / VALIDATION | 상태: OBSERVED / PARTIAL
+
+School CMP_WU_Copy read-only `diff -u pp21_des.cmd pp25_des.cmd | head -n 120` output: same `Grid="n1_msh.tdr"` context, different n21/n25 Current/Plot/Output/Parameter filenames; shown trap blocks Acceptor FromValBand EnergyMid=0.75 with identical eXsection=hXsection=1e-15, PooleFrenkel; `Conc=0` OFF → `Conc=1e18` ON. Previous grep found 22 traps per run. This `head` output was TRUNCATED; full equivalence and pp21/25 par comparison NOT established; no one-variable causal conclusion yet. Existing TDR untouched; no runs.
+
+NEXT: normalize run-specific file labels and Conc values and compare complete pp21/25 command files, then inspect `.par` and mesh provenance, read-only.
+
+---
