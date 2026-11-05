@@ -11445,3 +11445,65 @@ AI: ChatGPT
 다음: stop repeat AreaFactor checks; evaluate Wu pilot structural and physical baseline suitability while preserving 4um Kou Common Baseline. 2D J, QW IQE, paper fidelity remain unresolved.
 
 ---
+
+## 2026-11-05T06:40:44Z — TaekGyu0801
+
+[2026-11-05]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / BLOCKER
+상태: OBSERVED published text; original Fig1 image and contact/EBL details UNRESOLVED
+
+요약:
+- Publisher original Wu et al., 2023 DOI 10.1016/j.micrna.2023.207542 identifies basic 10um TCAD structure as Fig. 1(a), and separately PROPOSED C-shaped anode as Fig. 11. C-shaped Fig11 is not established as Fig1 base electrode.
+- Public excerpt confirms nGaN 3.9um/Si5e18, four In0.08Ga0.92N 3nm QWs/GaN 8nm barriers, pGaN Mg2e19, both-side 5nm sidewall acceptor-like traps.
+- Original Fig1(a) image/full article PDF not obtained through public browsing (ResearchGate says no full text/request PDF). EBL presence, pGaN thickness, and standard Fig1 electrode geometry still CANNOT be confirmed. Current 10um CMP_WU_Copy with EBL0, pGaN0.12um and planar Ohmic contacts is provisional, not paper-exact or protected 4um Kou baseline.
+- No new school simulation/code edit.
+
+근거: https://www.sciencedirect.com/science/article/pii/S2773012323000390 ; https://www.researchgate.net/publication/368792350_Physical_mechanisms_on_the_size-effect_in_GaN-based_Micro-LEDs
+변경: Lee TIMELINE, .ai-sync/LIVE_STATE.md only; no TCAD edit.
+다음: When legitimate Fig1 becomes available confirm exact contact/EBL/pGaN; separately validate 2D J and trap-inclusive IQE before GO; preserve n21/n25 and canceled hGap.
+
+
+---
+
+## 2026-11-05T07:01:50Z — TaekGyu0801
+
+[2026-11-05]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED Trap OFF current; previously OBSERVED Trap ON; IQE/sidewall loss UNRESOLVED
+
+요약:
+- School terminal in CMP_WU_Copy: user ran grep last anode on n21_des.log TWICE, both identically returned at 5.000E+00 V: electron 1.695E-04, hole 2.399E-03, total 2.569E-03 (Trap OFF).
+- Prior n25_des.log (Trap ON) 5 V already recorded: electron 1.690E-04, hole 2.397E-03, total 2.566E-03; NOT re-read in present terminal output.
+- Relative total current change ON vs OFF using printed rounded values: (2.566-2.569)/2.569*100=-0.1168%. This is small raw electrode-current difference, not IQE or trapped-recombination fraction. 2D current unit, physical J, net trap recombination and solver error assessment still unresolved.
+- No run, school code change, or canceled hGap restart.
+
+근거: user-pasted school n21_des.log last line twice; historically observed n25 5V line in TIMELINE/LIVE_STATE.
+변경: Lee TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md and JSON.
+다음: From CMP_WU_Copy perform exactly one read-only n25 check: grep -E '^[[:space:]]*anode[[:space:]]+[0-9.E+-]+' n25_des.log | tail -n 1. Then assess integral Rad/SRH/net trap pair-rate and current/J normalization; preserve model.
+
+
+---
+
+## 2026-11-05T07:30:31Z — TaekGyu0801
+
+[2026-11-05 16:28 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT
+상태: OBSERVED raw 5V terminal currents; IQE/J UNRESOLVED
+
+요약:
+- User freshly executed grep on school CMP_WU_Copy/n25_des.log at 5V: anode 5.000E+00 1.690E-04 2.397E-03 2.566E-03 (Trap ON).
+- Same session n21_des.log at 5V: anode 5.000E+00 1.695E-04 2.399E-03 2.569E-03 (Trap OFF).
+- Rounded total raw terminal-current difference ON-OFF=-3.0e-6, relative -0.11678%. This is not loss of IQE or net trap recombination fraction, and physical J/2D z-normalization remains unverified.
+- No new SDevice run or school code change; canceled hGap remains canceled.
+
+근거: user-pasted school terminal n21 and n25 logs, both at exactly 5.000E+00 V.
+변경: Lee TIMELINE, CURRENT_STATUS, LIVE_STATE.md and LIVE_STATE.json. NEXT_ACTIONS update attempted, pending tool result; no model code edit.
+다음: read-only saved 5 V region-integrated Rad/SRH/Auger and correct net gap-state pair recombination; do not sum eGapStates+hGapStates naively; preserve 4um Kou Common Baseline.
+
+---
