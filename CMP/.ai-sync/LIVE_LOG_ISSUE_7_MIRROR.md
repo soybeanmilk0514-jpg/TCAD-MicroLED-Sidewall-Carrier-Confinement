@@ -11299,3 +11299,149 @@ AI: ChatGPT
 다음: read-only inspect full saved cutline band and quasi-Fermi curves including barrier locations or export matched n25; preserve canceled hGap rerun.
 
 ---
+
+## 2026-11-05T01:11:30Z — TaekGyu0801
+
+[2026-11-05]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED + DERIVED; physical cause UNRESOLVED
+
+요약: School saved n21 Trap OFF 5 V center Y=5um C1 band CSV read-only AWK measured Barrier0..4, each N=6. Ec minima=[-0.5787,-0.4615,-0.2076,-0.1440,-0.1040], Ec maxima=[-0.5690,-0.2697,-0.0158,0.0478,0.0878] eV. Ev minima=[-4.0156,-3.7357,-3.5113,-3.4267,-3.4535], Ev maxima=[-4.0039,-3.5627,-3.3088,-3.2453,-3.2052] eV. B0/B1/B2/B3/B4 sampled X regions [.120,.128), [.131,.139), [.142,.150), [.153,.161), [.164,.172) um. Min/max across each range are NOT point-matched interfaces and cannot by themselves define injection barriers or prove polarization/transport cause of QW4 accumulation.
+
+근거: User pasted actual terminal AWK output (five barrier lines), previous saved n21 central band CSV and per-QW measured offsets.
+변경: No SDevice run/code modification; GitHub member timeline, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/JSON updated. Team timeline update unsuccessful.
+다음: Read saved pointwise X/ Ec/Ev/EFn/EFp near QW/Barrier interfaces, then assess transport direction without replacing current files or restarting canceled hGap rerun.
+
+---
+
+## 2026-11-05T01:26:00Z — TaekGyu0801
+
+[2026-11-05]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED / DERIVED, physical root cause UNRESOLVED
+
+요약: Read-only terminal output from saved Wu n21_des Trap OFF 5V center Y=5um band C1 CSV gave duplicate coordinate interface values:
+x=.15000001 Barrier2->QW3 Ec -0.0808 to -0.2726 (Δ=-0.1918 eV), Ev -3.5177 to -3.3738 (+0.1439 eV).
+x=.153 QW3->Barrier3 Ec -0.1440 to +0.0478 (+0.1918), Ev -3.2453 to -3.3891 (-0.1438).
+x=.161 Barrier3->QW4 Ec +0.0017 to -0.1900 (-0.1917), Ev -3.4351 to -3.2913 (+0.1438).
+x=.164 QW4->Barrier4 Ec -0.1040 to +0.0878 (+0.1918), Ev -3.2052 to -3.3490 (-0.1438).
+QW3 and QW4 interface band step magnitudes nearly same; no supported evidence of unique QW4 material band offset. These are not overall carrier injection barriers. Strong QW4 carrier/radiative concentration origin still unresolved.
+
+근거: actual user school AWK rows from WU_n21_C1_QW_band.csv.
+변경: no school solver runs or source edits. GitHub state/timelines/next actions synced.
+다음: read-only assess actual band bending and quasi Fermi profiles across neighboring barriers and whether solver model supports inferred transport. Preserve canceled hGap rerun and n21/n25 outputs.
+
+---
+
+## 2026-11-05T01:35:16Z — TaekGyu0801
+
+[2026-11-05]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS
+상태: OBSERVED CSV EXPORT / QW FIELD ANALYSIS PENDING
+
+요약: School saved n21_des Trap OFF 5V central Y=5um C1 ElectricField-X CSV `WU_n21_C1_QW_Efield.csv` exported. Terminal head confirms columns `X,ElectricField-X` and row `none,SELECTED`, X=.12 initial fields +9029.3958 and -17558.221 plus subsequent negative samples through X=.12725. Per-QW QW1..4 field averages/peaks not yet calculated; no demonstrated physical polarization origin.
+근거: user-provided terminal `head -n 8` output and prior SVisual screenshot (legend V/cm).
+변경: school CSV export only, no new simulation or source edit; member timeline and LIVE_STATE updated.
+다음: one-line read-only awk for QW1 [.128,.131), QW2 [.139,.142), QW3 [.150,.153), QW4 [.161,.164) signed and absolute ElectricField-X means and extrema. Protect canceled hGap rerun.
+
+---
+
+## 2026-11-05T01:38:03Z — TaekGyu0801
+
+[2026-11-05]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED / DERIVED, physical cause UNRESOLVED
+
+요약: On school saved n21_des Trap OFF 5V central Y=5um C1, user ran read-only AWK over WU_n21_C1_QW_Efield.csv. QW1-4 counts [3,4,3,4], signed Emean=[6.881e5,8.292e5,3.108e5,4.901e5] V/cm; EabsMean=[6.943e5,8.495e5,3.590e5,5.118e5] V/cm; Emin=[-9.345e3,-4.064e4,-7.223e4,-4.338e4] V/cm; Emax=[1.041e6,1.473e6,5.762e5,1.524e6] V/cm. QW4/QW3 absMean=~1.426, but QW2 mean magnitude exceeds QW4. Results do not prove electric field alone causes QW4 carriers. QW4 highest sample peak may be sensitive to near-interface point/duplicate X weighting: inspect x-resolved rows next, no unsupported polarization causal claim. Mean are sample means, not full area integrated fields.
+
+근거: user terminal actual awk output.
+변경: GitHub member/team timelines, current status/next actions/live state updated; no school solver or model edits.
+다음: READ ONLY print pointwise X, ElectricField-X from .150-.164um before further physical interpretation; canceled hGap remains canceled.
+
+---
+
+## 2026-11-05T01:59:02Z — TaekGyu0801
+
+[2026-11-05]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / NEXT_ACTION
+상태: PROPOSED workflow, not baseline GO
+
+요약: Routine n21 QW local field cutline measurements paused. Next focus is checking Wu 10um pilot against Wu 2023 article and protected Kou-based 4um Common Baseline. Existing GitHub Common Baseline uses In0.15 QW/22nm barriers/26nm EBL/4um representative mesa; school Wu pilot was observed with In0.08/8nm barriers/0nm EBL/10um stripe and provisional full-width contacts. These are not automatically interchangeable. Original Wu exact electrode and EBL structure from figure not yet verified. No publication-ready IQE/J normalization. Read-only verify actual school effective pp1_dvs.cmd geometry/contact declarations first; then assess Wu fidelity and potential baseline selection. Preserve completed n21/n25; canceled hGap rerun remains canceled.
+
+근거: CMP/COMMON_BASELINE.md, prior school pp1_dvs.cmd observations, Wu DOI 10.1016/j.micrna.2023.207542 publisher abstract.
+변경: GitHub Lee timeline, NEXT_ACTIONS, LIVE_STATE docs and JSON; no solver runs or source edits.
+다음: school CMP_WU_Copy grep effective pp1 source width, epi, EBL, contacts, then compare to article figure and protected common baseline.
+
+---
+
+## 2026-11-05T04:04:54Z — TaekGyu0801
+
+[2026-11-05]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED school source; publication fidelity partially verified; other structure still UNRESOLVED
+
+요약: Actual effective CMP_WU_Copy/pp1_dvs.cmd grep confirms Wm=10um, damage each 0.005um, pGaN tP=0.120um labeled PILOT, EBL tEBL=0 explicitly labeled not proof source paper lacks EBL, xAlEBL0.15 unused, 4x InGaN xIn=.08 QW3nm and GaN barrier8nm, nGaN3.900um, top anode x=0 bottom cathode x=Xend via ymid edge assignment. Wu 2023 DOI 10.1016/j.micrna.2023.207542 article methods excerpt confirms 10um example, nGaN3.9um, 4 QWs 3nm xIn0.08, GaN barrier8nm, pMg2e19, sidewall trap depth5nm, but does not verify pGaN thickness, EBL, or full Fig1 contacts. Not the protected 4um Kou-based Common Baseline. No baseline freeze/GO and no claim of exact Wu paper replica.
+
+근거: pasted school preprocessed pp1_dvs.cmd line matches; publisher article 2023 public methods; CMP/COMMON_BASELINE.md.
+변경: GitHub team/individual timeline and current/next/live state updated; no school simulation/code modification.
+다음: read-only sed -n '1,32p;80,94p' pp1_dvs.cmd to confirm header and complete contact declarations, then assess missing Fig1 and J/IQE normalization; preserve prior runs and canceled hGap rerun.
+
+---
+
+## 2026-11-05T04:12:10Z — TaekGyu0801
+
+[2026-11-05]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / BLOCKER
+상태: OBSERVED; normalized J UNRESOLVED
+
+School n25_des.log user grep reconfirms anode/cathode electrode area factor=1. Last 5V anode terminal current table: electron 1.690e-4; hole 2.397e-3; total 2.566e-3, matching component sum. Hole current fraction ~93.4% of electrode conduction current; not IQE. Historical official Sentaurus manual says 2D terminal currents use A/um and default missing-direction z width 1um. Only CONDITIONAL 10um stripe projected J: (2.566e-3 A/um)/(10um) x 1e8 = 2.566e4 A/cm2, assuming global Physics AreaFactor=1 and full-width planar 10um contact. This is NOT validated physical pixel J or 4um Common Baseline J. Full pp25_des.cmd global AreaFactor query not yet received; exact effective 2D scaling remains to be checked. Preserve existing n21/n25 and canceled hGap rerun; no model rerun or source edit. Next one read-only grep of global Physics/AreaFactor.
+
+GitHub updated Lee timeline, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md and JSON.
+
+---
+
+## 2026-11-05T04:21:18Z — TaekGyu0801
+
+[2026-11-05]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED; normalized J UNRESOLVED
+
+요약: School pp25_des.cmd read-only grep -nEi 'AreaFactor|Physics|Electrode' | head -n 35 returned Electrode line18 and global Physics line22, region Physics blocks through line203, with NO explicit AreaFactor occurrence. Previously observed electrode area factor=1 for both contacts in n25_des.log. n25_des 5V terminal Ie=1.690e-4, Ih=2.397e-3, total=2.566e-3, hole fraction 93.4% (not IQE). 2D effective unit/z-width and true current-density normalization still UNRESOLVED; conditional stripe J is not a verified physical 4um pixel J.
+
+근거: pasted school n25_des.log and pp25_des.cmd grep outputs.
+변경: no simulation or source modification. 
+다음: read only inspect first 33 lines pp25_des.cmd and full SDE contact header; preserve canceled hGap rerun.
+
+---
+
+## 2026-11-05T04:49:54Z — TaekGyu0801
+
+[2026-11-05]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED; source header state marker UNRESOLVED
+
+요약: Actual school pp25_des.cmd lines 1-33 inspected. Initial concatenated sed command only caused command-line file-not-found; working second sed printed file. File banner says PROPOSED/NOT RUN, but independently n25 solver terminal current was observed at 5V, suggesting the banner may be stale—not a confirmed executed-versus-unexecuted status. File grid=n1_msh.tdr, parameter=pp25_des.par; global Physics=Fermi, Mobility(DopingDependence HighFieldSaturation), Recombination(SRH Radiative Auger), Piezoelectric_Polarization(strain), IncompleteIonization(MagnesiumActiveConcentration), Thermionic. Electrode anode/cathode initial 0V. No explicit AreaFactor in global Physics, consistent with previous keyword grep and log electrode factors=1.
+
+근거: user pasted complete pp25_des.cmd header plus n25_des.log current output.
+변경: no school code or simulation edit; Lee timeline updated.
+다음: stop repeat AreaFactor checks; evaluate Wu pilot structural and physical baseline suitability while preserving 4um Kou Common Baseline. 2D J, QW IQE, paper fidelity remain unresolved.
+
+---
