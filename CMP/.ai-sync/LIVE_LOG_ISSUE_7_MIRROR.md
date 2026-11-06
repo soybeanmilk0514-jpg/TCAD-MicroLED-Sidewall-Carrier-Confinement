@@ -11691,3 +11691,207 @@ AI: ChatGPT
 - 반복 QW 적분/물리 세부 재검증을 멈추고 Project A 설계 준비. 향후 저 J 광학 효과의 정량 주장에 필요할 경우 저장된 공간 결과를 확인하거나 사용자 별도 승인 후 최소 matched J~10 A/cm² OFF/ON 출력용 시뮬레이션만 제안(이전 n21/n25 원본 보존). hGap/n29 rerun 취소 유지.
 
 ---
+
+## 2026-11-06T10:29:02Z — soybeanmilk0514-jpg
+
+[2026-11-06 19:26 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS
+상태: PROPOSED (발표용 초안 생성; 새 연구 실행 없음)
+
+요약:
+- 4차 CMP 진행 발표용 편집 가능한 9장 PPTX 초안을 현재 채팅에서 제작함.
+- Wu-inspired 10µm pilot 구조, 5V Trap OFF/ON, C1 저J 전기적 차이, QW4 ~91% 방사재결합 비중, 주수빈 11/04 중앙 cutline n/p/Rad 결과를 출처와 검증 단계에 맞춰 발표 흐름으로 구성함.
+- 핵심 과학적 제한: 저J 전기적 전류 감소를 IQE 감소로 해석하지 않음; 최종 Baseline 확정도 주장하지 않음.
+- 새 학교 시뮬레이션/코드 수정 없음. PPTX는 채팅 전달물로 생성했으며 GitHub repository에 파일 업로드하지 않음.
+
+다음:
+- 발표 조건(발표시간, 양식, 발표 분량)을 적용해 PPT 편집 및 최종 검토.
+
+---
+
+## 2026-11-06T10:39:25Z — soybeanmilk0514-jpg
+
+[2026-11-06 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / PRESENTATION
+상태: PROPOSED (4차 발표 PPT 초안 제작; 새 연구결과 없음)
+
+요약:
+- 사용자 제공 3주차 PPTX의 배경·서체·색상·페이지 구분 디자인을 기준으로 4차 발표용 편집 가능한 15장 PPTX를 제작하고 화면 렌더 확인.
+- Baseline 파트에 활성 Wu 10µm pilot의 구조, 수치 및 관측된 기존 저J 전기적 I-V 차이를 시각화. 최종 Baseline 검증/IQE 효과는 미확정이라고 표시.
+- Project A/B 각각 목차·구분 및 두 장의 제목만 있는 빈 페이지 확보. A/B 실제 위치·적용 방식·파라미터는 확정/입력하지 않음.
+
+근거:
+- 사용자 첨부 3차 발표 PPTX, GitHub CMP 최신 기록 및 학교 데이터에 이미 관측된 수치.
+
+변경:
+- CMP/members/JuSubin/TIMELINE.md (commit fc8659c); 채팅 PPTX 파일만 생성. GitHub에 바이너리 PPTX 미업로드.
+- 학교 코드·시뮬레이션·Baseline 물리 판단 변경 없음.
+
+다음:
+- 주수빈/이택규가 Project A/B의 위치·수치 결정 후 PPT에 직접 입력.
+
+---
+
+## 2026-11-06T10:48:24Z — soybeanmilk0514-jpg
+
+[2026-11-06 19:47 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / PRESENTATION
+상태: OBSERVED historic source facts used in draft; new TCAD work NONE
+
+요약:
+- 사용자 제공 3차 PPT 스타일을 유지한 4차 발표 파일에 baseline 변경 과정 2장 추가, 총 15→17장.
+- 새 4장: 3차 4µm Mesa/2µm Half/AlGaN EBL vs 현재 Wu 10µm stripe/EBL=0nm pilot 구조도; 3차 5V OFF raw1.448e-11, QW 3항 방사비율0.1095% (3차 발표 원문). 모델 간 직접 인과 효과 비교 아님.
+- 새 5장: Wu 동일 모델의 GaN Mg acceptor mapping 수정 전후; nominal MgActive=2e19 cm^-3 동일, pGaN net0 → 약-2e19 mesh. 5V OFF raw TotalCurrent2.884e-5→2.569e-3, HoleCurrent3.696e-27→2.399e-3 (관측 과거 pre/post-fix 로그).
+- Project A/B 적용 위치·설계 파라미터 4개 페이지는 제목만 있고 내용 비워둠. 현재 Wu working pilot ≠ 최종 scientific baseline/IQE 검증 완료.
+
+근거:
+- 첨부 3차 발표 PPTX, 기존 학교 Wu n21 로그 및 SDE mesh 관측 기록, CMP CURRENT_STATUS/TEAM_TIMELINE.
+
+변경:
+- CMP/members/JuSubin/TIMELINE.md 업데이트(commit 84786bcb). PPTX는 채팅 전달물이고 GitHub 바이너리 업로드 없음. 학교 모델 및 계산 결과 수정 없음.
+
+다음:
+- Project A/B 위치 및 최종 수치 확정 후 빈 PPT 페이지 채우기.
+
+---
+
+## 2026-11-06T11:19:30Z — soybeanmilk0514-jpg
+
+[2026-11-06 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / PRESENTATION
+상태: PROPOSED layout revision (actual school screenshots not yet inserted)
+
+요약:
+- 기존 17장 4차 PPT의 4/6/8장에 있던 설명용 소자 및 측벽 도식 전체를 제거하고 각 실제 TCAD/SVisual 이미지가 들어갈 자리에 한국어 안내를 작성.
+- 4장: 3차 4µm Full/Half-Mesa 실제 Geometry/Mesh와 Wu 10µm n1_msh.tdr 전체 화면.
+- 6장: Wu n1_msh.tdr 전체 구조 및 QW1–4·좌측 5nm 측벽 확대(Y 약0~0.02µm).
+- 8장: n21 OFF/n25 ON 5V TotalTrapConcentration의 좌측 DmgL_QW1–4 동일 범위·컬러바 비교.
+- 3차 스타일, 기존 수치, Project A/B 제목만 있는 빈 페이지 유지. 학교 시뮬레이션/실제 이미지 삽입은 수행하지 않음.
+
+근거:
+- 채팅에서 사용자 명시 요청, 기존 3차 및 4차 PPT, 저장된 GitHub Wu 파일명/필드 기록.
+
+변경:
+- CMP/members/JuSubin/TIMELINE.md (commit a0913fe). PPTX 채팅 전달물: CMP_4차발표_TCAD실제이미지_삽입안내_주수빈.pptx. 바이너리 GitHub 업로드 없음.
+
+다음:
+- 연구원이 실제 SVisual 캡처로 안내 박스를 교체.
+
+---
+
+## 2026-11-06T11:22:42Z — TaekGyu0801
+
+[2026-11-06 20:17 KST]
+작업자: 이택규
+AI: ChatGPT (Claude→GPT handoff reviewed)
+구분: DECISION / PROJECT A PLAN / HANDOFF
+상태: USER DECISION A-u (design choice), PROPOSED remaining plan, UNRESOLVED gates
+
+요약:
+- Claude가 사용자에게 전달한 Project A(GaN:C) 계획을 인계받음. 실제 학교 서버 시뮬레이션 실행·TCAD 코드 수정 없음.
+- **사용자 결정(20:12 KST): A-u = upper n-GaN side Cedge_L/R의 Si 도너를 국소 제거하고 탄소 도핑 GaN:C 재성장형 개념을 주 모델로 사용.** A-n(Si 유지)은 1–2점 민감도만. 학교 CMP_WU_Copy(n21 OFF/n25 ON), 10um Wu pilot 및 5nm 측벽 손상 영역은 그대로 보존.
+- Claude 단계 A0 SDE-only→A1 Si-on/C0(A0m) vs Si-off/C0(A0u) 대조군→A2 위치/상한 민감도→A3 대표 pilot→A4 소규모 DOE→A5 후속 sensitivity는 모두 PROPOSED, 미실행. 동일 전류밀도 광학/전압/전체 손실 비교가 필요하고 Si 제거 효과와 탄소 효과를 분리해야 함.
+- Cao 2023 Publisher 본문 재확인: https://doi.org/10.1038/s41598-023-41678-1, CN=Ev+0.9eV, CGa=Ec-0.11eV, sigma_e,h=1e-15cm2, CGa=0.5CN, **실제 CN 최대 6e18cm^-3**(nominal total-C=1e19과 구분). Claude 제안 CN1e19,2e19은 이 논문의 실제 CN 범위 밖이며 stress/uncalibrated. GaN-on-Si high-voltage 모델을 microLED 5V에 직접 입증한 것으로 설명하지 않음.
+- Wu Copy의 기존 측벽 Dmg Traps에는 PooleFrenkel이 있으므로 'Baseline PF 없음'은 부정확. 신규 Carbon trap에 PF/TAT를 추가하지 않는 first-pass 가정만 분리. 단순 n≈N_Si−0.5CN는 occupancy를 무시한 추정, tau≈5ps는 조건부 capture-time이지 순재결합수명/IQE가 아님.
+- 20% improvement, null-control 5mV/2%, p측 Cedge 대안은 사용자 승인 전. Claude G3(같은-J 광학 Gate)과 기존 GitHub Gate 2 이름 충돌하므로 의미 기준으로 구분. 학교 G3 실행 여부 미확인.
+근거:
+- 사용자가 제공한 Claude GPT handoff 요약 (원문 PROJECT_A_PLAN_20261106.md는 미첨부/이번 작업에서 직접 확인 불가)
+- GitHub CMP/PROJECT_AB_TCAD_IMPLEMENTATION_PLAN.md 및 2026-11-06 최신 LIVE_STATE/Lee TIMELINE
+- Cao (2023) 출판사 본문, GaN:C 보상 모델 https://doi.org/10.3390/mi12060709
+변경:
+- Lee TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.md, PROJECT_AB_TCAD_IMPLEMENTATION_PLAN.md (모두 문서만 수정)
+다음:
+1) 학교 G3 saved off/on 저-J TDR 여부 ls/find 읽기전용
+2) 실제 CMP_WU_Copy/sde_dvs.cmd 원문 확보 및 GitHub 후보와 대조
+3) A0 독립 versioned 복사본 및 SDE-only 실행은 이택규 승인 후. 원본 결과/파일 보호.
+
+
+---
+
+## 2026-11-06T11:27:54Z — soybeanmilk0514-jpg
+
+[2026-11-06 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / PRESENTATION CORRECTION
+상태: OBSERVED historical paper/source provenance, PRESENTATION EDIT (NO new simulation)
+
+요약:
+- 사용자 명시 요청에 따라 4차 발표 17장 PPT에서 baseline '수정 전 문제 = Mg 도핑 매핑 오류' 서술을 **Kou 2019 + Wu 2023 서로 다른 소자 조건을 혼합해 만든 기존 4um representative baseline의 정량 검증 부족**으로 수정.
+- 정확한 기존 출처: Kou 4x In0.15GaN QW3nm, QB22nm, AlGaN EBL26nm, nGaN4um (Kou 논문 lateral chip20/60/100um, CMP 4um mesa는 자체 대표 모델), Wu 5nm sidewall acceptor-like trap 개념. Nt1e18/EtEv+0.75 등은 CMP calibration 시작값이며 Wu/Kou의 측정값이 아님.
+- 현재 별도 Wu-inspired pilot: 10um, In0.08 QW3nm×4, QB8nm, nGaN3.9um, 5nm dual sidewalls, EBL0nm/pGaN120nm 등은 미검증 pilot 설정.
+- 슬라이드4 기존/현재 수치·TCAD 삽입 자리 유지; 슬라이드5 Kou/Wu 출처별 값 + 혼합/재설계 논지로 교체하고 기존 MgFix raw 전류 그림·숫자 삭제. AI 도식 없이 실제 학교 TCAD 캡처 안내 유지, Project A/B 제목만 있는 빈 페이지 유지. 17장 완성본을 채팅에 전달; 렌더링 및 overflow 검사 통과.
+- 주의: '논문 혼합이 과거 전류/solver/QW4 오류의 원인으로 입증됐다'고 주장하지 않음. Wu pilot은 최종 검증된 단일 논문 복제나 팀 고정 Baseline이 아님.
+
+근거:
+- CMP/COMMON_BASELINE.md, CMP/members/JuSubin/BASELINE_REBUILD_PROPOSAL_20261103.md, TEAM_TIMELINE의 11/03 관련 기록, 3차 발표와 본 채팅 4차 PPT.
+
+변경:
+- CMP/members/JuSubin/TIMELINE.md (commit 2f19909). 현재 학교 TCAD 데이터/소스, Common Baseline 등 변경 없음. 바이너리 PPT는 채팅 다운로드만.
+
+다음:
+- 실제 SVisual 소자/측벽 이미지 삽입, Project A/B 위치/숫자 결정 후 미기입 페이지 채우기.
+
+---
+
+## 2026-11-06T11:32:01Z — soybeanmilk0514-jpg
+
+[2026-11-06 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESEARCH REVIEW / PRESENTATION CLARIFICATION
+상태: OBSERVED source setting + REFERENCES; EBL scientific baseline UNRESOLVED
+
+요약:
+- 실제 관측된 학교 CMP_WU_Copy tEBL=0.000um은 Wu 10um pilot의 임시 모델링 설정이며 최종 공통 Baseline 확정값 아님. Wu 2023 공개 본문은 Fig1 EBL 유무/두께를 확인해 주지 않음.
+- 별도 protected CMP/COMMON_BASELINE.md의 4um Kou-based hybrid는 EBL26nm. 두 baseline lineage 구분 필요.
+- Peer-reviewed examples of EBL-free microLED exist: IEEE TED 2024 DOI 10.1109/TED.2024.3478197, Opt Express 2025 DOI 10.1364/OE.549908. 구조/주입에 따라 EBL 제거는 개선 또는 전자 누설 위험이 있으므로 '반드시 있어야 한다/없어야 한다' 결론 불가.
+- 사용자 발표용 정확한 표현: 'EBL=0nm (현재 Wu 기반 pilot 임시 설정, Wu Fig1 EBL 미확인)'. Kou 26nm를 Wu 모델에 무근거로 이식하지 않음.
+
+변경:
+- JuSubin/TIMELINE.md (fab9021). 연구 코드/학교 시뮬레이션/기존 PPT 파일 변경 없음.
+
+다음:
+- 원 Wu Fig1 확인으로 EBL 구조 출처 검증; 필요 시 별도 승인 후 한 변수 EBL 유무 영향 검토.
+
+---
+
+## 2026-11-06T12:03:02Z — TaekGyu0801
+
+2026-11-06 이택규: Wu Copy EBL=0nm의 물리적 타당성 검토(새 시뮬레이션·코드변경 없음). IEEE TED 2024 doi:10.1109/TED.2024.3478197은 EBL 없는 청색 microLED의 저전류 개선 사례; Nat Commun 2023 doi:10.1038/s41467-023-36773-w은 EBL의 전자 차단과 정공 주입 저하 tradeoff 설명. Wu 2023 Fig1의 EBL 유무는 현재 확인 불가. 5V n21/n25의 anode electron current fraction 약 6.6%는 terminal 구성비이지 독립 검증된 전자 overflow율은 아님. Wu working pilot EBL0 유지 권고, 최종 baseline 승인 전 동일 저J 광학 재결합 검토 필요. Lee TIMELINE/CURRENT_STATUS에 기록함.
+
+---
+
+## 2026-11-06T12:29:36Z — soybeanmilk0514-jpg
+
+[2026-11-06 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / PRESENTATION FINAL REVISION
+상태: OBSERVED historic raw source values; no new TCAD execution
+
+요약:
+- 교수님의 요구사항(발표 1~2장에 Baseline 구조/도핑/Trap/전기 수치 표; AI 모식도·재구성 그래프 불허; 실제 TCAD Raw Data 중심)을 반영하여 4차 발표 17장 편집 가능한 PPTX 수정.
+- 슬라이드 2: 실행 중인 Wu-inspired 10µm PILOT의 층별 두께, In 조성, Mg/Si 입력, 5nm 측벽, Nt OFF/ON, Et, σ, polarization 및 n21/n25 5V 실제 SDevice raw terminal 출력값 표. 최종 Baseline 확정 전, EBL0nm은 Wu 논문 verified 값 아님.
+- 슬라이드 3~5: Kou+Wu 혼합 4µm 대표 모델에서 Wu 10µm 별도 모델로 다시 만든 역사 및 파라미터 차이. 혼합 자체가 기존 solver 실패 원인으로 증명되지 않았음.
+- 슬라이드 6~8: 실제 n1_msh.tdr/n21_des.tdr/n25_des.tdr TCAD 캡처 안내. 슬라이드 9: 과거 인공 저J 막대그래프를 없애고 실제 n21/n25 .plt I–V 캡처 안내+로그 5V raw. 슬라이드 10: 실제 보존된 SVisual 12 MQW 영역 Radiative/SRH/Auger 5V 적분 표+실제 Field Integration 화면 자리. 현재 검증 안 된 전체 IQE는 주장하지 않음.
+- Project A/B 4개 페이지(12,13,15,16)는 제목 외 내용 없음. 총17장, 이미지 0개(아직 사용자 실제 TCAD 스크린샷 미제공), PDF/AI 생성 구조 그림/임의 가공 그래프 없음, 렌더링·overflow 검사 통과.
+
+근거:
+- 학교 실측 로그 기록, CMP/COMMON_BASELINE.md, JuSubin 11/03 연구 기록, GitHub CURRENT_STATUS, 사용자의 3차 발표 PPTX 및 교수 요구사항.
+
+변경:
+- CMP/members/JuSubin/TIMELINE.md (commit c6188f3); 파일은 채팅 내 PPTX로 전달, 학교 소스/실험 및 GitHub 공통 Baseline 수정 없음.
+
+다음:
+- 실제 SVisual 이미지 수급 후 지정 자리만 교체, 이후 Project A/B 실제 결과 확정 후 빈 페이지 작성.
+
+---

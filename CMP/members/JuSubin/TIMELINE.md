@@ -1,3 +1,57 @@
+## 2026-11-06 — 4차 발표 최종 PPT 수정: 교수 요구사항 반영, 실제 Raw Data 우선 (PRESENTATION ONLY)
+- 작업자: 주수빈; AI: ChatGPT; 상태: OBSERVED 기존 학교 실행 데이터 재사용 + PRESENTATION EDIT. **신규 학교 코드/실행/결과 없음**.
+- 사용자 제공 교수 요구사항: 첫 번째 또는 두 번째 장에 Baseline 구조·층별 두께·도핑·Trap·전기적 값의 표, 실제 SDE/SVisual/Mesh/Raw Plot만 사용, AI 모식도/임의 가공 그래프 사용 금지, 실제 TCAD 캡처 없으면 해당 자리 안내문, Project A/B는 향후 원본 결과 입력용 공백 유지.
+- 최종 17장 채팅 산출물 `CMP_4차발표_교수님요구사항_최종수정_주수빈.pptx` 제작. 3차 발표 디자인(미색 배경, 남색/청록 글꼴·강조) 유지. 슬라이드2에 현재 학교 `CMP_WU_Copy` **Wu-inspired 10µm PILOT** 구조/파라미터 표 및 5V 원본 terminal(raw 2D) 수치(n21 OFF Ie1.695e-4, Ih2.399e-3, Itot2.569e-3; n25 ON Ie1.690e-4, Ih2.397e-3, Itot2.566e-3). 2D raw 값을 실제 pixel 전류 또는 J로 단정하지 않음. EBL0 nm/pGaN120nm, trap Et/sigma는 pilot, 최종 정량 Baseline 아직 미확정으로 명시.
+- 슬라이드3~5 Kou 4µm representative epi + Wu 5nm localized damage 혼합 모델에서 Wu 10µm 별도 PILOT으로 재설계한 역사적 출처 및 차이 유지. 논문 혼합이 과거 수치 오류의 검증된 원인이라는 오해 방지.
+- 슬라이드6~8 실제 n1_msh.tdr, n21_des.tdr, n25_des.tdr의 Geometry/Doping/Recombination/Trap 콘투어 캡처 위치·파일명·변수 안내로 구성. 슬라이드9 인공 막대그래프 제거 → 실제 n21/n25 .plt SVisual I–V 캡처 자리 및 실제 5V 로그 원시 전류 2개로 대체.
+- 슬라이드10은 실제 저장된 5V 12개 QW 분할 영역 Field Integration 적분값을 표기: OFF Radiative9.902518e15/SRH6.102184e14/Auger4.442221e15, ON Radiative9.869850e15/SRH6.086824e14/Auger4.424524e15 [s^-1 um^-1]. 동일 V이나 I 차이 있고 explicit eGap trap term이 포함되지 않은 전체 IQE는 미확정임을 표시. OFF/ON 실제 SVisual Field Integration 이미지 삽입 자리 확보.
+- Project A/B 12/13/15/16장은 페이지명 외 **내용 없음**. 최종 파일 내 사진 객체 및 embedded image **0개**; 실물 학교 TCAD 사진은 제공되지 않아 의도적으로 미삽입. 총 17장, 16:9, PowerPoint/한쇼 편집 가능. 자체 슬라이드 렌더/오버플로 검사를 통과함.
+- 저장 위치: 채팅 downloadable PPTX와 미리보기 PNG; GitHub에는 PPTX 바이너리를 업로드하지 않음. 발표 수정을 넘는 공통 Baseline/학교 코드 변경 없음.
+- NEXT: 학교 SVisual에서 실제 원본 캡처를 가져와 자리 교체; 후속 Project A/B 파라미터 확정 후 연구자가 빈 페이지 작성.
+
+## 2026-11-06 — 주수빈 EBL=0nm의 최종 Baseline 여부·EBL-free 물리적 타당성 검토 (READ-ONLY)
+- 사용자 질문: '지금 우리 최종 baseline 구조가 EBL=0nm야?? Micro-LED에서 EBL 층이 없어도돼?'.
+- GitHub 최신 확인: 활성 학교 `CMP_WU_Copy`의 이전 실제 `pp1_dvs.cmd` 관측값 `tEBL=0.000µm`은 **Wu 기반 10µm 작업용 pilot의 임시 설정**으로 확인됨. 원본 Wu 2023 출판사 공개 설명에서 EBL 유무·두께가 확인되지 않았으므로 'Wu 논문 EBL=0'으로 표현 불가. **최종 scientific baseline 미확정**.
+- 별도 보호된 `CMP/COMMON_BASELINE.md`는 Kou vertical epitaxy 기반 4µm representative hybrid 구조로 **p-Al0.15Ga0.85N EBL=26nm**를 규정. 현재 학교 Wu 10µm pilot이 이 protected baseline을 자동 대체하지 않음.
+- 문헌 확인(2026-11-06): `Wu et al. 2023` DOI 10.1016/j.micrna.2023.207542 공개 본문에서 Fig1 EBL 불명. EBL-free microLED 자체는 문헌에서 가능; blue low-current microLED without EBL experimental Zheng et al. Opt Express 2025 DOI 10.1364/OE.549908에서 peak EQE 32.8→34.6% at 0.4 A/cm2 보고(다른 소자); IEEE TED 2024 DOI 10.1109/TED.2024.3478197 also low-J EBL-free efficiency/hole injection improvement in a modeled device. 다른 연구의 효과를 현재 CMP 성능으로 전이하지 않음. EBL removal은 구조에 따라 hole injection 개선 또는 electron overflow 증가를 야기할 수 있으므로 범용 최적값 아님.
+- 제안: 발표에는 'EBL 0nm (Wu 모델 임시 설정, 원문 Fig1 미확인)' 표기, Wu 논문 그림 확인 전 Kou의 26nm EBL을 기계적으로 이식하지 않고 기존 Wu pilot 수치·결과 보존. 충분한 근거 없이 EBL 미포함 구조를 final 확정이라고 표현하지 않음. 실험·코드·baseline status 변경 없음.
+
+## 2026-11-06 — 주수빈 4차 발표 PPT 수정: 기존 Kou+Wu 혼합 출처 문제로 서술 교체 (PRESENTATION EDIT ONLY)
+- 작업자 주수빈 / AI ChatGPT / 상태: OBSERVED 문헌·기록 기반 서술, PRESENTATION REVISION. 신규 연구 판단 확정 또는 TCAD 실행 아님.
+- 사용자 요청: 앞선 발표용 17장 PPT의 '수정 전 문제=Mg 도핑 인식 오류' 서술을 삭제하고, 실제로 이전 4µm CMP Baseline이 **Kou 2019 수직 에피(4×In0.15 QW3nm, GaN QB22nm, AlGaN EBL26nm, nGaN4µm) + Wu 2023 양측 측벽 5nm acceptor-like damage**를 결합한 대표 가정 모델이었다는 내용을 명확히 넣음. 기존 4µm Mesa는 대표 모델 선택이지 Kou 논문 내 4µm Mesa가 아니며 Kou 실제 chip 20/60/100µm.
+- 수정된 slide4: 3차 Kou+Wu 혼합 4µm 구조 vs 4차 Wu-inspired 10µm 별도 모델(In0.08 QW3nm×4, QB8nm×5, EBL 0nm pilot)의 수치를 대칭 비교함. 실제 SVisual 이미지 삽입 상자 유지.
+- 수정된 slide5: Kou vs Wu 원문에서 가져온 설계 조건과 기존 4µm hybrid 구성, 새 Wu source-grounded pilot 전환을 두 카드와 하단 요약으로 표현. 기존 MgFix 5V 전/후 전류 서술 및 수치 모두 이 슬라이드에서 제거.
+- **과학적 한계:** 두 논문의 수치 혼용은 문헌 혼합/정량 검증 부족에 따른 독립 Baseline 재설계 동기이지만, 그 혼합이 과거 solver/전류/QW4 문제의 **확정된 원인이라고 실험적으로 입증되지는 않음**. 새 Wu 모형도 pGaN/EBL/전극 등 Wu Fig1 완전 재현 미검증이며 working PILOT 상태.
+- Project A/B의 위치·파라미터 페이지는 제목 외 비워둠, TCAD SVisual 그림 삽입 안내 유지. 3차 발표의 미색·남색·청록 디자인 유지. 수정 결과 17장 PPTX 파일 `CMP_4차발표_Wu_Kou_혼합문제_반영_주수빈.pptx`를 이 채팅에서 제작했고 렌더링 및 overflow 검사 통과. GitHub에는 PPT 바이너리 저장하지 않음.
+- 근거: `CMP/COMMON_BASELINE.md`, `CMP/members/JuSubin/BASELINE_REBUILD_PROPOSAL_20261103.md`, 2026-11-03 JuSubin 프로젝트 내 대화/TEAM_TIMELINE, 현재 Wu school 모델 기존 관측 기록.
+- 코드/시뮬레이션/검증 상태 변경 없음.
+
+## 2026-11-06 — 4차 발표 PPT 내 인공 소자 그림 제거 및 실제 TCAD 캡처 위치 안내
+- 작업자: 주수빈; AI: ChatGPT; 상태: PRESENTATION UPDATE (PROPOSED layout, not new TCAD observation).
+- 직전 17장 `CMP_4차발표_3차디자인통일_Baseline변경과정추가_주수빈.pptx`의 4·6·8장에 코드로 그렸던 **설명용 소자 단면도·측벽 그림을 모두 삭제**하고 편집 가능한 실제 TCAD 이미지 삽입 안내 텍스트 상자로 교체함. 전체 슬라이드 17장과 3차 발표 기반 미색/남색/청록 디자인, 측정 수치, Project A/B 빈 슬라이드는 유지.
+- 4장: 3차 실제 4µm Full/Half-Mesa SVisual Geometry/Mesh 캡처와 Wu `CMP_WU_Copy/n1_msh.tdr` 10µm Geometry/DopingConcentration 전체 화면.
+- 6장: 같은 Wu `n1_msh.tdr`에서 전체 구조(X 적층 전체, Y=0..10µm)와 QW1–4·좌측 5nm 측벽 확대(Y≈0..0.02µm) 두 컷 삽입 권장.
+- 8장: 실제 `n21_des.tdr`(Trap OFF), `n25_des.tdr`(Trap ON) `TotalTrapConcentration` 좌측 DmgL_QW1–4를 동일한 배율·영역·색상 범례로 나란히 캡처하여 교체하도록 안내함.
+- 제공 파일: `CMP_4차발표_TCAD실제이미지_삽입안내_주수빈.pptx`; PowerPoint 17장, 삽입된 사진 오브젝트 0개, 슬라이드 렌더링으로 가독성 확인. 아직 실제 학교 TCAD 이미지가 PPT에 삽입된 것은 아님. 기존 계산/코드 또는 Baseline 상태 변화 없음.
+- 다음: 사용자가 실제 학교 화면에서 캡처해 안내 위치에 붙여넣고 설명 안내문 삭제.
+
+## 2026-11-06 — 4차 발표 PPT Baseline 변경 전후 2장 추가 (주수빈, PRESENTATION ONLY)
+- 작업자: 주수빈; AI: ChatGPT; 상태: OBSERVED source data used in draft / PPT revised; 새로운 TCAD 실행·코드 변경 없음.
+- 사용자 요청에 따라 3차 발표 PPT와 동일한 미색/남색/청록색, 편집 가능한 소자 개념도, 간결한 수치 카드 형식을 유지하고 기존 15장 → 17장으로 수정.
+- 신규 슬라이드 4: 3차 당시 4µm mesa/2µm half/AlGaN EBL/4QW와 현재 학교 Wu-inspired 10µm full 2D stripe/EBL0nm(pilot)/4×3nm QW를 별도 모델로 구분. 3차 발표 출처의 5V OFF raw 전류1.448e-11 및 QW 3항 방사비율0.1095% 기재. **서로 다른 모델이므로 직접 인과 비교 금지** 안내.
+- 신규 슬라이드 5: 동일 Wu model의 Mg 도핑 인식 문제 전후를 비교. 입력 MgActive=2e19 cm^-3 유지, 원래 pGaN net Doping≈0 → project-local datexcodes GaN Mg acceptor mapping/SDE rerun 후≈-2e19 cm^-3(메시 표시). 기존 pre-fix OFF n21 5V raw Total=2.884e-5, Hole=3.696e-27 → post-fix OFF n21 5V Total=2.569e-3, Hole=2.399e-3. 두 런 모두 로그/메시 관측 근거 존재. raw 2D 출력, 절대 전류밀도 미검증.
+- 유지: Project A/B의 적용 위치·설계 수치 페이지는 제목 외 본문 없음. 현재 Wu 모델은 working pilot이며 저J 광학 IQE 및 final common baseline 검증은 미완료.
+- 산출물: 채팅 다운로드용 PPTX `CMP_4차발표_3차디자인통일_Baseline변경과정추가_주수빈.pptx` / 전체 17장 렌더링 확인. GitHub repository에 PPTX 바이너리 저장하지 않음.
+- 다음: A/B 위치와 수치 실제 합의 후 발표 슬라이드를 사용자가 직접 채움.
+
+## 2026-11-06 — 4차 CMP 발표 PPT 초안 제작 (주수빈, PRESENTATION ONLY)
+- 작업자: 주수빈; AI: ChatGPT; 상태: PROPOSED / 발표 문서 생성, 신규 TCAD 실행 없음.
+- 사용자 제공 3차 발표 PPTX 형식(미색 배경·남색 타이틀·청록색 강조·중앙 구분 슬라이드)을 참고하여 수정 가능한 15장 4차 발표 PPTX를 채팅 산출물로 제작함.
+- Baseline 파트: 현재 활성 Wu-inspired 10µm CMP_WU_Copy 작업용 pilot 구조/주요 치수, Trap OFF/ON 조건, 2026-11-06 기존 C1 동일 J IV 보간 ΔV 수치를 시각화. 저J 광학 IQE와 최종 검증은 미완료임을 명시.
+- Project A/B 파트: 목차, 섹션 구분 및 적용 위치/방식·설계 파라미터 제목의 **빈 슬라이드만** 준비함. 위치·수치·기구를 **확정하거나 기입하지 않음**. 향후 연구원이 직접 채울 예정.
+- 초안은 사용자가 제공한 기존 PPTX 기반의 별도 채팅 다운로드 파일이며 GitHub에 바이너리 PPTX는 올리지 않음. 학교 SDevice/메시/코드 및 물리적 Baseline 결정 변경 없음.
+- 다음: A/B 설계 위치 및 수치 합의 후 비어 있는 PPT 슬라이드에 사용자가 직접 내용을 추가하거나 요청 시 반영.
+
 ## 2026-11-04 JuSubin measured n25 central QW carrier radiative CSV — OBSERVED / DERIVED (physical root cause still UNRESOLVED)
 - Worker **주수빈** executed a single-line awk read-only analysis of saved `CMP_WU_Copy/WU_n25_C1_QW_carrier_rad.csv` from the `n25_des` Trap ON, 5 V, central Y≈5um C1 cutline. Reported samples `QW1 N=3 eMean=1.572e19 hMean=2.857e16 RadMean=3.611e25 npMean=1.806e35`; `QW2 N=4 e=2.053e19 h=1.089e18 Rad=8.874e25 np=4.437e35`; `QW3 N=3 e=3.644e19 h=3.712e18 Rad=1.812e28 np=9.062e37`; `QW4 N=4 e=5.493e19 h=1.874e19 Rad=2.150e29 np=1.075e39`. e/h units cm^-3, Radiative cm^-3 s^-1, np cm^-6; averages are simple **sample means on one line** not 2D integrals/area-averaged rates or IQE.
 - Derived `QW4 / QW3`: e=1.507x, h=5.048x, np=11.863x, radiative=11.865x. Derived per-QW `RadMean/npMean` ≈2.00e-10 cm^3/s for all four wells (empirical effective B in these four local samples, **not yet independently verified against pp25_des.par**). The local radiative hierarchy follows local electron–hole product; do NOT multiply separately averaged e and h to reproduce npMean (covariance).
