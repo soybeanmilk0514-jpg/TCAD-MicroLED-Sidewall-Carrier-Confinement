@@ -11507,3 +11507,80 @@ AI: ChatGPT
 다음: read-only saved 5 V region-integrated Rad/SRH/Auger and correct net gap-state pair recombination; do not sum eGapStates+hGapStates naively; preserve 4um Kou Common Baseline.
 
 ---
+
+## 2026-11-06T01:03:49Z — TaekGyu0801
+
+[2026-11-06 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / HANDOFF
+상태: OBSERVED file existence; model validity UNRESOLVED
+
+요약:
+- School terminal in `~/CMP_BASELINE_2.0.0_V2` explicitly printed FOUND for `pp2_des.cmd`, `pp6_des.cmd`, `n2_end_des.tdr`, `n6_end_des.tdr`.
+- This is existence-only evidence, NOT independent proof of OFF/ON conditions, convergence, 5V state, physically credible LED IQE, or Common Baseline freeze.
+- User wants to stop redundant Wu pilot verification and refocus on 4um Kou-based preserved model for Project A feasibility. This is proposed workflow, not GO.
+
+근거: user-pasted school `bash -lc 'for f in ...; do [ -f "$f" ] ...; done'` terminal output, four FOUND lines.
+변경: Lee TIMELINE updated only; no school source/run edits.
+다음: one read-only inspection of the stored Kou node conditions and saved-file provenance; determine whether Project A design can begin without full Baseline freeze. Do not touch protected baseline or canceled hGap.
+
+---
+
+## 2026-11-06T01:07:22Z — TaekGyu0801
+
+[2026-11-06 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED saved Kou V2 source grep and 3.6V last anode rows; common-baseline GO UNRESOLVED
+
+요약:
+- School `~/CMP_BASELINE_2.0.0_V2` successful `bash -lc` command checked effective `pp2_des.cmd` and `pp6_des.cmd`: both `Piezoelectric_Polarization(strain activation=0.5)`; displayed damaged-region trap `Conc=0` in n2 OFF and `Conc=1e18` in n6 ON, `EnergyMid=0.75`, `eXsection=hXsection=1e-15`. First six sampled grep matches only; not full source identity proof.
+- Last printed anode at 3.600 V n2 OFF: Ie=2.903e-19 Ih=3.647e-8 Itot=3.647e-8; n6 ON: Ie=4.432e-22 Ih=9.220e-9 Itot=9.220e-9. Rounded raw difference (9.220e-9/3.647e-8-1)*100=-74.71895% at fixed voltage. NOT IQE reduction or isolated sidewall SRH loss.
+- Last-row 3.6V does not show whether intended sweep completed, failed, or end-TDR bias is 3.6V. Need targeted log-tail and Solve Goal inspection; physical-current units and baseline convergence/GO remain UNRESOLVED.
+
+근거: User-pasted `pp2_des.cmd`/`pp6_des.cmd` grep and `n2_des.log`/`n6_des.log` latest-anode outputs.
+변경: Updated Lee TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json. No school simulation/code edits.
+다음: Read-only inspect n2/n6 log final 12-20 lines and pp2/pp6 Solve Goal; only then one targeted recombination readout and Project A development readiness decision. Preserve Kou V2, Wu files and canceled hGap rerun.
+
+---
+
+## 2026-11-06T01:13:26Z — TaekGyu0801
+
+[2026-11-06 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / HANDOFF (workflow correction)
+상태: USER DIRECTIVE; previous Kou data OBSERVED archival only; Wu physics GO UNRESOLVED
+
+요약:
+- User correctly intervened after assistant diverted to older `~/CMP_BASELINE_2.0.0_V2` n2/n6 checks. Current working model remains `/user/semi/semi437/tmp/myproject/CMP_WU_Copy`: 10µm Wu pilot, 5V n21 OFF / n25 ON already saved and verified. Stop further Kou n2/n6 checks unless separately requested.
+- The 2026-11-06 n2/n6 inspection (intended 3.6V, both normal exit) remains a valid **archival** observation but not active focus, not switch to Kou, not Common Baseline freeze.
+- NEXT READ ONLY: SVisual saved Wu n21_des.tdr / n25_des.tdr at 5V; QW RadiativeRecombination 2D maps and region integrals, then SRH/previously saved eGapStates; no unsupported double-counted trap IQE. No new solve/source edits; canceled hGap rerun remains canceled.
+
+근거: user explicitly said "엥 근데 지금 CMP wu copy 해야하는거 아니야? 뭐하는거야?" and prior 2026-11-05 school Wu n21/n25 records.
+변경: Lee TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json updated to correct task focus; **no school simulation or code modification**.
+다음: Wu 5V saved-output radiative comparison; Kou previous work kept as archive.
+
+---
+
+## 2026-11-06T01:21:13Z — TaekGyu0801
+
+[2026-11-06 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: HANDOFF
+상태: PROPOSED Claude independent review; no new execution/physics validation
+
+요약:
+- User asked for Claude copy-paste prompt and exact remaining verifications for the ACTIVE school `CMP_WU_Copy` (Wu 10µm pilot, n21 OFF / n25 ON, both 5V post-MgFix).
+- Existing observations: total raw I 2.569e-3 OFF / 2.566e-3 ON; 12-QW Rad 9.902518e15 OFF / 9.869850e15 ON; 3-term IQE-proxy 66.215622% OFF / 66.227019% ON (NOT full trap-inclusive IQE); damaged-region 22 eGapStates integral 4.26866644e-5 OFF / 4.18789439e13 ON; QW4 Rad share ~91% already in OFF.
+- Blockers: gap-state e/h net pair accounting and possible SRH overlap, hGap output missing and prior rerun explicitly canceled; QW4 distribution physical explanation; matched-current/2D J normalization; Wu Fig1 EBL/contact/pGaN fidelity; n29 Nt1e17 stalled ~2.42V. Do not repeat already complete integrations or switch to historical Kou.
+- Claude has NOT been messaged; no school simulation/edit, no model freeze.
+
+근거: Latest CMP JuSubin/Lee TIMELINE, RELAY, CURRENT_STATUS and user request.
+변경: `CMP/.ai-sync/RELAY.md`, `CMP/members/LeeTaekGyu/TIMELINE.md` handoff notes.
+다음: Await independently reasoned Claude audit via user's manual transfer; prioritize existing-data-only minimal decisive checks and review actual school preprocessed source before any recommendation.
+
+---
