@@ -11584,3 +11584,110 @@ AI: ChatGPT
 다음: Await independently reasoned Claude audit via user's manual transfer; prioritize existing-data-only minimal decisive checks and review actual school preprocessed source before any recommendation.
 
 ---
+
+## 2026-11-06T01:49:11Z — TaekGyu0801
+
+[2026-11-06 10:43 KST]
+작업자: 이택규
+AI: Claude (독립 검토; ChatGPT가 사용자 제공 인수인계 내용 기록)
+구분: REVIEW / DECISION / HANDOFF
+상태: Claude RESOLVED trap-accounting claim (조건부 공식 수지식) / Wu pilot CONDITIONAL GO / final baseline NO-GO
+
+요약:
+- 대상은 학교 `CMP_WU_Copy` (Wu 10µm pilot), 5V n21 OFF vs n25 ON. Claude 검토만 수행했고 학교 서버 재실행·코드 수정은 **없음**. Claude의 GitHub 쓰기 권한 부재로 사용자가 인계 프롬프트를 전달함.
+- Claude의 공식 UG 인용 (T-2022.03 Ch17 Eq525–529 pp553–554, Eq395 p473): 정적 local trap의 순 전자/정공 포획률은 같으며 **eGapStatesRecombination 1회**가 pair-loss, eGap+hGap 합산 시 중복, 통상 lifetime SRH 별도. 이 수지식은 Claude의 문헌 기반 **독립 결론**으로, GPT는 원문 페이지를 이 턴에서 직접 검증하지 않았음. 취소된 hGap rerun은 유지.
+- Claude 입자수지 잔차 [s^-1 µm^-1]: OFF1.8776e13, ON trap제외6.0614e13, ON eGap22 1회1.8736e13, 2회 -2.3143e13. 이는 각 공간영역 외 재결합과 cathode hole flux 차이가 작다는 가정에 의존. 주어진 기존 5V 4자리 로그와 3항 IQE proxy만 독립 검산하면 잔차 OFF~2.154e13/ON(1회)~1.596e13으로 수치가 다름; 로그 반올림 및 원본 PLT 정밀도 미확인. Claude는 더 정밀한 I로 ΔI/I~-0.086%, 기존 반올림 log는 -0.1168%; 그대로 구분 보존.
+- Claude 지표: q∫Rad_QW/I OFF61.7675%, ON61.6165% (−0.1510 percentage point); QW 4-term R/(R+SRH+Auger+eGap_QW) OFF66.2156%, ON66.0432%; 3-term 66.215622%/66.227019%은 explicit trap 손실 미반영. 서로 다른 분모를 혼동 금지.
+- Claude 고-J 진단: 조건부 5V stripe J≈2.57e4 A/cm² (T-2022.03 UG A/µm + AreaFactor1 + width10um 기준), overflow electron/total current≈6.6%, Auger/Rad≈0.45, eGap22/Rad≈0.00424. 고 J 단일 바이어스는 저·중 J 측벽 SRH 연구판단에 부족. 2D stripe J는 3D pixel J/EQE와 동일하지 않음.
+- QW4 Radiative ~91%는 IQE나 입증된 오류가 아니나 p측 QW1 정공 부족과 n측 QW4 집중의 원인은 미해결. Wu Fig1 EBL/pGaN/contact 불확실; Nt sensitivity n29 2.42V 수렴 실패; mesh 미검증. Wu 정확 재현 주장 금지.
+- 판정: **Wu pilot 조건부 GO** (workflow 개발/예비 정성 비교 허용), **최종 Baseline NO-GO**. 이는 Claude 독립 의견이며 팀의 최종 과학적 확정은 아님.
+
+근거: 사용자가 붙여넣은 Claude 인수인계 프롬프트, 기존 학교 로그와 GitHub 11/04~05 기록, Claude가 인용한 공식 UG 위치(원문 GPT 미확인).
+변경: Lee TIMELINE, LIVE_STATE.md/json, RELAY, NEXT_ACTIONS, CURRENT_STATUS 업데이트. 학교 코드/실행/결과는 변경 없음.
+다음: C1 한 단계만 READ ONLY: 기존 `n21_des.plt`/`n25_des.plt`로 0.1–10 A/cm² 저 J I–V와 ΔI/I, 동일 J ΔVf 및 ideality 분석. Claude 스크립트 `cmp/WU_REVIEW_20261106/wu_iv_compare.py`는 학교 측 존재 여부가 **미확인**이고 실행도 안 됨. 스크립트가 없으면 검증 없이 있는 척하지 말 것. 이후 C2 `pp25_des.par` LatticeParameters 읽기. 새 SDevice/hGap/n29는 사용자 승인 없이 금지.
+
+---
+
+## 2026-11-06T01:56:32Z — TaekGyu0801
+
+[2026-11-06 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / NEXT
+상태: OBSERVED ASCII DF-ISE files; C1 low-J analysis PROPOSED / NOT RUN
+
+요약:
+- School `CMP_WU_Copy/n21_des.plt` (OFF, ~41 KB, 11/03 23:58) and `n25_des.plt` (ON, ~70 KB, 11/04 01:00) exist and are ASCII DF-ISE xyplot.
+- Both headers include `anode OuterVoltage` and `anode TotalCurrent` (1-based dataset columns 10 and 16). The user pasted only header, no numerical Data rows; low-J response not yet computed.
+- NEXT one read-only AWK program directly from `CMP_WU_Copy` over existing PLTs: derive 2D stripe J assuming A/um and 10um width, interpolate V at equal J 0.1, 1, 10 (plus 100/1000 where covered), and ON relative current at OFF voltage. Output NOT_COVERED if target range absent. No Claude helper script existence claim, no school source edits or SDevice reruns.
+근거: User school `ls -lh`, `file`, and `head -n 20` PLT outputs (11/06).
+변경: Lee TIMELINE and NEXT_ACTIONS updated, no TCAD modification.
+다음: Receive only AWK comparison output and make pilot low-J verdict without repeating completed QW integrations.
+
+---
+
+## 2026-11-06T02:08:36Z — TaekGyu0801
+
+2026-11-06 이택규 CMP_WU_Copy 저전류 I-V C1 읽기 전용 분석 완료. 학교 n21_des.plt OFF 100점, n25_des.plt ON 172점에서 추출. 동일 전압의 ON 전류 변화율: J=0.1,1,10,100,1000 A/cm2에서 각각 -35.9422%, -77.7924%, -89.3471%, -54.0779%, -8.6693%. 대응 동일 J 전압 차이: +0.043056,+0.063822,+0.043324,+0.021111,+0.007323 V. 따라서 고전류 5V보다 저전류에서 측벽 Trap에 따른 전기적 차이가 큼. 실제 IQE 감소율은 아직 확인되지 않음. 새 시뮬레이션/소스 변경 없음. 결과는 Lee TIMELINE, LIVE_STATE.md/json, RELAY, CURRENT_STATUS, NEXT_ACTIONS에 기록함. 다음 검토는 기존 학교 pp25_des.par의 분극 극성 확인이며 재실행은 보류.
+
+---
+
+## 2026-11-06T02:38:35Z — TaekGyu0801
+
+2026-11-06 이택규 CMP_WU_Copy 학교 pp25_des.par LatticeParameters 읽기 전용 확인: X=(0,0,-1), Y=(1,0,0) (4-7행). 코드상의 선언은 확인됐으나 실제 p-to-n 좌표 및 분극 부호와의 물리적 일치 여부는 미해결. 저전류 I-V C1 전기적 차이는 이미 확인, 저전류 광학 IQE, QW4 약91% 집중 원인, Wu Fig1 구조 일치성, Nt/mesh 민감도는 남음. 새 시뮬레이션 및 소스 변경 없음. TIMELINE, LIVE_STATE.md/json, NEXT_ACTIONS 업데이트.
+
+---
+
+## 2026-11-06T02:48:43Z — TaekGyu0801
+
+2026-11-06 이택규 Wu Copy 검증 최소화 결정. 기존 C1 저전류 I-V, 5V 재결합 적분, 측벽 Trap 적용, LatticeParameters 선언 확인 결과는 재검증하지 않음. 최종 Baseline 승인 전 남은 핵심 단계만 3개로 축소: 1) 기존 학교 pp25_des.par·SDE 소자로 분극 방향 및 p-n 축 물리적 일치성 읽기전용 검토, 2) 같은 저전류밀도 10 A/cm2에서 OFF 약3.206047V/ON 약3.249371V의 방사/SRH/Auger/순 Trap 손실 비교 및 명확한 효율 지표 계산. 먼저 저장된 중간 TDR 존재 여부 확인하고, 없을 때는 재실행 전에 사용자 허가 필수. 3) 최종 정량 Baseline 확정 직전에 최소 격자 민감도 점검. 불필요한 QW4 단독 재실행·hGap 재실행·n29 반복·Nt 전수 스윕·Kou V2 재검토·5V 적분 반복 모두 금지. Wu pilot 조건부 GO, 최종 Baseline 미확정. 이번에는 새로운 학교 시뮬레이션이나 코드 변경 없음. GitHub TIMELINE, LIVE_STATE.md/json, NEXT_ACTIONS 갱신.
+
+---
+
+## 2026-11-06T06:08:03Z — TaekGyu0801
+
+[2026-11-06 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / DECISION / NEXT
+상태: OBSERVED school file grep / REFERENCE-BASED UCS interpretation; final polarization-sign verification UNRESOLVED
+
+요약:
+- 실제 학교 `CMP_WU_Copy`에서 사용자가 파일 경로 수정 후 `grep -nEi 'LatticeParameters|Piezoelectric_Polarization|Polarization|anode|cathode|tEBL|tP|set-contact' pp25_des.par pp25_des.cmd pp1_dvs.cmd | head -n 50` 실행. `pp25_des.cmd` polarization strain ON, anode 5V goal; `pp1_dvs.cmd` tP=.120um (pilot), tEBL=0, pGaN layer first, anode x0, cathode Xend. Prior 직접 확인된 `pp25_des.par` vectors X=(0,0,-1),Y=(1,0,0).
+- Sentaurus Training Device §16.3 https://ghzphy.github.io/Sentaurus_Training/sd/sd_16.html 에서 이 LatticeParameters 값은 UCS x-axis가 GaN c-axis 반대쪽일 때의 정확한 예시이며 §16.4 strain 모델과 일치. 다만 현재 학교 TDR 좌표와 실제 계면 분극 전하 부호는 별도로 직접 확인되지 않았으며 Wu Fig1 EBL/contact fidelity도 미확인.
+- 소자 p/n 순서·전극 극성·분극 ON 선언에 명백한 모순 없음: 큰 오류만 배제하고 Wu-inspired PILOT 진행 허용. 최종 Baseline 검증·저전류 IQE 감소 확인은 별도 필요. 학교 코드 변경 / 재시뮬레이션 없음.
+
+근거:
+- 이택규가 붙여넣은 실제 학교 grep 원문 및 이전 `pp25_des.par` 출력, 공식 Sentaurus Training 예시.
+
+변경:
+- Lee TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json 기록; TCAD/서버 소스 변경 없음.
+
+다음:
+- 기존 OFF/ON J~10A/cm2 (PLT interpolation OFF V3.206047, ON V3.249371) 근처 저장된 spatial TDR 있는지만 일단 읽기 전용 확인. 없으면 한 번의 최소 광학 검증용 OFF/ON 실행 필요성을 설명하고 사용자 허가 먼저 받기. 완료된 5V 재결합 적분과 취소된 hGap/n29 반복 금지.
+
+---
+
+## 2026-11-06T06:11:54Z — TaekGyu0801
+
+[2026-11-06 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / NEXT
+상태: OBSERVED file inventory (restricted root/n21-n25 patterns); low-J optical proof UNRESOLVED
+
+요약:
+- 학교 서버 활성 `CMP_WU_Copy`에서 사용자가 읽기전용 `find . -maxdepth 1 -type f \( -name 'n21*.tdr' -o -name 'n25*.tdr' \) -printf '%f\n' | sort` 실행; 실제 출력은 `n21_des.tdr`, `n25_des.tdr` 두 파일.
+- 이 결과는 루트 디렉터리 n21/n25 이름 패턴에 한정됨. 다른 node 이름/하위 디렉터리/TDR 내 저장 스텝 존재까지 부정하는 것은 아님. 기존 n21 OFF/n25 ON 5V 시뮬레이션 및 재결합 적분, C1 저전류 전기적 I-V 비교 완료. 저 J의 방사·비방사 광학 손실과 IQE 효과는 아직 미확정.
+- 큰 물리적 소스 오류가 발견되지 않았고 저전류 전기적 차이가 있는 Wu-inspired PILOT으로 Project A의 **준비/개발 진행을 권고**함. 팀 확정 Baseline 선택이나 논문 수준 IQE/정량 성능 판정으로 확대하지 않음.
+
+근거:
+- 사용자 붙여넣은 실제 학교 `find` 결과, 기존 완료된 5V/C1 로그 및 GitHub 최신 기록.
+
+변경:
+- CMP/members/LeeTaekGyu/TIMELINE.md, CMP/CURRENT_STATUS.md, CMP/NEXT_ACTIONS.md, CMP/.ai-sync/LIVE_STATE.md 및 LIVE_STATE.json 기록. 학교 소스/시뮬레이션 변화 없음.
+
+다음:
+- 반복 QW 적분/물리 세부 재검증을 멈추고 Project A 설계 준비. 향후 저 J 광학 효과의 정량 주장에 필요할 경우 저장된 공간 결과를 확인하거나 사용자 별도 승인 후 최소 matched J~10 A/cm² OFF/ON 출력용 시뮬레이션만 제안(이전 n21/n25 원본 보존). hGap/n29 rerun 취소 유지.
+
+---

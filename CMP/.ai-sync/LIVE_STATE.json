@@ -1,4 +1,50 @@
 {
+  "leeWuRootTdrInventory20261106": {
+    "worker": "이택규",
+    "dateKST": "2026-11-06",
+    "status": "OBSERVED_ROOT_N21_N25_TDR_NAMES_ONLY_LOW_J_OPTICAL_UNVERIFIED",
+    "schoolProject": "/user/semi/semi437/tmp/myproject/CMP_WU_Copy",
+    "readOnlyShellCommand": "find . -maxdepth 1 -type f ( -name 'n21*.tdr' -o -name 'n25*.tdr' ) -printf '%f\\n' | sort",
+    "found": [
+      "n21_des.tdr",
+      "n25_des.tdr"
+    ],
+    "findingScope": "root directory, n21/n25 filename patterns only; no recursive search and no TDR internal-state check",
+    "currentEvidence": "5V OFF/ON spatial integration already conducted, low-J IV electrical suppression established from PLT, low-J optical effect/IQE NOT verified",
+    "recommendation": "conditionally proceed with Wu-inspired pilot as working Project A development model but NOT final or publication-grade baseline",
+    "pending": "Low-J matched-current QW Radiative/SRH/Auger/net trap pair-loss at stripe J~10 A/cm2; OFF V~3.206047 ON V~3.249371 from earlier interpolation. Any added SDevice paired output run requires explicit user approval.",
+    "schoolCodeEdited": false,
+    "newSimulation": false
+  },
+  "leeWuGrossPhysicalSourceScreen20261106": {
+    "worker": "이택규",
+    "dateKST": "2026-11-06",
+    "status": "OBSERVED_SOURCE_GREP_NO_OBVIOUS_GROSS_ERROR_POLARIZATION_SIGN_NOT_FULLY_VERIFIED",
+    "schoolProject": "/user/semi/semi437/tmp/myproject/CMP_WU_Copy",
+    "observed": {
+      "polarizationModel": "Piezoelectric_Polarization(strain) pp25_des.cmd:28",
+      "latticeX": [
+        0,
+        0,
+        -1
+      ],
+      "latticeY": [
+        1,
+        0,
+        0
+      ],
+      "latticeRef": "prior school pp25_des.par lines 4-7",
+      "anode": "x=0 first pGaN side",
+      "cathode": "x=Xend nGaN side",
+      "tPum": 0.12,
+      "tEBLum": 0,
+      "reference": "https://ghzphy.github.io/Sentaurus_Training/sd/sd_16.html (UCS example exact matching LatticeParameters)"
+    },
+    "limitations": "School mesh coordinate system and actual interface polarization charge sign not directly proved; Wu Fig1 fidelity unverified; gross screen is not full physics gate or final baseline approval",
+    "next": "Read-only list of saved low-J spatial TDR around stripe J10 A/cm2 OFF V3.206047 ON V3.249371; if none, seek authorization for minimal preserved OFF/ON optical output-only rerun; no hGap/n29/Kou switch",
+    "schoolSimulationRun": false,
+    "schoolCodeEdited": false
+  },
   "leeOffOnTerminal5VNov05_2026": {
     "worker": "이택규",
     "dateKST": "2026-11-05",
@@ -8570,5 +8616,242 @@
     "next": "Open saved n21_des.tdr and n25_des.tdr to compare QW RadiativeRecombination field and integrals plus sidewall SRH/gap states at 5V; do not rerun; no Kou analysis unless user requests",
     "noNewSimulation": true,
     "noSchoolSourceChange": true
+  },
+  "leeWuCopyClaudeIndependentReview20261106": {
+    "worker": "이택규",
+    "reviewer": "Claude",
+    "dateKST": "2026-11-06",
+    "provenance": "USER_PASTED_INDEPENDENT_CLAUDE_ANALYSIS_NO_SCHOOL_OR_NEW_MODEL_EXECUTION",
+    "activeProject": "/user/semi/semi437/tmp/myproject/CMP_WU_Copy",
+    "offNode": 21,
+    "onNode": 25,
+    "voltageV": 5,
+    "observedExisting": {
+      "offTerminalRawRounded": 0.002569,
+      "onTerminalRawRounded": 0.002566,
+      "offRad12QW": 9902518000000000,
+      "onRad12QW": 9869850000000000,
+      "offEGap22": 0.0000426866644,
+      "onEGap22": 41878943900000,
+      "offThreeTermIQEPercent": 66.215622,
+      "onThreeTermIQEPercent": 66.227019,
+      "QW4RadSharePercentOff": 91.03,
+      "QW4RadSharePercentOn": 91.1
+    },
+    "claudeClaim": {
+      "trapAccountingStatus": "RESOLVED_BY_CLAUDE_UNDER_STATIONARY_LOCAL_TRAP_ASSUMPTIONS",
+      "trapPairRate": "Count eGapStatesRecombination ONCE; do not add eGap+hGap; conventional lifetime SRH considered separate",
+      "guideReference": "Sentaurus Device T-2022.03 Ch17 Eq525-529 pp553-554, Eq395 p473 (CLAUDE_CITED_UNVERIFIED_BY_GPT)",
+      "closureResidualsPerSecondPerUm": {
+        "off": 18776000000000,
+        "onOmitTrap": 60614000000000,
+        "onCountTrapOnce": 18736000000000,
+        "onCountTwice": -23143000000000
+      },
+      "efficiencyPercent": {
+        "qRadOverI_OFF": 61.7675,
+        "qRadOverI_ON": 61.6165,
+        "rateFourTerm_OFF": 66.2156,
+        "rateFourTerm_ON": 66.0432
+      },
+      "stripeJ5V_Acm2_Conditional": 25700,
+      "sameBiasRadDecreasePercent": 0.3299,
+      "pilotDecision": "CONDITIONAL_GO_FOR_WORKFLOW_ONLY",
+      "finalBaselineDecision": "NO_GO",
+      "dominantProblems": [
+        "no_low_mid_J_sidewall_recombination_evidence",
+        "QW4_dominance_physical_cause_unresolved",
+        "Wu_Fig1_EBL_pGaN_contacts_unverified",
+        "Nt_and_mesh_sensitivity_unverified",
+        "n29_Nt1e17_failed_near_2p42V"
+      ]
+    },
+    "independentGPTNumericalCheck": {
+      "usingRounded4SigCurrentAndExisting3TermProxy_residualOff": 21543718170000,
+      "usingRounded4SigCurrentAndExisting3TermProxy_residualOnCountTrapOnce": 15961897930000,
+      "status": "ROUNDING_LIMITED_NOT_THE_SAME_INPUT_PRECISION_AS_CLAUDE",
+      "note": "Claude -0.086% current change and ΔI/q≈-1.3724e13 imply more precise PLT current than rounded logs; PLT not yet read by GPT. Do not treat these numerical differences as physics contradictions."
+    },
+    "nextSingleStep": {
+      "status": "PROPOSED_NOT_RUN",
+      "description": "Read-only low J I-V comparison using existing n21/n25 PLTs",
+      "claudeSuggestedCommand": "python3 wu_iv_compare.py n21_des.plt n25_des.plt 10.0",
+      "scriptLocation": "cmp/WU_REVIEW_20261106/wu_iv_compare.py",
+      "caveat": "School availability of helper script NOT VERIFIED, do not request blind run; no new SDevice rerun",
+      "after": "Read-only pp25_des.par LatticeParameters if useful"
+    },
+    "noSchoolRun": true,
+    "noSchoolCodeEdit": true,
+    "doNotRerun": [
+      "hGapStatesRecombination",
+      "n29"
+    ],
+    "assistantVerification": "Claude claims recorded with provenance; GPT independently calculated approximate numerical sanity check only, not verified UG original or full PLT"
+  },
+  "leeWuCopyLowJIVC1_20261106": {
+    "worker": "이택규",
+    "dateKST": "2026-11-06",
+    "status": "OBSERVED_READ_ONLY_C1_COMPLETE_INTERPOLATED_LOW_J_VOLTAGE_CURRENT_COMPARISON",
+    "project": "/user/semi/semi437/tmp/myproject/CMP_WU_Copy",
+    "files": [
+      "n21_des.plt",
+      "n25_des.plt"
+    ],
+    "offPoints": 100,
+    "onPoints": 172,
+    "conditionalStripeJ_Acm2": {
+      "offRange": [
+        6.43e-14,
+        25700
+      ],
+      "onRange": [
+        5.94e-14,
+        25700
+      ]
+    },
+    "results": [
+      {
+        "jAcm2": 0.1,
+        "Voff": 3.030022,
+        "Von": 3.073078,
+        "deltaV": 0.043056,
+        "deltaCurrentAtOffV_percent": -35.9422
+      },
+      {
+        "jAcm2": 1,
+        "Voff": 3.140705,
+        "Von": 3.204527,
+        "deltaV": 0.063822,
+        "deltaCurrentAtOffV_percent": -77.7924
+      },
+      {
+        "jAcm2": 10,
+        "Voff": 3.206047,
+        "Von": 3.249371,
+        "deltaV": 0.043324,
+        "deltaCurrentAtOffV_percent": -89.3471
+      },
+      {
+        "jAcm2": 100,
+        "Voff": 3.280607,
+        "Von": 3.301718,
+        "deltaV": 0.021111,
+        "deltaCurrentAtOffV_percent": -54.0779
+      },
+      {
+        "jAcm2": 1000,
+        "Voff": 3.412496,
+        "Von": 3.419819,
+        "deltaV": 0.007323,
+        "deltaCurrentAtOffV_percent": -8.6693
+      }
+    ],
+    "method": "AWK records grouped by 17 numeric tokens, uses dataset col10 anode OuterVoltage and col16 anode TotalCurrent; abs(I)*1e7 for W=10um, A/um unit; first crossing and log-linear interpolation",
+    "evidence": "user pasted school AWK console output; no code/run/outputs modified",
+    "conclusion": "STRONG_ELECTRICAL_TRAP_CURRENT_SUPPRESSION_AT_LOW_J; DOES_NOT_ESTABLISH_LOW_J_IQE_OR_TRAP_PAIR_LOSS",
+    "existingFinal5VRaw": {
+      "V": 5,
+      "JoffApprox": 25690,
+      "JonApprox": 25660
+    },
+    "next": "Read-only school pp25_des.par LatticeParameters polarization orientation if requested; final low-J optical efficiency needs spatial saved states or permitted separate run; no rerun now",
+    "noNewSimulation": true,
+    "noSourceEdit": true,
+    "pilotStatus": "CONDITIONAL_GO",
+    "baselineStatus": "FINAL_NO_GO"
+  },
+  "leeWuCopyLatticeAxesReadOnly20261106": {
+    "worker": "이택규",
+    "dateKST": "2026-11-06",
+    "project": "CMP_WU_Copy",
+    "source": "school pp25_des.par",
+    "line": 4,
+    "X": [
+      0,
+      0,
+      -1
+    ],
+    "Y": [
+      1,
+      0,
+      0
+    ],
+    "status": "OBSERVED_DECLARATION_ONLY",
+    "physicalPolarity": "UNRESOLVED_REQUIRES_DEVICE_AXIS_AND_POLARIZATION_CONVENTION",
+    "newSimulation": false,
+    "sourceEdited": false
+  },
+  "leeWuCopyMinimumFinalBaselinePlan20261106": {
+    "worker": "이택규",
+    "dateKST": "2026-11-06",
+    "status": "USER_DIRECTIVE_MINIMUM_VALIDATION_ONLY_NO_ACTION",
+    "active": "CMP_WU_Copy",
+    "pilotDecision": "CONDITIONAL_GO",
+    "finalDecision": "AWAITING_ESSENTIAL_VALIDATION",
+    "completed": [
+      "n21_n25_5V_runs",
+      "trap_region_examples",
+      "5V_QW_field_integrations",
+      "22_region_eGapStates",
+      "low_J_I_V_C1_comparison",
+      "observed_lattice_axes"
+    ],
+    "mustDo": [
+      {
+        "order": 1,
+        "task": "read_only_confirm_physical_polarization_orientation",
+        "basis": "school pp25_des.par X=(0,0,-1),Y=(1,0,0); p-to-n structure; school effective physics",
+        "newRun": false
+      },
+      {
+        "order": 2,
+        "task": "at_one_equal_low_J_compare_2D_Rad_SRH_Auger_and_single_net_trap_loss",
+        "targetJ_Acm2": 10,
+        "offVFromC1": 3.206047,
+        "onVFromC1": 3.249371,
+        "first": "check_saved_spatial_states_exist",
+        "ifAbsent": "ask_fresh_user_approval_before_two_output_only_runs"
+      },
+      {
+        "order": 3,
+        "task": "one_minimal_mesh_sensitivity",
+        "when": "before_final_quantitative_baseline_freeze"
+      }
+    ],
+    "defer": [
+      "unneeded_hGap_rerun",
+      "n29_repeat",
+      "full_Nt_sweep",
+      "QW4_only_rerun",
+      "historical_Kou_detour",
+      "5V_region_reintegration",
+      "blind_exact_Wu_fidelity_remodel"
+    ],
+    "noSimulation": true,
+    "noCodeEdits": true,
+    "provenance": "user requested only essential validations; no new observation"
+  },
+  "leeWuCopyPragmaticGrossErrorScreen20261106": {
+    "worker": "이택규",
+    "dateKST": "2026-11-06",
+    "decision": "USER_PREFERS_ACCEPT_IF_NO_GROSS_ERROR_MOVE_ON",
+    "active": "CMP_WU_Copy",
+    "screenNow": "read_only_source_pn_polarization_contacts_screen_once",
+    "nextAfter": "one_equal_J10_Acm2_low_J_optical_recombination_proxy_only_if_needed_for_sidewall_IQE_claim",
+    "existingC1": {
+      "voltageOff": 3.206047,
+      "voltageOn": 3.249371,
+      "J_Acm2": 10
+    },
+    "deferred": [
+      "QW4_91pct_only_investigation",
+      "n29_repeat",
+      "hGap_rerun",
+      "full_Nt_sweep",
+      "broad_mesh_refinement_until_publication"
+    ],
+    "decisionStatus": "WORKING_BASELINE_RECOMMENDED_IF_GROSS_SCREEN_PASSES_AND_SINGLE_LOWJ_OPTICAL_EVIDENCE_ACQUIRED",
+    "noSchoolExecution": true,
+    "noCodeEdits": true
   }
 }
