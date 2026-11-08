@@ -11895,3 +11895,251 @@ AI: ChatGPT
 - 실제 SVisual 이미지 수급 후 지정 자리만 교체, 이후 Project A/B 실제 결과 확정 후 빈 페이지 작성.
 
 ---
+
+## 2026-11-08T06:33:17Z — soybeanmilk0514-jpg
+
+[2026-11-08 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / SOURCE REVIEW
+상태: OBSERVED primary paper / EBL exact parameters UNRESOLVED
+
+요약:
+- Wu et al. 2023 원문 10쪽 PDF (DOI 10.1016/j.micrna.2023.207542) 업로드 및 실제 Fig.1과 본문 검토.
+- 2쪽 Fig.1(b) 포획·확산 개념도에는 p-GaN/MQW 사이에 **AlGaN** 명시. Fig.1(a) 본 소자 모식도와 Sec.1.1에는 해당 층 두께, Al 조성/도핑, 명시적 EBL 역할 미제공. 'Wu 논문에 EBL 없음'도 'Wu EBL 26nm'도 결론 불가.
+- Sec.1.1 명시: 10um, nGaN 3.9um Si5e18, 4 QWs In0.08 3nm, GaN barrier8nm, pGaN Mg2e19, 양측 5nm acceptor-like sidewall traps, piezoelectric/Mg incomplete ionization/field-related trapping/Rad-SRH-Auger. Fig.1(a) ITO/SiO2/전극, Sec.2.2 Silvaco TCAD (학교는 Sentaurus).
+- 현재 학교 CMP_WU_Copy pGaN120nm EBL0nm은 **Wu-inspired working PILOT 가정**, 정확한 원문 복제 입증 아님. 신규 학교 실행/코드 수정 없음.
+
+근거:
+- 사용자 제공 원문 p.2 Fig.1(a,b)/Sec.1.1; p.3 Sec.2.2/Table1; p.6-7 Tables3/4.
+- 기존 CMP_WU_Copy 결과는 유지.
+
+변경:
+- CMP/members/JuSubin/TIMELINE.md
+- CMP/CURRENT_STATUS.md
+- CMP/NEXT_ACTIONS.md
+- CMP/.ai-sync/LIVE_STATE.md 및 LIVE_STATE.json
+- CMP/.ai-sync/RELAY.md
+
+다음:
+- 4차 발표에는 EBL0nm pilot assumption과 Wu Fig.1(b) AlGaN 미확인 상세를 분리 표기.
+- Wu-exact 구조 필요 시 원저자 파라미터 확보 또는 별도 승인 후 민감도 실험.
+- 기존 저J matched-J 방사/Trap net pair 재결합 게이트 미완료; 현재 baseline/code는 그대로 보호.
+
+---
+
+## 2026-11-08T06:43:07Z — soybeanmilk0514-jpg
+
+[2026-11-08 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / PROGRESS / HANDOFF
+상태: USER-APPROVED A/B WORKING BASELINE / NO NEW SIMULATION
+
+요약:
+- 사용자 직접 지시 “알았어. 일단 지금확정한 baseline으로 projectA와 B를 이어나가자.”
+- 공통 A/B **작업용 비교 기준**을 현재 학교 `CMP_WU_Copy` Wu-inspired 10µm 소자로 채택. Baseline n25 Trap ON damaged branch, n21 OFF는 진단용 Clean. 기존 5V/PLT/TDR/mesh 및 school 원본 코드는 그대로 보호.
+- 소자 주요 조건: 10µm, n-GaN3.9µm Si5e18, QW×4 In0.08 3nm, GaN barrier8nm, p-GaN120nm/Mg input2e19, EBL0nm 및 양측 5nm damage. pGaN120/EBL0은 Wu 원문 확정값이 아니라 current pilot 가정 (Wu Fig1b에 AlGaN 층 존재하나 두께 미명시).
+- A: 이택규 GaN:C n-side A-u Si 제거 main, A-n sensitivity. B: 주수빈 lateral AlGaN barrier; 역사적 4µm Kou Bspan3 코드는 이 새 Wu 모델에 직접 이식할 수 없음. B 변경 영역/메시 확인 필요.
+- 과거 보호된 `CMP/COMMON_BASELINE.md`는 Kou 4µm v1 역사로 그대로 보존; 이번 결정 별도 `CMP/WORKING_BASELINE_WU2023.md`를 신설. Working research parent GO ≠ Wu 원문 완전재현, calibrated scientific freeze 또는 low-J optical IQE 검증.
+
+근거:
+- 사용자 명시 결정 및 기존 학교 n21/n25 실제 로그 기록; Wu 2023 원문 10쪽 PDF Fig1/Section1.1.
+- Project A 11/06 A-u 결정, Project B 과거 Bspan matrix/runbook.
+
+변경:
+- 새 `CMP/WORKING_BASELINE_WU2023.md`
+- `CMP/members/JuSubin/TIMELINE.md`
+- `CMP/TEAM_TIMELINE.md`
+- `CMP/CURRENT_STATUS.md`
+- `CMP/NEXT_ACTIONS.md`
+- `CMP/.ai-sync/LIVE_STATE.md` / `LIVE_STATE.json`
+- `CMP/.ai-sync/RELAY.md`
+- 학교 TCAD/SWB 파일 수정/신규 계산 없음.
+
+다음:
+1) 실제 학교 Wu SDE 전체 입력·pp CMD/PAR 및 G3 low-J saved output read-only 확보.
+2) 원본은 보존하고 A/B를 서로 독립 버전 프로젝트로 복제, 각자 SDE-only mesh/region first.
+3) 허가된 새 SDevice 실행 이후 동일 주입 전류로 절대 QW Radiative, SRH/Auger, Trap net pair 손실, ΔV 및 active volume 비교. 기존 불필요 검증은 반복하지 않음.
+
+---
+
+## 2026-11-08T06:47:33Z — soybeanmilk0514-jpg
+
+[2026-11-08 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / PRESENTATION
+상태: OBSERVED original paper / PRESENTATION ONLY; 새 TCAD 실행·코드 변경 없음
+
+요약:
+- 사용자 제공 Wu 원본 PDF와 기존 학연생 PPTX의 실제 디자인을 바탕으로 21장 Wu 논문리뷰 PPTX 제작.
+- 원본 Wu Fig. 1–13과 Tables 1–4를 직접 추출해 배치; 한글 Figure 설명/발표자 노트 21개; 기존 PPT 스타일 보존; PDF 렌더로 확인.
+- 원문 Silvaco 결과와 CMP Sentaurus 결과를 구분. Wu Fig.1(b) AlGaN 보이지만 EBL 두께/역할 미확정; EBL0nm 학교값은 pilot 가정.
+
+근거:
+- 사용자 업로드 Wu 논문 원본.pdf / 2주차_논문리뷰.pptx
+변경:
+- CMP/members/JuSubin/TIMELINE.md (commit 617054e)
+- PPTX/PDF는 채팅에만 저장; GitHub 바이너리·baseline·TCAD 파일 미수정
+다음:
+- 발표 전 원문 figure와 발표자 노트 최종 검토.
+
+---
+
+## 2026-11-08T06:50:39Z — soybeanmilk0514-jpg
+
+[2026-11-08 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / RESEARCH REVIEW / NEXT-STAGE DECISION
+상태: OBSERVED previously saved school data, DERIVED analysis, UNRESOLVED optical mechanism; no new run
+
+요약:
+- 사용자는 현재 선택한 Wu 10um `CMP_WU_Copy`에서 Trap ON 현상과 정확한 문제를 먼저 정리하고, 이어서 Project A/B **물리적 수치 및 적용 영역을 결정한 뒤에만** 코드를 수정하겠다고 단계 지정.
+- 기존 실제 데이터 재분석: OFF n21 NtSide0, ON n25 NtSide1e18. 선택된 좌/우 Dmg_QW1 실제 Trap1e18cm^-3, clean0; 22 damaged regions eGapStatesRecombination OFF4.26866644e-5→ON4.18789439e13 s^-1 um^-1 (99.06% of ON eGap in damaged QWs, NOT total IQE).
+- 학교 PLT 보간 conditional stripe J1/10 A/cm2에서 ON fixed-OFF-voltage I suppression -77.79%/-89.35%, same-J voltage rise +63.82mV/+43.32mV. 5V rounded raw terminal I OFF2.569e-3, ON2.566e-3 (~-0.1%); 5V 12-QW integrated Radiative OFF9.902518e15, ON9.869850e15 (-0.3299%). Standard SRH and Auger also slightly down under same-V/different-I comparison. 3-channel ratio excludes explicit traps; same-J optical sidewall efficiency loss NOT yet measured. QW4 ~91% of QW Rad in both OFF & ON, so not trap-on-specific defect.
+- Paper Wu mechanism includes electron capture/depletion and lateral-field effects; actual school local field/current redistribution and optical matched-J rate remain to be verified. Any new quantitative effectiveness claim requires current-normalized full QW and net trap pair accounting.
+
+근거:
+- 기존 `n21/n25` 학교 SDevice/SVisual/PLT 출력의 GitHub TIMELINE/CURRENT_STATUS/RELAY, Wu original 2023 PDF.
+- 새 정리 문서 `CMP/BASELINE_TRAP_ON_DIAGNOSIS_20261108.md`.
+
+변경:
+- 위 진단 문서 신규 생성
+- `CMP/members/JuSubin/TIMELINE.md`, `CMP/NEXT_ACTIONS.md`, `CMP/.ai-sync/LIVE_STATE.md` 갱신
+- 실제 학교 SDE/SDevice/mesh/로그/SWB 실행 수정 없음
+
+다음:
+1. 학교 `CMP_WU_Copy` 정확한 SDE source 및 effective pp 설정 read-only 확보.
+2. A 이택규 GaN:C n-edge Si-off controls와 B 주수빈 lateral AlGaN barrier의 적용 영역, 두께/폭/농도/조성 합의/확정. 과거 Kou Bspan은 원본 소자와 직접 혼용 금지.
+3. 별도 versioned A/B 클론 SDE mesh 확인 후 동의된 최소 SDevice 실행, 같은 J에서 절대 QW radiative/defect loss/Vf 비교. 기존 n21/n25 보호.
+
+---
+
+## 2026-11-08T07:15:30Z — soybeanmilk0514-jpg
+
+[2026-11-08 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / PRESENTATION REVISION
+상태: OBSERVED original paper and PPT layout / NO new TCAD execution
+
+요약:
+- 사용자 요청으로 Wu 논문 리뷰 PPT 21장 각각에 짧은 물리적 해석 한 줄을 추가하여 Figure/표만 보아도 핵심 메시지 이해하도록 보강.
+- 기존 원본 Wu Fig1–13 및 Tables1–4 이미지, PPT 배경/디자인/그림 배치, 발표자 노트 유지. 기존 템플릿에서 남은 Slide9 '전류 밀도 분포' 오표기 제거.
+- PDF 21장 렌더 확인. 별도 최종 PPTX `Wu_2023_논문리뷰_주수빈_핵심설명추가_최종.pptx`를 채팅 다운로드로 배포함.
+- Wu Table2의 5um 대 50um normalized radiative integral 차이 약 8%는 원문 값 산술 계산. Wu Silvaco와 현재 CMP Sentaurus 결과 구분 유지.
+
+근거:
+- 사용자 제공 Wu 원본 PDF와 기존 본 채팅 PPTX / 21장 최종 렌더
+변경:
+- CMP/members/JuSubin/TIMELINE.md 이력 추가
+- 학교 소스, Common Baseline, Project A/B와 GitHub 바이너리 변경 없음
+다음:
+- 주수빈 최종 발표 검토.
+
+---
+
+## 2026-11-08T07:16:01Z — soybeanmilk0514-jpg
+
+[2026-11-08 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESEARCH REVIEW / PROPOSED PARAMETER & REGION DESIGN
+상태: PROPOSED (literature directly verified for materials, not Wu planar A/B outcomes)
+
+요약:
+- Wu10µm 공유 working Baseline에 적용할 A GaN:C/B lateral AlGaN에 관한 논문 조사. 코드수정/신규 시뮬레이션 없음.
+- 문헌 직접값: Cao2023 C_total1e19 != active C_N6e16,4e17,6e17,6e18; C_Ga=.5C_N; C_N Ev+.9, C_Ga Ec-.11, sigmas1e-15. 실험 Richter2020 높은 저항은 두꺼운 bulk GaN 근거, 200nm LED 직접 검증 아님.
+- AlGaN: Furtmayr2011 나노와이어 측면 shell 위험/구속, WuY2022 실제 AlGaN/GaN nanowire shell x~.15, Baek2023 수직 EBL 17/45nm, Gong2026 수직 1nm interlayer. 어느 논문도 평면 Wu10µm의 측면 장벽 폭20nm를 입증하지 않음.
+- PROPOSED 시작조건: A n-GaN 측벽 Si 제거+GaN:C CN6e17/CGa3e17, 폭200nm 깊이200nm; B MQW/Barrier 측면 내측 Al0.15Ga0.85N 폭20nm, 기존5nm damage 보존; B는 양측 QW 폭 총40nm(~0.4%) 치환. A0u (Si-off,C0) 및 Bnull (xAl0 동일 QW 치환) 필수 컨트롤. 숫자·영역은 사용자 미승인/소자 최적점 미검증.
+- 원본 현재 학교 SDE 전문 및 실제 좌표·메시/재료 인터페이스 확인 전 코딩 불가. Baseline 원본 n21/n25/params 보호.
+
+근거:
+- Cao DOI10.1038/s41598-023-41678-1
+- Richter DOI10.1002/crat.201900129
+- Furtmayr DOI10.1103/PhysRevB.84.205303
+- WuY DOI10.1038/s41377-022-00985-4
+- Baek DOI10.1038/s41467-023-36773-w
+- Gong DOI10.3390/photonics13090806
+- 주수빈 Wu 원본 PDF 및 GitHub 11/08 working Baseline
+
+변경:
+- 신규 CMP/PROJECT_AB_LITERATURE_PARAMETERS_REVIEW_20261108.md
+- JuSubin/TIMELINE, TEAM_TIMELINE, NEXT_ACTIONS, LIVE_STATE.md/JSON.
+
+다음:
+- 학교 Wu 실제 sde_dvs.cmd, pp1_dvs.cmd, SDevice .cmd/.par 확인 → 수치·적용영역에 사용자 합의 → A/B 독립 SDE 후 최소 런 → 동일 J 방사·Trap net pair/Vf 비교.
+
+---
+
+## 2026-11-08T07:30:00Z — soybeanmilk0514-jpg
+
+[2026-11-08 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / PRESENTATION CORRECTION
+상태: PRESENTATION EDIT ONLY; NO new simulation
+
+요약:
+- 주수빈 피드백 반영: 이전 Wu 리뷰 PPT의 하단 별도 '의미/핵심' 1줄 형식은 요청과 달랐으므로 모두 삭제.
+- 슬라이드2–19는 기존 본문 텍스트 상자에 같은 폰트/강조/정렬로 설명 1줄 추가. Slide20은 결론 5번 항목 추가, Slide21은 참고·원문 설명 기존 문단 보강, Slide1 표지 변경 없음.
+- 원본 Wu Fig1–13 및 Tables1–4, 21장 발표자 노트/디자인 유지. PPTX 렌더 21장 확인.
+- 최종 PPTX 파일: `Wu_2023_논문리뷰_주수빈_본문설명보강_최종.pptx` (채팅 다운로드만).
+
+근거:
+- 사용자 업로드 원문 PDF와 PPT 템플릿, 이전 PPTX 및 최종 렌더 확인
+변경:
+- CMP/members/JuSubin/TIMELINE.md 이력 갱신; TCAD/baseline/학내 시뮬레이션 불변
+다음:
+- 발표 전 원문 figure와 문장 일치 여부 확인.
+
+---
+
+## 2026-11-08T07:36:17Z — soybeanmilk0514-jpg
+
+[2026-11-08 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: SOURCE RECOVERY / GEOMETRY AUDIT CORRECTION
+상태: FOUND GitHub candidate SDE, NOT live school pp1/mesh
+
+요약:
+- 사용자가 집에 있어 학교 서버를 사용하지 못하므로, GitHub main 브랜치 전체 tree 124개 파일 (truncated=false), 기존 채팅 아카이브 및 현재 직접 업로드 파일을 검색. 처음엔 놓쳤던 경로 `CMP/tcad/candidates/CMP_BASELINE_3.2.0_WU2023PHY/sde_dvs.cmd` **실물 파일을 찾아 전문 확인**. 동 경로 sdevice_des.cmd, sdevice.par, README.md, svisual1_iv.tcl 확인; 옛 Wu3.0 sde도 별도 확인.
+- 3.2 소스 정의 Wm10um, Wdmg5nm per side, pGaN120nm, EBL0, QWs4×3nm In.08, QB5×8nm, nGaN3.9um, MgActive2e19, Si5e18. `seg-list` DmgL Y0-.005, Clean Y.005-9.995, DmgR Y9.995-10. `add-layer` 11 layers ×3 =33개 2D Region; SDevice에는 22개 DmgL/DmgR sidewall traps 선언. 학교 이전 pp1 전문 일부 제공 기록과 주요 구성 일치.
+- **원본 mesh 설정 코드도 발견**: Ref.All maxXY(.20,.35) minXY(.010,.020) µm; Ref.MQW max(.002,.15) min(.0004,.010) µm; Ref.Edge max(.020,.001) min(.002,.0005) µm, 실제 적용 영역은 양측 가장 바깥 5nm. Proposed B AlGaN internal20nm과 A C region200nm의 내부 경계는 이 손상 에지 refinement의 범위를 벗어나므로 새 SDE에서 별도 refinement 검증 필요.
+- Proposed A inside Clean_nGaN x.172-.372, yL .005-.205/yR9.795-9.995; proposed B inside Clean_QW1..4 & Clean_Barrier0..4 x.120-.172, yL.005-.025/yR9.975-9.995; 아직 해당 신설 Region 없음, 코드 변경 전 상태.
+- GitHub *전체 tree*에는 학교 로컬 `CMP_WU_Copy/sde_dvs.cmd`, 생성 `pp1_dvs.cmd`, 메쉬 `n1_msh.tdr`가 없음. 3.2 후보는 학교 성공 모델의 구체적인 매우 가까운 소스지만, 최종 학교 버전과 byte-identical/mesh-same이라고 증명할 수 없음.
+- 실제 학교 코드/메쉬 신규 실행이나 편집 없음. 명확화된 연구 검토: CMP/PROJECT_AB_WU_SDE_GEOMETRY_AUDIT_20261108.md.
+
+변경:
+- AUDIT 추가 정정, JuSubin TIMELINE, NEXT_ACTIONS, LIVE_STATE.md 갱신.
+
+다음:
+- 집에서는 후보 SDE를 사용해 A/B 적용 영역과 Mesh 패치 설계를 더 구체화할 수 있음. 학교 복귀 시 로컬 실제 원본 pp1/dvs SHA/diff 및 n1_mesh 확인 후 적용.
+
+---
+
+## 2026-11-08T07:49:02Z — soybeanmilk0514-jpg
+
+[2026-11-08 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / DESIGN FREEZE / CODE HANDOFF
+상태: USER-DIRECTED INITIAL A/B DESIGN LOCK; NO CODE, MESH, OR TCAD RUN
+
+요약:
+- 사용자 지시 “이제 두 프로젝트의 최종 물리적 수치와 영역, 그리고 진행 방향 확정해줘. 그 다음으로는 코드 수정 이어나갈꺼야.” 기준으로 Wu10µm School CMP_WU_Copy n25 Trap ON(1e18cm^-3, 5nm 양측 손상) 유지하고 FIRST-RUN parameter/region freeze 완료. 검증된 최적 수치나 실제 학교 최신 소스와의 완전 동일성은 아직 확인 전.
+- A 이택규 방향 A-u: GaN:C in nGaN 상부 양측 200nm lateral×200nm vertical, x[.172,.372], yL[.005,.205],yR[9.795,9.995]µm; region CEdgeL/R_nGaN, Si만 국부 5e18→0. 명목상 총C1e19≠별도 electrically active trap(CN acceptor6e17 Ev+.9eV, CGa donor3e17 Ec-.11eV, e/h sigma1e-15 cm²). A0m/A0u/A1u controls 필수. 기존 Dmg5nm/Trap 원본 불변. 이 수치 자체에 대한 별도 이택규 명시 승인이라고 주장하지 않음.
+- B 주수빈: Al0.15Ga0.85N 내부 QW/QB 측면 material-replacement 폭20nm/side, x[.120,.172], yL[.005,.025],yR[9.975,9.995]µm, Barrier0..4 QW1..4 총9층 분할. 원래 QB NBg1e15 유지, 의도적 Mg 불추가, damage5nm 보존, InGaN projected width40nm(0.4%) 치환. Bnull은 동일 QW-edge GaN 치환으로 active-volume loss만 대조하고 B1 vs Bnull로 Al effect를 분리. 외부 코팅/나노와이어 재현 주장 금지.
+- GitHub 3.2 Wu SDE candidate(33 regions)는 과거 학교 pp1 일부와 일치하지만 final school source/mesh byte identity 미확인. 설계상 A36 regions, B51, 별도 local mesh interface refinement 필요. 코드 수정은 다음 작업. 최소 same-J (~10A/cm² conditional) QW absolute Rad, net trap pair loss, deltaV, carrier flow, QW active-volume 검증, false-positive 단순 I 감소 배제.
+
+문서:
+- CMP/PROJECT_AB_WU10_DESIGN_FREEZE_20261108.md [single authoritative coding specification]
+- JuSubin TIMELINE / TEAM_TIMELINE / CURRENT_STATUS / NEXT_ACTIONS / LIVE_STATE md/json / RELAY updated
+
+다음:
+- 실제 학교 원본은 보호, 복구한 3.2 후보로 별도 버전 A/B SDE/SDevice 코드 드래프트 → 학교 접근 시 source diff, SDE-only region/mesh 검증 → 권한 있는 최소 SDevice 실행. 현 시점 실제 TCAD 수정이나 A/B 결과 없음.
+
+---
