@@ -1,3 +1,13 @@
+## 2026-11-08 — 주수빈 Project B B1+Bnull design confirmed; preparing 4th presentation reference-format PPT (USER DECISION, NO NEW SIMULATION)
+- User explicitly: “그래 그냥 B1을 유지하면서 Bnull 대조군을 추가하는 방식으로 채택하자.” **CONFIRMED first-run Project B architecture:** B1 = internally replace 20nm/edge of 9 MQW+QB layers at X=.120-.172um, Y left .005-.025/right9.975-9.995um with Al0.15Ga0.85N; preserve full original bilateral 5nm Dmg Trap. **Required Bnull** = same geometry but GaN replacing InGaN QW edge (and same GaN host at replaced QB portion), isolates equal QW-volume removal context from Al barrier effect. Bnull not inert perfect placebo; compare B1 vs Bnull AND n25 original baseline at matched current and absolute QW radiative/Trap loss/ΔV. B1 replacement removes40nm/10um=0.4% projected original QW width; no measured benefit yet. This resolves architecture-choice blocker; previous n25/n21 and active user-selected design values unchanged. No actual code/TCAD run.
+- New task: **4th presentation PPT**. User intends to upload a Seoul National University undergraduate research lab senior's high-quality PPT as reference for slide design, content density and placement. It has **NOT yet been uploaded to this chat**, so no format inspection/artifact production claimed. Desired story: former multi-paper-mixed Baseline → new Wu (2023)-anchored 10um shared working Baseline; explicitly distinguish Wu paper-backed values from provisional pGaN120nm/EBL0 & simulator implementation assumptions; **observed** Trap OFF n21 vs ON n25 I–V, matched-low-J voltage/current shifts, 5V QW radiative/eGap results and unverified low-J IQE; Project A GaN:C Si-off upper nGaN 200×200nm / CN6e17 CGa3e17 Cao2023 etc; Project B Al0.15Ga0.85N MQW inner 20nm + Bnull GaN replacement, WuY2022/Furtmayr/Baek literature and region coords; study protocol. Professor requested baseline table early, no AI-generated images, prioritize actual SDE/SVisual/raw TCAD figures; show explicit placeholders when actual exports unavailable.
+- NEXT: when user uploads senior PPT, analyze its **actual** design/layout; author 4th presentation to match, not invent images/TCAD figures or unmeasured A/B performance. Consider preserving prior presentation template if additional provided. Cite papers/figures as appropriate.
+
+## 2026-11-08 — 주수빈 questions Project B MQW material replacement comparability; assessed and parked architecture decision (NO CODE/RUN)
+- User questioned whether Project B internal 20nm-per-side InGaN/QB→AlGaN replacement is scientifically fair vs Project A local Si removal+C traps, whether only *additions* to unchanged baseline are allowed. Clarified **no additive-only requirement**; A also removes local Si donor (not purely additive). B active QW width decreases40nm/10µm=.4%, which may confound emission/current and must not be equated with .4% emission. Same-J B1-vs-B0 measures total engineered outcome, B1-vs-Bnull (GaN replacement same width) partly separates lost active InGaN volume from Al effect; Bnull is **not a perfect inert control**, since GaN band/polarization also changes.
+- External sidewall AlGaN shell would preserve internal InGaN but be OUTSIDE existing 5nm Dmg, so **not necessarily block carriers traveling from intact QW to the trap**. Boundary/area also changes. GaN barrier-only sideguard retains all QW but is discontinuous at QWs; surface passivation addresses interface states rather than proven 5nm volume traps. With fixed mesa10µm and fixed intact damaged/QW edges, an intervening 20nm layer cannot appear without material replacement or geometry change. These are distinct experimental mechanisms.
+- Preserved existing user-directed B1 first-run design `CMP/PROJECT_AB_WU10_DESIGN_FREEZE_20261108.md` as historical approved design; **B architecture recheck OPEN** before source edit; no independent user decision to switch to exterior shell. New analysis `CMP/PROJECT_B_REPLACEMENT_VS_ADDITIVE_COMPARISON_REVIEW_20261108.md`. No code/mesh/run.
+
 ## 2026-11-08 — 주수빈 Wu10 Project A/B first-run numeric & region DESIGN FREEZE, NO CODE/RUN
 - User explicitly directed finalizing both projects' physics values, exact applied areas and study direction **before** code editing. Created `CMP/PROJECT_AB_WU10_DESIGN_FREEZE_20261108.md` as **frozen initial TCAD design spec** (NOT paper-proven optimum / final scientific baseline); later changes require documented rationale. Project A owner remains 이택규 (earlier 11/06 A-u Si-off decision), Project B owner 주수빈; do not claim Lee independently approved precise numeric values.
 - Existing working parent **school `CMP_WU_Copy` Wu10um** and n25 Trap ON damage 1e18, n21 OFF preserved (5nm bilateral damage, pGaN120nm, EBL0nm, 4QW, 5QB, nGaN3.9um). GitHub recoverable 3.2 Wu SDE only a PROPOSED candidate that closely matches school archived pp1, *not* certified bit-for-bit identical to school live code.
@@ -2166,3 +2176,45 @@ Neither is the actual 2D lateral barrier under bias. Do not claim physically val
 - 원본 Wu Fig1–13와 Tables1–4 이미지, 발표자 노트 21개, 출처와 템플릿/색상 유지. 총 21장. PDF로 렌더 21장 확인; 별도 하단 요약 배지/상자는 없어짐.
 - 결과물 `Wu_2023_논문리뷰_주수빈_본문설명보강_최종.pptx`를 채팅에서 다운로드 제공. GitHub PPTX 바이너리 업로드 없음.
 - NEXT: 주수빈 발표 전 문장과 Figure 읽기 흐름 최종 확인. 학교 TCAD 값과 원문 Silvaco 데이터를 동일 결과로 묶지 말 것.
+
+
+## 2026-11-08 — 4차 발표 PPT 편집 가능 초안 작성 (주수빈 / ChatGPT)
+- 상태: PRESENTATION DRAFT ONLY. 새 TCAD 실행/코드 수정/성능 검증 없음.
+- Wu10um n21/n25 Baseline, 실제 저장된 5V QW 적분과 저전류 PLT 보간, Project A GaN:C Si-off 및 Project B B1+Bnull 채택 설계를 이용한 14장 .pptx 초안 제작.
+- 사용자 요청의 서울대 선배 발표 PPT는 이 채팅에서 실제 첨부 파일이 확인되지 않아 **디자인 동일 복제 불가**. 임시 학술 양식 사용. 실제 TCAD 원본 스크린샷은 미제공이므로 각각 명시적 placeholder만 사용하고 가짜 결과/구조도 생성 없음.
+- 결과물: `CMP_4차발표_Wu_Baseline_ProjectAB_초안.pptx` (ChatGPT 채팅에서 파일 제공; GitHub 바이너리 미업로드).
+- NEXT: 선배 PPT 원본을 실제 수신하면 시각적 구성 복제. 학교 SDE/SVisual 원본 그래프 삽입 및 논문·모델 가정 표시 유지.
+
+
+## 2026-11-08 — 선배 H조 발표 PPT 디자인 직접 계승한 4차 발표본 제작 (주수빈 / ChatGPT)
+- 상태: PRESENTATION CREATED / RENDER VERIFIED; 새 학교 TCAD 실행·코드수정·Project A/B 성능 결과 없음.
+- 사용자 첨부 `H조_은지우_이강록.pptx` 실제 25장 분석(16:9; 원본 마스터의 상단 blue gradient, orange title, footer, 표·2-column blue chart frame). 업로드 원본을 PPT 테마/마스터로 **직접 재사용**하여 20장 새 `.pptx` 제작. 20장 LibreOffice PDF 렌더와 대표 슬라이드 시각 검사 완료.
+- 문서 구성: 첫 실질 슬라이드에 Wu10um working Baseline 전체 조건표; 기존 다중 문헌 Kou-lineage vs Wu2023-main으로의 전환; Wu 직접값과 school pilot pGaN120nm/EBL0 구분; 기존 n21 OFF/n25 ON 5V 및 조건부 2D low-J PLT 비교; 5V 12QW Radiative/SRH/Auger 및 damaged eGap 적분; Project A GaN:C(Cao) 200x200nm/Si-off/controls; Project B Al0.15Ga0.85N 20nm internal replacement with Bnull/0.4% QW loss; matched-J 후속 검증 및 문헌 DOI.
+- **교수님 요구 준수:** 실제 Sentaurus 원본 그림 파일이 이 채팅에 없으므로 I-V 및 SVisual 2-column 패널은 명시적인 교체 표시만 사용. TCAD 그래프나 Project A/B 성능을 임의 생성하지 않음. 발표 표에 실측된 수치와 미실행 설계 수치를 구별.
+- 생성 결과: `CMP_4차발표_선배PPT동일디자인_Wu_Baseline_ProjectAB.pptx` (대화 파일 제공, GitHub 바이너리 업로드 없음). 이전 임시 디자인 초안 대신 이 파일 사용.
+- 다음: 학교 실제 PLT/SVisual screenshot (n21/n25 I-V, 5V QW Radiative, eGap sidewall) 확보 후 지정된 그림 패널 교체; 수치/문헌 꼼꼼한 발표자 최종 검토.
+
+
+## 2026-11-08 — 4차 발표 PPT 시각 중심 전면 재편집 (주수빈 / ChatGPT)
+- 상태: PPT PRESENTATION REBUILD / RENDER VERIFIED. 학교 TCAD 실행, 코드 수정, Project A/B 실측 추가 없음.
+- 사용자 제공 `1주차_meeting_박상현.pptx` 20장 중 **후반 과제 부분 12~20장**의 마스터 테마 및 발표 형태 직접 확인. 기존 과한 Result Table 위주 디자인을 대신해 `상단 1~2줄 물리해석 → 넓은 실측 figure/숫자 → 간단한 비교` 방식으로 변경. 논문 리뷰 1~11장 형식은 사용하지 않음.
+- **실제 새 발표 PPTX 총 18장**, PDF 18장 렌더 확인. 원본의 상단 gradient, orange heading, blue outlined panels, gray backgrounds 재사용. 숫자 강조/적은 표/저전류 PLT 보간 ΔV 라인 그래프/5V QW Radiative 적분·측벽 eGap 채널 숫자 패널 제작.
+- 그림/근거: 기존 학교 n21/n25 로그와 보관된 PLT 보간/5V SVisual region integration 수치만 재표시, 원본 SDE/SVisual 화면 미제공 부분은 교체 자리 표시. 새로운 I–V 곡선이나 실제 소자 렌더 그림은 임의 생성하지 않음. Project A/B 숫자·controls는 FIRST-RUN DESIGN, NOT EXECUTED/VALIDATED로 표기. 기존 pGaN120nm/EBL0는 Wu 원문 확정값이 아닌 pilot 설정으로 표기.
+- 결과물: `CMP_4차발표_박상현과제형식_시각중심_개정.pptx` (채팅 제공, GitHub 바이너리 업로드 아님); 이전 `H조` 템플릿 20장 발표본을 대체할 새 디자인.
+- 다음: 학교 실제 SDE Material/Doping, n21/n25 I–V 및 5V SVisual Trap/Radiative 원본 그래픽으로 빈 Figure 영역 교체. 정확한 2D J normalization/동일 J optical IQE 미검증 사실 유지.
+
+
+## 2026-11-08 — 사용자 편집 24장 4차 발표본 리디자인 + 실제 Baseline SDE 기반 A/B 위치 주석 (주수빈/ChatGPT)
+- 구분: PRESENTATION REVISION / OBSERVED FILE OUTPUT. **새 TCAD 실행·A/B SDE 코드 생성·성능 검증·학교 Baseline 수정 없음**.
+- 사용자 최신 업로드 `CMP_4차발표_박상현과제형식_시각중심_개정.pptx`(직접 추가 슬라이드 포함 24장) 실제 열람. 별도 양식이던 6장 Baseline 변경 및 8장 실제 I–V 결과를 기존 박상현 과제 형식(상단 그라데이션/주황 제목/파란 결과 테두리)에 맞춰 리디자인. 중복된 2·3장에는 Full/Sidewall 확대 역할을 부여; 12·13장은 TotalTrap SVisual 공간 맵과 eGapStates 영역 적분의 역할을 구분. 기존 실측 수치 유지; 불확실성·단위 주석 명시.
+- User-provided actual Baseline source screenshots **embedded in PPT**: `n1_msh_2` Full 10µm & left MQW edge zoom. 해당 **그림을 그대로 재사용**하고 PPT 편집 가능한 주황색 위치 오버레이를 추가. **A Fig11 (16장)**: 양측 clean nGaN x=.172..372µm, yLeft=.005..205/right9.795..9.995µm, 각 200×200 nm Si-off GaN:C (구조 아직 미실행). **B Fig12 (19장)**: 좌측 실제 MQW 확대 x=.120..172, y=.005..025 µm Al0.15Ga0.85N 내부 치환 예정 구간 주황 테두리, 기존 y=0..005 µm Damage 구간 파란 테두리, 우측 대칭 적용. 원본 물성/결과를 바꾼 이미지가 아닌 **Baseline SDE 기반 편집 주석 / PROPOSED DESIGN ONLY**.
+- 전체 물리적 페이지 1~24 재번호; Fig1~Fig12 통일(서브패널 (a)/(b)); 슬라이드 넘침 검사 통과 및 파일/렌더 확인. 논문 리뷰/선배 다른 학생의 문구가 남아 있던 표지·Project A/B 구분 페이지의 speaker notes도 현재 발표 내용으로 교체.
+- 파일: `CMP_4차발표_최종디자인통일_SDE영역표시.pptx` (ChatGPT 응답에 편집 가능 파일 제공, GitHub에 바이너리 자체는 업로드하지 않음). 기존 24장 원본은 보존.
+- NEXT: 교수님용 최종 발표 시 실제 **A/B 신규 SDE 생성 후** 주석 이미지를 실측 구조 map으로 교체할 수 있음. 아직 A/B 성능은 미측정, Wu EBL0 pilot·2D J 조건부 정규화·IQE 미검증 주의 문구 유지.
+
+
+## 2026-11-08 — Project A GaN:C 예상 영역 이미지 위치 오류 수정 (주수빈/ChatGPT)
+- **오류 식별**: 이전 생성 예상 그림은 GaN:C를 MQW(QW/Barrier, x=.120–.172um) 안쪽에 겹쳐 그려 Project A 설계값과 불일치. 이미지 생성 도식의 위치 오류이며 **실제 TCAD 소자/설계 좌표가 변경된 것은 아님**.
+- **정확한 A 설계**: n-GaN 최상부 `x=.172–.372um`, 좌측 `y=.005–.205um`, 우측 `y=9.795–9.995um`, 200×200nm 두 곳, 손상 5nm 영역 보존, 이 영역만 Si off 및 CN/CGa 적용 예정. Project B 내부 MQW AlGaN guard와 혼동 금지.
+- **교정 근거와 파일**: 사용자가 올린 실제 Wu Baseline `n1_msh_2` Full Doping 스크린샷의 x=0/.172/4.072, y=0..10 축에 설계 좌표를 직접 대응시켜 주황 반투명 200×200nm rectangles 표시; 동일 원본 화면 좌/우 확대 캡처 추가. `ProjectA_정확한위치_실제Baseline_사진기반.png` 채팅 제공. B의 zoom 원본은 x≈0.22um까지만 보여 A 200nm 수직 범위 전체를 담지 못하므로 이전처럼 QW에 억지 표시하지 않음.
+- **상태**: 그림 위치 정정 OBSERVED. 실제 A SDE 구현/mesh/SDevice 결과 없음. 발표용 기존 PPT에 이전 잘못된 그림이 남아 있으면 **이 교정본으로 교체**해야 함; 현재 요청은 이미지 정정만이고 PPT 자체는 아직 교체하지 않음.

@@ -12143,3 +12143,150 @@ AI: ChatGPT
 - 실제 학교 원본은 보호, 복구한 3.2 후보로 별도 버전 A/B SDE/SDevice 코드 드래프트 → 학교 접근 시 source diff, SDE-only region/mesh 검증 → 권한 있는 최소 SDevice 실행. 현 시점 실제 TCAD 수정이나 A/B 결과 없음.
 
 ---
+
+## 2026-11-08T10:08:18Z — soybeanmilk0514-jpg
+
+[2026-11-08 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESEARCH METHODOLOGY REVIEW / BLOCKER DISCUSSION
+상태: OPEN DESIGN COMPARISON QUESTION, NOT USER-APPROVED NEW DESIGN
+
+요약:
+- 사용자는 A는 일부 nGaN Si 도핑 제거 + 탄소 결함 추가, B는 기존 4QW+5QB 양측 20nm를 AlGaN으로 치환하므로 비교 공정성 및 baseline에 반드시 추가만 가능한지 질문.
+- 추가만 가능한 것은 아님(A도 Si 제거). B는 10um QW 전체 폭 가운데 양측 20nm×2=40nm 즉 0.4%의 원래 InGaN emitter width를 치환하므로, AlGaN 장벽/전하/분극과 emitter volume 감소 효과가 섞임. Bnull 동일 폭 GaN replacement는 불완전하지만 비교에 중요. Base n25 vs B1은 전체 개선, Bnull vs B1은 같은 active volume에서 GaN↔AlGaN 차이. 절대 QW Radiative, net trap-pair loss, same injected I, Vf, active volume 엄격 평가.
+- 바깥 외부 AlGaN shell은 MQW를 보존해도 기존 5nm 내부 Dmg의 *바깥*에 위치해 Trap으로 접근하는 전자를 직접 차단하지 못할 수 있고, mesa footprint/interface/physics가 변함. QB만 치환하면 QW 보존되나 barrier가 QW 구간에서 단절. Passivation도 Trap/interface 기작 별도.
+- 기존 11/08 사용자 주도 B v1 첫 실행 설계 문서 유지, **새 외부 shell로 변경하는 사용자 결정 없음**, 코드/메쉬/시뮬레이션 미진행.
+
+변경:
+- 신규 CMP/PROJECT_B_REPLACEMENT_VS_ADDITIVE_COMPARISON_REVIEW_20261108.md
+- JuSubin TIMELINE, NEXT_ACTIONS, LIVE_STATE.md/JSON
+
+다음:
+- B 코드 작성 전 보존하고 싶은 물리 조건(QW 원본 유지가 필수인지)과 직접 Trap 사이 장벽인지, passivation인지 구분. 외부 구조로 바꿀 경우 재설계와 별도 대조군/모델 검증 필요.
+
+---
+
+## 2026-11-08T10:14:35Z — soybeanmilk0514-jpg
+
+[2026-11-08 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / NEXT PRESENTATION PREPARATION
+상태: B1+Bnull CONFIRMED, PPT REFERENCE FILE NOT YET UPLOADED, NO CODE/RUN
+
+요약:
+- 사용자 명시 결정: “그래 그냥 B1을 유지하면서 Bnull 대조군을 추가하는 방식으로 채택하자.” B1은 Wu10um 기존 n25 Trap ON 외측 5nm 손상영역을 보존하고 MQW+QB9층 양측 각20nm(내측) Al0.15Ga0.85N 치환. Bnull은 정확히 같은 폭/영역을 GaN으로 치환하는 대조군. 전체 40nm/10um=0.4% projected QW InGaN active width loss를 동일하게 통제한 Bnull은 불완전한 재료 controls이므로 원래 n25와 B1/Bnull을 모두 비교. B 설계 유지, 새로운 실험 결과 없음.
+- 다음 작업은 4차 발표용 PPT. 과거 여러 논문 수치를 혼합한 Baseline 구축에서, Wu2023을 주 근거로 하는 새 10um working Baseline(단 pGaN120/EBL0 등 school pilot 가정 구분)으로 전환한 이유, 현재 n21 OFF/n25 ON의 실제 I-V/low-J penalty/5V QW Rad/eGap 결과(동일전류 IQE 미검증 주의), Project A GaN:C Si-off 200×200nm(Cao/Richter) 및 Project B AlGaN20nm xAl=.15 Bnull(WuY2022/Furtmayr/Baek)의 정확한 물리적 수치/좌표/근거와 향후 계획을 설명 예정.
+- 사용자는 서울대 학부연구실 선배의 잘 만든 발표 PPT를 이제 업로드할 예정. **아직 참고파일을 받지 않아** 실제 템플릿 레이아웃 확인, 최종 슬라이드 제작은 시작하지 않음. 교수님 요구 1/2페이지 Baseline 조건 표, AI 생성된 구조 이미지 사용하지 않음, 실제 TCAD SDE/SVisual raw 이미지 우선; 자료 미보유는 이름 있는 빈 위치로 표시.
+- 학교 TCAD 코드 변경, 시뮬레이션, 실제 PPT 작성 없음.
+
+변경: JuSubin/TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.
+다음: 선배 PPT 파일 업로드 → 실제 디자인 분석 → 논문/TCAD 실측 근거만으로 편집 가능한 4차 발표 pptx 제작.
+
+---
+
+## 2026-11-08T10:20:17Z — soybeanmilk0514-jpg
+
+[2026-11-08 19:20 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / PRESENTATION DRAFT
+상태: OBSERVED presentation artifact; no new TCAD run
+
+요약:
+- Wu10um working Baseline과 기존 n21/n25 결과, A GaN:C Si-off / B AlGaN B1+Bnull 결정에 기반한 4차 발표 14장 PPTX 편집 가능 초안 제작.
+- 사용자가 언급한 선배 PPT 파일이 이 채팅의 실제 첨부로 확인되지 않아 디자인 복제는 아직 불가; 임시 학술 디자인으로 제작.
+- TCAD 원본 캡처 없는 곳은 명시적 placeholder. 새로운 측정값·프로젝트 A/B 성능을 생성하지 않음.
+근거: CMP/PROJECT_AB_WU10_DESIGN_FREEZE_20261108.md, CMP/BASELINE_TRAP_ON_DIAGNOSIS_20261108.md.
+변경: CMP/members/JuSubin/TIMELINE.md. PPTX는 채팅 제공, GitHub 바이너리 미업로드.
+다음: 선배 PPT 파일 수신 후 디자인 맞춤, 학교 SDE/SVisual raw images 삽입.
+
+---
+
+## 2026-11-08T10:33:49Z — soybeanmilk0514-jpg
+
+[2026-11-08 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / PRESENTATION DESIGN REBUILD
+상태: OBSERVED presentation created & PDF render verified / NO new TCAD run
+
+요약:
+- 사용자 제공 원본 "H조_은지우_이강록.pptx" 25장 직접 검사, 원본 slide master/theme 재사용해 20장짜리 CMP 4차 연구 진행 PPTX 생성.
+- 원본 16:9 blue gradient title bar, orange titles, tables, paired blue graph frames 등 디자인 구현. 20장 PDF 렌더 성공, 주요 페이지 시각 검수.
+- 2장에 Baseline 파라미터 표, 기존 mixed-paper vs Wu2023 모델 설명, n21/n25 5V·PLT low-J·QW integration, Project A GaN:C/Cao 및 B AlGaN B1+Bnull/문헌 근거와 실험 계획.
+- 학교 SVisual/PLT 원본 그림 미제공으로 해당 Figure 삽입란만 마련. 가짜 TCAD 그림, 검증 전 A/B 개선 수치 없음. pGaN120nm/EBL0은 Wu 논문 직접값 아닌 pilot 가정 표시.
+
+근거: 업로드 H조 템플릿; CMP/BASELINE_TRAP_ON_DIAGNOSIS_20261108.md; CMP/PROJECT_AB_WU10_DESIGN_FREEZE_20261108.md.
+변경: CMP/members/JuSubin/TIMELINE.md; 파일 'CMP_4차발표_선배PPT동일디자인_Wu_Baseline_ProjectAB.pptx' 채팅 제공, GitHub 바이너리는 업로드하지 않음.
+다음: 학교 실제 TCAD I-V, Radiative, eGap SVisual 이미지를 Figure 위치에 교체하고 발표자 최종 확인.
+
+---
+
+## 2026-11-08T10:54:23Z — soybeanmilk0514-jpg
+
+[2026-11-08 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / 4TH PRESENTATION VISUAL REVISION
+상태: OBSERVED artifact+PDF 18-slide render verified; NO new TCAD run
+
+요약:
+- 사용자 제공 `1주차_meeting_박상현.pptx`의 논문리뷰가 아닌 **과제 파트 12~20장** 레이아웃을 분석해 원본 파란색 그라데이션/주황 제목/큰 결과 그림+숫자 보조 패널을 활용한 18장 새 PPTX 작성.
+- 이전 H조 스타일의 과도한 표를 줄이고 n21/n25 I-V 저전류 ΔV(PLT 저장 수치로 재도표화), 5V QW Radiative, eGapStates 등 기존 실제 데이터의 시각적 전달을 강화.
+- 대조군 A0u, Bnull 포함한 A/B 수치와 좌표는 설계로 명확히 표기. 새 구조 이미지를 생성하지 않으며 학교 SDE/SVisual 원본 그림이 없는 영역은 삽입 안내.
+- Result: `CMP_4차발표_박상현과제형식_시각중심_개정.pptx`, 18-slide PDF 렌더 확인, 대화에서 다운로드 제공(GitHub PPTX 업로드 없음).
+
+근거:
+- 사용자 제공 Park 과제 발표 PPTX, 기존 CMP Wu school logs/PLT/SVisual archival evidence, CMP/PROJECT_AB_WU10_DESIGN_FREEZE_20261108.md.
+변경:
+- CMP/members/JuSubin/TIMELINE.md
+- CMP/NEXT_ACTIONS.md
+- 학교 TCAD 코드/실행/성능 데이터 변경 없음
+다음:
+- 실제 학교 n21/n25 I-V/SVisual Material+Doping/eGap map 캡처로 해당 figure 교체하고 출처 및 optical IQE 미검증 주의 확인.
+
+---
+
+## 2026-11-08T12:38:56Z — soybeanmilk0514-jpg
+
+[2026-11-08 20:5x KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / PRESENTATION REVISION
+상태: OBSERVED (PowerPoint rendered & QC passed); A/B geometry PROPOSED only
+
+요약:
+- 주수빈이 직접 수정/삽입한 24장짜리 CMP 4차 발표 PPT를 업로드 받아, 6장 Baseline 변경 및 8장 Raw I–V를 기존 박상현 과제형식의 파란 그라데이션/주황 제목/결과패널 스타일로 통일.
+- 2/3장은 Full SDE와 Sidewall Zoom, 12/13장은 TotalTrap 원본 맵과 eGap 적분/99.06% 숫자 비교로 구분. 전체 24 페이지 번호, Fig 1~12 재번호. 발표 내용과 다르게 남아 있던 복제 speaker notes 일부 수정.
+- 16장 Fig11: 사용자 업로드 PPT 내 실제 Wu10um Baseline SDE/SVisual Full Doping 이미지에 주황색 편집 가능한 경계로 Project A의 CEdgeL/CEdgeR (x.172–.372 µm, y=.005–.205 / 9.795–9.995 µm) 계획 표시. 19장 Fig12: 실제 Baseline 좌측 MQW 확대 이미지에 B1(20nm x.120–.172,y.005–.025) 계획을 주황색, 기존 5nm Dmg 보존 영역을 파란색으로 표시; 우측 대칭은 좌표로 설명.
+- **그림 모두 원본 school Baseline 스크린샷 + 후편집 계획 오버레이**이며 Project A/B 실행 산출물이나 검증된 재료 지도는 아님. 코드·시뮬레이션/성능 측정 변화 없음.
+- 결과: `CMP_4차발표_최종디자인통일_SDE영역표시.pptx` (대화에서 제공, GitHub PPTX 바이너리는 미업로드). 24장 전체 파일 열기, PDF render, 1~24 페이지 번호 검증, overflow 검사 통과.
+
+근거:
+- 사용자 업로드 24장 PPTX와 그 안의 원본 학교 n1_msh_2/n21/n25 SVisual 사진
+- `CMP/PROJECT_AB_WU10_DESIGN_FREEZE_20261108.md`
+변경:
+- `CMP/members/JuSubin/TIMELINE.md`
+- `CMP/NEXT_ACTIONS.md`
+다음:
+- A/B 실제 SDE/mesh를 학교에서 생성한 뒤 주석 사진을 실제 추출 결과로 교체하고 발표 원고 최종 확인.
+
+---
+
+## 2026-11-08T14:19:47Z — soybeanmilk0514-jpg
+
+[2026-11-08 23:12 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: FIX / PRESENTATION FIGURE
+상태: CORRECTED (image placement), A SDE still PROPOSED
+
+문제: ChatGPT-generated previous Project A sketch incorrectly colored GaN:C inside MQW x=.120–.172µm; approved A region belongs to nGaN immediately below MQW.
+교정: actual uploaded Wu Baseline full n1_msh_2 original screenshot overlaid with coordinate-derived 200×200nm two clean nGaN rectangles at x=.172–.372um, left y=.005–.205um/right y=9.795–9.995um. Existing outer 5nm damaged strips untouched. Delivered `ProjectA_정확한위치_실제Baseline_사진기반.png` in chat. B sidewall zoom alone cannot represent entire vertical A extent.
+영향: previous A concept graphics are invalid; replace them in any final presentation. No TCAD SDE modification/simulation, no Project A/B parameter change.
+변경: CMP/members/JuSubin/TIMELINE.md, CMP/ERROR_LOG.md.
+다음: Use corrected A image when next revising PPT; for actual A structure get independent school SDE/mesh once implemented.
+
+---
