@@ -12804,3 +12804,39 @@ AI: ChatGPT
 반영: Lee 개인 TIMELINE / NEXT_ACTIONS / LIVE_STATE.md/json.
 
 ---
+
+## 2026-11-09T10:27:46Z — TaekGyu0801
+
+[2026-11-09 KST] 이택규 / ChatGPT / OBSERVED BACKUP / NO TCAD RUN
+
+학교 실험용 두 번째 SWB Project A 경로 `/user/semi/semi437/CMP_A/CMP_WU_Copy_Copy` 에서 `cp -p sde_dvs.cmd sde_dvs.cmd.before_CEDGE` 실행 후 `ls -l`로 백업파일 5125 bytes (보존시각 Nov3 21:38) 존재 확인. 템플릿 `CMP_A/CMP_WU_Copy` 및 원본 `tmp/myproject/CMP_WU_Copy`는 이 명령으로 수정되지 않음. 새 SDE를 학교에 붙여넣거나 Mesh/SDevice를 실행했다는 증거는 아직 없음.
+
+현재 ChatGPT에서 제공하는 A0u 전체 SDE 초안 8b303e8701930f1eb55e36bcb583d18dd2ad0c744f9b1513aa1e067316b9aa97 (6255 bytes/157lines)은 Claude가 검토한 과거 18e 파일과 서로 다름. 두 번째 `CMP_WU_Copy_Copy`의 SDE 소스에만 붙여넣고 해시 확인 후 SDE 노드만 실행.
+개인 TIMELINE.md 및 LIVE_STATE.md 기록.
+
+---
+
+## 2026-11-09T10:31:07Z — TaekGyu0801
+
+[2026-11-09 KST]
+작업자: 이택규 / ChatGPT
+구분: OBSERVED / PROJECT A SDE SOURCE HASH MISMATCH
+
+학교 두 번째 실험 `CMP_A/CMP_WU_Copy_Copy/sde_dvs.cmd` 현재 SHA256 `b7734db6d65fab94e3bd138ca8e3baa5281a23ecea329509f8f148cde3e9ae64`. 이전 원본 ecbfc2ed...와 달라 소스 변경됨은 확인했지만, GPT 제공 전체 붙여넣기 파일 8b303e87... 및 Claude 검증 18e59e5e... 어느 쪽과도 같지 않아 정확한 적용 내용 미검증. 원인(EOL/실수/의도적 편집)은 미확인. `sde_dvs.cmd.before_CEDGE` 백업 5125B 확인 기록 유지. SDE/SDevice 실행 결과 없음.
+
+다음 한 단계: `wc -c`, CR제거 정규화 SHA, CEdge 지점 grep으로 두 번째 소스만 읽기. 필요 시 전체 내용 대조, SDE 실행은 그다음. 첫 번째 `CMP_A/CMP_WU_Copy` 템플릿과 기존 tmp/myproject 원본 보존.
+동기화: Lee TIMELINE, NEXT_ACTIONS, LIVE_STATE md/json.
+
+---
+
+## 2026-11-09T10:37:46Z — TaekGyu0801
+
+[2026-11-09 KST] 이택규 / ChatGPT / PROJECT A A1u SDEVICE+PAR HANDOFF — OFFLINE PROPOSED, NOT RUN
+
+사용자가 실험용 두 번째 `CMP_A/CMP_WU_Copy_Copy`에 바로 붙여넣을 SDevice 전체 코드·parameter 및 SWB 변수 요청. ChatGPT가 GitHub Wu10 PROPOSED SDevice template 기반 전체 259행 6790B `CMP_PROJECTA_A1u_sdevice_des.cmd` (SHA a41221fb1da81414cd0659410a2985ce72f9ba06600e4aa30060bfd52803515b), `CMP_PROJECTA_A1u_sdevice.par` 727B(SHA 2ba2d70db3d38b98cb25530a77f1a8a4ef9986d9b46d6050f47d9a360d70b27d), SWB 변수 텍스트 (SHA 52bb45734e17fcfcda66b0ddb79ee6f736f62dc9028856c4bc2d393f04fdaaf6) private chat 산출. 전체 22 기존 Dmg Physics + CEdgeL/R carbon trap2, A0u NCN0 NCGa0, A1u NCN6e17 NCGa3e17, original NtSide1e18 Vstop5 TrapEt.75 TrapSigmaN/P1e-15, SDE wC=dC=.2 NCEdge0. 신규 region trap acceptor Ev+.90/donor Ec-.11, sigma 1e-15. offline 정적 trap count/braces 확인만 수행.
+
+중요: 학교 실제 최신 `sdevice_des.cmd`와 `sdevice.par` 전체 내용은 아직 제공되지 않았으므로 3.2 GitHub 후보와 정확한 byte/physics 일치 검증 못 함. 기존 `.par`는 먼저 보존/비교, 첫 `CMP_A/CMP_WU_Copy` 템플릿과 `tmp/myproject/CMP_WU_Copy` 원본 변경 금지. 두 번째 SDE 실제 SHA b7734...는 8b/18e와 달라 36 region/mesh 미확인. 학교에서 아직 새 SDE/SDevice/mesh/solver 실행 증거 없음. 다음: SDE node only 성공 및 regions 확인 → SDevice source backup/paste → SWB preprocess Grid/macros 확인 → 소규모 run.
+
+GitHub 수정: Lee TIMELINE, NEXT_ACTIONS, LIVE_STATE.md/json (source 전체 public GitHub 미게재).
+
+---
