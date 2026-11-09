@@ -1,4 +1,233 @@
 {
+  "juB1PreprocessStaleTimestampConfirmed20261109": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-09",
+    "status": "OBSERVED_SOURCE_NEWER_THAN_PREPROCESSED_GRID_STALE_PREPROCESS_NEXT",
+    "schoolProject": "CMP_WU_ALBARRIER",
+    "sourceFile": {
+      "name": "sdevice_des.cmd",
+      "mtimeKST": "18:16:28",
+      "bytes": 6348,
+      "FileGridPresent": true
+    },
+    "preprocessedFile": {
+      "name": "pp25_des.cmd",
+      "mtimeKST": "18:15:41",
+      "bytes": 2425,
+      "FileGridPresent": false
+    },
+    "oldFatal": "Couldn't find name for geometry file !",
+    "diagnosis": "pp25 generated ~47 sec BEFORE full source repair, so previous failure does not test repaired source; update via SWB preprocess first",
+    "next": "SWB Project > Operations > Preprocess Ctrl+P or Run dialog Preprocess then run, check new pp25 Grid n1_msh.tdr and mtime before n25 solver",
+    "simulationSucceeded": false,
+    "newSchoolRunThisTurn": false
+  },
+  "juB1GridStillMissingAfterRestore20261109": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-09",
+    "schoolProject": "CMP_WU_ALBARRIER",
+    "status": "OBSERVED_PP25_MISSING_GRID_AFTER_SUCCESSFUL_SOURCE_RESTORE_UNKNOWN_SOURCE_PERSISTENCE",
+    "observations": {
+      "previousRestore": "RESTORE COMPLETE; sdevice_des.cmd File Grid @tdr@ present, Traps 22, scoped Mg 3",
+      "mostRecentPreprocessedGridGrep": "NO MATCH",
+      "mostRecentLogAnodeGrep": "NO MATCH",
+      "mostRecentFatal": "Couldn't find name for geometry file !",
+      "latestOutTimestampKST": "2026-11-09 18:15:43"
+    },
+    "unresolved": "Did SWB overwrite or revert sdevice_des.cmd, or preprocess different/stale command source?",
+    "next": "read-only stat/head/grep both sdevice_des.cmd and pp25_des.cmd and compare; use Tool > Edit Input > Commands for persistent SWB source, do not patch pp output directly",
+    "otherBranch": "CMP_WU_ProjectB Bnull stopped around 1.892V MinStep"
+  },
+  "juB1FullSDeviceSourceRestoredObservedSchool20261109": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-09",
+    "status": "OBSERVED_SCHOOL_FULL_SOURCE_RESTORE_SUCCESS_SOLVER_RERUN_PENDING",
+    "project": "CMP_WU_ALBARRIER",
+    "sourceFile": "sdevice_des.cmd",
+    "actualTerminalOutput": "RESTORE COMPLETE",
+    "headerContainsFileGrid": "Grid=\"@tdr@\"",
+    "ionizationDeclarations": 3,
+    "damageTrapDeclarations": 22,
+    "baselineOriginalEdited": false,
+    "backupOfB1TruncatedSource": true,
+    "preprocessedGridVerified": false,
+    "solverRerunYet": false,
+    "reached5V": false,
+    "next": "Reopen copied school CMP_WU_ALBARRIER SWB without overwriting restored source from stale editor buffer, preprocess/run n25 NtSide1e18 Vstop5, check generated pp25_des.cmd Grid n1_msh.tdr and actual 5V/solver output; Bnull Newton failure separate."
+  },
+  "juB1TruncatedSDeviceGeometryCause20261109": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-09",
+    "status": "OBSERVED_TRUNCATED_SDEVICE_SOURCE_CAUSING_MISSING_GRID_FIX_PREPARED_SCHOOL_UNRUN",
+    "schoolProject": "CMP_WU_ALBARRIER",
+    "observedSdeviceSourceFirstLine": "Physics (Region=\"DmgL_QW3\") {",
+    "observedPreprocessedFirstLine": "Physics (Region=\"DmgL_QW3\") {",
+    "observedGridLookup": "NO_MATCH",
+    "observedMesh": "n1_msh.tdr exists 1.4MB",
+    "observedFatal": "Couldn't find name for geometry file !",
+    "diagnosis": "Missing File Grid block due truncated school sdevice_des.cmd, not missing mesh",
+    "repairArtifact": "CMP_WU_ALBARRIER_SDEVICE_FULL_RESTORE_20261109.cmd, chat download only",
+    "sha256": "5453e103767cdd4568537684701973add43956f0a2b06bd49eb95c25d98c4625",
+    "localStaticChecks": "PASS; File/Grid/Electrode/Physics, 22 Trap blocks, 3 pGaN-only IncompleteIonization, Solve",
+    "schoolCodeChanged": false,
+    "schoolRerun": false,
+    "otherBranch": "Bnull CMP_WU_ProjectB Newton MinStep at 1.892V remains unresolved",
+    "next": "In SWB SDevice editor select all, paste entire repaired code, save. Verify sdevice_des.cmd header and generated pp25_des.cmd Grid n1_msh.tdr, then rerun only node 25."
+  },
+  "juProjectBMeshBothExistBnull1892V20261109": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-09",
+    "status": "OBSERVED_SCHOOL_READONLY_LOG_B1_GRID_UNRESOLVED_BNULL_NEWTON_1P892V",
+    "B1": {
+      "project": "CMP_WU_ALBARRIER",
+      "n1_mesh_file": "EXISTS 1.4MB",
+      "sdeCode": {
+        "WguardUm": 0.02,
+        "xAlB": 0.15,
+        "guardMaterial": "AlGaN"
+      },
+      "pp25GridGrep": "NO_MATCH_cannot_distinguish_missing_file_from_missing_property",
+      "lastAnode": "NONE",
+      "lastFatal": "Couldn't find name for geometry file !"
+    },
+    "Bnull": {
+      "project": "CMP_WU_ProjectB",
+      "n1_mesh_file": "EXISTS 1.4MB",
+      "sdeCode": {
+        "WguardUm": 0.02,
+        "xAlB": 0,
+        "guardMaterial": "GaN"
+      },
+      "preprocessedGrid": "n1_msh.tdr",
+      "preprocessedParameter": "pp25_des.par",
+      "lastVoltageV": 1.892,
+      "lastTotalCurrentRaw": "3.680e-17",
+      "solverFailure": "Newton 35 iterations; Step-size less than MinStep",
+      "reached5V": false
+    },
+    "next": "Read-only determine existence/content pp25_des.cmd in B1 and verify SWB @tdr@ input/dependency; inspect last failing Bnull logs before changing solver. Avoid physical model changes.",
+    "newCodeThisTurn": false
+  },
+  "juProjectBSeparateRootCausesLogs20261109": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-09",
+    "status": "OBSERVED_TWO_DISTINCT_SDEVICE_FAILURES_NO_CODE_CHANGE",
+    "ALBARRIER": {
+      "schoolPath": "CMP_WU_ALBARRIER",
+      "node": 25,
+      "latestFatal": "Couldn't find name for geometry file !",
+      "likelyArea": "SWB Grid=@tdr@ preprocessor/mesh file name or dependency, precise cause pending pp25 and mesh listing",
+      "sdeviceSucceeded": false
+    },
+    "Bnull": {
+      "schoolPath": "CMP_WU_ProjectB",
+      "node": 25,
+      "latestFatal": "Step-size less than MinStep (5.7456e-11)",
+      "prior": "Newton #iterations larger than 35",
+      "tdrWritten": true,
+      "sdeviceProcessFinished": true,
+      "sweepReached5V": "UNVERIFIED",
+      "lastVoltage": "UNKNOWN",
+      "guardRegionEvidence": "UNVERIFIED"
+    },
+    "next": "Read pp25_des.cmd File Grid and *_msh.tdr for ALBARRIER, n25_des.log final anode voltage and actual BGuard region listing for Bnull; don't alter physics yet."
+  },
+  "juBothProjectBBranchesFailedAwaitLogs20261109": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-09",
+    "status": "OBSERVED_ALBARRIER_RETRY_FAILED_GANNULL_FIRST_RUN_FAILED_USER_REPORTED_DIAGNOSIS_PENDING",
+    "projects": {
+      "ALBARRIER": {
+        "schoolProject": "CMP_WU_ALBARRIER",
+        "node": 25,
+        "retryFailed": true,
+        "reportedFixApplied": "pGaN-only IncompleteIonization",
+        "newFatalError": "unknown; job log only exit failure"
+      },
+      "GANNULL": {
+        "firstSDeviceRunFailed": true,
+        "reportedByUser": true,
+        "firstFatalError": "unavailable",
+        "schoolProjectName": "not yet verified"
+      }
+    },
+    "next": "Read failing SDevice node .out/.err/.log for both projects, diagnose first fatal error per branch before further physical changes.",
+    "codeChangeThisTurn": false,
+    "newSimulationThisTurn": false
+  },
+  "juProjectBAlBarrierMgIonizationErrorFix20261109": {
+    "worker": "주수빈",
+    "AI": "ChatGPT",
+    "dateKST": "2026-11-09",
+    "status": "OBSERVED_SCHOOL_ERROR_PROPOSED_STATIC_FIX_SCHOOL_RETRY_PENDING",
+    "schoolProject": "CMP_WU_ALBARRIER",
+    "node": 25,
+    "error": "The doping species MagnesiumActiveConcentration has no incomplete ionization parameters in the parameter file (region BGuardL_Barrier1, material AlGaN)",
+    "cause": "global IncompleteIonization Mg model applied to undoped AlGaN new guards; sdevice.par Mg ionization only defined under Material GaN",
+    "proposedFix": "remove global Mg IncompleteIonization and add to Physics for Clean_pGaN, DmgL_pGaN, DmgR_pGaN exclusively; keep 22 original damage Trap blocks and sdevice.par unchanged",
+    "artifact": "ProjectB_MgIonization_Fix_20261109.zip (chat-only)",
+    "artifactSha256": "cafbd5b78b6177fd771fba99718882047705bddeccab063d430ca6d85a3ad859",
+    "localStaticCheck": "PASS, 3 pGaN scoped ionization declarations, 22 original traps",
+    "schoolRetry": false,
+    "school5VComplete": false,
+    "next": "Use corrected ALBARRIER SDevice text in school copied SWB then rerun n25, inspect fresh out/err/log; maintain original baseline unchanged"
+  },
+  "juProjectBB1BnullCodeDraft20261109": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-09",
+    "status": "SOURCE_DRAFT_STATIC_PASS_SCHOOL_UNRUN",
+    "source": "user pasted school CMP_WU_Copy 4 input scripts; latest school pp/source hashes pending",
+    "artifact": "CMP_ProjectB_B1_Bnull_Wu10_FirstRun_20261109.zip (chat only, no public code commit)",
+    "zipSha256": "b17067924e586a97e31705f3f97f763f94e01297a2dda2920027a9776be9d2e7",
+    "cases": {
+      "B1": {
+        "name": "CMP_PROJECTB_1.0.0_ALBARRIER",
+        "guardMaterial": "AlGaN",
+        "alFraction": 0.15
+      },
+      "Bnull": {
+        "name": "CMP_PROJECTB_1.0.0_GANNULL",
+        "guardMaterial": "GaN",
+        "alFraction": 0
+      }
+    },
+    "geometry": {
+      "guardSidesYum": [
+        [
+          0.005,
+          0.025
+        ],
+        [
+          9.975,
+          9.995
+        ]
+      ],
+      "guardXum": [
+        0.12,
+        0.172
+      ],
+      "oldDamageWidthUm": 0.005,
+      "expectedRegionsPerCase": 51,
+      "damageTrapRegions": 22
+    },
+    "models": {
+      "sdeviceTrapPhysics": "same as baseline",
+      "thermal": "300K",
+      "polarization": "original ON",
+      "localMeshMaxXum": 0.001,
+      "localMeshMaxYum": 0.002,
+      "TrapOnConcentrationCm3": 1000000000000000000,
+      "Vstop": 5
+    },
+    "validation": {
+      "staticSourceChecks": "PASS",
+      "mockedTclSVisual": "PASS",
+      "actualSchoolSDE": "NOT_RUN",
+      "actualSchoolSDevice": "NOT_RUN",
+      "efficiencyGain": "NOT_MEASURED"
+    },
+    "next": "copy original school SWB twice; validate Bnull then B1 SDE/Mesh/regions first, then 5V SDevice only after source checks; matched-J QW absolute radiative/net trap loss."
+  },
   "leeProjectACedgeAuDecision20261106": {
     "worker": "이택규",
     "dateKST": "2026-11-06 20:12",
@@ -9149,5 +9378,201 @@
       ]
     },
     "next": "receive sample senior PPT then inspect and produce editable 4th presentation using actual raw data and source attribution"
+  },
+  "leeProjectACoarseFine20261109": {
+    "worker": "이택규",
+    "dateKST": "2026-11-09",
+    "state": "PROPOSED_SCAN_PLAN_NOT_RUN",
+    "userAsked": "50nm coarse sweep; 10nm finer scan around high-performance geometry",
+    "parent": "Wu10um CMP_WU_Copy n25 Trap ON; retain 5nm damaged sides",
+    "branch": "A1u local Si OFF in GaN:C regions below MQW",
+    "centerWidthNm": 200,
+    "centerDepthNm": 200,
+    "assistantProposed": {
+      "coarseWidthNm": [
+        50,
+        100,
+        150,
+        200,
+        250,
+        300,
+        350,
+        400
+      ],
+      "coarseDepthNm": [
+        50,
+        100,
+        150,
+        200,
+        250,
+        300,
+        350,
+        400
+      ],
+      "fineStepNm": 10,
+      "fineExampleAround200Nm": [
+        160,
+        170,
+        180,
+        190,
+        200,
+        210,
+        220,
+        230,
+        240
+      ],
+      "combinedPromisingWidthCount": 2,
+      "combinedPromisingDepthCount": 2,
+      "coarseUniqueGeometryCount": 15,
+      "estimatedMaxUniqueA1uGeometries": 35
+    },
+    "controls": "n25 reference, A0m regression, A0u carbon-zero Si-off at least shortlisted/final",
+    "evaluation": "same absolute I, conditional J10 A/cm2; QW absolute Rad, net sidewall trap pair loss once, Vf, SRH/Auger, current distribution and local mesh",
+    "source": "CMP/PROJECT_A_WU10_SWEEP_PLAN_20261109.md",
+    "sourceModified": false,
+    "simulationRun": false,
+    "caveat": "50..400 bounds, ±40 fine window and 2x2 combinations assistant suggestions, not user-confirmed optimum or hard freeze; school SDE not yet verified"
+  },
+  "leeProjectAFullHalfEquivalence20261109": {
+    "worker": "이택규",
+    "dateKST": "2026-11-09",
+    "status": "PROPOSED_CHECK_NOT_RUN",
+    "concern": "May FULL Wu10 and HALF prefer different GaN:C lateral/depth geometry",
+    "assessment": "If physical and electrical mirror symmetry and normalization apply, normalized results and optimal geometry should agree within numerical tolerance, else need investigate modeling or actual asymmetry.",
+    "proposedHalf": "from actual same-school Wu10 full source, cut at y=5um with left Dmg at y=0..0.005um and only one physical Cedge; center cut is symmetry boundary not damaged sidewall.",
+    "proposedPreflight": [
+      "full vs half n25 baseline comparison",
+      "full vs half A0u at width=depth=200nm",
+      "full vs half A1u at width=depth=200nm",
+      "match J or normalized injected current, area scaling, QW radiative, sidewall net trap loss and terminal V, local meshes"
+    ],
+    "proposedStrategy": "Only after equivalent: HALF 50nm coarse and 10nm fine for screening; FULL confirm top 2-3 and final combined geometry. If non-equivalent, debug or use FULL throughout.",
+    "caveats": [
+      "No HALF new run and no observed optimum shift",
+      "Historical different-lineage HALF cannot validate Wu10 symmetry",
+      "Original school effective source and area normalization not verified"
+    ],
+    "source": "CMP/PROJECT_A_WU10_SWEEP_PLAN_20261109.md"
+  },
+  "leeProjectASdeDraft20261109": {
+    "worker": "이택규",
+    "dateKST": "2026-11-09",
+    "actualSchoolSource": "/user/semi/semi437/CMP_A/CMP_WU_Copy/sde_dvs.cmd",
+    "comparison": "diff -q versus /user/semi/semi437/tmp/myproject/CMP_WU_Copy/sde_dvs.cmd reported identical",
+    "status": "PROPOSED_OFFLINE_A0U_SDE_DRAFT_NOT_RUN",
+    "chatArtifact": "CMP_PROJECTA_1.0.0_CEDGE_sde_dvs.cmd",
+    "sha256": "18e59e5e62e7ae0fdec94197cc2cbabf13fceb115dae57e2b35b5e527b0b6c56",
+    "geometry": {
+      "xUm": [
+        0.172,
+        0.372
+      ],
+      "leftYUm": [
+        0.005,
+        0.205
+      ],
+      "rightYUm": [
+        9.795,
+        9.995
+      ],
+      "sidewallDamageNm": 5,
+      "SiDopingInCEdgeCm3": 0,
+      "SiOutsideCm3": 5000000000000000000,
+      "expectedRegions": 36,
+      "expectedOriginalDamageRegions": 22
+    },
+    "offlineChecks": "paren balanced, 6 disjoint nGaN rectangles cover 39um2, nGaN geometry exact",
+    "carbonNotYetAdded": true,
+    "next": "Replace only Project A Workbench SDE input with privately provided draft, run SDE-only, inspect mesh geometry/region/doping; later SDevice carbon trap models and A0m/A1u controls",
+    "sourceEditedOnSchool": false,
+    "schoolSdeRun": false,
+    "source": "CMP/members/LeeTaekGyu/TIMELINE.md"
+  },
+  "leeProjectAClaudeReviewAndDmgSensitivity20261109": {
+    "worker": "이택규",
+    "reportedDecisionTimeKST": "2026-11-09 19:08",
+    "status": "USER_DECIDED_MAIN_UNCHANGED_PLUS_A1U_D_FUTURE_SENSITIVITY",
+    "provenance": "User-forwarded Claude 2026-11-09 static read-only review; no school TCAD executed by Claude or GPT in this exchange",
+    "primaryModel": "A1u: Wu10 10um full 2D, 5nm original DmgL/R and nGaN ND5e18 retained; CEdgeL/R 200x200nm Si0; carbon traps only after future SDevice update",
+    "sensitivity": "A1u-D single representative 200x200nm branch after SDE smoke: upper x=.172..372 of both Dmg_nGaN strips Si0 and carbon traps added; original damage trap physical parameters retained; code not created/run",
+    "warning": "A1u-D splits 2 damaged region geometries, requiring Region Physics mapping to all pieces; nominal 38 total regions vs base36 if 2 replaced by 4; this is combined Si-off+carbon sensitivity not Si-only",
+    "claudeReviewedSourceSha256": "18e59e5e62e7ae0fdec94197cc2cbabf13fceb115dae57e2b35b5e527b0b6c56",
+    "laterPasteReadySourceSha256": "8b303e8701930f1eb55e36bcb583d18dd2ad0c744f9b1513aa1e067316b9aa97",
+    "versionMismatchVerified": true,
+    "claudeReview": "THIRD_PARTY_STATIC_ONLY: SDE-only GO for reviewed18e; 36 expected regions, unchanged 22 Dmg/main, nGaN area39um2, contacts plausible. SDevice conditional. 35-point sweep redesign proposed NOT user adopted.",
+    "corrections": [
+      "5nm n+ bypass/2e12cm-2 charge estimate depends on unmeasured trap occupancy",
+      "FromConBand vs fromCondBand conflicting public training examples; school T-2022.03 decisive",
+      "q QW-radiative/I is external-current-normalized QW radiative yield proxy not true IQE",
+      "n21−n25 matched-J radiative difference useful headroom not strict upper bound",
+      "10nm geometry fine scan needs mesh noise validation; 4x4 2D alternative only proposed"
+    ],
+    "stillPending": [
+      "School Project A source SHA and SDE-only node run",
+      "SVisual region count/mapping/doping/contacts/mesh",
+      "School source SDevice/PAR full review",
+      "Matched-J10 radiative and sidewall trap loss",
+      "A1u-D actual code/run",
+      "Sweep alternative approval"
+    ],
+    "next": "Backup copied Project A sde_dvs.cmd, select reviewed file hash explicitly, run SDE n1 only and verify CEdge regions/Dmg/doping/mesh; do not edit baseline",
+    "summaryDoc": "CMP/PROJECT_A_CEDGE_CLAUDE_REVIEW_HANDOFF_20261109.md",
+    "newSchoolRun": false,
+    "newSchoolCodeEdit": false
+  },
+  "juB1GridResolvedBnullShell20261109": {
+    "workerThread": "주수빈 Project B research (current user identity unconfirmed)",
+    "dateKST": "2026-11-09",
+    "status": "OBSERVED_B1_PP25_GRID_RESOLVED_BNULL_SHELL_ONLY_ERRORS",
+    "schoolProjectB1": "CMP_WU_ALBARRIER",
+    "preprocessedGrid": "Grid=\"n1_msh.tdr\" (line 12 of pp25_des.cmd)",
+    "b1RerunObserved": false,
+    "b1Reached5V": false,
+    "schoolProjectBnull": "CMP_WU_ProjectB",
+    "bnullNewLogObserved": false,
+    "bnullBlocker": "Newton/MinStep ~1.892V remains unresolved",
+    "next": "Rerun B1 n25; obtain Bnull Math/Solve and solver out/err with single-line full-path commands; no new code changes"
+  },
+  "leeProjectASelectedWorkbenchExperiment20261109": {
+    "worker": "이택규",
+    "dateKST": "2026-11-09",
+    "status": "USER_DECIDED_EXPERIMENT_SELECTION_NO_TCAD_RUN",
+    "swbRoot": "/user/semi/semi437/CMP_A",
+    "templateExperiment": "CMP_WU_Copy",
+    "activeEditableExperiment": "CMP_WU_Copy_Copy",
+    "rule": "Preserve first experiment as unchanged reusable copy template; modify only second",
+    "bothSameSource": "USER_REPORTED_NOT_YET_HASH_CONFIRMED",
+    "secondDiskPath": "/user/semi/semi437/CMP_A/CMP_WU_Copy_Copy/sde_dvs.cmd",
+    "secondDiskPathVerification": "PENDING",
+    "priorFirstCopyEditInstructions": "SUPERSEDED",
+    "next": "Read-only check existence and hashes/diff for both copied SDEs, then backup and change only second; SDE-only smoke test",
+    "newSchoolRun": false,
+    "newCodeEdit": false
+  },
+  "juBnullNewtonStagnationAndDampingTrial20261109": {
+    "worker": "주수빈 research thread; actual user identity not newly confirmed",
+    "dateKST": "2026-11-09",
+    "status": "OBSERVED_NEWTON_NONCONVERGENCE_PROPOSED_DAMPING_TRIAL_UNRUN",
+    "project": "CMP_WU_ProjectB",
+    "math": "Iterations=35 NotDamped=100 Digits=5 ErrRef(Electron/Hole)=1e8",
+    "failure": "error approx3.48 plateau at Newton iterations26-35, electron max_error approx3.8e-3 at x=0.139um y=0; iteration cap35 then QS MinStep 5.7456e-11",
+    "lastKnownAnodeVoltage": "1.892V prior school log",
+    "patch": "QS inner Coupled(Iterations=50 LineSearchDamping=0.01) { Poisson Electron Hole }",
+    "newSchoolRun": false,
+    "schoolFileModifiedByAI": false,
+    "next": "backup school Bnull source; apply guarded local single-statement patch; SWB preprocess, run n25, verify last anode=5V and successful sweep; inspect local boundary if failure"
+  },
+  "leeProjectACopySdeHashConfirmation20261109": {
+    "worker": "이택규",
+    "status": "OBSERVED_READONLY_SCHOOL_COPY_SDE_IDENTICAL",
+    "sourceCommand": "bash -lc 'cd /user/semi/semi437/CMP_A || exit 1; ls -l CMP_WU_Copy/sde_dvs.cmd CMP_WU_Copy_Copy/sde_dvs.cmd; sha256sum CMP_WU_Copy/sde_dvs.cmd CMP_WU_Copy_Copy/sde_dvs.cmd'",
+    "templateSde": "/user/semi/semi437/CMP_A/CMP_WU_Copy/sde_dvs.cmd",
+    "editableSde": "/user/semi/semi437/CMP_A/CMP_WU_Copy_Copy/sde_dvs.cmd",
+    "sha256Both": "ecbfc2ed80480c7f20ab9cd0992f553910023d8161c6f3552b130ec53571fa6f",
+    "sizeBytesBoth": 5125,
+    "mtimeBoth": "2026-11-03 21:38 (school ls)",
+    "carbonSdeApplied": false,
+    "schoolRun": false,
+    "next": "Backup only CMP_WU_Copy_Copy source; choose SHA for CEdge candidate explicitly; replace second only; hash check then SDE-only run; preserve CMP_WU_Copy template"
   }
 }
