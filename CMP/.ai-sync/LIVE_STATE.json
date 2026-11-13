@@ -1,4 +1,5 @@
 {
+  "leeProjectASDEtPUnboundSchool20261113": {"worker":"이택규","dateKST":"2026-11-13","status":"OBSERVED_ACTUAL_SCHOOL_SDE_FATAL_PROPOSED_HEADER_REPAIR_UNRUN","schoolProject":"/user/semi/semi437/CMP_A/CMP_WU_Copy_Copy","sdeError":"SCHEME COMMAND 4 *** Error sde:eval: unbound variable: tP","sourceHead":"(define (seg-list) — no baseline initialization header before first use tP","proposedFix":"Prepend sde:clear, ABA boolean setting, Wu pilot base geometry/doping/material variables, xNow/xActiveStart/xActiveEnd and Project A wC=dC=0.200um NCEdge=0 in editable copy only","warningsNotShownFatal":"datexcodes.txt species redefined lines; license feature sde_all expiry 18 days","schoolPatchApplied":false,"schoolSdeRerun":false,"schoolSdeMeshSuccess":false,"next":"After backup, apply header; run SDE node only; review new n1_dvs.out/err, region/mesh; preserve protected baseline and template"},
   "juB1PreprocessStaleTimestampConfirmed20261109": {
     "worker": "주수빈",
     "dateKST": "2026-11-09",
@@ -9647,5 +9648,22 @@
     ],
     "actualSchoolRun": false,
     "actualSchoolFileChangeByAssistant": false
+  },
+  "projectBRebuildFromFinalBaselineUserPlan20261113": {
+    "dateKST": "2026-11-13",
+    "actor": "Project B chat (current speaker identity not explicitly confirmed)",
+    "status": "USER_DECISION_WORKFLOW_CHANGE_NO_BASELINE_FILES_UPLOADED_NO_CODE_OR_SCHOOL_RUN",
+    "inputRequired": "actual successful final school Baseline sde_dvs.cmd, sdevice_des.cmd, sdevice.par, SWB macros and if available pp/log",
+    "sequence": [
+      "audit full original geometry/doping/physics/solver/mesh against school preprocessed deck",
+      "document minimum Bnull and B1 differences from same baseline",
+      "write independent full copied SDE/SDevice/par decks with preflight static checks",
+      "user runs school SDE mesh then SWB preprocess then SDevice 5V",
+      "verify convergence & fair baseline/Bnull/B1 matched current comparison"
+    ],
+    "preserve": "original baseline school SWB and outputs, 5nm original bilateral damage, all existing traps and common physics unless new material models require scoped differences",
+    "previousBnullDampingProposal": "not independently proven to resolve prior Newton failure; do not make default before baseline audit",
+    "schoolCodeWritten": false,
+    "simulated": false
   }
 }

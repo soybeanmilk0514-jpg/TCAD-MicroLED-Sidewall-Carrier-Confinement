@@ -12840,3 +12840,87 @@ AI: ChatGPT
 GitHub 수정: Lee TIMELINE, NEXT_ACTIONS, LIVE_STATE.md/json (source 전체 public GitHub 미게재).
 
 ---
+
+## 2026-11-13T04:32:22Z — soybeanmilk0514-jpg
+
+[2026-11-13 KST]
+작업자: Project B 공동작업 (이번 발화에서 개인 실명 미확인)
+AI: ChatGPT
+구분: DECISION / PLANNING
+상태: USER DECIDED WORKFLOW, ACTUAL BASELINE FILES NOT YET UPLOADED; NO NEW CODE OR SCHOOL RUN
+
+요약:
+사용자는 B1/Bnull의 반복 수렴 오류에 대해 임의 Math/Solve 조정보다, 실제 학교 최종 Baseline 소스 전체를 먼저 업로드해서 구조, 지역별 도핑·Trap, 물리모델, 계산모델, Mesh, .par 및 SWB preprocessed deck을 검토한 뒤 Project B 변경 계획을 수립하고, 그 기준으로 Bnull/B1 완전 코드를 작성해 SDE→mesh→preprocess→SDevice 5V 단계별로 검증하기로 함.
+기존 20nm GaN Bnull / Al0.15Ga0.85N B1 통제 조건과 원본 5nm Damage/Trap/contacts 보존. 과거 GitHub Wu 3.2 PROPOSED deck을 실제 학교 성공 Baseline으로 동일시하지 않음.
+현재 이 대화에서 새 source/solver 결과 제공되지 않음. 과거 Bnull LineSearchDamping 시도는 제안으로만 유지.
+
+근거: 사용자 직접 요청, CMP ProjectAB Wu10 Design Freeze 및 현재 학교 로그 히스토리.
+변경: 기록 문서만 갱신. 학교 및 원본 데이터 변경 없음.
+다음: 실제 final Baseline sde_dvs.cmd, sdevice_des.cmd, sdevice.par, SWB 매크로, 가능하면 pp25/log을 사용자로부터 받고 비교표/변경계획부터 작성.
+
+---
+
+## 2026-11-13T06:18:58Z — TaekGyu0801
+
+[2026-11-13 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / STATIC CODE REVIEW
+상태: OBSERVED (CHAT-PASTED SOURCE), UNRESOLVED (ACTUAL SCHOOL CODE/RUN)
+
+요약:
+이택규가 Project A SDE 조각과 SDevice 텍스트를 채팅에 제공. SDE 조각은 nGaN CEdgeL/R와 중앙 Si 도핑 보존을 의도하며 Si-OFF는 NCEdge=0일 때만 성립. 앞부분 정의와 실제 학교 저장 파일/mesh는 미확인. SDevice 메시지에는 동일한 Wu3.2 원본 22 Damage Trap Physics가 두 번 반복되고 CEdgeL/R C_N/C_Ga Physics가 전혀 없으며, 각 보여준 Solve tail에는 Solve를 닫을 마지막 중괄호 하나가 없음. 학교 파일에도 이 상태인지 미확인; 메시지 중복일 수 있음. 따라서 현 텍스트를 곧바로 A1u 계산 완료용으로 취급 불가.
+
+근거:
+- 2026-11-13 사용자 직접 채팅에 붙인 SDE/SDevice 텍스트 (학교 파일 해시/로그 미제공)
+- CMP/PROJECT_AB_WU10_DESIGN_FREEZE_20261108.md (A0u/A1u 정의)
+- Sentaurus Training sd_1 Solve / sd_13 Trap 예제
+
+변경:
+- CMP/members/LeeTaekGyu/TIMELINE.md 기록만 갱신
+- 실제 학교 코드/물리모델/계산 결과 변화 없음
+
+다음:
+- 실험용 CMP_A/CMP_WU_Copy_Copy 실제 SDE 초기 변수/CEdge mesh 및 SDevice tail/중복/CEdge Physics 확인
+- 실제 누락된 경우 Solve 닫는 } 보완, A1u 전용 C_N/C_Ga region trap 별도 추가, 학교 T-2022.03 preprocess 및 mesh gate → SDevice run
+- 원본 학교 Wu Baseline과 CMP_A 첫 복사 템플릿 보존
+
+---
+
+## 2026-11-13T06:36:06Z — TaekGyu0801
+
+[2026-11-13 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / SDE DIAGNOSIS
+상태: OBSERVED (ACTUAL SCHOOL SDE ERROR), PROPOSED (HEADER FIX NOT RUN)
+
+요약:
+학교 편집용 두 번째 Project A `/user/semi/semi437/CMP_A/CMP_WU_Copy_Copy`에서 SDE 실패. 실제 `n1_dvs.out` Sentaurus SDE T-2022.03: `SCHEME COMMAND 4 *** Error sde:eval: unbound variable: tP`. 실제 `head -n35 sde_dvs.cmd` 첫 줄 `(define (seg-list)`. 원본 Wu baseline에 있던 `sde:clear`, ABA 및 Wm/Wdmg/tP/tQW/tQB 등 변수 정의 헤더가 파일 앞에서 누락됨. `n1_dvs.err`의 datexcodes 재정의 경고와 18일 후 license 만료 메시지는 이번 fatal이 아님.
+
+근거:
+- 이택규 실제 학교 터미널의 n1_dvs.out/err 및 sde_dvs.cmd 첫 35줄
+- GitHub `CMP/tcad/candidates/CMP_BASELINE_3.2.0_WU2023PHY/sde_dvs.cmd`의 preamble과 `CMP/PROJECT_AB_WU10_DESIGN_FREEZE_20261108.md`의 Project A 값
+
+변경:
+- GitHub 기록만 갱신: Lee TIMELINE, ERROR_LOG, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json
+- 학교 SDE, mesh, SDevice 수정 없음. 새로운 실행 없음. 코드 복구 완료나 SDE 성공 주장 금지.
+
+다음:
+실험용 복사본만 백업 후 누락된 baseline preamble 복구, `wC=dC=.200um; NCEdge=0` (A0u) 추가, SDE 노드만 재실행하여 n1_dvs.out 및 mesh 확인. 처음 CMP_A 템플릿/원본 Wu Baseline 보존.
+
+---
+
+## 2026-11-13T06:58:12Z — TaekGyu0801
+
+[2026-11-13 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / SDE FIX SOURCE HANDOFF
+상태: PROPOSED / OFFLINE STATIC PASS, NOT RUN SCHOOL
+
+사용자 요청에 따라 이후 코드는 부분 패치가 아니라 **전체 파일 복붙용 완성본**으로 제공. 이번 `CMP_PROJECTA_A0u_sde_dvs_FULL_20261113.cmd` 6166B/159lines SHA256 f5b05e20840734cdf55dd655777ef20254b938ae97eac7a80318662f7eeeb30e 를 채팅 아티팩트로 작성. 기존 학교 실험 SDE의 `tP` unbound 원인인 누락된 Wu initializations 및 A0u wC=dC0.2um, NCEdge0을 복구한 전체 소스. 원래 QW/barrier/pGaN/Dmg/contact/mesh 및 user-pasted CEdge 구조를 보존하는 목표, 추가 국소 CEdge mesh. Scheme 괄호/따옴표 정적 체크 PASS. 실제 T-2022.03 실행/학교 파일 수정/mesh 생성/5V SDevice 결과는 전혀 없음.
+
+GitHub에는 Lee TIMELINE에 메타데이터만 기록; full proprietary deck은 public repo 미게시. 다음: 오직 `CMP_A/CMP_WU_Copy_Copy`에서 전체 소스로 교체 후 SDE 노드만 실행하여 새로운 로그 확인. 처음 템플릿/학교 원본 Baseline 보존.
+
+---
