@@ -13712,3 +13712,178 @@ AI: ChatGPT
 사용자에게 오직 조회용 복붙 명령으로 라이선스 변수 출력 및 lmstat -c 27020@ryu_synop, 27020@ssudisu3, 27009@ssudisu3 각각 8초 timeout probe 전달. 원본/복사본 학교 코드 및 실행중 node 변경 없음. 결과 대기 중.
 
 ---
+
+## 2026-11-16T08:26:23Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / RESULTS PENDING
+상태: USER-REPORTED / UNVERIFIED
+
+사용자 발언: '일단 copy3개 다돌아감'. 문맥상 COPY 3접미 프로젝트 `CMP_WU_Copy_Copy_Copy` 실행을 뜻한다고 임시 해석하되, 노드 몇 개 완료인지·5V 수렴/정상 종료/TCAD raw data는 미제공. 직전 SDevice license wait 및 -96 오류가 영구 해결되었다는 근거도 없음. 기존 연구상 모델 세 종류가 모두 완료됐다고 주장 금지.
+
+다음: copy 프로젝트의 n*_des.log 마지막 anode 전압 및 n*_des.out, n*_des.err 종료상태를 읽기전용으로 확인하여 Si_X_C_O 200x200 5V 성능 검사. 정상 확인 후 기존 Si_O_C_O 동일 물리·Mesh 비교. 학교 수정/실행 AI 수행 없음.
+
+---
+
+## 2026-11-16T08:30:24Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: ERROR / PROGRESS
+상태: OBSERVED(shell errors), USER REPORTED(SDevice completion), UNRESOLVED(SVisual)
+
+학교 터미널에서 이전 AI의 여러 줄 `bash -lc ' ... '` 복붙을 실행하다 `Unmatched '.`, `Undefined variable`, `Missing }`, `done: Command not found` 발생. 로그인 shell이 csh/tcsh 계열로 해석되어 multi-line quote 명령이 줄마다 별도로 파싱된 정황. 학교 TCAD solver 오류가 아님. 향후 **한 줄 전체 복붙** `bash -c '...'`만 제공.
+
+사용자 현재 발언: '디바이스까지는 다 돌아갔어'. 복사본 SWB Device 실행 완료는 사용자 보고로 기록, 5V/solver 정상종료는 로그 미검증. SVisual n73 출력 및 pp73* 읽기 전용 one-liner 전달, 응답 대기. SVisual 원인과 추가 sdevice n74 역할은 확인 전. 학교 파일 수정 없음.
+
+---
+
+## 2026-11-16T08:33:46Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / ROOT CAUSE
+상태: OBSERVED(SVisual X display failure); UNRESOLVED(relaunch/config)
+
+사용자 새 출력 (복사 SWB /user/semi/semi437/CMP_A/CMP_WU_Copy_Copy_Copy): n73_vis.err 정확히 `ERROR : No Display available.`; n73_local.err `Job failed; Error: Unknown error: child process exited abnormally; gjob exits with status 1`; n73_vis.out 공백. n73_vis.tcl, pp73_vis.cmd, n73_vis.job 존재. SVisual 프로세스 실패는 X11 DISPLAY 미확보가 직접 오류; SDevice 물리 계산 실패 증거 아님. SVisual Tcl 실제 동작은 GUI 복구 후 별도 확인 필요.
+
+Synopsys SVisual manual의 `-b` headless(batch) 및 `-bx` virtual X export mode 참고. 다음: 실제 n73_vis.job 및 pp73_vis.cmd launch option과 DISPLAY 설정을 읽기전용으로 확인; GUI 필요시 MobaXterm X Server/SSH X11 forwarding 점검, 무화면 CSV만 필요하면 batch 고려. 기존 SDE/SDevice 재실행 금지. 학교 파일 변경 없음.
+
+---
+
+## 2026-11-16T08:36:17Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: FIX / PROGRESS / MODEL NAMING
+상태: USER REPORTED(SVisual resolved), UNVERIFIED(5V and pasted source)
+
+사용자가 'SVisual 해결됨 이제 뭐할까 이게 그 a1m 이었나?' 보고. 복사본의 목표 SDE 정의 NCEdge0, wC=dC.200 및 NCN6e17 NCGa3e17이면 **A1m이 아니라 A1u = Si_X_C_O**. A1m = Si_O_C_O (NCEdge5e18, Carbon ON); A0m = Si_O_C_X (Si ON, C OFF). 실제 학교 SDE 입력은 미확인이라 명명은 해당 코드 반영 전제. 직전 n73 No Display SVisual 장애는 사용자 보고상 해결, 해결 방법/새 로그 미제공.
+
+다음: 복사본 5V terminal 마지막 전압 및 정상 종료 확인, 같은 200×200nm Damage ON 기준 A1m과 A1u 실험 비교. **GitHub Wu3.2 PROPOSED 기반으로 재구성한 전체 후보가 기존 학교 A1m과 물리/메쉬/solver 동일한지는 diff 전까지 미검증**. 추가 학교 파일 변경 없음.
+
+---
+
+## 2026-11-16T08:39:36Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: DIAGNOSTIC / NEXT ACTION
+상태: OBSERVED (zero matching log output) / UNRESOLVED
+
+사용자 on semi437@ssudisu3: Copy_Copy_Copy에서 `for f in "$d"/n*_des.log; do [ -f "$f" ] || continue; ...` 명령 수행 시 결과가 단 한 줄도 출력되지 않음. 추정상 최상위 경로에서 해당 이름의 regular log를 찾지 못했거나 지정 경로 불일치; SDevice 수렴 실패나 5V 미도달을 의미하지 않음. 앞서 SDevice 완료·SVisual 해결은 사용자 보고.
+
+다음: csh-safe 한 줄 read-only 명령 `ls -ld "$d"; find "$d" -maxdepth 2 -type f \( -name "*des*" -o -name "*.plt" -o -name "*.tdr" \) -printf "%P\\n" | sort | head -n 80` 으로 실제 파일명/경로를 확인한 뒤 노드별 5V 종점 로그를 읽는다. 학교 코드/결과 변경 없음.
+
+---
+
+## 2026-11-16T08:49:55Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / DIAGNOSTIC
+상태: OBSERVED(5V endpoints/process finish), UNRESOLVED(model assignment)
+
+요약:
+학교 CMP_A 실제 read-only find+grep 결과 `CMP_WU_Copy_Copy` n21/n53/n63/n69 모두 마지막 anode 5.000E+00 V 및 `Sentaurus Device simulation finished`; `Si_X_C_O` n72 역시 5.000E+00 V / 1.687E-04 electron / 2.396E-03 hole / 2.565E-03 conduction 및 normal finish 텍스트. Copy_Copy 4개 노드는 표시 전류 모두 1.695E-04/2.399E-03/2.568E-03으로 같음(원인 미확인). Copy_Copy n25는 명령 결과에서 최종 행 출력 없음. 과거 parent n21/n25 5V 및 preMgFix backup은 현행 3모델의 직접 증빙이 아님.
+
+근거:
+- 사용자 학교 터미널 노드별 n*_des.log/n*_des.out 출력
+
+변경:
+- 학교 파일 변경 없음. CMP TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/.json 갱신.
+
+다음:
+- pp node macro NtSide/NCN/NCGa 및 실제 SDE NCEdge/CTrap 활성/mesh provenance를 확인하여 3가지 case를 정확히 매핑. 성공을 세 모델 각각으로 과장하지 말 것. 다음 크기 split은 이 최소 검사 후 진행.
+
+---
+
+## 2026-11-16T08:52:54Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / DIAGNOSTIC
+상태: OBSERVED (school SDE source and pp effective physics), UNRESOLVED (all 3 matched 5V runs)
+
+요약:
+사용자 학교 터미널 출력: CMP_WU_Copy_Copy SDE wC=dC.200um, NCEdge5e18; pp21/53/63/69 DmgL_nGaN trap Conc0 (이들 노드는 앞서 모두 5V 정상 종료). 같은 프로젝트 pp72 Dmg Conc1e18이지만 해당 프로젝트 n72 5V 로그 미제공. 다섯 pp에서 exact `CEdgeL_nGaN` Physics AWK 추출 출력 없음. Si_X_C_O SDE NCEdge0, wC=dC.200um; pp72 Dmg trap 1e18, CEdgeL_nGaN C_N acceptor6e17 Ev+.9 + C_Ga donor3e17 Ec-.11; 앞선 Si_X_C_O/n72 5V 및 SDevice finished 확인. 실제 mesh doping 유효성은 아직 검사 전.
+
+판정:
+Si_X_C_O 5V source/PP/running-node 연결 확인. Si_O_C_X Damage ON 5V 미확인(기존 완료 n21/53/63/69는 Damage OFF), Si_O_C_O Carbon ON Si ON 5V 미확인. 세 모델이 모두 검증 완료되었다고 보고하지 않음.
+
+변경:
+학교 코드/런/메쉬 수정 없음. CMP 개인 TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/.json 갱신.
+
+다음:
+1) 기존 Copy_Copy에서 Carbon ON region 실제 presence 및 pp72에 해당하는 5V 실행 여부 확인. 2) 독립 clone에서 Si_X_C_O 코드 전체와 mesh/physics 유지하며 NCEdge만5e18로 바꾼 Si_O_C_O 조건 SDE/mesh/pp/SDevice5V. 3) 세 모델 matched damage ON 통과 후 wC/dC geometry split.
+
+---
+
+## 2026-11-16T08:55:52Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: RESULT / BLOCKER
+상태: OBSERVED (status file only, CEdge named Physics not present) / UNRESOLVED (Si_O_C_X and Si_O_C_O matched D-ON 5V)
+
+요약:
+학교 `CMP_A/CMP_WU_Copy_Copy`에서 `sdevice_des.cmd`와 `pp72_des.cmd`의 `CEdge[LR]_nGaN` grep 결과 모두 공백. n72_des.*는 52B `n72_des.sta`만 존재; n72_des.log/out는 출력된 목록에 없음. 그러므로 Si-ON C-OFF D-ON pp72 조건이 이전에 설정돼 있었다 해도 해당 노드 SDevice 5V 완료의 증거는 없음. CEdge 전용 Physics가 없는 현 COPY_COPY 소스에서 Si-ON Carbon-ON을 주장 불가. n72 sta 본문을 아직 읽지 않아 중단/미실행/대기 원인은 확정 불가. 독립 Si_X_C_O n72는 앞서 Si OFF + Carbon ON + Damage ON pp, 5V finish 확인.
+
+다음:
+Copy_Copy/n72_des.sta 본문 및 SWB 상태만 읽어 상태 확정. Si_O_C_X D ON 5V를 해당 프로젝트 단독 실행해 결과 확보; Si_O_C_O는 성공한 Si_X_C_O 독립 복사본에서 donor NCEdge만 5e18로 변경 후 SDE→mesh→PP→한 SDevice5V. 3개 matched 5V 후 기하학 width/depth sweep.
+
+GitHub 수정: Lee TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/.json. 학교 TCAD 파일 편집/시뮬레이션 실행 없음.
+
+---
+
+## 2026-11-16T09:02:48Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / CODE PROPOSAL
+상태: PROPOSED / STATIC PASS / SCHOOL UNRUN
+
+요약:
+사용자가 요구한 Project A 두 Si-ON 모델 `Si_O_C_X`와 `Si_O_C_O`의 전체 SWB 참고 코드 패키지 `CMP_PROJECTA_Si_ON_C_OFF_C_ON_PROPOSED_20261116.zip`를 **현재 ChatGPT 대화의 다운로드 파일로만** 작성. 각 모델의 SDE 130 lines, SDevice 252 lines, sdevice.par, SWB_PARAMETERS, README, SHA manifest 제공. SDE brackets, SDevice braces, 22 기존 Dmg Trap, 2 CEdge Region Trap/static macro 구조 정적 통과. ZIP은 GitHub Wu3.2 PROPOSED 기반 재구성, 실제 성공한 학교 전체 deck과 byte-identical 증거 없음. 공개 GitHub로 proprietary source 업로드 안 함.
+
+두 모델 공통: CEdge 200x200nm, 원래 Damage5nm 손대지 않음, NCEdge5e18, NtSide1e18, Vstop5, TrapEt.75, sigma e/h1e-15. Si_O_C_X: NCN0 NCGa0; Si_O_C_O: NCN6e17 NCGa3e17. 기존 Si_X_C_O 학교 성공 n72의 물리/Solver/PAR를 최우선으로 보존. 안전한 실행 가이드: 학교 성공한 `Si_X_C_O`를 SWB에서 두 독립 프로젝트로 복사, SDE NCEdge만 0→5e18로 바꾸고 각 SWB NCN/NCGa만 설정, 원본 SDevice/.par 및 메시/변수 외 설정 보존, 각 복사본 SDE→mesh→PP→SDevice 5V 한 번씩. 참조 ZIP을 무검증으로 학교 원본에 덮어쓰지 말 것.
+
+근거:
+- 사용자 학교 실제 n72 5V completion + SDE NCEdge0 및 pp72 Carbon and Damage macro evidence; GitHub `CMP/PROJECT_AB_WU10_DESIGN_FREEZE_20261108.md`, Wu3.2 PROPOSED template.
+
+변경:
+- 학교 코드 수정/시뮬레이션 실행 없음. GitHub Lee TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/.json에 PROPOSED 상태 기록.
+
+다음:
+사용자가 학교 SWB 복사본에서 정확히 두 모델 원본 기준으로 실행. 성공한 세 모델 확보 후 wC/dC 크기 분할 탐색.
+
+---
+
+## 2026-11-16T10:42:07Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER / DIAGNOSIS REQUEST
+상태: USER REPORTED / UNRESOLVED
+
+요약:
+주수빈은 B1 SDevice 계산이 같은 Newton/Quasistationary 과정을 반복하며 수렴하지 않는 것 같다고 보고하고 SWB 스크린샷 제공. 현 대화에 실제 B1 out/log/err 숫자 및 최종 voltage, MinStep fatal의 텍스트 출력은 아직 없음. 라이선스 문제인지 계산 진입 후 Newton 정체인지 별도로 확인 필요. 이전 B1 CMD 전체 파일은 PROPOSED였고 학교 적용/PP 반영은 아직 미검증.
+
+변경:
+- 사용자 상태 보고와 read-only 진단 계획만 기록. 학교 코드는 수정하지 않음.
+
+다음:
+- B1 최신 n*_des.out/.log/.err, 실제 pp*_des.cmd Mg 선언/Goal/Grid, 마지막 anode 및 Newton 실패 문구를 한 번에 읽기 전용으로 취득. Solver/mesh 원인 추정 패치 금지, Baseline/Bnull 보호.
+
+---
