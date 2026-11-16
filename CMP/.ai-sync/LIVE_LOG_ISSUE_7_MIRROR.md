@@ -12924,3 +12924,791 @@ AI: ChatGPT
 GitHub에는 Lee TIMELINE에 메타데이터만 기록; full proprietary deck은 public repo 미게시. 다음: 오직 `CMP_A/CMP_WU_Copy_Copy`에서 전체 소스로 교체 후 SDE 노드만 실행하여 새로운 로그 확인. 처음 템플릿/학교 원본 Baseline 보존.
 
 ---
+
+## 2026-11-16T01:35:54Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / PLANNING
+상태: OBSERVED (SWB screenshot only), UNRESOLVED (root cause), PROPOSED (coarse-mesh sweep)
+
+요약:
+사용자 스크린샷에서 NtSide×NCN×NCGa 2×2×2=8 SDevice 노드가 전부 빨간색 실패 표시. SDE는 사용자 진술상 오류 없으나 새로운 mesh/SDE log 증거 없음. n21 조건 NtSide=0,NCN=0,NCGa=0부터 첫 fatal을 확인해야 하며 원인은 현재 단정 불가. 기존 11/13 tP unbound의 해결 여부 미검증.
+사용자 제안: 빠른 두께/모델 탐색에 Coarse Mesh 사용 후 유망 후보만 Fine Mesh 검증. 원래 5nm damage/3nm QW를 무효화하지 않도록 국소 refinement 필수; 사용자가 아직 확정 실행하거나 시뮬레이션 결과를 낸 건 아님.
+
+근거: 2026-11-16 사용자 SWB screenshot, 사용자 SDE 오류 없음 보고.
+변경: Lee TIMELINE 기록. 실제 학교 소스/mesh/solver 미변경.
+다음: n21_des.err/out/log 최신 출력 확보, Grid·macro/preprocess 및 common fatal 확인, 단일 기본조건 SDevice 성공 후 sweep.
+
+---
+
+## 2026-11-16T01:42:56Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / RESULT / HANDOFF
+상태: OBSERVED (actual school log), UNRESOLVED (root cause/last voltage), PROPOSED (mesh sweep)
+
+요약:
+학교 복사 실험 CMP_A/CMP_WU_Copy_Copy/n21_des.out: 실제 Nov13 15:52:25 SDevice n21 종료. Newton '#iterations larger than 35'; Quasistationary 'Step-size less than MinStep (step-size = 5.4037e-11)'. TDR written + 'simulation finished'는 프로그램 종료일 뿐 5V 도달 아님. 메모리 864MB / wallclock2299.64s. n21은 앞서 SWB 스크린샷에서 NtSide0,NCN0,NCGa0. 따라서 Carbon trap만이 원인이라는 근거 없음. stderr tail eDOSMass/hDOSMass side-material interpolation/isotropic notice만 확인, fatal 미확인. 나머지 빨간색 7개 노드 동일 원인인지 아직 미확인.
+기존 SDE tP unbound 로그와 시점 구분 필요: 현재 n21은 SDevice solver까지 진행했지만 정확한 SDE source/mesh 재검증은 없음.
+
+근거:
+- 사용자가 제공한 실제 n21_des.out/err tail
+- SWB node n21 parameter screenshot
+
+변경: 연구 기록만; 학교 파일, mesh, solver 미수정.
+다음: n21_des.log last-anode V; n21_des.out last QS step and max_error; pp21_des.cmd Grid/Math/Solve read-only. 단일 기본 케이스 5V 성공 후 후보를 Coarse Mesh로 탐색하고 선택 후보 Fine Mesh 검증(3nm QW/5nm Damage local refine 유지).
+
+---
+
+## 2026-11-16T01:51:20Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / RESULT
+상태: OBSERVED (actual school logs), UNRESOLVED (root physical cause)
+
+요약:
+School copied Project A `CMP_A/CMP_WU_Copy_Copy` n21 last `anode` rows: 2.336E+00V, raw terminal conduction current 2.624E-12. Last `n21_des.out` Newton exceeded 35 iterations; t=0.467166 repeated trial steps 8.6459e-10→4.3229e-10→2.1615e-10→1.0807e-10; final MinStep failure 5.4037e-11. At Vstop5, 5×0.467166=2.33583V. Did NOT reach 5V. This is the simplest SWB n21 condition NtSide=0,NCN=0,NCGa=0; carbon trap cannot be asserted as sole cause.
+
+명령 오류: user accidentally pasted two `bash -lc` commands joined together, yielding `tail: 12bash: invalid number of lines`. Therefore `pp21_des.cmd` Grid/Math/Solve output is still absent. Distinguish bash error from Sentaurus error.
+
+근거: user's school terminal last anode/step outputs, prior SWB screenshot.
+변경: GitHub status/log only; no school code, mesh, solver edits or reruns.
+다음: corrected single command to inspect effective pp21 Grid/Math/Solve and failed Newton max_error location; compare known Wu 5V baseline and solve one base case before coarse-mesh parameter screening. Preserve 3nm QW/5nm damage fine local refinement.
+
+---
+
+## 2026-11-16T02:06:05Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / BLOCKER
+상태: OBSERVED (actual pp21_des.cmd), UNRESOLVED (root cause)
+
+요약:
+학교 실험용 CMP_A/CMP_WU_Copy_Copy/pp21_des.cmd 실제 grep: line12 Grid="n1_msh.tdr", line225 Digits5, 226/227 ErrRef(Electron/Hole)=1e8, 228 Iterations35, 229 NotDamped100, 232/233 Coupled init Iterations150, 235 QS InitialStep1e-4 MinStep1e-10 MaxStep.02. 앞서 n21 last anode2.336V, Newton #iterations>35, MinStep5.4037e-11. 그러므로 이전 누락 Grid 문제가 이 실행의 직접적 fatal은 아님. 단 mesh 실제 최신 여부, 수렴 실패 spatial location, parent deck 대비 geometry/doping/physics 변경, 물리 원인은 아직 검증 안 됨.
+
+근거: 사용자가 붙여준 학교 pp21_des.cmd read-only grep 줄번호/값.
+변경: GitHub 팀/개인 상태 기록만. 학교 소스, Mesh, solver 변경 없음.
+다음: n21_des.out max_error 위치+기존 5V Wu Baseline effective SDevice 설정 및 mesh timestamps 비교, 단일 기본케이스 원인부터 확인; Coarse mesh 대량 sweep 실행 전 문제 해결.
+
+---
+
+## 2026-11-16T02:11:09Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / NEXT ACTION
+상태: PROPOSED (controlled A0m test, UNRUN), OBSERVED (user prioritizes minimum checks)
+
+요약:
+이택규가 과도한 Mesh/수렴 microdiagnostics 중단, 꼭 필요한 검증 후 실험 진행을 요청. 현재 Project A A0u CEdgeL/R 내부 nGaN Si 도핑 NCEdge=0 (원본 Clean_nGaN ND=5e18)이라 단순 측벽 형상 추가뿐 아니라 n형 도핑도 바뀐 조건. 이는 n21 2.336V 수렴 실패의 가설적인 원인일 뿐 확정 아님.
+
+다음 최소 계획(학교 실행 전): 기존 실험용 SDE 백업하고 CEdge 내부 Si만 NCEdge=5e18로 돌린 A0m 대조군을 형성, 기존 NtSide0 NCN0 NCGa0 유지, SDE→Mesh 재생성 후 n21 단 한 개 5V 실행 및 성공 여부 확인. 원본 baseline/첫 CMP_A 템플릿 보존. 성공 후 coarse bulk mesh로 두께 후보 선별, fine mesh 결과 재검증. 실제 학교 파일 수정이나 시뮬레이션은 이번 대화에서 수행하지 않음.
+
+변경: Lee TIMELINE, NEXT_ACTIONS, LIVE_STATE 기록.
+
+---
+
+## 2026-11-16T02:15:10Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / HANDOFF
+상태: USER APPROVED A0m TEST / PROPOSED COMMAND / NOT RUN SCHOOL
+
+요약:
+사용자가 A0m 단일 최소 검증에 동의하고 코드 변경 여부 질문. 현재 실험용 Project A `CMP_A/CMP_WU_Copy_Copy/sde_dvs.cmd`에서 `(define NCEdge 0)`/0.0 를 고유성 검증하고 타임스탬프 백업 후 `(define NCEdge 5.0e18)`로 바꾸는 안전한 전체 복붙용 Bash 명령어 제공. Carbon 및 Damage trap OFF인 n21 NCN0 NCGa0 NtSide0 하나만 SDE 재생성 후 5V SDevice 실행 계획. 기존 Baseline과 1차 CMP_A 템플릿 보존.
+
+근거: 사용자 명시적 동의 및 이전 학교 n21 2.336V 실패/pp21 solver 검사. 이 테스트는 Si 제거가 원인인지 판별하기 위한 대조군이지 원인을 확인한 결과 아님.
+변경: GitHub 계획/개인 timeline 기록만. 학교 코드 변경·실행 여부 아직 미확인.
+다음: 사용자가 guard 출력 및 SDE/n21 결과 제공, 실패 시 코드 변경 중단하고 실제 NCEdge 선언 확인.
+
+---
+
+## 2026-11-16T03:28:23Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / HANDOFF
+상태: USER DECISION / PROPOSED (no school code edit or simulation run)
+
+요약:
+Project B 전체 소스 분석·Bnull/B1 SDE/SDevice/.par/mesh 코드 작성·오류 해결 및 성공 실행 준비는 Claude에서 이어가기로 사용자 결정. 실제 5V SDevice 실행에 성공한 뒤 물리적 검증·matched-current 재결합/I–V/측벽 손실/volume-normalized 해석은 주수빈의 기존 ChatGPT 채팅으로 돌아와 진행. 이전 2026-11-13 Project B RESET(성공한 학교 Wu10 Baseline 전체 원본 분석 후 최소 변경)은 유지. Bnull 1.892V Newton/MinStep 및 B1 Grid 복구 뒤 5V 미확인 blocker 변경 없음.
+
+근거: 본 채팅 사용자 명시 결정 및 CMP Project B 최신 기록.
+변경: 개인/팀 TIMELINE, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.md에 코드 책임 분담 기록. 실제 학교 코드/mesh/실험 결과 변경 없음.
+다음: Claude가 GitHub 프로토콜 및 학교 성공 Baseline 원본 확인 후 코드를 작성하고, 사용자가 학교 실험 성공 로그를 이 채팅에 가져와 물리 검증.
+
+---
+
+## 2026-11-16T03:31:58Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / CODE CHANGE / HANDOFF
+상태: OBSERVED (user actual school edit), UNRESOLVED (SDE/mesh/n21 run)
+
+요약:
+이택규가 학교 semi437 계정에서 `/user/semi/semi437/CMP_A/CMP_WU_Copy_Copy/sde_dvs.cmd`에 이전에 제공된 guard/backup/`sed` 명령을 실제 실행했고, stdout `32:(define NCEdge 5.0e18)` 확인. 원래 CEdge donor0 → Si donor5e18로 바꿔 A0m 대조군을 구성. 명령은 예상 정의 1개 확인 후 백업하여 복사 실험 SDE 파일만 수정하며, original school Wu baseline과 첫 CMP_A 템플릿은 대상 아님. 백업 실재 목록/파일 내용 전체는 재확인되지 않음.
+
+아직 SDE/mesh 재실행 증거 및 n21 5V SDevice 결과가 없으므로 SUCCESS 아님. 이전 A0u n21은 2.336V Newton/MinStep 중단.
+
+비교 조건: A0m Si유지 Carbon OFF / A0u Si제거 Carbon OFF / A1u Si제거 Carbon C_N6e17 C_Ga3e17. 동일 Damage Trap 조건으로 통제.
+
+다음: SWB SDE node 재실행하여 mesh 생성 확인, NtSide=0 NCN=0 NCGa=0의 n21 하나만 목표 5V까지 실행, fresh n21_des.log 마지막 anode 및 n21_des.out 최종 상태 확인. 다른 7개 동시 실행 금지. 최소 검증 우선.
+
+---
+
+## 2026-11-16T03:39:30Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / BLOCKER / HANDOFF
+상태: PROPOSED (SDevice numerical patch), NOT RUN SCHOOL
+
+사용자가 8개 SDevice 실패 이후 동일 코드 재실행 제안을 거부함. 실제 기존 학교 A0m SDE donor NCEdge5e18 변경은 확인되나, 기존 n21 A0u 2.336V Newton35/MinStep 오류가 수렴 옵션만으로 해결될지는 미확인.
+
+제공한 자동 source 변경 명령: 실험용 `CMP_A/CMP_WU_Copy_Copy/sdevice_des.cmd`에 QS inner `) { Coupled { Poisson Electron Hole } }`가 정확히 하나 있는 경우에만 타임스탬프 백업하고 `) { Coupled(Iterations=60 LineSearchDamping=0.1) { Poisson Electron Hole } }`로 교체. 다른 SDevice physics, contacts, par, original parent/template 변경 금지. 성공 보장 아님, 공식 Training 문법으로 지원되는 damping 옵션.
+
+다음: 사용자 학교 command UPDATED/STOP 결과 확인 → SDE mesh rebuild + SWB pp refresh → n21 only NtSide0 NCN0 NCGa0 Vstop5. 두 변수가 이전 실패 A0u 대비 함께 바뀌므로 성공 시 Si 효과만으로 귀속 금지. 코드는 학교에서 아직 적용·실행되었다는 증거 없음.
+
+---
+
+## 2026-11-16T03:42:18Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / HANDOFF
+상태: OBSERVED USER DECISION / UNRESOLVED ROOT CAUSE / NO NEW SCHOOL RUN
+
+사용자가 GPT의 근거 없는 SDevice QS 내부 Newton 반복 35→60 / LineSearchDamping=0.1 수정 제안을 거부, 독립적인 Claude 원인 분석과 전체 상황 인수인계를 요청함. 이전 계산 패치 명령은 제공된 **제안**이며 학교에서 실제 적용했다는 증거 없음. 관측된 최근 학교 source edit은 experimental SDE `(define NCEdge 5.0e18)` 출력뿐, 이후 SDE/mesh/n21 5V 실행 결과 미확인.
+
+핵심 사실: Wu working parent 5V 완료 이력, Project A A0u n21 NtSide0 NCN0 NCGa0 2.336V에서 Newton35/MinStep5.4037e-11 실패. SWB 8개 SDevice red (7개 fatal 미검증). Copied pp21 Grid 및 Math/Solve 주요 설정은 Wu parent와 같음. Mesh TDR 크기는 A1114636B vs parent984164B (밀도 판단 근거 아님). A0m Si5e18/C0, A0u Si0/C0, A1u Si0/C_N6e17/C_Ga3e17.
+
+Claude에게 GitHub CMP 프로토콜, 상태/개인 이력/Issue7 및 실제 학교 SDE/SDevice/PP/로그를 재확인한 뒤 **최소 진단과 분리된 단일 변수 수정** 및 필요 시 전체 복붙용 코드 요청. 무작정 Iterations/MinStep 증가 금지. 원본 보호, coarse→fine screening은 기본 케이스 검증 이후.
+
+변경: GitHub 연구 기록뿐; 학교 시뮬레이션/코드 수정 없음.
+
+---
+
+## 2026-11-16T03:44:32Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / PROGRESS / HANDOFF
+상태: PROPOSED (code artifact locally built / static PASS; school UNRUN)
+
+요약:
+사용자가 Claude와 GPT 두 개 독립적인 Project B 코드를 모두 학교에서 돌려 에러/5V 수렴 비교하기로 결정. ChatGPT는 기존 GitHub Wu3.2.0 PROPOSED Baseline에서 GPT FIX1 Bnull/B1 전체 SDE/SDevice/.par 코드를 생성하여 chat-only ZIP CMP_ProjectB_GPT_FIX1_Bnull_B1_20261116.zip 제공, SHA256 af0822931741cd87a99144b6133d3ccc483faf2fd5d7e87eea276ff8ffa6b552. 기존 20nm/side MQW Guard 및 5nm Damage/22 traps/3 pGaN Mg scope 유지. 지난 Bnull 1.892V Newton/MinStep 실패에 대응하는 제안: Guard 내부뿐 아니라 양측 interface 이웃까지 10nm lateral/3nm vertical collar mesh; QS inner Coupled iterations50 & LineSearchDamping0.1. B1 과거 누락된 File/Grid 및 AlGaN Mg incomplete ionization 재발 방지. SDE 괄호/SDevice braces, 51 예상 regions, 22 trap sections 등 정적 검사 통과.
+
+근거:
+기존 실제 학교 11/09 로그 Bnull 1.892V Newton/MinStep, B1 Mg 및 stale/truncated Grid, GitHub 후보 코드.
+변경:
+ChatGPT 사설 아티팩트만; GitHub에는 연구 로그/상태만 (공개 저장소에 proprietary 원본 없음). 학교 SDE/SDevice/mesh/시뮬레이션 미변경.
+주의:
+GitHub Wu3.2.0은 PROPOSED, 실제 학교 성공 Baseline CMP_WU_Copy와 byte-level 동일성 미확인. solver/mesh 변경이 실패를 해결했다는 증거 없음. 코드 오류-free/5V 성공 주장 금지.
+다음:
+학교 최종 성공 Baseline 원본과 비교 후 복사 프로젝트에서 SDE→mesh→preprocess→n25 5V. 실제 out/err/log 확인 후 Claude 후보와 공정 비교, 물리적 유효성 후속 검증.
+
+---
+
+## 2026-11-16T04:01:42Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / HANDOFF
+상태: PROPOSED (school SVisual unrun)
+
+요약: GPT FIX1 Bnull/B1에 공통 적용할 전체 SVisual1 I-V 및 SVisual2 2D Tcl 코드를 채팅으로 제공. GitHub Wu3.2 후보/기존 CURRENT SVisual pattern을 확인했다. I-V는 원시 anode InnerVoltage–TotalCurrent 사용, 미확인 2D AreaFactor/J 환산은 적용하지 않음. 2D는 직전 SDevice TDR 파일이 존재하고 실제 5V 계산된 경우에만 해석해야 함.
+근거: GitHub svisual1_iv.tcl, svisual2_maps.tcl, TCAD_REFERENCE_INDEX.
+변경: 공개 저장소 코드 변경 없음, 주수빈 TIMELINE 기록. 학교 시뮬레이션/Tcl 실행 없음.
+다음: 사용자 학교 복사본에서 preprocess 및 SDevice n25 5V 성공 확인 후 SVisual 노드 실행하고 로그/그림 공유.
+
+---
+
+## 2026-11-16T04:26:07Z — soybeanmilk0514-jpg
+
+[2026-11-16 13:24 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / BLOCKER
+상태: OBSERVED (school n25 View Output screenshot) / UNRESOLVED (final outcome and cause)
+
+요약:
+GPT FIX1 Bnull 학교 `CMP_PROJECTB_1.0.1_GPT_BNULL/n25_des.out` SDevice n25 실행 중 `#iterations larger than 50`, `Newton didn't converge, trying again with smaller step`, QS t=0.065284, stepsize=2.3903e-06, 큰 반복 오차를 관찰. 0→Vstop5 QS라면 전압 약 0.326V로, 아직 5V 성공 확인 아님. 이전 Bnull ~1.892V 실패와 별개 새 FIX1 시행 로그이지만 당시 화면이 계산 진행 중이어서 최종 MinStep 종료는 확인되지 않음. .err 화면의 datexcodes species redefined 경고는 현 수렴 실패의 직접 원인으로 증명되지 않음.
+근거: 주수빈 제공 SWB n25 output 스크린샷.
+변경: 연구 기록만, 학교 코드/solver/mesh GPT 미수정.
+다음: 읽기 전용 `n25_des.log` 마지막 anode 행 및 `n25_des.out` 최신 진행과 끝부분을 확인, 실제 상태/원인 점검 후 단일 수정. 반복횟수/MinStep 무작정 증가 금지.
+
+---
+
+## 2026-11-16T04:26:42Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / LITERATURE REVIEW
+상태: PROPOSED (선정/우선순위 제안, 논문 원문 확인), NO TCAD RUN
+
+요약:
+Project B 원래 설계 기록과 학술지 공식 원문/DOI를 대조하여 중심 문헌 3편을 선정.
+1) Yuanpeng Wu et al., Light: Science & Applications 11, 294 (2022), DOI 10.1038/s41377-022-00985-4 — AlGaN/GaN nanowire shell, InGaN/AlGaN MQW, Al 약15% 및 polarization/strain; B 관련 1순위.
+2) Zhuang Wu et al., Micro and Nanostructures (2023) 207542, DOI 10.1016/j.micrna.2023.207542 — Wu10um Baseline, sidewall 5nm damage/trap과 재결합.
+3) Furtmayr et al., Physical Review B 84, 205303 (2011), DOI 10.1103/PhysRevB.84.205303 — lateral AlGaN carrier confinement 및 고Al lateral field 손실 가능성.
+
+근거:
+CMP/PROJECT_AB_WU10_DESIGN_FREEZE_20261108.md, CMP/WORKING_BASELINE_WU2023.md, 공식 논문 원문/초록.
+
+변경:
+CMP/members/JuSubin/TIMELINE.md 문헌 리뷰 우선순위 기록. B0/Bnull/B1 파라미터·코드·실험 변경 없음.
+주의: 20nm 측벽 내부 MQW 재료 치환은 CMP 설계 가정이며, Wu2022 nanowire 결과를 그대로 planar 측벽 defect passivation 증거로 해석하지 않음.
+다음:
+Wu2022 Fig2~4 우선 검토, Wu2023 Baseline 및 Furtmayr confinement과 한계를 비교; simulation 결과 확보 후 matched-current 물리 검증.
+
+---
+
+## 2026-11-16T04:28:52Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / NEXT ACTION
+상태: OBSERVED (n21 final log row), USER REPORTED (other nodes running), UNVERIFIED (normal exit/new mesh)
+
+학교 출력 n21 마지막 anode 5.000E+00 V, raw electron1.695E-04, hole2.399E-03, conduction2.568E-03. 이전 school experimental SDE `NCEdge=5e18` edit 관찰 → A0m 의도 조건이나 새 Mesh/PP 도핑반영/정상 solver 완료 로그는 미제공. 다른 SWB 노드들은 사용자가 현재 돌리는 중이라 말함.
+
+매우 중요한 명명: NCEdge5e18인 동일 프로젝트에서 NCN/NCGa ON은 **A1n(Si retained+Carbon)**이지 A1u(Si0+Carbon)가 아님. A0m=Si retained/C OFF, A0u=Si0/C OFF, A1u=Si0/C ON. NtSide ON/OFF 별도 축. 작업 중 SDE 수정 금지.
+
+제안(미실행): 기존 running A0m 계열 완료 및 저장 → 독립 SWB 복사본에서 NCEdge0 SDE→Mesh 재생성, A0u 한 개 5V 확인(이전 2.336V 실패) → A0u 성공한 경우 별도 복사본 A1u Carbon ON 실행. 자원 낭비/기존 baseline 덮어쓰기 방지. GPT는 학교 코드/시뮬레이션을 실행하지 않음.
+
+---
+
+## 2026-11-16T04:29:07Z — soybeanmilk0514-jpg
+
+[2026-11-16 13:24+ KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / BLOCKER
+상태: OBSERVED (real school terminal) / UNRESOLVED (cause and final termination)
+요약:
+GPT FIX1 Bnull n25 actual school last three anode rows all 3.265E-01V (~0.3265V), Quasistationary t~0.065291. #iterations larger than50 and Newton did not converge, steps shrinking down to 5.3107e-08. 5V clearly NOT reached in supplied log. Last out snippet still in new trial and final MinStep/job status NOT observed. Mesh/50-iteration+damping FIX1 not proven to resolve earlier issue.
+근거: user supplied n25_des.log last anode and n25_des.out last steps/tail.
+변경: only GitHub metadata. School source/solver unchanged by ChatGPT.
+다음: if still stalled stop copied Bnull n25 only; compare genuine successful school Wu baseline source/preprocessed file with GPT branch and inspect spatial error before targeted correction. Avoid blind Newton iteration escalation.
+
+---
+
+## 2026-11-16T04:35:16Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED (actual school diff), UNRESOLVED (root cause)
+요약: 주수빈이 성공 학교 Wu CMP_WU_Copy와 GPT FIX1 Bnull `sdevice_des.cmd`의 diff-u 결과 제공. 코멘트/공백 제외 실제 두 차이만 확인: global Magnesium IncompleteIonization→GaN pGaN 3 region scope, QS inner Coupled→Iterations50 LineSearchDamping0.1. 기존 22개 damaged Trap, global Physics, Plot, Math, File/Grid 등 다른 부분은 diff에서 변경되지 않음. 이 두 설정이 0.3265V Newton 불수렴을 유발했다는 증거는 아직 없음. 
+근거: 사용자 터미널 `diff -u` 원문.
+변경: 기록만, 학교 코드/mesh/시뮬레이션 미변경.
+다음: read-only 실제 성공 Wu Baseline과 실험 GPT Bnull의 SDE 전체 diff 및 .par cmp 확인. 소스/mesh/doping 차이 확인 전 solver 추가 증량 금지.
+
+---
+
+## 2026-11-16T04:38:06Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / PROGRESS / HANDOFF
+상태: PROPOSED (문헌-파라미터 출처 고정 및 비교 검증 gate), NO SCHOOL CODE/RUN
+
+요약:
+사용자가 Project B 논문들의 물리적 효과/우리 planar 소자와 구조 차이/각 수치 근거를 정확히 정의하고 과거 다중 문헌 혼합 문제를 피하도록 요청. 주요 논문 3편 공식 근거와 기존 2026-11-08 B freeze를 재검토한 뒤 신규 설계 출처 관리 문서 `CMP/PROJECT_B_PARAMETER_PROVENANCE_20261116.md` 생성.
+- Wu2023 Micro and Nanostructures DOI10.1016/j.micrna.2023.207542: working Wu10um baseline의 유일한 공통 physical/numerical source. School original 보호, pGaN120nm/EBL0/NBg1e15/NtSide1e18 등 pilot 파라미터는 논문 직접 수치라고 허위 주장 금지.
+- Yuanpeng Wu2022 Light Science Applications DOI10.1038/s41377-022-00985-4: N-polar nanowire AlGaN barrier 약15%를 B1 **initial** Al fraction으로만 사용. 논문 QW12nm, In~30%, graded shell polarization doping 및 QCSE/strain 효과를 planar constant-Al guard로 이전 금지. 논문 Fig4 20nm strain penetration은 VERTICAL, B 20nm lateral width 근거 아님.
+- Furtmayr2011 PRB DOI10.1103/PhysRevB.84.205303: high-Al nanowire radial field optical penalty caution. x~30% nanowire emission 특성은 B 최적값 아님.
+- 기존 B0/Bnull/B1 freeze 보존: 5nm bilateral Dmg +22 trap regions, 20nm/side interior all-nine-MQW/QB edge guard; Bnull GaN, B1 Al0.15Ga0.85N, total original InGaN projected width lost 0.4% as first-run CMP hypothesis.
+- 중요 confound: 이전 GPT FIX1 candidate는 Mg incomplete-ionization scope, mesh collar, QS numerical options도 달라짐. 역사적 B0와 바로 비교해 AlGaN 효과 주장 금지. 학교 성공 원본 비교 후 필요 시 common settings B0-regression, Bnull, B1 전부 동일하게 적용해 단일 물질 변화만 분리.
+
+근거:
+CMP/PROJECT_AB_WU10_DESIGN_FREEZE_20261108.md, CMP/WORKING_BASELINE_WU2023.md, 논문 출처 원문.
+
+변경:
+CMP/PROJECT_B_PARAMETER_PROVENANCE_20261116.md 생성 및 JuSubin/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md, LIVE_STATE.json, RELAY.md 동기화. 실제 학교 소스·Mesh·Solver·결과는 변경 없음.
+
+다음:
+실제 학교 성공 baseline SDE/SDevice/.par 및 pp/log와 GPT/Claude 코드의 full diff → common numerical/physical controls/B0 regression → Bnull/B1 5V 검사 → 동일 terminal current에서 absolute QW radiative, Dmg nonradiative, EC/EV/field/lateral J/Vf 해석.
+
+---
+
+## 2026-11-16T04:38:56Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / BLOCKER
+상태: OBSERVED (SWB screenshot) / UNRESOLVED (final fatal)
+요약: GPT Bnull CMP_PROJECTB_1.0.1_GPT_BNULL SWB 화면에서 n25 빨간 failed 확인. 파라미터 NtSide=1e18, Vstop=5, TrapSigmaN=1e-15. SDE n1 done 표시. 이전 같은 프로젝트의 Newton 반복/0.3265V 정체가 원인일 가능성은 높으나 스크린샷만으로 최신 최종 에러 문구를 확정할 수 없음.
+근거: 사용자 제공 SWB node n25 빨간 상태 스크린샷, 앞선 n25 log.
+변경: GitHub 기록만; 학교 파일/mesh/솔버 미수정.
+다음: read-only n25_des.out/.err/.log tail 및 final anode 받고 정확한 실패 확인, 그 다음 실제 Baseline-vs-Bnull SDE/par 비교.
+
+---
+
+## 2026-11-16T04:42:00Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / BLOCKER
+상태: OBSERVED (학교 최종 n25 out/err/log) / UNRESOLVED (물리·mesh root cause)
+
+요약:
+GPT FIX1 Bnull 최종 실패 확정: n25 anode last 0.3265V (target5V), Newton RHS 폭증 >1e10, Supernodal zero pivot 2회, Step-size less than MinStep 8.3174e-11. `Sentaurus Device simulation finished`는 5V 수렴 증거가 아님. 마지막 C-norm max Poisson(x=.1242676,y=.006103516) 좌측 GuardL Barrier0; Electron(x=.161,y=9.21875)/Hole(x=.164,y=9.453125) QW4/Barrier4 주변, Guard 내부가 아님. 근본 원인 확정 불가. wallclock1705.73s peak954MB.
+근거:
+실제 학교 CMP_PROJECTB_1.0.1_GPT_BNULL/n25_des.out, .err, .log user paste.
+변경:
+GitHub 연구 상태만 기록, 학교 코드/메쉬 미수정. 이 GPT FIX1 n25 결과는 5V FAIL.
+다음:
+기존 학교 성공 Wu Baseline과 GPT 실험 SDE/.par 및 pp25/mesh 차이를 읽기 전용 비교하고, solver/physics 변경은 B0 regression을 거쳐 검증. Iterations/MinStep 무조건 증가 금지.
+
+---
+
+## 2026-11-16T04:48:42Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / NEXT_ACTION / HANDOFF
+상태: OBSERVED (실제 학교 SDE/par diff) / PROPOSED (Bsplit 대조실험 미실행)
+
+요약:
+사용자가 제공한 학교 원본 Wu 성공 Baseline vs GPT FIX1 Bnull의 SDE 및 sdevice.par diff를 분석. sdevice.par 이온화(E0.15/alpha0/g4/Xsec1e-12), LatticeParameters, Thermionic Formula1, PooleFrenkel epsPF9.5 등 수치 동일; 주석/공백만 다름. SDE pGaN/nGaN 두께·도핑·Contact와 QW3nm×4/QB8nm×5, 5nm damage 보존. 실제 기능 차이는 9개 MQW/QB layer의 새 20nm/side GaN BGuard material replacement 및 근접 mesh collar, 5-way region split. 새 구조/재료로 인해 측면 InGaN-GaN 경계가 생기지만 이것이 n25 0.3265V zero-pivot 원인이라는 것은 아직 미확인.
+다음:
+기존 Bnull과 Wu parent 보호. Bnull 복사본 'BSPLIT'에서 BGuardL/R 재료 파라미터만 `guardMaterial nval pval guardXAl` → `material nval pval alloy` 로 각각 변경하여 같은 geometry/mesh/solver에서 원래 QW edge InGaN 물질을 복원하는 통제실험 제안. SDE→mesh→preprocess→n25만 실행 후 도달전압/로그 확인. 성공/실패에 따라 material-interface vs split/solver fork. 새 코드나 학교 실행은 이번 턴에서 발생하지 않았음.
+
+---
+
+## 2026-11-16T04:54:59Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / FIX PROPOSAL
+상태: PROPOSED / SCHOOL UNRUN
+
+요약:
+사용자가 Bsplit 추가 대조실험 중단 및 Bnull 직접 수정을 요청. 최종 GPT FIX1 Bnull n25는 0.3265V (target5)에서 RHS>1e10 발산, Supernodal zero pivot, MinStep8.3174e-11로 실패 확정. 실제 성공 Wu 학교 SDevice와 GPT Bnull SDevice의 기능상 차이는 전역 Mg IncompleteIonization→3 pGaN scoped, QS Coupled→Iterations50 LineSearchDamping0.1 두 가지. .par 물성 수치 동일, SDE에서는 의도한 20nm GaN guard/mesh 분할만 새로 도입.
+변경 계획:
+GPT Bnull 복사본 SDevice 소스만 학교 성공 Wu 원본으로 guarded backup 후 byte-identical 복사하여 두 변화를 되돌리는 FIX2 시도. Bnull SDE/material/mesh/parameter, 원래 Wu Baseline, 다른 B1(AlGaN Mg 오류 때문에 scoped 유지), Claude 후보는 변경하지 않음. Preprocess 후 n25 5V 단일 케이스 실행. 이는 근본 원인 확정이나 수렴 성공 주장이 아님.
+근거:
+사용자의 실제 diff 및 최종 실패 로그. T-2022.03 설치환경 새 실행 증거 아직 없음.
+다음:
+학교 소스 복사 성공 출력 확인, preprocessed pp25가 변경된 소스인지 확인, n25 재실행 결과 로그 확보.
+
+---
+
+## 2026-11-16T05:05:42Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER / HANDOFF
+상태: OBSERVED / UNRESOLVED
+요약: GPT Bnull sdevice_des.cmd QS 50/damping0.1 -> bare Coupled 복원 guarded command 실행 결과 STOP: Solver 설정 확인 필요. 원래 패턴 grep -Fc가 정확히 1이 아니라 종료. Mg검사, 백업, sed 수정은 해당 실행에서 수행되지 않음. 실제 Solver 내용이나 이전 FIX2 적용 여부 미확인.
+근거: 사용자 터미널 출력.
+변경: 연구 로그만. 학교 파일 변경 없음.
+다음: read-only Math/Solve 블록과 Mg 선언/백업 목록 확인 후 현재 실제 소스에 맞는 단일 수정. 원본 Wu 및 독립 B1/Claude 보존.
+
+---
+
+## 2026-11-16T05:08:02Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / NEXT ACTION
+상태: USER DECIDED (names), PROPOSED (geometry sweep); NO SCHOOL RUN/EDIT
+
+요약: Project A 주 모델 이름을 정확히 3개로 통일: Si_O_C_X (Si 유지/C OFF; 구 A0m), Si_O_C_O (Si 유지/C ON; 구 A1m), Si_X_C_O (Si 제거/C ON; 구 A1u). Si_X_C_X는 설명용 조합일 뿐 채택된 네 번째 주 모델 아님. 선택적 접미 D_ON/OFF, W<nm>_H<nm>. 현재 8개 SWB 파라미터 NCN{0,6e17}×NCGa{0,3e17}×NtSide{0,1e18}, Vstop5는 고정 200×200nm 조건에서 트랩/손상 비교로서 길이 스플릿이 아님.
+근거: 현재 사용자 승인 및 SWB 화면; 기존 Lee n21 5V 로그.
+변경: 연구 기록 및 이름/향후 계획만; 학교 source, 메쉬, solver, running outputs 변경 없음.
+다음: 현재 실행 중 프로젝트 보호; 완료 뒤 노드별 5V 및 정상 종료 확인. 독립 복사본에서 Si_X_C_O 재구성/메쉬 검증, C 영역 크기는 Coarse→10nm refinement→Fine Mesh 재검증. 핵심 3모델 외 모델을 임의 확대하지 않는다.
+
+---
+
+## 2026-11-16T05:08:36Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / NEXT_ACTION
+상태: OBSERVED (실제 학교 source), UNRUN (복원 후 새 n25)
+요약: guarded QS patch 재실행이 STOP(원래 Coupled50/damping0.1 패턴 부재). 사용자 read-only 학교 출력으로 실제 Bnull sdevice_des.cmd Math Iterations35 NotDamped100, QS inner Coupled { Poisson Electron Hole }, global IncompleteIonization Mg 단일 선언(29행) 확인. 학교 성공 Wu baseline SDevice 기능상 설정이 이미 원복됨. 해당 복원 실행 시점/주체는 확인 안 됨. bak* 백업 파일 목록도 없음. 이전 0.3265V MinStep/zero pivot 실패는 전의 FIX1 numerical deck으로 실행된 결과이며 현재 소스 재실행은 미확인.
+변경: GitHub 연구 상태만; GPT 학교 파일 변경하지 않음.
+다음: Bnull SWB n25 Preprocess하여 pp25에 최신 bare QS/global Mg/Grid=n1_msh.tdr 반영 확인한 뒤 n25만 다시 돌려 5V 여부 검증. 원본 Wu, B1/Claude 변경하지 않음; B1 AlGaN에는 전역 Mg 불필요/오류 위험.
+
+---
+
+## 2026-11-16T05:10:52Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / NEXT ACTION
+상태: OBSERVED source excerpt, UNRESOLVED actual mesh/run provenance
+
+요약: 실제 학교 `CMP_A/CMP_WU_Copy_Copy/sde_dvs.cmd` 읽기 전용 grep에서 line30 wC=.200µm=200nm(가로), line31 dC=.200µm=200nm(세로), line32 NCEdge=5e18cm^-3(Si 유지) 확인. line100-104 xc=xa+dC, y1=Wdmg+wC, y2=Wm-Wdmg-wC. line112-113 CEdgeL/R_nGaN 사용. line177-182 Ref.CEdge 존재하지만 수치 refinement-size 행은 grep에 빠져 정확한 메쉬 크기 아직 미확인. line29 Si-OFF 설명 주석은 현재 line32 define과 불일치하는 과거 주석임.
+
+근거: 사용자 학교 서버 grep 출력. 실제 실행 메쉬 도핑 갱신/8개 노드 최종 정상 종료는 이 출력으로 검증 불가.
+변경: GitHub 기록만. 학교 SDE/mesh/SDevice 및 실행중 작업 미변경.
+다음: read-only sed -n '165,183p' SDE에서 Ref.CEdge 수치 확인 후, 현 8개 완료·보존한 다음 독립 프로젝트의 Si_O_C_X, Si_O_C_O, Si_X_C_O 가로/세로 크기 스플릿을 별도 재메쉬로 계획.
+
+---
+
+## 2026-11-16T05:13:26Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: DESIGN REVIEW / NEXT ACTION
+상태: PROPOSED, NO SCHOOL EXECUTION
+
+사용자가 200x200nm를 최적화의 기준으로 삼는 근거를 지적. 200nm는 기존 채택된 초기 시험 형상일 뿐 문헌 최적값이 아니다. 5~20nm까지 얇은 측벽 C 영역도 잠재 후보이며 우열은 아직 확인 불가. GPT의 새 실험 제안: 우선 wC/dC 각각 {10,50,200}nm의 3x3=9 조합으로 넓은 탐색, 이후 유망한 구간에서 5~20nm 및 세밀한 10nm 간격, Fine Mesh 검증. `Si_O_C_O` 및 `Si_X_C_O`는 동일 가로·세로/physics/손상 조건에서 비교, `Si_O_C_X`는 고정 기준. 5nm Damage/3nm QW/C 경계 국부 메쉬 보존. 아직 사용자 최종 채택 아님.
+근거: 실제 학교 SDE wC=dC=.200µm; CMP PROJECT_AB_WU10_DESIGN_FREEZE 초기 설계 가정; Cao 2023 GaN-on-Si C-buffer는 다른 소자 구조.
+변경: GitHub 연구 계획 기록만, 현재 돌아가는 8 노드 및 학교 코드 변경 없음.
+다음: 현재 실행 완료 후 C-edge 메쉬 분해능과 5V 검증, 실제 sweep 설계 승인.
+
+---
+
+## 2026-11-16T05:15:12Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / NEXT ACTION
+상태: OBSERVED (학교 SDE source) + PROPOSED (geometry sweep; 학교 실행 없음)
+
+실제 학교 `CMP_A/CMP_WU_Copy_Copy/sde_dvs.cmd` 165-183행에서 좌/우 CEdge Win 및 `sdedr:define-refinement-size "Ref.CEdge" 0.010 0.010 0.002 0.002` 확인. µm 단위에서 최대 x/y 10nm, 최소 x/y 2nm 지정. 앞선 grep에서 wC=dC=.200µm=200nm, NCEdge5e18 source 확인. 생성된 메쉬 셀 분포 및 실행노드 최신 메쉬를 이 정보만으로 보증할 수 없음.
+
+주의: 10nm 폭/깊이에 max10nm 조건을 그대로 적용하면 충분한 메쉬 분할 보장 안 됨. 좁은 CEdge는 해당 영역 및 계면 국부 메쉬를 따로 세밀화하고 최종 mesh independence 확인할 것. MQW3nm/Dmg5nm 기존 국부 해상도 보존.
+
+제안(실행/승인 전): 현재 8노드 완료 후 읽기 전용 5V 도달/정상 종료 확인 및 결과 보존. 독립 복사에서 10×10, 50×50, 200×200 nm 대표 형상부터, 이후 가로/세로 {10,50,200}nm 3×3 전개. 세 가지 사용자 주 모델 Si_O_C_X(기준 고정), Si_O_C_O, Si_X_C_O 유지. 실행중 SDE·메쉬·SDevice 변경 없음.
+변경: GitHub 메타데이터만.
+
+---
+
+## 2026-11-16T05:16:38Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / NEXT_ACTION
+상태: OBSERVED (school preprocessed configuration) / UNRESOLVED (new run)
+
+요약:
+Bnull 학교 pp25_des.cmd lines221-239 실제 Math/Solve: Digits5, ErrRef(E,H)=1e8, Iterations35, NotDamped100; Poisson150, P/E/H150; QS InitialStep1e-4 MinStep1e-10 MaxStep.02, Increment1.25 Decrement2.0, Goal anode5V, inner bare Coupled. 앞서 pp25 Grid=n1_msh.tdr, Parameter=pp25_des.par, global Mg IncompleteIonization 1개도 확인. 최신 유효 PP의 solver 설정은 과거 Wu baseline과 일치. 이것은 새 5V 수렴을 뜻하지 않음.
+
+근거:
+- 주수빈 학교 터미널 grep 출력 / CMP_PROJECTB_1.0.1_GPT_BNULL/pp25_des.cmd lines221-239
+
+변경:
+- GitHub 연구 기록만, 학교 코드/메쉬/실행 미변경
+
+다음:
+- SWB NtSide1e18/Vstop5 조건 n25만 재실행, 마지막 anode 5V/정상 종료/out/err 검증. B1/Wu 원본 보호.
+
+---
+
+## 2026-11-16T05:19:42Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / NEXT ACTION
+상태: USER REPORTED COPY, SCHOOL EDIT/RUN UNVERIFIED
+
+요약: 현재 8개가 실행 중인 Project A를 사용자가 별도 복사했으며, 이후 CEdge 가로/세로 wC/dC 변경과 Coarse-to-Fine 크기 스플릿은 복사본에서 진행하기로 함. 정확한 복사 경로 및 입력/메쉬 독립성은 아직 미제공. 원본 실행중 SWB 입력과 결과는 보존.
+다음: 복사본 정확한 절대 경로를 받아 독립성 확인 후, 50×50 nm 대표 한 케이스만 SDE/메쉬/PP/5V 테스트; 이후 10-200nm 폭/깊이 스플릿. 주 모델 Si_O_C_X, Si_O_C_O, Si_X_C_O만 사용. 10nm 얇은 CEdge는 10nm max 메쉬를 그대로 신뢰하지 말고 세밀화·메쉬 수렴 검증.
+변경: GitHub 연구 기록만. 학교 코드/메쉬/계산 변경 없음.
+
+---
+
+## 2026-11-16T05:20:24Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER / RESULT / HANDOFF
+상태: OBSERVED (13:19 KST license denied), UNRESOLVED (current process/5V)
+
+요약:
+GPT Bnull n25 새 실행의 실제 n25_des.out: 2026-11-16 13:19:02 KST PID 55438, "unable to check out 1 sdevice license(s)", "Currently no/not enough license(s)", "Waiting for license feature sdevice to become available ...". 해당 시점 n25_des.log의 anode 행 없음. 이 상태는 Newton 계산의 수치 실패가 아니라 SDevice 라이선스 체크아웃 대기 상태. 계속 대기인지 이후 라이선스 획득/실행 여부는 별도 확인 필요. .err datexcodes redefined 경고는 현 blocker 원인 아님. pp25의 기존 Wu식 Math/Solve, Grid, Mg 선언 확인은 유지.
+
+근거:
+- 사용자 학교 터미널: CMP_PROJECTB_1.0.1_GPT_BNULL/n25_des.out, n25_des.log, n25_des.err
+
+변경:
+- GitHub TIMELINE/ERROR_LOG/CURRENT_STATUS/NEXT_ACTIONS/LIVE_STATE.md/.json/RELAY 기록만, 학교 코드 변경 없음
+
+다음:
+- read-only ps PID55438 및 n25 최신 out/log/err로 라이선스 대기/수치 계산 여부 확인. 기존 작업이 살아 있으면 중복 실행 금지. 5V 정상 종료 아직 미확인.
+
+---
+
+## 2026-11-16T05:23:10Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / HANDOFF
+상태: USER REPORTED (학교 CMD/PAR 복사), UNRESOLVED (최신 PP/5V)
+
+요약:
+주수빈은 GPT Bnull SDevice의 `sdevice_des.cmd`, `sdevice.par`를 모두 기존 동작 Wu Baseline 것으로 그대로 복사해 실행했다고 보고. Bnull GaN/InGaN guard에 대해 이러한 baseline physics/numerical deck 복원은 비교 타당성상 합리적 출발점. 실제 학교 파일 byte cmp와 최신 pp25_des.par/최종 5V 미검증. B1 AlGaN에는 global Mg ionization을 그대로 복사하면 과거 물성 오류 위험.
+
+근거:
+- 사용자 채팅의 직접 보고, 과거 pp25 CMD 검증, 가장 최근 license checkout 실패 로그
+
+변경:
+- Github 연구 로그만 업데이트; AI는 학교 TCAD 파일/실행 직접 수정하지 않음
+
+다음:
+- 마지막 복사 후 CMD/PAR SWB Preprocess 반영 및 SDE region/trap 대응 확인. 라이선스 대기/진행 확인 후 Bnull n25 5V 결과 검증. 원본 Wu 및 B1 보존.
+
+---
+
+## 2026-11-16T05:34:13Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / CODE PROPOSAL
+상태: PROPOSED / STATIC MOCK CHECK PASS / SCHOOL UNRUN
+
+요약:
+B1의 complete sdevice_des.cmd/sdevice.par는 과거 Wu3.2 GitHub PROPOSED template를 재구성해 덮어쓰지 않고 학교 성공 Wu Baseline 원본 CMD/PAR을 로컬에서 가져와 생성하는 복붙 스크립트로 준비. CMD의 전역 Mg IncompleteIonization 1개만 삭제하고 Clean_pGaN/DmgL_pGaN/DmgR_pGaN Physics 블록에 지역 한정 적용. 원래 22개의 측벽 Damage Traps 및 Solver, File macros, contact/physics/Plot 그대로 보존. sdevice.par는 Baseline과 byte-identical 복사. B1 SDE AlGaN 확인 및 기존 B1 파일 자동 backup 포함.
+
+근거:
+- 학교 이전 pp25 actual Wu-style Math/Solve + global Mg 확인, ProjectB B1 AlGaN Mg species error 이력, GPT local mock 22 traps/3 ionization/unchanged par 체크 통과.
+
+변경:
+- GPT 답변용 로컬 generator artifact 생성; GitHub 상태/개인 타임라인에 PROPOSED 기록. 실제 학교 파일/시뮬레이션 AI 수정·실행 없음.
+
+다음:
+- 사용자가 B1 실험 복사본에서 생성 코드 1회 실행, SWB n25 PP 후 3개 Mg/22 traps/pp25_des.par/Al0.15Ga0.85N 확인. 라이선스 확보 후 5V 실행 로그 판단. Bnull/B0 동일 Mg-scope regression 확보 후 B1-Bnull 비교.
+
+---
+
+## 2026-11-16T05:43:44Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: CODE PROPOSAL / HANDOFF
+상태: PROPOSED/UNRUN, SCHOOL CODE NOT CONFIRMED MODIFIED
+
+사용자: 현재 실행중 CMP_WU_Copy_Copy 복사본의 이름에 Copy가 한 번 더 붙음, 코드 수정은 반드시 전체 복붙 가능한 터미널 명령으로 제공 요구. 경로 가정: /user/semi/semi437/CMP_A/CMP_WU_Copy_Copy_Copy (학교 미확인). 제시한 guarded bash 명령은 해당 복사본의 sde_dvs.cmd만 변경: 파일 존재·원본과 비동일성·원래 NCEdge5e18 1회·wC,dC .200·SDevice CEdgeL/R 및 NCN/NCGa macro 검사를 통과한 경우에만 시간표시 백업 후 NCEdge 0.0으로 치환. 실행 결과 미제공. 원본 8-node ongoing project 불변.
+
+다음: 사용자 명령 성공/STOP 출력 확인, 복사 프로젝트 SDE→새 mesh→SWB preprocess→SDevice 한 조건 NCN6e17 NCGa3e17 NtSide1e18 Vstop5 실행, 마지막 anode/정상 종료 확인. 성공 전 모델 검증 완료 주장 금지.
+
+---
+
+## 2026-11-16T05:46:33Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: WORKFLOW CORRECTION / CODE HANDOFF
+상태: PROPOSED / UNRUN
+
+사용자가 학교 SWB Tool 편집기 안에서 코드를 직접 붙여넣어 사용한다고 명시함. 이전 터미널 bash patch가 작업 방식에 맞지 않아, 이후 필요 Tool(SDE, SDevice, SDevice par), 실제 붙여넣을 코드 부분, SWB parameter table, 실행 순서로 각각 안내해야 함.
+
+새 Si_X_C_O 200x200nm: 복사본 실제 SDE 기존 wC .200, dC .200 유지, NCEdge5e18→0.0만 변경. 다른 소자/메쉬/physics/solver를 변경하지 않음; 기존 복사본 SDevice에 CEdgeL/R 트랩과 NCN/NCGa 존재 확인, 기존 par 유지. SWB NCN6e17, NCGa3e17, NtSide1e18, Vstop5; TrapEt .75, TrapSigmaN/P1e-15는 최신 학교값 확인 필요. SDE 재실행/재메쉬 후 한 SDevice 노드 5V 시도.
+
+주의: 복사된 실제 학교 SDE/SDevice/.par 전체 원문은 현재 제공되지 않았으며 Github Wu3.2 후보는 실제 학교 성공 코드와 byte 동일성 미확인. 임의 full deck으로 덮어쓰지 않음. 학교 실행/수정 증거 없음. GitHub 기록만 변경.
+
+---
+
+## 2026-11-16T05:49:45Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER / HANDOFF
+상태: OBSERVED (license unavailable at 13:40) / UNRESOLVED (current process and 5V)
+
+요약:
+학교 Bnull n25_des.out에서 13:40:06 KST PID64105 새 프로세스가 SDevice license checkout 실패 후 waiting. n25_des.log anode 행 없음. 기존 13:19 PID55438이 중지됐는지 여전히 대기인지 확인되지 않음. .err datexcodes redefined 경고는 라이선스 실패의 원인 아님. 수치 solver/물리 코드 오류 판정 금지.
+
+근거:
+- 사용자 터미널 n25_des.out/.log/.err
+
+변경:
+- GitHub 기록만, 학교 코드/solver/mesh 수정 없음
+
+다음:
+- ps로 PID 55438/64105 확인, 최신 out/log 확인, 중복 제출 자제, 라이선스 확보 뒤 5V 검증.
+
+---
+
+## 2026-11-16T05:54:39Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: CODE AUDIT / BLOCKER
+상태: OBSERVED (school files), UNRESOLVED (PAR functional diff)
+
+요약:
+실제 학교 B1 `sdevice_des.cmd`는 동작 Wu Baseline CMD와 diff -u 출력 없음(동일), 따라서 B1 전역 Mg ionization line29가 그대로 남아 있고 region-scoped Mg 3개 패치가 아직 실제 학교 파일에 적용되지 않았음. Trap 선언 22개는 그대로. B1 `sdevice.par` vs Wu baseline `cmp`는 DIFFERENT, 기능적 차이인지 주석/공백인지 미확인. 타임스탬프 B1 CMD 13:09:38 / PAR 12:15:48 KST. 이전 B1 코드 생성 제안이 학교에 적용된 것으로 판단하면 안 됨.
+
+근거:
+- 주수빈 학교 터미널 diff/grep/cmp/stat 출력
+
+변경:
+- GitHub 상태 기록만, 실제 학교 파일 변경 없음
+
+다음:
+- `diff -u`로 PAR 차이를 먼저 확인한 뒤, B1 원본 백업과 guarded Mg region-only 3개 수정(파라미터 차이는 근거에 따라 처리). 원본 Wu와 Bnull 유지, Preprocess 후 PP 확인.
+
+---
+
+## 2026-11-16T05:55:58Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: CODE DRAFT / HANDOFF
+상태: PROPOSED, LOCAL STATIC CHECK ONLY, NO SCHOOL RUN
+
+SWB 내 SDE/SDevice/Parameter 전체 코드를 붙여넣을 수 있도록 학교 독립 복사본용 Si_X_C_O 200x200nm 한 케이스 전체 후보 생성. SDE 140 lines, 5519 bytes(괄호 static 균형, 예상 30+6=36 regions), SDevice 250 lines, 6129 bytes(22 Damage Traps+2 CEdge blocks, braces balanced), sdevice.par 397 bytes 및 SWB 7 macro table 제공. 채팅 ZIP: CMP_PROJECTA_Si_X_C_O_200nm_SWB_CANDIDATE.zip. 실제 T-2022.03 컴파일/메쉬/SDevice 수렴 미확인.
+
+중요: 전체 재구성 출처는 GitHub CMP_BASELINE_3.2.0_WU2023PHY **PROPOSED** 후보이며 실제 학교 성공 SDE/SDevice/par와 byte 동일성은 미확인. 기존 학교 성공 코드를 추정하여 동일하다고 주장하지 않음. 실제 원본과 physics/mesh/solver 차이 가능, strict matched-Si 비교는 actual diff 필요. 학교 실행중 8노드 프로젝트/원본 baseline 및 proprietary source GitHub 업로드 없음.
+
+설계 조건: CEdge 200x200nm, NCEdge0 local, C_N Ev+0.90/6e17, C_Ga Ec-0.11/3e17, original Dmg NtSide1e18, Vstop5, TrapEt.75, sigmaN/P1e-15. 다음: 독립 SWB copy에서 Tool 각각 전체 코드 검증→SDE/mesh & region/dopant→SDevice PP macro→한 노드 5V 마지막 전압/정상 종료 확인.
+
+---
+
+## 2026-11-16T06:01:03Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / CODE PROPOSAL
+상태: OBSERVED (PAR diff), PROPOSED (B1 CMD edit, mock check PASS), SCHOOL UNRUN
+
+요약:
+학교 B1 vs 실제 Wu baseline `sdevice.par` diff는 주석·공백뿐; LatticeParameters, GaN Mg ionization, Thermionic, PooleFrenkel 활성 값은 모두 동일. PAR 내용 변경 불필요. B1 CMD는 여전히 baseline과 동일하며 전역 Mg ionization 선언(22개 traps 유지). B1 CMD만 대상으로 baseline 파일 byte 동일 및 region/trap 확인 후 자동 백업, 전역 Mg 제거 및 Clean_pGaN/DmgL_pGaN/DmgR_pGaN 3개 region-local Mg로 바꾸는 copy-paste 명령어 준비. Python 문법 및 synthetic fixture 변환 PASS, 실제 학교 파일 수정 및 SDevice 5V 없음.
+
+근거:
+- 사용자 실제 학교 diff 출력, 현재 B1 CMD grep/diff, 로컬 patch mock test.
+
+변경:
+- GitHub 문서/로그만 갱신. 학교 Wu/Bnull/B1 파일 ChatGPT 직접 미변경.
+
+다음:
+- 사용자가 B1 CMD-only guarded patch 실행 후 결과 확인, SWB Preprocess B1 n25 Mg 3개/22 trap/정상 Grid/Parameter 확인. 필요시 AlGaN material 모델 로그 검증 및 동일 Mg-scope Bnull/B0 regression.
+
+---
+
+## 2026-11-16T06:02:00Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: PROGRESS / SCREENSHOT REVIEW
+상태: OBSERVED (SWB GUI setup only); RUN UNVERIFIED
+
+복사한 SWB screenshot row에서 NtSide1e18, Vstop5, TrapEt.75, TrapSigmaN1e-15, TrapSigmaP1e-15, NCN6e17, NCGa3e17 등 7개 설정을 확인. 왼쪽 SDE→첫 SDevice 이후 SVisual(n73), 맨 오른쪽 별도 SDevice(n74)가 더 있으나 존재 목적/command 파일 불명. 최초 새 Si_X_C_O 200nm 실험에는 왼쪽 SDE+첫 SDevice만 필요, SVisual은 이후 분석 optional, 추가 SDevice는 삭제/실행하지 않고 보류 권고.
+
+Screenshot으로 SDE NCEdge=0 반영, ParameterFile 존재, 실제 5V 수렴은 확인할 수 없음. 원본 SWB 실행중 8개 작업 변경 금지.
+다음: 복사본 첫 SDE 실행 결과(메쉬 성공 및 regions), 첫 SDevice PP+1 case 정상 5V 로그 확인.
+
+---
+
+## 2026-11-16T06:05:14Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: CODE PROPOSAL / HANDOFF
+상태: PROPOSED / STATIC PASS / SCHOOL UNRUN
+
+요약:
+사용자 요청에 따라 B1용 SDevice CMD 전체 코드 `CMP_PROJECTB_B1_sdevice_des_FINAL.txt`(242줄, 6189 bytes, SHA256 16d3c7ab459adae1a99ee725f1c44e47613db758b2b322f3e9f0c2644c68e8d2) 생성. GitHub `CMP_BASELINE_3.2.0_WU2023PHY` PROPOSED Wu 후보를 토대로 전역 Mg IncompleteIonization만 제거하고 Clean_pGaN/DmgL_pGaN/DmgR_pGaN 각 지역에 동일 선언 추가. Damage Trap 22개, File/Plot, Math/Solve, @Vstop@ 유지. 22 traps / 3 scoped Mg / 23 region blocks / balanced braces 정적 검사 PASS. 학교 성공한 실제 Wu source와 byte identity 검증 없음. 현재 B1 PAR의 물리값은 학교 Baseline과 동일(주석만 다름)하여 PAR 재작성 불필요.
+
+근거:
+- 연결된 GitHub Wu3.2.0 후보 텍스트, 사용자 학교 실제 B1 CMD/PAR 비교 기록, ChatGPT 로컬 정적검사/아티팩트 SHA
+
+변경:
+- 사용자에게 TXT 산출물 제공, GitHub 진행사항 기록. 학교 코드/TCAD 실행 ChatGPT 직접 변경하지 않음. 공개 GitHub에 proprietary 코드 원문 커밋하지 않음.
+
+다음:
+- 사용자 학교 B1 CMD 백업, 실제 Wu source와 변경 차이 검증 후 B1에 복사 적용, SWB pp25 검증, 라이선스 확보 시 5V 실행. 원본 Wu/Bnull 보호.
+
+---
+
+## 2026-11-16T06:09:34Z — soybeanmilk0514-jpg
+
+[2026-11-16 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: CODE PROPOSAL / HANDOFF
+상태: PROPOSED / STATIC CHECK PASS / SCHOOL UNRUN
+
+요약:
+사용자가 최종 Baseline이라 명시한 전체 sdevice_des.cmd를 채팅에 제공. 본문 header 자체는 `CMP_BASELINE_3.2.0_WU2023PHY — PROPOSED/NOT RUN`으로 기재돼 있으므로 사용자 진술/코드 header 출처를 구분. 해당 내용으로 B1 complete `CMP_PROJECTB_B1_sdevice_des_FROM_FINAL_BASELINE.txt` 및 .cmd 파일 생성(244줄 6348 bytes SHA256 e89012705b0715476a899927d6fc3ebd6f477d4113381353004e849db5565e48). Baseline 구조는 239줄 6183 bytes. 전역 Mg IncompleteIonization 제거, Clean_pGaN/DmgL_pGaN/DmgR_pGaN에만 선언 추가, 모든 22 damaged Traps/Math/Solve/Plot/File 그대로. Diff와 정적 검사 PASS. 학교 파일 변경 및 5V 결과 검증되지 않음. B1 PAR 활성 수치는 Baseline과 동일(주석만 다름), 그대로 사용.
+
+근거:
+- 사용자가 직접 제공한 실제 Baseline 전체 CMD 원문, 생성 파일 diff 및 정적 검사
+
+변경:
+- ChatGPT 로컬 TXT/CMD downloadable artifacts, GitHub 연구기록만
+
+다음:
+- B1 학교 CMD 백업 후 복사, SWB n25 Preprocess로 Mg 3개/Trap22/region 확인, 라이선스 확보 후 n25 5V 여부 확인. 원본 Wu/Bnull 보호, 비교용 region Mg 동일화 B0/Bnull regression 검토.
+
+---
+
+## 2026-11-16T06:13:17Z — TaekGyu0801
+
+[2026-11-16 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / SCREENSHOT REVIEW
+상태: OBSERVED / UNRESOLVED
+
+복사본 Si_X_C_O SDevice 실행 화면에서 `Waiting for license feature sdevice to become available ...` 확인. 따라서 현재 코드 파싱/solver 실패가 아니라 Sentaurus SDevice 라이선스 대기. `Reached limit of 5 users/licenses to be displayed`는 표시 목록 제한으로, 서버 총 라이선스 숫자가 5라는 근거가 아니다. Solver 실제 시작/5V 완료 미확인.
+
+변경: GitHub 현황/에러로그만, 학교 코드·실행 중 다른 노드 변경 없음.
+다음: 대기 작업 유지하고 필요시 학교 CLI에서 `lmstat -a -f sdevice`로 실제 사용량 확인, 라이선스 취득 후 SDevice pp/로그 최종 전압 및 정상 종료 판정.
+
+---
+
+## 2026-11-16T06:15:44Z — TaekGyu0801
+
+[2026-11-16 14:23 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / LICENSE DIAGNOSTIC
+상태: OBSERVED / ROOT CAUSE UNRESOLVED
+
+학교 ssudisu3에서 직접 실행한 `lmstat -a -f sdevice`: `License server status: 27020@snu.polaris.09`, `License file(s): 27020@ryu_synop:27020@ssudisu3:27009@ssudisu3:`, `lmgrd is not running: License server machine is down or not responding. (-96,7:2 No such file or directory)`. 사용자는 숭실대 서버에서 실행 중이며 수빈이의 서울대 연구실 라이선스 5명 제한과 관련 있는지 문의. 화면만으로 5개 seat 소진, SNU 서버 혼선, 숭실대 서버 장애 어느 원인도 확정 불가. FlexNet -96은 wrong host / unreachable manager 상황에 해당(Revenera official guide), Synopsys 환경 SNPSLMD_LICENSE_FILE과 LM_LICENSE_FILE 설정 검증 필요.
+
+사용자에게 오직 조회용 복붙 명령으로 라이선스 변수 출력 및 lmstat -c 27020@ryu_synop, 27020@ssudisu3, 27009@ssudisu3 각각 8초 timeout probe 전달. 원본/복사본 학교 코드 및 실행중 node 변경 없음. 결과 대기 중.
+
+---

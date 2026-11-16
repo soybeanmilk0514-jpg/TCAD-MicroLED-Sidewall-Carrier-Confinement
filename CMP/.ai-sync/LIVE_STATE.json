@@ -1,5 +1,199 @@
 {
-  "leeProjectASDEtPUnboundSchool20261113": {"worker":"이택규","dateKST":"2026-11-13","status":"OBSERVED_ACTUAL_SCHOOL_SDE_FATAL_PROPOSED_HEADER_REPAIR_UNRUN","schoolProject":"/user/semi/semi437/CMP_A/CMP_WU_Copy_Copy","sdeError":"SCHEME COMMAND 4 *** Error sde:eval: unbound variable: tP","sourceHead":"(define (seg-list) — no baseline initialization header before first use tP","proposedFix":"Prepend sde:clear, ABA boolean setting, Wu pilot base geometry/doping/material variables, xNow/xActiveStart/xActiveEnd and Project A wC=dC=0.200um NCEdge=0 in editable copy only","warningsNotShownFatal":"datexcodes.txt species redefined lines; license feature sde_all expiry 18 days","schoolPatchApplied":false,"schoolSdeRerun":false,"schoolSdeMeshSuccess":false,"next":"After backup, apply header; run SDE node only; review new n1_dvs.out/err, region/mesh; preserve protected baseline and template"},
+  "juSubinBnullSdeviceLicenseWait20261116": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-16",
+    "status": "OBSERVED_LICENSE_CHECKOUT_UNAVAILABLE_AS_OF_13_19_KST_CURRENT_STATE_UNRESOLVED",
+    "schoolProject": "/user/semi/semi437/tmp/myproject/CMP_PROJECTB_1.0.1_GPT_BNULL",
+    "node": "n25",
+    "startedAtKST": "2026-11-16 13:19:02",
+    "pid": 55438,
+    "log": "unable to check out 1 sdevice license(s); Waiting for license feature sdevice to become available",
+    "anodeRowsAtObservation": 0,
+    "solverNumericalFailureObserved": false,
+    "reached5VVerified": false,
+    "sourceAndPp": "Wu baseline-like preprocessed QS bare Coupled/global Mg/Grid n1_msh.tdr, earlier confirmed",
+    "schoolCodeEditedByAI": false,
+    "next": "Read-only ps PID55438 and latest n25_des.out/n25_des.log/.err; avoid duplicate run while license waiting; if license acquired then assess last anode5V and exit"
+  },
+  "juSubinProjectBLiteratureParameterGate20261116": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-16",
+    "status": "DESIGN_PROVENANCE_LOCK_PROPOSED_NO_SCHOOL_RUN",
+    "sourceOfTruth": "Actual working school /user/semi/semi437/tmp/myproject/CMP_WU_Copy full SDE/SDevice/par/PP/mesh",
+    "designDocument": "CMP/PROJECT_B_PARAMETER_PROVENANCE_20261116.md",
+    "designFrozenExisting": "Wu10um B0 NtSide1e18 Damage5nm; Bnull 20nm-per-side inner MQW GaN; B1 same 20nm guard Al0.15Ga0.85N; original 22 traps untouched",
+    "sourced": "Wu2023 baseline structural params; Yuanpeng Wu2022 nanowire barrier Al~0.15 as INITIAL candidate; Furtmayr2011 qualitative lateral electric field caveat",
+    "unsupportedTransfer": "nanowire N-polar gradient polarization doping/QCSE strain and QW thickness/indium composition NOT portable; 20nm Wu2022 strain penetration is VERTICAL not lateral guard width",
+    "numericalRisk": "GPT FIX1 changed mesh QS numeric and Mg ionization scope compared to historical B0; B0-regression needed before isolating Al effects",
+    "newCodeOnSchool": false,
+    "newSimulation": false,
+    "school5VProven": false,
+    "next": "Actual school Wu10 successful source audit, all-common numerics/mg before B0-regression/Bnull/B1 and matched-current band/sidewall trap/QW absolute radiative comparison"
+  },
+  "leeProjectAn21FiveVoltRowRemainingNodes20261116": {
+    "worker": "이택규",
+    "dateKST": "2026-11-16",
+    "status": "OBSERVED_N21_LOG_LAST_ROW_5V_OTHER_NODES_USER_REPORTED_RUNNING",
+    "node": "n21",
+    "anodeVoltageV": 5,
+    "electronCurrentRaw": 0.0001695,
+    "holeCurrentRaw": 0.002399,
+    "conductionCurrentRaw": 0.002568,
+    "experimentalSdeDonorEarlierObserved": "NCEdge=5e18",
+    "freshMeshAndPpDopingVerified": false,
+    "solverNormalExitVerified": false,
+    "otherNodesRunning": "USER_REPORTED",
+    "distinction": "Under Si donor NCEdge5e18, Carbon ON cases are A1n not A1u; A0u/A1u require separate Si0 rebuilt mesh",
+    "next": "Do not edit active project; finish runs; separate project clone for A0u Si0 C0 5V first; A1u Si0 Carbon ON only if A0u succeeds"
+  },
+  "leeRejectsSolverEscalationClaudeHandoff20261116": {
+    "worker": "이택규",
+    "dateKST": "2026-11-16",
+    "status": "USER_REJECTED_UNJUSTIFIED_NUMERICAL_PATCH_CLAUDE_HANDOFF",
+    "rejectedProposal": "Unverified QS inner Coupled Iterations=60 LineSearchDamping=0.1",
+    "schoolSolverPatchVerified": false,
+    "schoolSdeDonorChangeObserved": "line32 (define NCEdge 5.0e18)",
+    "schoolSdeMeshRerunVerified": false,
+    "schoolSdeviceRerunVerified": false,
+    "latestVerifiedFailure": "A0u n21 stops at anode 2.336V, Newton>35 then MinStep5.4037e-11, target5V",
+    "claudeRequested": "Independent code-based root cause, compare actual school Wu baseline with Project A SDE/SDevice, minimal 1-2 checks, full paste-ready corrected code if necessary, no blind numerics escalation",
+    "next": "Claude handoff and actual current school source evidence, protect baseline"
+  },
+  "leeProjectASdeviceNumericalPatchProposed20261116": {
+    "worker": "이택규",
+    "dateKST": "2026-11-16",
+    "status": "PROPOSED_SDEVICE_QS_NUMERICAL_PATCH_NOT_SCHOOL_RUN",
+    "reason": "User rejected unchanged rerun of 8 failed SDevice nodes",
+    "schoolExperiment": "/user/semi/semi437/CMP_A/CMP_WU_Copy_Copy",
+    "sourceFile": "sdevice_des.cmd",
+    "sourcePatch": "Unique QS inner Coupled { Poisson Electron Hole } -> Coupled(Iterations=60 LineSearchDamping=0.1) { Poisson Electron Hole }",
+    "guard": "Require exactly one regex target; backup before replacement",
+    "notExecutedInSchool": true,
+    "previousSdeEditObserved": "NCEdge=5e18",
+    "physicsUnchanged": true,
+    "plannedRun": "Rebuild SDE mesh, SWB preprocess, n21 NtSide0 NCN0 NCGa0 Vstop5 only",
+    "caveat": "Donor and numeric solver both changed from failed A0u so cannot attribute convergence improvement to donor alone"
+  },
+  "leeProjectAA0mSchoolSdeEditObserved20261116": {
+    "worker": "이택규",
+    "dateKST": "2026-11-16",
+    "status": "OBSERVED_SCHOOL_SDE_SOURCE_EDIT_SDE_MESH_AND_SDEVICE_RERUN_PENDING",
+    "project": "/user/semi/semi437/CMP_A/CMP_WU_Copy_Copy",
+    "file": "sde_dvs.cmd",
+    "schoolCommandSucceeded": true,
+    "output": "32:(define NCEdge 5.0e18)",
+    "previousValue": "0",
+    "newValue": "5.0e18",
+    "backupCommandExecuted": true,
+    "backupPathNotListed": true,
+    "sourceOnly": true,
+    "requestedCase": "A0m",
+    "conditions": {
+      "NtSide": 0,
+      "NCN": 0,
+      "NCGa": 0,
+      "Vstop": 5
+    },
+    "sdeRerunVerified": false,
+    "sdeviceRerunVerified": false,
+    "n21Reached5V": null,
+    "next": "SDE node rebuild mesh then n21 only at NtSide0 NCN0 NCGa0 Vstop5, inspect final n21_des.log and n21_des.out",
+    "baselineTargeted": false
+  },
+  "leeProjectAMinimumCheckA0mDecision20261116": {
+    "worker": "이택규",
+    "dateKST": "2026-11-16",
+    "decision": "MINIMUM_CHECKS_ONLY",
+    "observed": "Project A A0u n21 2.336V Newton/MinStep; pp21 effective controls same as original; current CEdge donor NCEdge=0 in documented code whereas parent Clean nGaN ND=5e18",
+    "hypothesis": "CEdge Si removal may affect electron injection/convergence, not confirmed",
+    "proposedOneRun": "Back up experimental SDE, only restore NCEdge=5e18 with Carbon and NtSide=0 to make A0m; rebuild SDE mesh, rerun only n21 to 5V",
+    "status": "PROPOSED_NOT_RUN",
+    "next": "Verify only run final voltage and success before broader coarse→fine screen",
+    "originalBaselinePreserved": true
+  },
+  "leeProjectAn21EffectivePpSettings20261116": {
+    "worker": "이택규",
+    "dateKST": "2026-11-16",
+    "status": "OBSERVED_EFFECTIVE_SDEVICE_PP21_SETTINGS_ROOT_CAUSE_UNRESOLVED",
+    "project": "/user/semi/semi437/CMP_A/CMP_WU_Copy_Copy",
+    "node": "n21",
+    "effectiveGrid": "n1_msh.tdr",
+    "digits": 5,
+    "errRefElectron": 100000000,
+    "errRefHole": 100000000,
+    "newtonIterations": 35,
+    "notDamped": 100,
+    "initialCoupledIterations": 150,
+    "initialStep": 0.0001,
+    "minStep": 1e-10,
+    "maxStep": 0.02,
+    "lastAnodeVoltageV": 2.336,
+    "failedNewtonIterations": 35,
+    "failedMinStep": 5.4037e-11,
+    "rootCause": "UNRESOLVED",
+    "next": "Compare last Newton max_error location and effective Wu baseline pp21 settings/mesh timestamps prior to any solver or mesh change",
+    "schoolCodeModified": false,
+    "schoolRunPerformed": false
+  },
+  "leeProjectAn21LastVoltage20261116": {
+    "worker": "이택규",
+    "dateKST": "2026-11-16",
+    "status": "OBSERVED_N21_STALLED_AT_2_336V",
+    "schoolProject": "/user/semi/semi437/CMP_A/CMP_WU_Copy_Copy",
+    "node": "n21",
+    "lastAnodeVoltageV": 2.336,
+    "lastRawConductionCurrent": 2.624e-12,
+    "quasistationary_t": 0.467166,
+    "targetVoltageV": 5,
+    "calculatedVoltageV": 2.33583,
+    "newtonFailure": "#iterations larger than 35",
+    "minStepFailure": "5.4037e-11",
+    "solverSettingsCheck": "FAILED_SHELL_PASTE_DOUBLE_COMMAND_tail_12bash_invalid",
+    "effectiveGridMathSolve": "UNVERIFIED",
+    "otherSevenNodes": "RED_UI_ONLY",
+    "physicalRootCause": "UNRESOLVED",
+    "next": "Read-only pp21_des.cmd Grid/Math/Solve; last max_error location; compare protected Wu baseline before new coarse mesh run",
+    "schoolChanged": false
+  },
+  "leeProjectAn21NewtonMinStep20261116": {
+    "worker": "이택규",
+    "dateKST": "2026-11-16",
+    "status": "OBSERVED_ACTUAL_SCHOOL_N21_NONCONVERGENCE_5V_UNVERIFIED",
+    "project": "/user/semi/semi437/CMP_A/CMP_WU_Copy_Copy",
+    "logEndedKST": "2026-11-13 15:52:25",
+    "node": "n21",
+    "parametersFromScreenshot": {
+      "NtSide": 0,
+      "NCN": 0,
+      "NCGa": 0
+    },
+    "newtonFailure": "#iterations larger than 35",
+    "quasiStationaryFailure": "Step-size less than MinStep (step-size = 5.4037e-11)",
+    "wallclockSeconds": 2299.64,
+    "peakMemoryMB": 864,
+    "sdeviceProcessExited": true,
+    "convergedTo5V": false,
+    "lastVoltage": "UNVERIFIED",
+    "otherNodes": "7 other red nodes but logs not inspected",
+    "stderrTail": "InGaN eDOSMass/hDOSMass and anisotropic/isotropic notes, no direct fatal shown",
+    "sdeStatus": "Previous tP unbound error observed, but later n21 SDevice run exists; no fresh SDE/mesh proof",
+    "coarseMeshPlan": "PROPOSED ONLY, screening bulk coarsening while preserving 3nm QW and 5nm damage refinement, fine mesh finalists",
+    "next": "Read last anode from n21_des.log, last failed QS step and max_error from n21_des.out, pp21_des.cmd effective Grid Math Solve before modifying school source"
+  },
+  "leeProjectASDEtPUnboundSchool20261113": {
+    "worker": "이택규",
+    "dateKST": "2026-11-13",
+    "status": "OBSERVED_ACTUAL_SCHOOL_SDE_FATAL_PROPOSED_HEADER_REPAIR_UNRUN",
+    "schoolProject": "/user/semi/semi437/CMP_A/CMP_WU_Copy_Copy",
+    "sdeError": "SCHEME COMMAND 4 *** Error sde:eval: unbound variable: tP",
+    "sourceHead": "(define (seg-list) — no baseline initialization header before first use tP",
+    "proposedFix": "Prepend sde:clear, ABA boolean setting, Wu pilot base geometry/doping/material variables, xNow/xActiveStart/xActiveEnd and Project A wC=dC=0.200um NCEdge=0 in editable copy only",
+    "warningsNotShownFatal": "datexcodes.txt species redefined lines; license feature sde_all expiry 18 days",
+    "schoolPatchApplied": false,
+    "schoolSdeRerun": false,
+    "schoolSdeMeshSuccess": false,
+    "next": "After backup, apply header; run SDE node only; review new n1_dvs.out/err, region/mesh; preserve protected baseline and template"
+  },
   "juB1PreprocessStaleTimestampConfirmed20261109": {
     "worker": "주수빈",
     "dateKST": "2026-11-09",
@@ -9665,5 +9859,381 @@
     "previousBnullDampingProposal": "not independently proven to resolve prior Newton failure; do not make default before baseline audit",
     "schoolCodeWritten": false,
     "simulated": false
+  },
+  "juProjectBClaudeHandoff20261116": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-16",
+    "status": "USER_DECISION_HANDOFF_PROPOSED_NO_SCHOOL_RUN",
+    "implementationOwner": "Claude (Project B Bnull/B1 complete source creation, school error debug with user)",
+    "verificationOwner": "ChatGPT in existing JuSubin conversation after successful 5V school logs",
+    "sourceOfTruth": "Actual school final Wu10 10um CMP_WU_Copy and GitHub CMP protocol; latest school full SDE SDevice par SWB params upload pending",
+    "variants": "B0 original n25 NtSide1e18; Bnull GaN internal MQW edge 20nm per side; B1 same geometry Al0.15Ga0.85N; original 5nm Dmg/22 traps preserved",
+    "blockers": [
+      "Bnull Newton/MinStep at ~1.892V observed 2026-11-09",
+      "B1 actual pp25 Grid n1_msh.tdr later observed, 5V execution not verified",
+      "Latest successful school Baseline complete input deck not uploaded to handoff conversation"
+    ],
+    "next": "Claude source-level audit before code, independent Bnull/B1 full source and SDE→mesh→preprocess→n25 5V evidence; later ChatGPT matched-current physical analysis",
+    "schoolRunThisTurn": false,
+    "schoolCodeModifiedThisTurn": false
+  },
+  "juProjectBGPTFix1Candidate20261116": {
+    "worker": "주수빈",
+    "ai": "ChatGPT",
+    "dateKST": "2026-11-16",
+    "status": "PROPOSED_STATIC_PASS_SCHOOL_UNRUN",
+    "artifact": "CMP_ProjectB_GPT_FIX1_Bnull_B1_20261116.zip (private chat download only)",
+    "sha256": "af0822931741cd87a99144b6133d3ccc483faf2fd5d7e87eea276ff8ffa6b552",
+    "codeFolders": [
+      "CMP_PROJECTB_1.0.1_GPT_BNULL",
+      "CMP_PROJECTB_1.0.1_GPT_B1"
+    ],
+    "source": "CMP/tcad/candidates/CMP_BASELINE_3.2.0_WU2023PHY GitHub PROPOSED; actual successful school input NOT verified identical",
+    "changes": [
+      "Guard-to-Clean/Dmg interface mesh collars, lateral10nm vertical3nm",
+      "QS local Coupled Iterations50 LineSearchDamping0.1 controlled convergence test",
+      "full File Grid and region-only Mg IncompleteIonization in three pGaN"
+    ],
+    "staticChecks": [
+      "balanced SDE Scheme, SDevice braces",
+      "expected 51 regions",
+      "22 trap sections",
+      "3 scoped Mg regions",
+      "matched Bnull/B1 except guard GaN vs AlGaN"
+    ],
+    "previouslyObservedFailure": {
+      "Bnull": "Newton/MinStep ~1.892 V, root cause unknown",
+      "B1": "AlGaN Mg ionization mismatch and prior truncated File/Grid, later Grid bound but 5V unconfirmed"
+    },
+    "schoolRun": false,
+    "finalValidated": false,
+    "next": "compare true school baseline then isolated SWB SDE→mesh→preprocess→n25 to 5V; inspect out err log; continue Claude comparator"
+  },
+  "juProjectBGPTFix1BnullSolverScreen20261116": {
+    "worker": "주수빈",
+    "whenKST": "2026-11-16 13:24 onward",
+    "status": "OBSERVED_SCHOOL_LOG_EARLY_QS_STALL_FINAL_JOB_UNRESOLVED",
+    "project": "/user/semi/semi437/tmp/myproject/CMP_PROJECTB_1.0.1_GPT_BNULL",
+    "node": "n25",
+    "actualLogLastAnodeV": 0.3265,
+    "lastQt": 0.065291,
+    "observations": [
+      "last 3 anode lines voltage 3.265E-01",
+      "Newton didn't converge, trying again with smaller step",
+      "iterations larger than 50",
+      "step sizes 6.9459e-07 down to 5.3107e-08",
+      "no final MinStep or process exit observed"
+    ],
+    "targetVoltageV": 5,
+    "confirmedReachedTarget": false,
+    "rootCause": "UNRESOLVED; source from Wu3.2 PROPOSED candidate not matched to actual school baseline",
+    "next": "If still unchanged at 0.3265V stop ONLY experimental n25; compare real school working Wu baseline SDE/SDevice/.par and effective pp25; inspect one failure-location excerpt before minimal isolated repair",
+    "schoolSourceEditByGPTThisTurn": false
+  },
+  "juProjectBGPTBnullFailedSWB20261116": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-16",
+    "status": "OBSERVED_FINAL_NUMERICAL_FAILURE",
+    "project": "/user/semi/semi437/tmp/myproject/CMP_PROJECTB_1.0.1_GPT_BNULL",
+    "node": "n25",
+    "targetV": 5,
+    "lastAnodeV": 0.3265,
+    "finalErrors": [
+      "|RHS| increased by more than factor 1e10",
+      "Supernodal had problems (zero pivot)!",
+      "Step-size less than MinStep (8.3174e-11)"
+    ],
+    "peakMemoryMB": 954,
+    "wallclockSeconds": 1705.73,
+    "lastCNormCoordinatesUm": {
+      "poisson": [
+        0.1242676,
+        0.006103516
+      ],
+      "electron": [
+        0.161,
+        9.21875
+      ],
+      "hole": [
+        0.164,
+        9.453125
+      ]
+    },
+    "interpretation": "Confirmed Bnull GPT FIX1 5V solve FAILED; physical/mesh/root cause unproven. Poisson max in left BGuard Barrier0, electron/hole far from guard near QW4/Barrier4.",
+    "next": "Compare real successful school Wu parent vs GPT Bnull sde_dvs.cmd and sdevice.par (and pp25/mesh) read-only, verify numerical B0 regression under modified solver/physics, repair one cause, preserve master.",
+    "schoolCodeEditedByAI": false
+  },
+  "juProjectBBnullSchoolSDEParDiff20261116": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-16",
+    "status": "OBSERVED_SDE_PAR_DIFF_ANALYZED_BSPLIT_TEST_PROPOSED_SCHOOL_UNRUN",
+    "source": "Actual user terminal diff CMP_WU_Copy vs CMP_PROJECTB_1.0.1_GPT_BNULL",
+    "par": "Numerical parameter blocks unchanged; only comments/whitespace",
+    "sde": "Parent layer widths, contact, doping, original mesh unchanged; intentional nine-layer 20nm/side GaN QW-edge replacement and new mesh collars; expected 51 region not verified on school mesh",
+    "gptBnullLastOutcome": "5V FAILED: final 0.3265V, zero pivot, RHS blowup, MinStep",
+    "hypothesis": "new InGaN/GaN lateral heterointerfaces versus region splitting/mesh/shared altered SDevice; root cause unknown",
+    "proposedIsolation": "Clone Bnull separately as BSPLIT; change both BGuard region material nval pval composition from guardMaterial ... guardXAl to material ... alloy; retain identical SDevice/Mg-scope/solver, SDE geometry and mesh; run only BSPLIT n25; compare with original B0 and Bnull",
+    "schoolSourceEditedThisTurn": false,
+    "schoolSimulationNewThisTurn": false
+  },
+  "juProjectBBnullGPTFix2DirectRollback20261116": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-16",
+    "status": "PROPOSED_NOT_APPLIED_SCHOOL",
+    "summary": "User rejects Bsplit controls and requests direct Bnull fix. Revert GPT Bnull SDevice to exact existing successful-school Wu parent SDevice, guard/backup/verify. Keep experimental SDE 20nm GaN guard and mesh, par, NtSide/Vstop; run n25 after SWB preprocess.",
+    "source": "/user/semi/semi437/tmp/myproject/CMP_WU_Copy/sdevice_des.cmd",
+    "target": "/user/semi/semi437/tmp/myproject/CMP_PROJECTB_1.0.1_GPT_BNULL/sdevice_des.cmd",
+    "changes": [
+      "Restore original global Mg IncompleteIonization",
+      "Restore original bare QS Coupled, dropping Iterations50 LineSearchDamping0.1"
+    ],
+    "otherPhysicalFilesChanged": false,
+    "why": "FIX1 0.3265V failure with zero pivot and MinStep; two experimental SDevice changes were introduced vs successful school Wu; exact causal root unresolved",
+    "preserve": "B1 separate requires scoped Mg due AlGaN; Wu parent and existing Bnull SDE/mesh untouched",
+    "next": "User runs guarded copy script; regenerate n25 preprocess; run only n25 at Vstop5 NtSide1e18 and send last anode and final logs",
+    "schoolRun": false
+  },
+  "juProjectBBnullSolverGuardStopped20261116": {
+    "worker": "주수빈",
+    "status": "OBSERVED_SAFE_GUARD_ABORT_NO_EDIT",
+    "project": "CMP_PROJECTB_1.0.1_GPT_BNULL",
+    "message": "STOP: Solver 설정 확인 필요",
+    "reason": "Exact grep count of old Iterations50 LineSearchDamping0.1 Coupled line is not 1",
+    "actionEffect": "set -eu exited before Mg guard, backup and sed; no code changes in this invocation",
+    "unknown": "prior FIX2 overwrite or whitespace/real source different",
+    "next": "read-only show Math and Solve blocks, IncompleteIonization lines and backups",
+    "schoolSolverRerun": false
+  },
+  "leeProjectAThreeLabelsSweepPreparation20261116": {
+    "worker": "이택규",
+    "dateKST": "2026-11-16",
+    "status": "USER_DECISION_NAMING_AND_PROPOSED_PLAN_NO_SCHOOL_EDIT",
+    "primaryModels": {
+      "Si_O_C_X": "Si donor retained, carbon off, historical A0m",
+      "Si_O_C_O": "Si donor retained, both carbon traps on, historical A1m",
+      "Si_X_C_O": "Si donor removed, both carbon traps on, historical A1u"
+    },
+    "notAdoptedFourthModel": "Si_X_C_X",
+    "optionalLabelSuffixes": [
+      "D_ON",
+      "D_OFF",
+      "W200_H150 (nm)"
+    ],
+    "runningProject": "CMP_A/CMP_WU_Copy_Copy",
+    "runningBranches": "NCN 0/6e17; NCGa 0/3e17; NtSide 0/1e18; Vstop5: eight fixed geometry comparisons",
+    "latestLogVerified": "n21 last anode5V only, mesh/donor provenance and normal exit unknown",
+    "next": "Preserve active running project; read-only 5V/exit review; prepare independent Si-removed copy and width/depth coarse-to-fine mesh sweep after current 8 complete",
+    "schoolCodeChanged": false,
+    "schoolNewRunByGPT": false
+  },
+  "juProjectBBnullCurrentSourceRestoredSchool20261116": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-16",
+    "status": "OBSERVED_LIVE_SOURCE_BASELINE_SOLVER_AND_GLOBAL_MG_RESTORED_REPROCESS_UNRUN",
+    "project": "CMP_PROJECTB_1.0.1_GPT_BNULL",
+    "actualSource": "sdevice_des.cmd",
+    "solver": "Math Iterations35 NotDamped100 QS bare Coupled { Poisson Electron Hole }",
+    "MgIncompleteIonization": "one global declaration at line29",
+    "backupFiles": "none matched sdevice_des.cmd.bak*",
+    "guardPatch": "STOP no modification",
+    "whoWhenAppliedOriginalBaseline": "UNKNOWN",
+    "previousRun": "0.3265V failed under former modified solver; no current-source run evidence",
+    "next": "SWB preprocess n25, verify pp25 correct Grid, global Mg, bare Coupled and rerun n25 Vstop5 NtSide1e18 only",
+    "B1": "No global Mg rollback for AlGaN",
+    "schoolModifiedByAI": false
+  },
+  "leeProjectACedgeSourceObserved20261116": {
+    "worker": "이택규",
+    "status": "OBSERVED_READ_ONLY_SDE_SOURCE__RUNNING_MESH_NOT_PROVEN",
+    "schoolSource": "/user/semi/semi437/CMP_A/CMP_WU_Copy_Copy/sde_dvs.cmd",
+    "wC_um": 0.2,
+    "dC_um": 0.2,
+    "lateralWidth_nm": 200,
+    "verticalDepth_nm": 200,
+    "NCEdge_cm3": 5000000000000000000,
+    "geometryExpressions": [
+      "xc=xa+dC",
+      "y1=Wdmg+wC",
+      "y2=Wm-Wdmg-wC"
+    ],
+    "edgeRegions": [
+      "CEdgeL_nGaN",
+      "CEdgeR_nGaN"
+    ],
+    "meshRefinementName": "Ref.CEdge",
+    "meshNumericalSettingsVerified": false,
+    "note": "Line29 old Si-OFF comment; actual define line32 Si5e18. Fresh mesh/provenance and node normal exit not confirmed. Preserve running nodes.",
+    "next": "Read-only sed lines 165-183 for mesh refinement numeric parameters, then independent project geometry sweep after ongoing nodes finish",
+    "schoolEditedByAI": false
+  },
+  "leeProjectACedgeMeshRefinementObserved20261116": {
+    "worker": "이택규",
+    "status": "OBSERVED_SCHOOL_SDE_SOURCE__NEXT_SWEEP_PROPOSED_NOT_RUN",
+    "source": "/user/semi/semi437/CMP_A/CMP_WU_Copy_Copy/sde_dvs.cmd",
+    "windowNames": [
+      "Win.CEdgeL",
+      "Win.CEdgeR"
+    ],
+    "definition": "(sdedr:define-refinement-size \"Ref.CEdge\" 0.010 0.010 0.002 0.002)",
+    "unit": "um",
+    "maxSpacingNm": {
+      "x": 10,
+      "y": 10
+    },
+    "minSpacingNm": {
+      "x": 2,
+      "y": 2
+    },
+    "nominalGeometryNm": {
+      "wC": 200,
+      "dC": 200
+    },
+    "siSourceCm3": 5000000000000000000,
+    "generatedMeshProvenanceVerified": false,
+    "thin10nmAdequatelyResolved": false,
+    "proposedRepresentativesNm": [
+      [
+        10,
+        10
+      ],
+      [
+        50,
+        50
+      ],
+      [
+        200,
+        200
+      ]
+    ],
+    "proposedFullExplorationNm": [
+      10,
+      50,
+      200
+    ],
+    "newSchoolRun": false,
+    "schoolFileModified": false,
+    "next": "Current 8 nodes finish/read-only 5V end plus normal exit; preserve original; independent copies and local CEdge mesh refinement for thin width/depth."
+  },
+  "juSubinBnullBaselineSdeviceCmdParCopyUserReported20261116": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-16",
+    "status": "USER_REPORTED_CMD_PAR_COPY_NOT_BYTE_VERIFIED_OR_SCHOOL_SOLVER_VERIFIED",
+    "branch": "CMP_PROJECTB_1.0.1_GPT_BNULL",
+    "action": "User reports copying working Wu baseline sdevice_des.cmd and sdevice.par verbatim to Bnull",
+    "assessment": "Appropriate Bnull controlled numerical/physical baseline test if SDE region/mesh/trap compatibility and fresh PP are verified",
+    "alGaNB1Exception": "Do not directly copy global Mg incomplete ionization into B1; previously caused AlGaN Mg ionization parameter error",
+    "lastObservedBlocker": "License checkout unavailable at 2026-11-16 13:19 KST",
+    "postCopyParPreprocessingVerified": false,
+    "new5VSuccessVerified": false,
+    "next": "Confirm fresh pp25_des.cmd/par after latest copy and license/job status, then assess Bnull 5V"
+  },
+  "juSubinProjectBB1CmdParFromSchoolBaselinePatchProposed20261116": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-16",
+    "status": "PROPOSED_PATCH_GENERATOR_MOCK_TEST_PASS_SCHOOL_NOT_RUN",
+    "sourceOfTruth": "school CMP_WU_Copy/sdevice_des.cmd + sdevice.par",
+    "target": "school CMP_PROJECTB_1.0.1_GPT_B1/sdevice_des.cmd + sdevice.par",
+    "codeOperation": "Copy both entire actual working Wu parent CMD/PAR. CMD only: remove global MagnesiumActiveConcentration incomplete ionization and add it to Clean_pGaN, DmgL_pGaN, DmgR_pGaN Region Physics. Keep all 22 original trap declarations and complete Solver. PAR byte-identical to school Wu parent. Check B1 SDE contains AlGaN. Back up B1 existing files before writing.",
+    "validation": "bash syntax and synthetic fixture passed; full actual school raw files/PP and real solver not available; school B1 source unchanged by ChatGPT",
+    "caution": "B1 requires matched Bnull/B0 region-scoped Mg control before alloy-only conclusions; current n25 license wait blocker observed; xAl=.15 SDE and default AlGaN materials still need PP/run verification",
+    "next": "User executes generated single-block bash command on school; verify B1 sdevice.par baseline byte cmp, pp25_des.cmd scoped Mg 3 and traps 22, pp25_des.par and 5V solver after license availability"
+  },
+  "juSubinBnullSdeviceSecondLicenseWait20261116": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-16",
+    "status": "OBSERVED_SECOND_LICENSE_CHECKOUT_BLOCKER_CURRENT_STATE_UNRESOLVED",
+    "project": "CMP_PROJECTB_1.0.1_GPT_BNULL",
+    "startAtKST": "2026-11-16 13:40:06",
+    "pid": 64105,
+    "previousAttemptPid": 55438,
+    "observedMessage": "unable to check out 1 sdevice license(s); Waiting for license feature sdevice to become available",
+    "lastAnodeRowsAtObservation": 0,
+    "solverStartedVerified": false,
+    "reached5VVerified": false,
+    "priorPidStatusVerified": false,
+    "next": "read-only ps on 55438 and 64105, latest n25 output/log; do not create duplicate jobs"
+  },
+  "juSubinB1SchoolCmdParAudit20261116": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-16",
+    "status": "OBSERVED_B1_CMD_UNPATCHED_PAR_DIFFERENT",
+    "schoolBaseline": "/user/semi/semi437/tmp/myproject/CMP_WU_Copy",
+    "schoolB1": "/user/semi/semi437/tmp/myproject/CMP_PROJECTB_1.0.1_GPT_B1",
+    "cmdDiffNoOutput": true,
+    "effectiveMgScope": "Global MagnesiumActiveConcentration IncompleteIonization at source line 29",
+    "damageTrapBlockCount": 22,
+    "parByteEqualToBaseline": false,
+    "parFunctionalDifferenceUnknown": true,
+    "modifiedCmdAtKST": "2026-11-16 13:09:38",
+    "modifiedParAtKST": "2026-11-16 12:15:48",
+    "proposedB1ThreeRegionMgApplied": false,
+    "schoolCodeEditedByAI": false,
+    "next": "Inspect read-only diff -u baseline/B1 sdevice.par to determine physical vs comment differences, then guard-and-backup minimal B1-only CMD Mg-scoping patch and baseline-based PAR where appropriate. Preserve Wu and Bnull; preprocess verify before any run."
+  },
+  "juSubinB1ParCommentOnlyAndCmdPatchProposed20261116": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-16",
+    "status": "OBSERVED_PAR_COMMENT_ONLY_AND_UNMODIFIED_B1_CMD_PROPOSED_GUARDED_PATCH_MOCK_TEST_PASS",
+    "schoolParDiff": "B1 sdevice.par differs from Wu baseline in comments/whitespace only; active LatticeParameters, GaN Mg ionization, Thermionic, PooleFrenkel unchanged",
+    "parOverwriteNeeded": false,
+    "cmdObserved": "B1 sdevice_des.cmd still baseline-identical, global Mg incomplete ionization, 22 traps",
+    "proposedPatch": "Back up B1 CMD, global Mg -> region-specific Mg for Clean_pGaN,DmgL_pGaN,DmgR_pGaN only; verify original Wu baseline bytes and 22 trap blocks; untouched original solver and B1 PAR",
+    "check": "Python one-liner syntax/representative fixture PASS only, not school execution",
+    "sourceModifiedOnSchoolByAI": false,
+    "postPatchVerification": false,
+    "next": "User runs B1 CMD-only patch in school shell, returns B1 CMD grep Mg diff and pp25 after SWB Preprocess; future 5V pending license"
+  },
+  "juSubinB1CompleteSdeviceCmdTxtGenerated20261116": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-16",
+    "status": "PROPOSED_COMPLETE_TXT_STATIC_PASS_SCHOOL_NOT_VERIFIED",
+    "artifactName": "CMP_PROJECTB_B1_sdevice_des_FINAL.txt",
+    "artifactBytes": 6189,
+    "artifactLines": 242,
+    "artifactSHA256": "16d3c7ab459adae1a99ee725f1c44e47613db758b2b322f3e9f0c2644c68e8d2",
+    "provenance": "GitHub proposed/unrun Wu baseline 3.2.0 SDevice candidate not exact verified school Wu source",
+    "changes": "Global IncompleteIonization Mg removed and Mg Region Physics inserted in Clean_pGaN/DmgL_pGaN/DmgR_pGaN; 22 original Damage Trap blocks, Solver, Plot, File macros otherwise preserved",
+    "staticCheck": "PASS 22 Traps, 3 scoped Mg, 23 Region Physics blocks, balanced braces and baseline solver",
+    "par": "Existing school B1 sdevice.par active values match baseline, only comments whitespace differ; do not overwrite",
+    "statusSchoolCodeEdited": false,
+    "status5VSuccess": false,
+    "next": "User backs up live school B1 CMD, reconciles new TXT versus actual school Wu source and region names before replacing; SWB preprocess verify pp25 and material, then run when SDevice license available"
+  },
+  "juSubinProjectBB1FromFullBaselineText20261116": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-16",
+    "status": "PROPOSED_COMPLETE_B1_CMD_FROM_USER_SUPPLIED_BASELINE_TEXT_STATIC_VALIDATION_PASS_SCHOOL_NOT_RUN",
+    "provenance": "User pasted complete final-named Wu Baseline SDevice source in current chat, header still says GitHub 3.2.0 PROPOSED/NOT RUN",
+    "sourceBytes": 6183,
+    "sourceLines": 239,
+    "artifactTXT": "CMP_PROJECTB_B1_sdevice_des_FROM_FINAL_BASELINE.txt",
+    "artifactCMD": "CMP_PROJECTB_B1_sdevice_des.cmd",
+    "artifactBytes": 6348,
+    "artifactLines": 244,
+    "artifactSHA256": "e89012705b0715476a899927d6fc3ebd6f477d4113381353004e849db5565e48",
+    "change": "Remove global Mg incomplete ionization and add same Mg ionization in Clean_pGaN, DmgL_pGaN, DmgR_pGaN; preserve 22 traps and original Math/Solve, Plot, other Physics and file macros",
+    "par": "Existing B1 par active values match school baseline; comments/whitespace differ; no change",
+    "userDownloadProvided": true,
+    "schoolSourceEditedByAI": false,
+    "schoolPreprocessVerified": false,
+    "school5VVerified": false,
+    "next": "User copy B1 CMD with school backup, SWB preprocess and inspect pp25, verify material mapping and license, then n25 5V; B0/Bnull same Mg scope control for alloy-only comparison"
+  },
+  "leeProjectALicenseWaitObserved20261116": {
+    "worker": "이택규",
+    "status": "BLOCKER_OBSERVED_ROOT_CAUSE_UNRESOLVED",
+    "schoolHost": "ssudisu3",
+    "lmstatDate": "2026-11-16T14:23:00+09:00",
+    "lmstatStatus": "lmgrd is not running: License server machine is down or not responding. (-96,7:2 No such file or directory)",
+    "queriedDefaultServer": "27020@snu.polaris.09",
+    "listedLicenseHosts": [
+      "27020@ryu_synop",
+      "27020@ssudisu3",
+      "27009@ssudisu3"
+    ],
+    "fiveUsersLimitProven": false,
+    "sourceCodeErrorProven": false,
+    "schoolCodeModifiedByAI": false,
+    "next": "Read-only display license variables and explicit lmstat -c for each listed host. Do not alter running jobs."
   }
 }
