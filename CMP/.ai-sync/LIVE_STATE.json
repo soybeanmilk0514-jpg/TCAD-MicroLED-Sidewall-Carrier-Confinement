@@ -10436,5 +10436,181 @@
       "no new school edits or runs"
     ],
     "next": "Inspect live deck + results and confirm revised sweep before any new run; only then configure independent SWB split clone, fix outputs and matched C OFF numerical control"
+  },
+  "leeCorrectiveTwoAxisAudit20261117": {
+    "worker": "이택규",
+    "dateKST": "2026-11-17",
+    "status": "GPT_CORRECTIVE_AUDIT_PROPOSED_NO_SCHOOL_RUN",
+    "conclusion": "Prior GPT immediate 12-case wCxdC split run instruction withdrawn. Need inspect actual school source and output before new run.",
+    "officialSources": [
+      "CMP/PROJECT_AB_WU10_DESIGN_FREEZE_20261108.md",
+      "CMP/PROJECT_NAMING_CONVENTION.md",
+      "CMP/references/TCAD_REFERENCE_INDEX.md"
+    ],
+    "externalSources": [
+      "https://www.sciencedirect.com/science/article/pii/S2773012323000390",
+      "https://www.nature.com/articles/s41598-023-41678-1",
+      "https://web.stanford.edu/class/ee212/SWB/swb_d.html"
+    ],
+    "criticalConfound": "A1u has SiOFF C ON. wC and dC sweep changes Si removal volume and carbon trap volume together, so cannot claim carbon-only width/depth effect without matched SiOFF C OFF A0u",
+    "knownSchool": "Si_X_C_O n72 historically reached 5V with NtSide1e18 and carbon traps in preprocessed settings; 3 current named projects logs not audited",
+    "proposedPilotNm": [
+      [
+        200,
+        200
+      ],
+      [
+        50,
+        200
+      ],
+      [
+        100,
+        200
+      ],
+      [
+        400,
+        200
+      ],
+      [
+        200,
+        100
+      ],
+      [
+        200,
+        400
+      ]
+    ],
+    "fullFactorial": "w=[50,100,200,400], d=[100,200,400] is OPTIONAL UNCONFIRMED, not automatically authorized 12 jobs",
+    "holdReason": [
+      "real school wC dC macro/mesh not inspected",
+      "low J TDR/current plot outputs not inspected",
+      "A0m and A1m Dmg ON 5V unverified"
+    ],
+    "next": "Read-only school source/preprocessed/log inspection; verify output for same J and correct AreaFactor; only then independent copy SWB split pilot",
+    "schoolCodeModified": false,
+    "schoolRunPerformed": false,
+    "uncertainty": "Actual successful school SDE/SDevice deck not available in GitHub; T-2022.03 official manuals privately uploaded elsewhere, not read here"
+  },
+  "leeA1uSDECurrentUserCode20261117": {
+    "worker": "이택규",
+    "dateKST": "2026-11-17",
+    "status": "USER_SUPPLIED_SDE_SOURCE_PROPOSED_CHANGE_NOT_RUN",
+    "file": "Si_X_C_O_WC/sde_dvs.cmd",
+    "header": "Si_X_C_O | 200x200nm | PROPOSED, UNRUN; reconstructed from GitHub candidate; not byte identical to successful school deck",
+    "actualDefinitions": {
+      "wC_um": 0.2,
+      "dC_um": 0.2,
+      "NCEdge_cm3": 0,
+      "Wdmg_um": 0.005,
+      "Ref_CEdge_max_xy_um": 0.01,
+      "Ref_CEdge_min_xy_um": 0.002
+    },
+    "codeObservation": "wC and dC already control both CEdge geometry and Win.CEdge mesh windows. No @wC@/@dC@ macro in actual pasted SDE source.",
+    "proposedMinimalModification": [
+      "(define wC @wC@)",
+      "(define dC @dC@)"
+    ],
+    "proposedSWBValuesUm": {
+      "wC": [
+        0.05,
+        0.1,
+        0.2,
+        0.4
+      ],
+      "dC": [
+        0.1,
+        0.2,
+        0.4
+      ]
+    },
+    "scopedPilotNm": [
+      [
+        200,
+        200
+      ],
+      [
+        50,
+        200
+      ],
+      [
+        100,
+        200
+      ],
+      [
+        400,
+        200
+      ],
+      [
+        200,
+        100
+      ],
+      [
+        200,
+        400
+      ]
+    ],
+    "caveats": [
+      "12 crossing not automatically approved",
+      "verify pp effective substitutions and school CEdge trap SDevice separately",
+      "SiOFF and carbon trap area both change with wC/dC",
+      "no new school run or edit by ChatGPT"
+    ]
+  },
+  "leeA1uRawOutputSDeviceProposal20261117": {
+    "worker": "이택규",
+    "dateKST": "2026-11-17",
+    "status": "PROPOSED_STATIC_CHECK_ONLY_NOT_SCHOOL_RUN",
+    "file": "Si_X_C_O_WC_sdevice_des_with_raw_outputs.cmd",
+    "sha256": "6c8baccdee24e5bc49d2a745bf6549c70e8b7c8289ea5518aa0f6d4dc26a7806",
+    "lines": 335,
+    "added": "top-level CurrentPlot: Radiative/SRH/Auger over 4QW*3 regions, eGapStates over22Damage +2CEdge =60 integrals; Quasistationary body Plot at t .60/.62/.64/.65/.66/.68/.70 for 3.0-3.5 V at Vstop5",
+    "unchanged": "physics,22Damage traps,2CEdge C traps, original Plot, Math/Solve numerics",
+    "note": "Local balance checks only; T-2022.03 school preprocessing/run unavailable; same-V TDR != same-J TDR; all results PROPOSED",
+    "next": "Paste into separate Si_X_C_O_WC clone only, first PP and 200nm regression; check currentplot variables/output file before sweep"
+  },
+  "juSubinB1BnullMinStepScreenshot20261117": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-17",
+    "status": "OBSERVED_TERMINAL_NEWTON_MINSTEP_BOTH_CAUSE_UNRESOLVED",
+    "evidence": "User-provided screenshots of school SWB T-2022.03 Output windows",
+    "B1": {
+      "project": "CMP_PROJECTB_1.0.1_GPT_B1",
+      "node": "n21",
+      "message": "Newton didn't converge; Step-size less than MinStep",
+      "lastStepSize": 6.4428e-11,
+      "finishedAtKST": "2026-11-16 22:26:02"
+    },
+    "Bnull": {
+      "project": "CMP_PROJECTB_1.0.1_GPT_BNULL",
+      "node": "n25",
+      "message": "Newton didn't converge; Step-size less than MinStep",
+      "lastStepSize": 7.235e-11,
+      "finishedAtKST": "2026-11-16 19:39:51"
+    },
+    "reached5V": false,
+    "reached5VQualification": "No screenshot evidence of 5V; failure before completing requested solve; effective Vstop for nodes still unverified",
+    "blocker": "Newton convergence fails in two different nodes; effective PP, last voltage and max-error location unknown",
+    "next": "Read node-specific log/out/err, preprocessed pp21_des.cmd and pp25_des.cmd, SWB NtSide/Vstop; no blind solver/physics edits",
+    "schoolEditPerformed": false
+  },
+  "latest_observation_20261117_lee_wcdc_parser": {
+    "status": "OBSERVED_SOURCE_DEPLOYED_SDEVICE_NOT_RERUN",
+    "worker": "이택규",
+    "timestamp_kst": "2026-11-17 15:10",
+    "project": "/user/semi/semi437/CMP_A/Si_X_C_O_WC",
+    "node": "n72_des.out",
+    "evidence": "pp72_des.cmd first line offending eDensity; user's pasted SDevice source begins eDensity and contains CurrentPlot Math Solve but omits File Electrode Physics and Plot opener",
+    "interpretation": "SDevice parser error before solver. Missing Plot wrapper or truncated input suspected only; not confirmed. Other split nodes user-reported failures not diagnosed.",
+    "next": "Rerun one SWB node; inspect regenerated pp72_des.cmd, n72_des.out/.err and 5V finish before all split nodes.",
+    "school_edits": "Active sdevice_des.cmd replaced from 335-line candidate by user; original timestamped backup exists",
+    "root_cause": "Input preprocessing missing front section is established for n72; original school full-file/version cause still to be verified; other split node log details not supplied",
+    "candidate_path": "/user/semi/semi437/CMP_A/Si_X_C_O_WC/sdevice_des_RESTORE_CANDIDATE.cmd",
+    "candidate_lines": 335,
+    "blocks": "CEdgeL/R Physics 204/214, Plot 223, CurrentPlot 238, Math 309, Solve 319, intermediate Plot 332",
+    "output_candidate": "Si_X_C_O_WC_sdevice_des_FULL_PROPOSED.cmd",
+    "source_fidelity": "Reconstructed from GitHub proposed Wu 3.2.0 + archival Project A Carbon physics + pasted output tail; not exact school 335-line candidate",
+    "static_check": "22 Damage region physics, 2 CEdge physics, 60 integrals, braces 38/38, parens 149/149",
+    "active_source": "/user/semi/semi437/CMP_A/Si_X_C_O_WC/sdevice_des.cmd",
+    "school_observation": "User terminal APPLIED SUCCESS from cp/cmp and head shows File block. Original timestamp backup created."
   }
 }

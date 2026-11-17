@@ -13945,3 +13945,199 @@ Claude의 개선 제안:
 
 
 ---
+
+## 2026-11-17T02:25:01Z — TaekGyu0801
+
+[2026-11-17 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: CORRECTION / RESEARCH JUDGEMENT / HANDOFF
+상태: PROPOSED, SOURCE-VERIFIED LITERATURE SCOPE, SCHOOL UNRUN
+
+요약:
+GPT가 사용자 승인 없는 4x3=12개 전수 실행을 지시하고 dC를 누락하는 등 불일치한 계획을 제안한 오류 인정. 기존 12-node 즉시 실행 권고 철회. 사용자의 실제 목표는 A1u(Si OFF, Carbon ON)의 가로 wC와 세로 dC **양방향** 최적화이며, 실제 학교 소스 매크로/메쉬/로그 미확인 상태에서 SWB split 설정·동일-J 재결합 출력이 검증 완료된 것으로 주장 금지.
+
+중요 연구 해석:
+- A1u wC/dC 변경은 Carbon Trap 영역과 Si 제거 영역을 동시에 바꿔 carbon-only 효과를 분리할 수 없음. 동일 크기 A0u(Si OFF, Carbon OFF) 대조군이 필요. A0m(Si ON, C OFF)은 메시/구조 회귀용이나 Carbon 효과 단독 대조가 아님.
+- Wu 2023 DOI10.1016/j.micrna.2023.207542는 micro-LED sidewall traps 연구; Cao 2023 DOI10.1038/s41598-023-41678-1은 GaN-on-Si GaN:C 두꺼운 버퍼 누설/항복 연구이며 micro-LED 10~400nm CEdge 최적값 근거 아님. Stanford Synopsys Workbench tutorial은 두 SWB parameter split의 MxN 실험 생성 기능 확인, 학교 deck macro는 미확인.
+
+보류 및 다음:
+1) 학교 실제 Si_X_C_O, Si_O_C_X, Si_O_C_O_Copy 의 SDE/SDevice 및 effective pp, Dmg ON n*_des.log와 saved PLT/TDR 읽기 전용 확인
+2) wC/dC SWB macro 연결과 경계·메쉬 품질 확인, 고정 J 변환 확인
+3) 적은 수로 두 축 모두 확인하는 예비 후보 (w,d)nm: 200x200 회귀, 50x200, 100x200, 400x200, 200x100, 200x400. 아직 실행/확정 아님. 필요하면 이후 교차점 Full factorial 고려.
+
+GitHub 상태: 개인/팀/현재/다음/LIVE/RELAY 기록 갱신, 학교 코드나 실행 변경 없음.
+
+
+---
+
+## 2026-11-17T02:30:44Z — TaekGyu0801
+
+[2026-11-17 KST]
+작업자 이택규 / ChatGPT
+분류: USER-REPORTED PROGRESS / PROPOSED NEXT / SCHOOL UNRUN
+SWB 스크린샷에 `Si_X_C_O_WC` 복사 프로젝트 확인. 이택규가 이제 해당 복사본에서 Carbon lateral wC 및 vertical dC 두 변수를 SWB Parameter Split에 연결하려고 함. 원본 SDE 전체 코드는 아직 미확인, 학교 파일은 AI가 읽거나 수정하지 않음. 우선 복사본 `sde_dvs.cmd`에서 wC/dC/CEdge/refinement 실제 정의를 읽기 전용 grep으로 확인 후, 필요한 경우 복사본의 단일 정의부만 `@wC@`/`@dC@`로 최소 치환; 이미 연결돼 있으면 수정 없음. SDevice physics, C/Dmg trap, NCEdge 고정; 4x3 전수 실행은 사용자 확정 및 preprocess/mesh/output 검증 전 자동 지시하지 않음. Project A 연구의 Carbon-only 인과 분리는 A0u 동형 대조 필요.
+
+
+---
+
+## 2026-11-17T02:39:13Z — TaekGyu0801
+
+[2026-11-17 KST]
+작업자: 이택규
+구분: SOURCE INSPECTION / PROPOSED SWB MACRO PARAMETERIZATION
+상태: USER-SUPPLIED TEXT / PROPOSED CHANGE / SCHOOL UNRUN
+
+이택규가 `Si_X_C_O_WC` 복사본에 사용할 완전한 `sde_dvs.cmd` 텍스트 제공. 헤더에 "PROPOSED, UNRUN; derived GitHub candidate, not byte-identical school" 명시. 실제 코드에는 (define wC 0.200), (define dC 0.200), (define NCEdge 0.0); CEdgeL/R geometry와 Win.CEdgeL/R mesh window에서 wC/dC 참조; 5nm Damage 및 CEdge mesh 최대 10nm/최소 2nm. 현 SDE에 SWB @wC@/@dC@ 연결은 없음.
+
+복사본 단 두 정의 줄을 `(define wC @wC@)`, `(define dC @dC@)`로 바꾸는 최소 패치 제안. 나머지 물리/Si/Dmg/mesh 유지. 제안 값 wC .05/.10/.20/.40um, dC .10/.20/.40um. 모든 조합 12개 실행 확정 아님; 우선 200x200 회귀와 가로/세로 각각 영향 pilot 제안. 다음에는 SWB Split PP에서 실제 치환/형상, 다른 파일의 CEdge trap Physics를 확인해야 하며 아직 학교 파일 수정/새 계산 미실행.
+
+
+---
+
+## 2026-11-17T03:00:47Z — TaekGyu0801
+
+[2026-11-17 KST]
+작업자 이택규 / ChatGPT
+구분 CODE PROPOSAL / OUTPUT-ONLY SDEVICE / NO SCHOOL RUN
+
+사용자가 붙여넣은 Project A A1u SDevice 전체에 Raw Data 출력만 추가한 복사본용 335행 파일 제안: Si_X_C_O_WC_sdevice_des_with_raw_outputs.cmd (ChatGPT 로컬 다운로드, SHA256 6c8baccdee24e5bc49d2a745bf6549c70e8b7c8289ea5518aa0f6d4dc26a7806). 기존 22 Damage Physics와 좌/우 CEdge Carbon Physics, Math/Solve 값 불변. 추가: CurrentPlot의 4QW Clean/DmgL/DmgR 각 Radiative/SRH/Auger 적분 36개 + Damage 22/CEdge2 eGapStates 적분 24개, 총 60개. Quasistationary 내부 Plot Time 0.60/0.62/0.64/0.65/0.66/0.68/0.70; Vstop5 때 약 3.0~3.5V TDR 저장. 2D AreaFactor 및 bias 별 고정 J 환산 별도. 균형/블록 개수 정적 검사 PASS, 학교 Sentaurus T-2022.03 전처리/실행과 실제 데이터 확인 NOT PERFORMED. 본문을 공개 GitHub에 복제하지 않음. 학교 성공 A1u 전체와 byte identical 주장이 아님. 우선 복사본 200x200 PP + 작은 실험 확인 뒤 wC/dC SWB Split.
+
+
+---
+
+## 2026-11-17T03:07:52Z — TaekGyu0801
+
+[2026-11-17 KST]
+작업자 이택규 / ChatGPT
+유형: PLAN CORRECTION / USER REITERATED STRATEGY
+상태: PROPOSED, SCHOOL UNRUN
+
+이택규가 원래 계획은 SWB wC/dC 많은 조합을 느슨한 Coarse Mesh로 먼저 탐색하고, 정상 수렴+동일-J 발광/Trap 손실 비교가 유망한 후보 2~3개만 Fine Mesh로 재검증하는 것이라고 재강조. 종전 GPT가 CEdge 10nm/2nm mesh 그대로 두라고 한 것은 사용자 실험전략 누락. 붙여넣은 SDE 실제 CEdge Ref 기존 maxX/maxY/minX/minY=0.010/0.010/0.002/0.002 um. 1차 제안 Ref.CEdge=0.020/0.010/0.004/0.002 um (세로 20nm, 가로 10nm 최대), MQW 및 5nm Dmg 국소 mesh 유지; 최적값/수렴/속도 개선 미검증. 모든 coarse 후보/200x200 기준 동일 mesh recipe, 이후 fine mesh 수치 민감도 확인 후 결과 인정. A1u w/d가 Si OFF와 C ON 영역 동시 변경됨에 주의, Carbon 단독 효과 A0u 필요. 학교 편집·실행 없음.
+
+---
+
+## 2026-11-17T03:13:40Z — TaekGyu0801
+
+[2026-11-17 KST] 이택규 / ChatGPT
+유형 CODE PROPOSAL / COARSE MESH / NOT SCHOOL RUN
+사용자가 제공한 Project A Si_X_C_O_WC SDE 전체를 기준으로 복붙용 144행 Coarse SDE 후보 제작: Si_X_C_O_WC_sde_dvs_COARSE.cmd (SHA256 27ee5b1bd43a90ca5b090f33089489145a2a6f596d991096a86784160cac246d; 사용자 다운로드만 제공, 공개 GitHub에 원문 미업로드). 변경: wC=@wC@, dC=@dC@ SWB 매크로 연결 및 Ref.CEdge 0.010/0.010/0.002/0.002→0.020/0.010/0.004/0.002 µm (x 세로20nm, y 가로10nm 최대). MQW 및 5nm Damage Mesh와 나머지 영역/도핑/접촉 물리 불변. Scheme 괄호/핵심 설정 정적 검사 PASS, 학교 SWB 전처리·Mesh·SDevice 결과 미확인. 우선 wC=.2 dC=.2 1점 테스트와 전처리/메쉬 검증 후 여러 Coarse 탐색, 유망 후보 Fine 재검증. 사용자 선택 전 12조건 자동 실행 지시하지 않음.
+
+---
+
+## 2026-11-17T05:24:16Z — soybeanmilk0514-jpg
+
+[2026-11-17 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER / RESULT
+상태: OBSERVED (terminal Newton failure), UNRESOLVED (root cause)
+
+요약:
+학교 SWB T-2022.03 스크린샷 2장으로 Project B 두 노드에서 Newton 반복 뒤 Step-size less than MinStep 종료 확인.
+- B1 CMP_PROJECTB_1.0.1_GPT_B1/n21_des.out: 6.4428e-11; 종료 11/16 22:26:02.
+- Bnull CMP_PROJECTB_1.0.1_GPT_BNULL/n25_des.out: 7.2350e-11; 종료 11/16 19:39:51.
+두 경우 모두 실패 시 TDR 생성; 5V 성공 근거 아님. 서로 다른 노드/파라미터일 수 있으며 마지막 전압, ppN 코드, 실제 Mg, max_error/mesh는 미확인. AlGaN만 원인이라고 단정 불가.
+
+근거: 이번 대화 업로드 SWB Output 캡처 (전체 로그는 아직 미제공)
+변경: GitHub 오류/현재상태/다음행동/개인 및 팀 타임라인/LIVE/RELAY 기록만 갱신; 학교 코드/실행 수정 없음.
+다음: n21/n25 read-only 최신 log/out/err 및 ppNN cmd/실제 NtSide,Vstop 확인 후 최소 수정.
+
+---
+
+## 2026-11-17T06:12:41Z — TaekGyu0801
+
+[2026-11-17 15:10 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER / RESULT
+상태: OBSERVED (parser error), UNRESOLVED (cause)
+
+요약:
+School SWB Project A /user/semi/semi437/CMP_A/Si_X_C_O_WC Node72 n72_des.out screenshot:
+Error in "pp72_des.cmd" at line 1, offending input: eDensity
+syntax error !
+This is SDevice input parsing failure before Newton solver, NOT mesh/Newton convergence failure. User reports multiple wC/dC variant SDevice failures but other node logs unprovided.
+
+근거: 2026-11-17 user-uploaded Node72 Explorer screenshot; school sdevice_des.cmd / pp72_des.cmd contents not yet seen.
+변경: GitHub observation/status only; no school code or run.
+다음: First 45 lines read-only diff of school sdevice_des.cmd and pp72_des.cmd; verify exact missing wrapper/truncation then one pilot. Suspect missing Plot { only, NOT confirmed.
+
+
+---
+
+## 2026-11-17T06:15:05Z — TaekGyu0801
+
+[2026-11-17 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: BLOCKER / DIAGNOSIS
+상태: OBSERVED (n72 parser + pasted code); UNRESOLVED (source provenance)
+
+사용자가 빨간 SDevice 다수 노드 화면과 실제 SDevice 코드 끝부분 전체를 제공. 제시된 코드 첫 줄은 eDensity hDensity이고 마지막은 CurrentPlot/Math/Solve 끝이다. 바로 전 n72_des.out은 pp72_des.cmd line 1 offending eDensity syntax error. 따라서 n72는 wC/dC mesh/Newton 실패가 아니라 전처리 SDevice 입력 선두 구간 누락에 의한 구문 실패. 원래 File/Electrode/Physics/Plot 시작 블록이 없으므로 Plot { 한 줄만 추가하면 안 됨. 다른 노드는 각 로그 미확인.
+
+다음: 학교의 정상 A1u Si_X_C_O/sdevice_des.cmd와 현재 Si_X_C_O_WC/sdevice_des.cmd 선두/Physics/Region 비교; 원본 백업 후 호환되는 prefix만 복구하면서 CurrentPlot과 Plot(Time) 보존, 1 노드 pilot. GitHub나 학교에 실제 고친 SDevice 전체 원본은 아직 없음.
+
+---
+
+## 2026-11-17T06:22:03Z — TaekGyu0801
+
+[2026-11-17 KST] 이택규 / ChatGPT / OBSERVED
+기존 학교 파일 /user/semi/semi437/CMP_A/Si_X_C_O/sdevice_des.cmd의 첫 15행 확인: File(Grid=@tdr@,Current=@plot@,Plot=@tdrdat@,Output=@log@,Parameter=@parameter@), Electrode(anode/cathode) 존재. 그러나 헤더에 PROPOSED / UNRUN, 실제 학교 소스와 다를 수 있다고 명시되어 있어 '성공한 원본'이라고 주장할 수 없음. 현재 wC/dC n72 pp72 line1 eDensity parser error와 구분. 다음: 해당 참조 파일의 CEdge Physics / Plot 시작 위치 read-only 검증 후 원본 덮어쓰기 없이 별도 복원 후보를 작성. 학교 파일 변경 없음.
+
+---
+
+## 2026-11-17T06:23:24Z — TaekGyu0801
+
+[2026-11-17 KST] 이택규 / ChatGPT / OBSERVED, PREPARED NOT RUN
+학교 `Si_X_C_O/sdevice_des.cmd` grep 결과: Physics { at 16; CEdgeL_nGaN physics at 204; CEdgeR_nGaN physics at 214; Plot { at 223. 앞서 Wc/dc SDevice 전처리 Node72 첫 줄 eDensity error 및 사용자 붙여넣은 eDensity-start source와 대조. 복원 후보는 원본 1–223행 + Wc/dC 소스 전체를 안전 조건 검사 후 별도 파일로 생성 가능. 원본 헤더 PROPOSED / UNRUN이므로 물리모델 호환성 및 정상 실행 아직 미검증. 학교 원본 수정·실행 없음.
+
+---
+
+## 2026-11-17T06:26:03Z — TaekGyu0801
+
+[2026-11-17 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: PROGRESS / ERROR FIX CANDIDATE
+상태: OBSERVED (candidate file generation), PROPOSED / UNRUN (validity)
+
+학교 bash 실행 성공: /user/semi/semi437/CMP_A/Si_X_C_O_WC/sdevice_des_RESTORE_CANDIDATE.cmd 335줄 생성. 참조 Si_X_C_O/sdevice_des.cmd 1~223행 (Plot { 포함) + 오류가 있던 현재 wC/dC SDevice의 eDensity부터 끝까지를 이어붙임. grep 확인: CEdgeL/R Physics 204/214, Plot 223, CurrentPlot 238, Math 309, Solve 319, QS Plot 332. 기존 n72 pp72 line1 eDensity parse failure에 대응. 원래 active sdevice_des.cmd 아직 교체 안 했으며 학교 SDevice는 미실행. 원본 ref가 PROPOSED / UNRUN 표기임을 유지.
+
+다음: 후보 소스 정적 체크 → 현재 active 소스 타임스탬프 백업 → 후보 적용 → SWB 한 노드만 재실행하여 pp 문법/CurrentPlot/TDR 출력 확인. 학교 소스/메쉬 설정의 다른 변경 금지.
+
+---
+
+## 2026-11-17T06:34:07Z — TaekGyu0801
+
+[2026-11-17 KST]
+작업자: 이택규 / ChatGPT
+구분: CODE PROPOSAL / HANDOFF
+상태: PROPOSED / SCHOOL UNRUN
+
+사용자가 wC/dC 모든 실패 노드의 공통 SDevice 코드 오류를 지적하며 복붙 가능한 전체 SDevice 원문 요구. ChatGPT가 구조적으로 완결된 328-line 전체 SDevice 후보를 별도 로컬 파일 및 채팅 코드로 제공. Damage 22 region, CEdgeL/R 각 CN Ev+.90 NCN + CGa Ec-.11 NCGa, 60 Integrate, Plot, CurrentPlot, Math, Solve, 3.0~3.5V TDR 출력. Brace 38/38, paren 149/149 정적 검사. 학교에 생성된 335-line restore candidate와 byte-identical하지 않음(원본 1–223행 미접근). 구동/물리적 검증 전 후보이며 SWB 매크로 확인 후 한 노드 pilot 필요. 학교 파일 편집·실행은 AI가 수행하지 않음.
+
+---
+
+## 2026-11-17T06:42:32Z — TaekGyu0801
+
+[2026-11-17 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: BLOCKER / DIAGNOSIS
+상태: OBSERVED active old source, UNRESOLVED until deployment
+
+학교 사용자 read-only 결과: Si_X_C_O_WC/sdevice_des.cmd mtime 14:49:58, 첫줄 eDensity; pp72_des.cmd mtime 14:50:06 첫줄 eDensity; n72_des.out mtime 14:50:08. 즉 node72는 새 335줄 복원 후보가 아니라 과거 누락된 active 소스를 읽어 parser line1 syntax error 발생한 것. 후보만 생성되고 실제 sdevice_des.cmd 교체는 아직 미확인.
+다음: 원본 백업 후 검증된 파일명 sdevice_des_RESTORE_CANDIDATE.cmd(335줄)을 active sdevice_des.cmd로 cp, 내용 확인; SWB 전처리/단일 노드 재실행. pp72 직접 수정 금지.
+
+---
+
+## 2026-11-17T06:44:10Z — TaekGyu0801
+
+[2026-11-17 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: FIX APPLIED (SOURCE ONLY) / NEXT RUN
+상태: OBSERVED (school source replacement), UNRESOLVED (parser/solver rerun)
+
+실제 학교 터미널에서 /user/semi/semi437/CMP_A/Si_X_C_O_WC/sdevice_des_RESTORE_CANDIDATE.cmd (335줄)을 active sdevice_des.cmd로 cp 적용. 기존 파일 timestamp 백업, cmp 성공, 화면 APPLIED SUCCESS 및 File { / Grid=@tdr@ 시작 확인. 14:50 이전 pp72_des.cmd, n72_des.out 오류는 옛 잘린 소스의 결과이므로 신규 적용 후 재전처리/실행 검증 필요.
+
+다음: SWB 72번 SDevice 하나만 재실행 → pp72 first lines, n72_des.out/err (5V 정상 종료 포함) 확인 → 그 뒤 전체 wC/dC split 진행 판단. PROPOSED/UNRUN 헤더가 있는 참조 원문 이용, CurrentPlot 문법 및 물리/수렴은 아직 검증 안 됨.
+
+---
