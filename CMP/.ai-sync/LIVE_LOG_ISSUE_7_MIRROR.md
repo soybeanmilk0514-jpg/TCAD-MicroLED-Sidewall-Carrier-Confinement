@@ -13887,3 +13887,61 @@ AI: ChatGPT
 - B1 최신 n*_des.out/.log/.err, 실제 pp*_des.cmd Mg 선언/Goal/Grid, 마지막 anode 및 Newton 실패 문구를 한 번에 읽기 전용으로 취득. Solver/mesh 원인 추정 패치 금지, Baseline/Bnull 보호.
 
 ---
+
+## 2026-11-17T01:39:31Z — TaekGyu0801
+
+[2026-11-17 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: DECISION / HANDOFF
+상태: USER-SELECTED PROPOSED / SCHOOL UNRUN
+
+요약:
+Project A 기존 세 SWB 모델 사용자 실행 완료 보고(현행 5V log 및 모델 매핑 미검증). 다음 실험으로 기존 5V 완료 증빙이 있는 Si_X_C_O(A1u)를 별도 복사해, 수동으로 SDE를 매 조건 수정하지 않고 SWB Parameter Split으로 CEdge 측면 폭 wC=10/20/50/100/200nm(0.010/0.020/0.050/0.100/0.200um) 탐색 계획을 채택. 깊이 dC=200nm 고정, NCEdge0, NCN6e17, NCGa3e17, NtSide1e18, Vstop5 및 Damage5nm/동일 물리조건 유지. 5nm는 mesh 검증 후 선택적 후보.
+
+근거:
+- 현재 사용자 제공 SWB 프로젝트 목록 및 채팅 합의
+- 이전 실제 학교 Si_X_C_O n72 5V 완료와 SDE source/pp 확인 기록
+
+미확인/다음:
+- 실제 SDE wC가 SWB macro인지 사전 검사, pp_dvs에서 split 치환 확인
+- 10nm mesh 품질과 좌우 CEdge 형상 확인
+- 다른 두 모델의 실제 Damage ON 5V 로그 확인, 200nm 기존 결과 재사용 조건 확인
+- PLT/TDR raw export 및 matched-current 성능 비교
+- A0u Carbon OFF/Si OFF 대조군 필요성 검토
+
+변경:
+- ChatGPT가 Claude 독립 검증 요청 프롬프트 작성, 학교 코드/실행 변경 없음. GitHub Lee TIMELINE, NEXT_ACTIONS, LIVE_STATE md/json 동기화.
+
+---
+
+## 2026-11-17T01:54:52Z — TaekGyu0801
+
+[2026-11-17 KST]
+작업자: 이택규
+AI: ChatGPT (Claude handoff received)
+구분: DECISION REVIEW / HANDOFF
+상태: CLAUDE-REPORTED REVIEW / PROPOSED / SCHOOL UNRUN
+
+요약:
+이택규가 Claude의 Project A wC Split 독립 검토 요약을 GPT에 전달. Claude는 학교 서버에서 수정/실행하지 않았고 학교 A1u 실제 SDE/SDevice 전체 원문을 읽지 않았음. 전체 보고서는 Claude 전용 프로젝트 경로 'cmp/PROJECT_A_WC_SWEEP_20261117/PROJECT_A_WC_SWEEP_REVIEW_20261117.md'에 있다고 보고했지만 본 GPT는 GitHub에서 해당 문서를 찾지 못함. 아래는 사용자 제공 핸드오프 내용.
+
+Claude의 개선 제안:
+- 기존 wC 10/20/50/100/200nm보다 1차 50/100/200/400nm, dC=200nm 고정 (10/20/800 조건부)
+- 5V 최종 전류는 n21 2.569e-3, n25 2.566e-3, A1u n72 2.565e-3, Copy_Copy 2.568e-3이며 최대 약 0.156% 차이 → J=1/10/100 A/cm2에서 비교 우선
+- 실제 학교 저장 TDR과 CurrentPlot 없으면 selected bias TDR+ROI integrals 출력 보강 필요 (문법/데이터 실물 검증 전)
+- wC에 맞는 CEdge 국소 Mesh 및 동일 형상 A0m(w) C OFF 회귀 대조군 제안
+- A0m(w) vs A1u(w)는 Si 조건도 달라 Carbon-only 효과 분리 불가, 최종 A0u(w) 필요
+- A1m 유효 보상이나 10/20nm 효과 부재는 가정일 뿐 검증된 결과 아님
+
+실행 전:
+1) 실제 학교 SDE wC macro, Ref/mesh, SWB PP 유효 파라미터 및 세 모델 Dmg ON 5V 로그 읽기
+2) 기존 PLT로 같은 J 델타 Vf 비교
+3) 출력 추가가 필요한 경우에만 원본 보존 복제본에서 개입
+4) 200nm 회귀 후 wC sweep.
+
+변경/상태:
+- 이번 작업에서 ChatGPT는 학교 코드를 수정하거나 TCAD를 실행하지 않음. 이 리뷰를 CMP 개인/팀/현재/다음/RELAY/LIVE 상태 파일과 Issue #7에 동기화.
+
+
+---

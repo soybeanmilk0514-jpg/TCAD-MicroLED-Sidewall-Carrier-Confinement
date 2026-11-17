@@ -10363,5 +10363,78 @@
     "fullDeckProvenSchoolIdentical": false,
     "codeEditedOnSchool": false,
     "school5VNewRuns": false
+  },
+  "leeProjectAWidthSplitClaudeReview20261117": {
+    "worker": "이택규",
+    "dateKST": "2026-11-17",
+    "status": "USER_SELECTED_PROPOSED_SPLIT_NOT_RUN",
+    "screenshotProjects": [
+      "CMP_WU_Copy",
+      "Si_O_C_X",
+      "Si_X_C_O",
+      "Si_O_C_O_Copy"
+    ],
+    "userReported": "Previously running jobs now finished; exact current 5V logs and effective per-model conditions not rechecked",
+    "verifiedPreviousSchool": "Si_X_C_O/n72 5V SDevice finished; NCEdge=0 SOURCE, pp Damage NtSide=1e18, Carbon C_N6e17 C_Ga3e17",
+    "unverified": [
+      "Current A0m/A1m damaged 5V node logs",
+      "Si_O_C_O_Copy actual donor and Carbon source",
+      "SWB wC macro link and node pp",
+      "Mesh resolved at 10nm"
+    ],
+    "next": "Clone successful Si_X_C_O into independent SWB project; after confirming current SDE wC parameter linkage, SWB Split wC [0.010,0.020,0.050,0.100,0.200] um; keep dC0.200um NCEdge0 NCN6e17 NCGa3e17 NtSide1e18 Vstop5; mesh and 5V each new point; extract PLT/TDR",
+    "controlNote": "Current 3 cases do not isolate Carbon-only effect at Si OFF; A0u could be needed",
+    "schoolCodeChanged": false,
+    "schoolSimulationRun": false,
+    "independentReview": "Full Claude verification prompt prepared in chat, not Claude-verified"
+  },
+  "leeProjectAClaudeSweepReview20261117": {
+    "worker": "이택규",
+    "dateKST": "2026-11-17",
+    "status": "CLAUDE_REVIEW_REPORTED_BY_USER_PROPOSED_NOT_RUN",
+    "evidenceLevel": "User pasted Claude handoff; complete Claude project markdown report unavailable to this GPT in GitHub",
+    "formerWidthSweepNm": [
+      10,
+      20,
+      50,
+      100,
+      200
+    ],
+    "claudeProposedWidthSweepNm": [
+      50,
+      100,
+      200,
+      400
+    ],
+    "optionalWidthNm": [
+      20,
+      10,
+      800
+    ],
+    "fixedDepthNm": 200,
+    "comparisons": "J=1/10/100 A/cm2 proposed with 2D normalization validation",
+    "baseline5VRawCurrentA": [
+      0.002569,
+      0.002566,
+      0.002565,
+      0.002568
+    ],
+    "max5VSpreadPercent": 0.15595,
+    "candidateControls": "Same-geometry A0m(w) for mesh/no-C regression; A0u(w) eventually needed to isolate Carbon effect at local Si OFF",
+    "preflight": [
+      "Read actual live school SDE SWB wC macro and mesh",
+      "Read SDevice CurrentPlot/Quasistationary Plot syntax and saved intermediate TDR",
+      "Verify A0m/A1m Damage ON 5V logs",
+      "Save original A1u source",
+      "Assess 200nm regression before variants"
+    ],
+    "caution": [
+      "Claude 1D barrier estimate is heuristic",
+      "4.7e18 nominal donor arithmetic not actual trap compensation",
+      "Raw data and official UG syntax not independently verified",
+      "A0m vs A1u changes both Si and C",
+      "no new school edits or runs"
+    ],
+    "next": "Inspect live deck + results and confirm revised sweep before any new run; only then configure independent SWB split clone, fix outputs and matched C OFF numerical control"
   }
 }
