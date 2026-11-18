@@ -14141,3 +14141,18 @@ This is SDevice input parsing failure before Newton solver, NOT mesh/Newton conv
 다음: SWB 72번 SDevice 하나만 재실행 → pp72 first lines, n72_des.out/err (5V 정상 종료 포함) 확인 → 그 뒤 전체 wC/dC split 진행 판단. PROPOSED/UNRUN 헤더가 있는 참조 원문 이용, CurrentPlot 문법 및 물리/수렴은 아직 검증 안 됨.
 
 ---
+
+## 2026-11-18T01:48:17Z — TaekGyu0801
+
+[2026-11-18 10:44 KST]
+작업자: 이택규
+AI: ChatGPT
+구분: BLOCKER
+상태: OBSERVED screenshot / UNRESOLVED root cause
+
+요약: wC 0.05/0.10/0.20/0.40 um × dC 0.10/0.20/0.40 um 12개 SWB 조건에 대해 사용자가 전부 오류를 보고함. 사진에서 split parameter는 확인되나 SDevice 오류문/재전처리 시점은 확인 불가. 어제 335줄 복원 소스 적용은 확인되었으나 오늘 실패 노드가 이를 사용했는지는 미확인.
+근거: 2026-11-18 SWB screenshot 및 2026-11-17 GitHub 기록
+변경: 학교 코드 변경 없음; 이택규 TIMELINE 기록
+다음: 대표 노드 n72와 다른 실패 노드의 최신 pp_des.cmd, n_des.out/.err 비교. 입력 문법/오래된 preprocessed file/수렴 오류 구별 후 한 노드만 검증.
+
+---
