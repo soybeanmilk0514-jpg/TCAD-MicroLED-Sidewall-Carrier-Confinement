@@ -14156,3 +14156,35 @@ AI: ChatGPT
 다음: 대표 노드 n72와 다른 실패 노드의 최신 pp_des.cmd, n_des.out/.err 비교. 입력 문법/오래된 preprocessed file/수렴 오류 구별 후 한 노드만 검증.
 
 ---
+
+## 2026-11-18T01:57:15Z — TaekGyu0801
+
+[2026-11-18 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: BLOCKER / DIAGNOSIS
+상태: OBSERVED 4 MinStep, UNRESOLVED 8 terminal biases
+
+요약: Si_X_C_O_WC 12개 SDevice out/log 현황. 이전 n72 pp 명령 첫 줄 eDensity parse 오류는 새 335줄 소스/PP에서 더 이상 확인되지 않음 (File/Grid 정상). n106(.40/.10um), n143(.20/.20), n154(.40/.20), n187(.20/.40) 4개는 Newton nonconvergence + MinStep 종료. 다른 n72,n84,n95,n121,n132,n165,n176,n198은 grep 출력상 process finished이지만 전압/종료 원인 확인 전 5V 성공 판단 보류. 4개 MinStep 각각 6.3778e-11, 5.3844e-11, 6.8759e-11, 7.7901e-11.
+
+근거: 사용자가 공유한 2026-11-18 학교 터미널 출력과 SWB screenshot
+변경: 학교 코드 미변경; TIMELINE, ERROR_LOG, CURRENT_STATUS, NEXT_ACTIONS 갱신
+다음: read-only nN_des.out의 Finished,because 이후 이유 + nN_des.log 마지막 anode 전압, 이후 단일 노드 원인 검증.
+
+---
+
+## 2026-11-18T02:03:53Z — TaekGyu0801
+
+[2026-11-18 KST]
+작업자: 이택규 / AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED (8 completed to 5V), UNRESOLVED (4 MinStep cause/physical performance)
+
+요약: A1u Si_X_C_O_WC wC/dC 12 split 중 n72,n121,n165,n84,n132,n176,n95,n198 8개 last anode 5V + Curve trace finished. n143 2.545V, n187 2.499V, n106 2.319V, n154 2.584V에서 Step-size less than MinStep. 5V 성공 조건 final log column raw 2.562E-03~2.566E-03, unit/normalization unverified. 이전 n72 eDensity parser 오류는 최신 정상 PP와 5V 완료로 해소.
+
+근거: 사용자가 제시한 실제 학교 터미널 n*_des.log 마지막 anode 행 및 n*_des.out Finished,because 후속문구, 이전 SWB split 스크린샷.
+
+변경: 학교 코드 변경 없음; GitHub 개인/팀 상태, errors, next, LIVE_STATE, RELAY, JSON 기록.
+
+다음: 사용자는 Claude와 후속 검증 진행. Claude는 Bash/tcsh 환경에서 복붙 가능한 안전한 읽기 전용 1-step 명령부터 제시하여 4개 MinStep의 pp/mesh/Newton failure bias와 success case 대조 후 최소 변경 제안; 코드 무단 변경 금지. A1u sweep C-only 효과가 아닌 Si-off+C-on 복합 효과임을 유지.
+
+---
