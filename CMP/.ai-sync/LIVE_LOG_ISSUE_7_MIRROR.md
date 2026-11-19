@@ -14188,3 +14188,64 @@ AI: ChatGPT
 다음: 사용자는 Claude와 후속 검증 진행. Claude는 Bash/tcsh 환경에서 복붙 가능한 안전한 읽기 전용 1-step 명령부터 제시하여 4개 MinStep의 pp/mesh/Newton failure bias와 success case 대조 후 최소 변경 제안; 코드 무단 변경 금지. A1u sweep C-only 효과가 아닌 Si-off+C-on 복합 효과임을 유지.
 
 ---
+
+## 2026-11-19T02:49:24Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT (Claude 수정 코드/실행은 사용자 보고)
+구분: PROGRESS / HANDOFF
+상태: USER REPORTED (new execution), OBSERVED (SWB setup screenshot), UNRESOLVED (5V numerical completion / applied code)
+
+요약:
+새 SWB 프로젝트 /users/student/team3/JSB/CMP_B_B1 및 CMP_B_BNULL에서 Claude가 수정한 Project B 코드가 모두 돌아갔다고 사용자 보고. 첨부 SWB T-2022.03 화면은 두 프로젝트에 각각 NtSide=0, 1e18 두 행과 Vstop=5, TrapEt=0.75, TrapSigmaN/P=1e-15 조건을 표시함. 그러나 node 상태/마지막 anode 전압/Curve trace finished/실제 적용 코드 및 mesh는 이미지에 없어 5V 정상 종료가 확인된 것은 아님. 기존 11/17 실패는 별도의 과거 프로젝트 경로 결과이므로 새 프로젝트와 혼동 금지.
+
+근거:
+- 2026-11-19 사용자 진술 및 SWB parameter grid 스크린샷 2개
+
+변경:
+- 학교 코드 ChatGPT 미수정; 주수빈 TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.md 업데이트
+
+다음:
+- 새 경로의 n*_des.log/out를 읽어 4개 Trap ON/OFF 조건의 5V/종료 사유, 노드 대응을 확인
+- Claude 수정 SDE/SDevice/.par 및 preprocess, mesh, Mg ionization, Trap 적용 공통성 확인 후 matched-current 결과 분석
+
+---
+
+## 2026-11-19T03:18:13Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER / TERMINAL FIX PROPOSAL
+상태: OBSERVED (tcsh shell paste error), PROPOSED (single-line Bash workaround; school untested)
+
+요약: team3@semicon4 터미널에서 GPT가 제공한 여러 줄 bash -lc 인용문이 tcsh에 의해 `Unmatched '`로 중단되며 이후 for/do/while/fi 등이 Bash 바깥에서 개별 실행되어 Command not found/Missing }/Undefined variable 발생. TCAD solver 문제나 결과 삭제가 아니라 셸 인용 오류. 새 CMP_B_B1/BNULL의 5V 로그는 여전히 미확인.
+
+변경: 학교 TCAD 파일 변경 없음. Bash 한 줄 `/bin/bash -c '...'` read-only 로그 확인 명령 제공(실제 실행 미검증).
+
+다음: 사용자 명령 출력으로 각 n*_des.log 마지막 anode 및 des.out 정상 종료 검증. 개인 TIMELINE/ERROR_LOG 기록.
+
+---
+
+## 2026-11-19T03:21:10Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED (3 nodes finished 5V) / UNRESOLVED (B1 n5; trap node mapping, model equivalence)
+
+요약:
+새 프로젝트 /users/student/team3/JSB/CMP_B_B1 / CMP_B_BNULL에서 실제 터미널 로그 출력:
+B1 n5 last anode 1.884E+00, raw last current 1.037E-08; 마지막 Finished 메시지는 Error smaller than 1 (9.2220E-01)로 Newton 내부 convergence 메시지이며 5V 완료/최종 실패 여부를 뜻하지 않음.
+B1 n6 last anode 5.000E+00, raw last current 2.824E-05, Curve trace finished.
+Bnull n5 last anode 5.000E+00, raw last current 7.899E-05, Curve trace finished.
+Bnull n6 last anode 5.000E+00, raw last current 5.447E-05, Curve trace finished.
+현재 세 개 노드는 5V numerical completion OBSERVED. n6 B1/Bnull raw last-current ratio 0.5184 (약 -48.2%)이나 비교 모델의 유효 NtSide, units/AreaFactor, PP/mesh/물리 일치 전에는 성능 해석 불가.
+
+근거: 사용자가 제공한 새 프로젝트 n5/n6 des.log/out grep 결과, 앞선 SWB parameter-grid 스크린샷.
+변경: 학교 코드 미변경; 개인/팀 상태, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.md GitHub 갱신.
+다음: B1 n5 out 마지막 20~30행/상태 확인, 양쪽 pp5/pp6에서 Trap OFF/ON node 매핑 검증, 실제 Claude 적용 코드 점검, 이후 matched-current radiative/SRH 평가.
+
+---
