@@ -14249,3 +14249,382 @@ Bnull n6 last anode 5.000E+00, raw last current 5.447E-05, Curve trace finished.
 다음: B1 n5 out 마지막 20~30행/상태 확인, 양쪽 pp5/pp6에서 Trap OFF/ON node 매핑 검증, 실제 Claude 적용 코드 점검, 이후 matched-current radiative/SRH 평가.
 
 ---
+
+## 2026-11-19T10:35:13Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / RESEARCH REVIEW
+상태: PROPOSED (NOT ADOPTED / NOT RUN)
+
+요약:
+- 사용자: Baseline 구축 완료 판단, Project A/B 성능 연구 차질과 촉박한 마감 때문에 새로운 방향 검토 요청.
+- F implantation 문헌 검토: 고저항 p-GaN F passivation ring은 주입 전류가 측벽 결함을 피하도록 유도한다 (ACS Photonics 2026 DOI 10.1021/acsphotonics.5c02363). 실제 F implantation 완전 재현은 에너지·dose·3D 농도 분포·활성 전하·결함 보정에 의존하여 마감 전 위험.
+- AI PROPOSAL: F-*inspired* high-resistivity p-GaN edge guard numerical proxy의 전류 차단 효과만 검토; p-contact setback (implant와 동등하지 않은 별도 형상 대조군) 및 기존 baseline NtSide trap/passivation-strength sweep을 fallback으로 병행. Wu 2023이 trap density/size 효과를 이미 연구했으므로 단순 재현은 신규성 제한.
+- 평가 기준: 고정 전체 소자 면적/동일 총 주입 전류에서 absolute QW radiative, sidewall nonradiative, Vf penalty, lateral current; 동일 5V에서의 단순 전류 감소는 광학적 이득이 아님.
+
+근거:
+- https://doi.org/10.1021/acsphotonics.5c02363
+- https://www.sciencedirect.com/science/article/pii/S0022231323002363
+- https://www.sciencedirect.com/science/article/pii/S2773012323000390
+- GitHub CMP/PROJECT_AB_WU10_DESIGN_FREEZE_20261108.md
+
+변경:
+- CMP/members/JuSubin/TIMELINE.md PROPOSED 기록만 추가. Baseline, TCAD 학교 파일, 현재 A/B 작업계획 미변경. 시뮬레이션 미실행.
+
+다음:
+- 주수빈 선택 후 성공 Baseline 원본 audit→최소 3개 조건 pilot→기존 Baseline과 matched-current 비교.
+
+---
+
+## 2026-11-19T10:46:46Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / RESEARCH DESIGN / HANDOFF
+상태: 방향 USER CONFIRMED; 수치 PROPOSED/UNRUN; 실험 결과 NONE
+
+요약:
+- 주수빈: 마감 촉박, 기존 Baseline을 유지하며 Project A/B보다 F-inspired high-resistance Ring 직접 적용 우선. 4개 p-contact 전류 제어 예비실험은 하지 않기로 명시.
+- 문헌 우선순위: Pan et al., ACS Photonics 2026 DOI 10.1021/acsphotonics.5c02363 — pGaN 측벽 주변 F-implant high-resistivity ring, 6/8/10um. Luo et al., J Luminescence 2023 DOI 10.1016/j.jlumin.2023.119903 — F 도즈/에너지/공간 분포. 다른 2025 Advanced Science 10.1002/advs.202511520에서 30keV, 5e14cm^-2, Rs 68->37406Ω/□는 타 소자 데이터이며 직접 전사하지 않음.
+- CMP 최초 1개 5V 파일럿 후보(논문 보고 최적값 아님): 기존 10um stripe pGaN x=[0,.120]um, 양쪽 외곽 y=[0,.200] & [9.800,10]um에 effective high-R Ring; 기존 5nm damage 영역도 pGaN내 링에 포함해 전극 직통 bypass 방지, damage trap 전체 유지. 링 안에서만 유효 Mg 입력을 2e19 -> 2e16cm^-3로 줄이는 미보정 전기적 surrogate, 중앙 pGaN Mg/그 외 SDE/SDevice 물리·연결 모두 원래 값. 국부 coarse mesh 최대 20nm 최소 5nm (기존 damage/MQW 더 미세한 mesh 보존). NtSide1e18, Et.75, σn/σp1e-15, 5V. 학교 실제 코드/PP 확인 후 별도 CMP_PROJECTF_1.0.0_FRING 이름으로 생성할 후보.
+- 원소 F 실제 도핑, 30keV/5e14 implant profile, 실제 도전율 550배 변화를 재현했다고 주장하지 않음. 0.2um,2e16도 연구 시작용 자체 가정. 논문 SI의 정확한 F 공정/Ring 폭 정보 직접 검증 못함. 학교 소스 변경·시뮬레이션 실행 없음.
+
+근거:
+- GitHub CMP/PROJECT_F_FRING_DESIGN_20261119.md
+- DOI 10.1021/acsphotonics.5c02363, 10.1016/j.jlumin.2023.119903, 10.1002/advs.202511520
+- 기존 CMP/PROJECT_AB_WU10_DESIGN_FREEZE_20261108.md 및 GitHub 3.2.0 proposed baseline candidate (NOT school exact)
+
+변경:
+- 신규 연구설계 문서, JuSubin TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.md.
+- 학교 Baseline/A/B 코드·데이터 변경 없음.
+
+다음:
+- 학교에서 성공한 Baseline의 전체 원본 SDE/SDevice/PP/.par/mesh, contact 및 area factor read-only audit; 독립 clone 후 가드링 1개 파일럿만. 5V numerical completion과 Ring hole current 우회 먼저 확인, 이후 동일 총 전류의 QW 절대 Radiative/측벽 Trap/SRH 및 전압 penalty 비교.
+
+---
+
+## 2026-11-19T10:50:37Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESEARCH REVIEW / DECISION SUPPORT
+상태: PROPOSED (user decision pending, no simulation)
+
+요약:
+사용자가 F 공정 특정성을 없애고 'p-GaN만 고저항화해 전류 경로 우회'하는 최소 연구가 의미 있는지 검토 요청.
+- 전체 p-GaN 고저항화는 중앙 정공 주입을 저해할 위험이 커서 비권장. 좌우 가장자리 p-GaN만 선택적 고저항화해서 기존 5nm damaged sidewall로 향하는 전류를 억제하는 수치 연구는 타당.
+- 기존 CMP Project F 초안은 실제 F 원소/implant 공정이 아니라 원래 유효 Mg 저감 numerical proxy이므로 새 방향은 구현 변경보다 연구 설명/검증 목표 변경에 가까움.
+- 단, Mg 입력 저하는 이동도/비저항만 바꾸지 않고 ionization/space charge/carrier 분포까지 바뀜. 200nm, 2e16cm^-3은 원래부터 미보정 pilot assumptions.
+- Pan et al. ACS Photonics 2026 DOI 10.1021/acsphotonics.5c02363 및 2021 resistive ITO/p-GaN edge junction PMID34615218 선행. 순수 current-confinement 효과는 알려져 있어 신규성 제한. 같은 주입 전류에서 QW absolute radiative, sidewall nonradiative, voltage, carrier/current maps 비교 필요; current crowding 역효과 확인.
+- 새 방향은 아직 정식 사용자 채택이 아니므로 기존 Project F 명칭/프리셋, CMP NEXT_ACTIONS 및 학교 소스 변경하지 않음.
+
+근거:
+- PMID 34615218 https://pubmed.ncbi.nlm.nih.gov/34615218/
+- https://doi.org/10.1021/acsphotonics.5c02363
+- https://doi.org/10.1038/s41377-025-01751-y
+
+변경:
+- CMP/members/JuSubin/TIMELINE.md 연구검토 기록 추가. 학교 코드, 시뮬레이션 변경 없음.
+
+다음:
+사용자 확정 시 선택적 edge p-GaN current confinement으로 연구 제목/설계문서 수정 및 실제 성공 Baseline 원본 코드를 기준으로 1-case pilot.
+
+---
+
+## 2026-11-19T11:00:46Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESEARCH REVIEW
+상태: PROPOSED / USER DECISION PENDING
+
+요약:
+- 사용자의 'MicroLED 측벽 결함 논문 찾아서 지금 가장 쉽게 구현' 요청에 따라 7편 논문 및 기존 Wu10um 측벽 Damage/Trap 모델을 비교.
+- 구현 최소: SWB NtSide 전체 측벽 1e18 -> 첫 pilot 1e17cm^-3 (SDE/SDevice 수정/mesh 불필요)이나 Wu 기존 trap-density sweep과 중복하여 신규성 낮음.
+- 가장 간단한 별도 연구 질문 제안: MQW 측벽만 선택적 passivation 모델. 실제 school verified baseline SDevice 복제본에서 DmgL/R_QW1..4 등 8개 Trap Conc만 1e17 pilot로, 다른 14개 Damage trap과 모든 geometry/Mg/Physics/mesh/contacts 유지. 이는 가상의 선택적 defect suppression이지 실제 N2/ALD/TMAH 물성/두께 재현 아님.
+- 2022 TMAH 재결합 4배 감소 등 실험 결과를 Trap 농도 감소 배율에 바로 전사하지 않는다. Baseline 5V OFF/ON 전류 차이가 매우 작았던 역사 데이터가 있어 개선효과를 보장할 수 없고, 동일 전류의 QW 절대 방사/측벽 비방사/전압 패널티 분석 필수.
+- 대안 난이도: Damage 5nm 폭 축소 (SDE+mesh), 선택적 pGaN Ring (SDE+doping+mesh), explicit ALD/F (더 복잡). 이전 F-inspired Project F는 사용자 확정 변경 전까지 유지.
+
+근거:
+- CMP/SIDEWALL_LITERATURE_FEASIBILITY_20261119.md
+- https://doi.org/10.3390/mi14010010
+- https://doi.org/10.1038/s41377-024-01639-3
+- https://doi.org/10.1021/acsaelm.4c01540
+- https://doi.org/10.1364/OL.456993
+- https://doi.org/10.1002/pssr.202500042
+- https://doi.org/10.1016/j.micrna.2023.207542
+
+변경: 비교 문서와 JuSubin/TIMELINE.md 연구 검토 기록만 추가; CURRENT_STATUS / NEXT_ACTIONS / 학교 코드 미변경.
+다음: 주수빈이 실제 채택할 방식 선택 후 학교 Baseline source/PP 점검 및 최소 1개 조건 적용.
+
+---
+
+## 2026-11-19T11:06:36Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESEARCH REVIEW / PARALLEL TRACK PROPOSAL
+상태: PROPOSED, USER SELECTION NOT YET CONFIRMED, NO SCHOOL CODE MODIFIED/UNRUN
+
+요약:
+- User rejects simple Trap concentration lowering and requests two novel-enough feasible independent Project A/B replacement subjects for 이택규/주수빈 near deadline.
+- Recommendation A (이택규): localized p-GaN Mg deactivation/high-resistance edge current-confinement. Primary Kirilenko et al. Applied Physics Express 2022 DOI 10.35848/1882-0786/ac7fdc (H plasma pGaN edge Mg deactivation, 20um green microLED reported 1.4x EQE) and Hang 2021 resistive ITO/pGaN. Wu baseline 10um, damaged sidewall traps untouched, x pGaN0..0.12um, edge strips y0..0.2 and9.8..10um, effective Mg input2e16 vs center2e19. Width/Mg are CMP numerical assumptions only, not hydrogen chemistry or conductivity calibration.
+- Recommendation B (주수빈): uniform GaN QB thinning 8nm->6nm in same existing Wu MQW 4xIn0.08GaN 3nm (five barriers). Primary Le Chang et al. Nanoscale Research Letters 2020 DOI 10.1186/s11671-020-03372-3, 10um InGaN, QB6/9/12nm, thickness-dependent lateral spreading/surface losses. No new material, no Trap edits; SDE geometry, quantum/barrier interfacial mesh regeneration required. Paper uses different In%, EBL, 0.5um defects, APSYS Schrödinger+Poisson; do not extrapolate performance or model quantum effects by unverified Sentaurus drift-diffusion deck.
+- 1 pilot per project + original working reference, verify effective source and current AreaFactor before any edits, measure same-current QW absolute radiative / sidewall net defect nonradiative / h current spatial maps / Vf. Neither pilot performed; high chance smaller 5V signature.
+- Scientific novelty limited since both mechanisms in prior art; current contribution controlled Wu-baseline same-current comparator, not invention of mechanisms.
+
+근거/문서:
+- CMP/PROJECT_AB_REPLACEMENT_SHORTLIST_20261119.md
+- https://doi.org/10.35848/1882-0786/ac7fdc
+- https://doi.org/10.1186/s11671-020-03372-3
+- https://doi.org/10.1016/j.micrna.2023.207542
+
+변경:
+- 제안 문서 신규 작성 및 CMP/members/JuSubin/TIMELINE.md 기록. 팀 CURRENT_STATUS, NEXT_ACTIONS 및 현행 Project F 계획은 승인 전 변경하지 않음. 학교 SDE/SDevice/PAR/PP/mesh 원본 수정 없음.
+
+다음:
+- 주수빈이 두 주제의 분담을 승인하면 각 독립 SWB clone의 school source read-only audit 후 최소 1개 5V 후보만 실행.
+
+---
+
+## 2026-11-19T11:20:46Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈 (Project A 담당 이택규, Project B 담당 주수빈)
+AI: ChatGPT
+구분: DECISION / DESIGN FREEZE / HANDOFF
+상태: USER CONFIRMED DIRECTIONS / NUMERIC PILOT PROPOSED / SCHOOL UNRUN
+
+요약:
+사용자가 기존 Carbon Project A / AlGaN Project B 대신 두 신규 방향(이택규 A: 선택적 pGaN Mg 비활성화/H-inspired current confinement, 주수빈 B: 기존 GaN QB 8→6nm)에 명시 동의. 기존 F-inspired ring, C/AlGaN 기록은 보존하고 당장 우선순위에서만 제외.
+
+원문 검증:
+- Kirilenko et al. APEX2022 DOI 10.35848/1882-0786/ac7fdc: 20/100um green, pGaN300nm, lateral H diffusion approx1.7um, vertical100nm for similar processing; 250W300°C4min plasma, H deactivation under discussion; published 20um peak EQE 1.34→1.86%. CMP pGaN 120nm/10um/width200nm/Mg×1e-3 = OUR HIGH-R NUMERICAL PROXY, NOT publication-based calibration.
+- Chang et al. Nanoscale Res Lett2020 DOI 10.1186/s11671-020-03372-3: 10um blue, 6/9/12nm QB, In0.18GaN, 26nm EBL, 0.5um damaged edges, APSYS Schrödinger. CMP Wu In0.08, EBL0 pilot, damaged edges5nm; direct numeric improvement transfer invalid.
+
+변경/설계:
+- PROPOSED A: school-running Wu baseline clone only: pGaN x0-.120um y0-.2/9.8-10, including Dmg5nm; central nominal Mg2e19, edge effective Mg2e16cm^-3; existing 22 Dmg traps & other physics preserved, no H chemistry.
+- PROPOSED B: all five GaN QB8→6nm, 4x In0.08GaN3nm wells unchanged, MQW span52→42nm, nGaN start0.172→0.162um, tN=3.9um, all original traps/materials/physics untouched. SDE/remesh only, no extra AlGaN or C.
+- Common one single 5V TrapON pilot per branch; must verify actual executed school parent source, PP and 2D AreaFactor; compare SAME total injected current QW absolute Radiative, sidewall net nonrad, Vf and hole current maps. Current-only improvement and unverified quantum/implant claims disallowed.
+- Important unresolved: GitHub 3.2.0 Wu candidate header explicitly PROPOSED/UNRUN, not byte-identical to school working baseline; school source/mesh/PP not accessible here.
+
+GitHub:
+- New CMP/PROJECT_AB_REPLACEMENT_DESIGN_FREEZE_20261119.md
+- JuSubin/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, LIVE_STATE.md/json, RELAY.md updated.
+- Phase Issues #3 #4 #5 updated with archival historical text intact.
+- School files/code untouched; no A/B new simulation runs by GPT.
+
+다음:
+Read-only school true Wu SDE/SDevice/PAR/PP/mesh and hashes, then separate independent projects CMP_PROJECTA_2.0.0_HEDGE, CMP_PROJECTB_2.0.0_QB6 (check school collisions), one-file patch per project preserving baseline, PP/mesh first and 5V single pilot, then matched-current recombination and transport analysis.
+
+---
+
+## 2026-11-19T11:27:46Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESEARCH REVIEW / DESIGN ALTERNATIVE
+상태: PROPOSED / USER DECISION PENDING / NO SCHOOL RUN
+
+요약:
+- 사용자: 새로 채택한 A(H-inspired pGaN 저항 제어), B(GaN QB8->6nm)에서 측벽 관련 효과를 더 잘 보기 위해 공통 Baseline의 원래 5nm Damage 폭을 넓히는 방안 문의.
+- 원래 성공 Wu Baseline 5nm를 덮어쓰지 않고, 별도 50nm-per-side D50 high-damage stress test를 생성하는 설계를 제안. Wu2023 5nm, Chang2020 500nm sidewall defective zone, 2026 review 구조적 손상 약 40-100nm와 전기적 영향 0.5-1um을 구분. 50nm = 문헌의 구조적 손상 구간 안에 있으나 균일 체적 Trap 분포는 아직 모델 가정.
+- NtSide1e18cm^-3/Et0.75/sigmaN/P1e-15 유지 시 Damage 총 lateral 폭0.1%->1% (10um 폭), 명목상 영역 Trap inventory 약10배 증가하나 재결합량/효율 향상은 미확인.
+- 공정/논리: D50 baseline + H-edge-A-D50 + QB6-B-D50 최소 3회 5V run 필요; A/B는 반드시 D50를 직접 대조군으로. D5 vs D50는 별도 sensitivity 결과. A의 200nm edge ring은 50nm Dmg를 포함, B는 4QW3nm/5QB6nm. 기존 모든 22 Damage trap definition 보존.
+- 위험: 기존 5nm용 Ref.Edge fine mesh를 그대로 50nm 전체에 적용하면 mesh 수와 계산비용 상승. pGaN/nGaN까지 Dmg가 확대되므로 MQW와 비MQW 손실 분리 필요. 실제 학교 성공 source/PP/mesh 확인 후 새 복제본에만 적용 가능. 5V 전류 감소만으로 성공 주장 불가.
+- 기한에 추가 1개 baseline run조차 어렵다면 Wu5nm에서 원래 계획한 두 실험만 하는 것이 더 안전.
+
+근거:
+- https://doi.org/10.1016/j.micrna.2023.207542
+- https://doi.org/10.1186/s11671-020-03372-3
+- https://doi.org/10.1088/1361-6463/ae553e
+- CMP/DAMAGE_WIDTH_STRESS_TEST_REVIEW_20261119.md
+
+변경:
+- 위 D50 리뷰 문서, JuSubin/TIMELINE.md 리뷰 기록. 공식 A/B 설계/학교 Baseline/코드 미변경. 파일럿 미실행.
+
+다음:
+- 사용자가 D50 스트레스 비교 추가 결정 시 original Wu 기준 사본에서 one D50 reference 생성 후 A-D50/B-D50 공통 입력과 동일 전류 기준 분석.
+
+---
+
+## 2026-11-19T11:33:43Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESEARCH LITERATURE VERIFICATION / DESIGN CAUTION
+상태: OBSERVED (literature facts), PROPOSED (separate D50 hypothesis), NO SCHOOL RUN
+
+요약:
+- 사용자는 10µm 실제 LED에서 물리적 측벽 Damage 깊이가 어느 정도인지 문의. 단지 효과를 키우려는 임의 변경 대신 실제 문헌 근거 확인.
+- Wu 2023의 좌우5nm Trap region은 TCAD 모델링 가정이며, 10µm 소자의 필연적 실측 Damage 깊이가 아님.
+- LSA2025 리뷰: HRTEM 격자무질서~2nm, pGaN ICP 손상~40nm(750W source/150W RF), 다른 공정 nGaN~60nm(60W bias). J Phys D2026 review: 구조적 STEM 손상~40–100nm. 소자 크기 10µm만으로 특정 숫자를 확정할 수 없음.
+- 전기·광학 영향은 더 넓음. EQE 기반 fitted dead zone blue~180nm, green~150nm; 이미지 기반 PL/CL/FLIM 손상 영향 0.8µm에서 수µm까지, 10µm 소자에서는 거의 전체 MQW에 영향 보고. 이 범위를 homogeneous bulk trap층 두께로 사용해서는 안 됨.
+- 50nm는 plausible first physical-depth assumption일 뿐이며 현재 미승인. 10µm 2D stripe의 양쪽50nm는 1% 폭, 실제 square10x10µm의 50nm border area는~1.99%. NtSide1e18cm^-3고정 상태에서 폭5->50nm면 trap sheet inventory Nt*w=5e11->5e12cm^-2로 10배 증가: 기하학만 바꾼 모델 아님. 동일 inventory를 유지하려면 w50에서 Nt1e17cm^-3 필요(실측 보정 아님).
+
+근거:
+- https://www.nature.com/articles/s41377-025-01751-y
+- https://doi.org/10.1088/1361-6463/ae553e
+- https://www.sciencedirect.com/science/article/pii/S2773012323000390
+- https://cir.nii.ac.jp/crid/1360865819384133760?lang=en
+
+변경:
+- CMP/DAMAGE_WIDTH_STRESS_TEST_REVIEW_20261119.md 문헌·sheet trap 경고 보강, JuSubin TIMELINE 및 TEAM_TIMELINE 기록.
+- 학교 Baseline 및 A/B 계획·코드 변경 없음.
+
+다음:
+- 5nm Wu baseline 유지, D50별도 추가 여부와 trap sheet inventory 보존 vs high-defect stress를 사용자 결정 후 정확한 PP/Mesh 조건으로 적용.
+
+---
+
+## 2026-11-19T11:49:12Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: SOURCE PROVENANCE CHECK / HANDOFF
+상태: OBSERVED GitHub file, UNRESOLVED school final source
+
+요약:
+- 사용자가 '최종 확정 Wu10 Baseline SVisual 코드' 원문 복붙 요청. 실제 GitHub에서 CMP/tcad/candidates/CMP_BASELINE_3.2.0_WU2023PHY/svisual1_iv.tcl (3327자, SHA 284c0ddc68185a326f9221ddccdac715f8476796)을 읽음. 10um, PLT @plot@, NtSide macro, I–V/J–V, CSV output 사용. J 변환은 raw A/um + AreaFactor=1 가정이며 미검증; 원본 헤더 PROPOSED/not school-run.
+- CMP/tcad/CURRENT/svisual1_iv.tcl 와 svisual2_maps.tcl 는 과거 4um Common Baseline의 코드. Wu 3.2 candidate svisual2_maps.tcl 404 NOT FOUND. 실제 성공한 학교 CMP_WU_Copy의 최종 SVisual Tcl 원문은 GitHub에서 byte-verified 되지 않음. 학교 최종본이라고 주장하지 말 것.
+- D50에서는 10um 폭 정규화 자체 불변; 5nm y 좌표/TDR 이름을 하드코딩한 후처리 코드만 수정 가능. 복붙 요청에 10um GitHub 후보 및 역사적 2D 스크립트와 각각의 출처·검증수준을 분리해 답할 계획.
+
+변경: CMP/members/JuSubin/TIMELINE.md 기록. 학교/공통 D50 SWB 원본 변경 없음.
+다음: 실제 학교 소스가 필요하면 해당 SVisual input Tcl 원문이나 경로 확인, PP 연계 확인.
+
+---
+
+## 2026-11-19T11:54:50Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: HANDOFF / CODING WORKFLOW DECISION
+상태: CONFIRMED USER INTENT; SCHOOL SOURCE NOT YET READ / UNRUN
+
+요약:
+- 사용자는 기존 ChatGPT가 제공한 SVisual 코드를 '이건 아니야'라고 거부함. 과거 GitHub CURRENT의 4um SVisual 및 GitHub Wu3.2 UNRUN 후보 Tcl은 학교에서 마지막으로 성공한 Wu10um 최종본으로 인증되지 않았으므로 무단 사용 금지.
+- 사용자: 새로운 CMP 연구 계획과 D50 공통 모델 코딩은 Claude에게 맡기고, ChatGPT는 전체 컨텍스트/수치/우선순위/접속 준비사항을 정확하게 전달하는 복붙용 프롬프트 제공.
+- 클로드 첫 액션은 GitHub protocol/LIVE_STATE/NEXT_ACTIONS/RELAY/Issue7, 실제 학교 성공 D5 SDE, SDevice, par, **실제 최종 SVisual Tcl**, PP/Mesh/AreaFactor 읽기 전용 확인. 학교 접근 불가 시 tcsh에서도 동작하는 bash 한 줄 명령으로 출력 확보. 기존 school D5, 이전 A/B 산출물 보존.
+- D50 common control: Wm10um 2D, both side damage width 5->50nm (y0-.05, 9.95-10), volumetric NtSide1e18 unchanged; nominal sheet count10x. Keep original 22 trap regions, original physics and 8nm GaN QB and 4QW3nm.
+- Then A-D50 (이택규): pGaN bilateral0.2um edge including .05um damage, effective Mg2e16 vs core2e19 (uncalibrated H effect proxy); B-D50 (주수빈): all 5 GaN QB8->6nm, four QW3nm unchanged. Run minimum D50, A-D50, B-D50 one TrapON 5V each; compare A/B against same D50 at matched total injected current, not old D5. No p-contact 4-case.
+
+근거: CMP/PROJECT_AB_REPLACEMENT_DESIGN_FREEZE_20261119.md ; CMP/tcad/candidates/CMP_BASELINE_3.3.0_D50STRESS/README.md
+변경: CMP/members/JuSubin/TIMELINE.md, CMP/.ai-sync/RELAY.md, CMP/NEXT_ACTIONS.md; 학교 소스/시뮬레이션 변경 없음.
+다음: Claude가 학교 실소스 확보 및 철저한 파일별 수정 목록/완성 코드/최소 실행·검증 명령 제공.
+
+---
+
+## 2026-11-19T12:31:08Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION
+상태: CONFIRMED USER NAMING / SCHOOL UNRUN
+
+요약: 사용자 지정 새 SWB 작업명 `CMP_BASELINE_GPT`는 기존 GitHub 버전 후보 `CMP_BASELINE_3.3.1_GPTD50`의 별칭. 좌우 50nm D50, 물리모델 변경 없음. SWB 내부 입력 파일명 보존. 팀 버전 명명 규칙에 맞춘 공식 코드/이력은 기존 경로 유지.
+변경: CMP/members/JuSubin/TIMELINE.md 기록; 시뮬레이션/코드 변경 없음.
+다음: 학교에서 독립 SWB 프로젝트로 실행 전 mesh/PP 확인.
+
+---
+
+## 2026-11-19T13:08:01Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / HANDOFF
+상태: PROPOSED (GitHub static code checked), SCHOOL UNRUN
+
+요약:
+- 이택규 Project A H-inspired pGaN sidewall effective Mg passivation first-run: bilateral 0.200um (including Damage 0.050um), Mg edge2e16cm-3 vs center2e19; 5 pGaN lateral segments; retain 22 original Dmg traps/full top anode contact, plus local pGaN HEdge mesh.
+- 주수빈 Project B GaN quantum barriers: five QB8->6nm (tQB.008->.006um); 4QW3nm unchanged; MQW total52->42nm, total depth4.072->4.062um.
+- Two fully separate 6-file GitHub candidates created: CMP/tcad/candidates/CMP_PROJECTA_2.0.0_HEDGE and CMP/tcad/candidates/CMP_PROJECTB_2.0.0_QB6. Both read-back checked; SDE balanced, 22 traps, SDevice/par physics and SVISUAL computations unchanged except identity labels.
+- Values frozen as INITIAL PILOT, not calibrated optima; Kirilenko2022 (H effect) and Chang2020 (QB thinning) support mechanisms but not numeric transfer. No school solver/mesh run.
+
+근거:
+- GitHub candidate SDE/SDevice/par/SVisual/README; CMP/PROJECT_AB_REPLACEMENT_DESIGN_FREEZE_20261119.md
+변경:
+- Code candidates and team/current/timeline/live/next/relay records
+다음:
+- Confirm actual school Claude D50 5V/mesh/PP first; diff and apply only intended SDE edits to independent school A/B clones; run one TrapON 5V each and matched-current comparison. Do not run GPTD50 redundantly or overwrite verified school source.
+
+---
+
+## 2026-11-19T13:21:21Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION
+상태: OBSERVED USER NAMING / SCHOOL RUN UNVERIFIED
+
+요약: 사용자가 GPT 기반 Project A의 학교 SWB 작업명을 `CMP_A_GPT`, Project B의 작업명을 `CMP_B_GPT`로 변경했다고 보고. 각각 GitHub 버전 후보 `CMP_PROJECTA_2.0.0_HEDGE`, `CMP_PROJECTB_2.0.0_QB6`의 로컬 작업명으로 대응. 입력 내부 파일명과 GitHub 기존 코드·이력은 그대로 보존; 코드 변경/시뮬레이션 성공을 주장하지 않음.
+변경: CMP/members/JuSubin/TIMELINE.md
+다음: Claude D50 성공 확인 후 독립 A/B Mesh·5V 검증.
+
+---
+
+## 2026-11-19T13:38:24Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER
+상태: OBSERVED GUI SCREENSHOT / UNRESOLVED CAUSE
+요약: CMP_A_GPT school SDE graphical canvas blank. Scheme Commands screenshot shows definitions through `(define (add-layer ...))` and `>` prompt; no visible executed geometry or mesh calls. Could be incomplete/paused execution or error, not enough evidence for mesh issue. No school file accessed/edited.
+변경: CMP/ERROR_LOG.md added screenshot-observed blocker.
+다음: read-only actual `sde_dvs.cmd` tail, pp*_dvs.cmd and n*_dvs.out/.err, process status; patch only evidenced cause.
+
+---
+
+## 2026-11-19T13:42:03Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER ROOT CAUSE / FIX PROPOSED
+상태: OBSERVED user-pasted school source; correction NOT YET SCHOOL-RUN
+
+요약: 실제 CMP_A_GPT SDE 코드가 `(define (add-pgan-with-edge-deactivation)...)` 내부의 `sdegeo:create-rectangle` 직후에 끝난다고 사용자가 확정. 닫히지 않은 Scheme 함수 및 누락된 나머지 layer/contact/mesh 때문에 blank SDE/Scheme prompt, mesh 과밀이 원인이라고 볼 수 없음.
+근거: 사용자 전체 코드와 기존 GUI screenshot; GitHub complete candidate CMP/tcad/candidates/CMP_PROJECTA_2.0.0_HEDGE/sde_dvs.cmd 7450자 SHA ec9a347...
+변경: ERROR_LOG / JuSubin TIMELINE 추가. School 파일을 AI가 직접 수정하지 않음.
+다음: 학교 SDE 편집기에 완성 코드 전체로 교체, 재시작 후 SDE만 실행하여 mesh/log 확인; SDevice/par 유지.
+
+---
+
+## 2026-11-19T13:48:16Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER
+상태: OBSERVED USER SCREENSHOT / UNRESOLVED CAUSE
+요약: CMP_A_GPT SDevice node n6 fails with `Error in pp6_des.cmd at line 98, offending input: [garbled bytes], syntax error!` shown in n6_des.out/err. GitHub stored SDevice line98 is normal `}` but actual school PP may differ; no numerical run. `datexcodes.txt` redefine notices are visible but not proven cause.
+변경: CMP/ERROR_LOG.md only. No school edit.
+다음: compare actual school pp6_des.cmd lines88-108, line98 hex, source sdevice_des.cmd, and SWB substitution; minimal repair after confirming offending actual text.
+
+---
+
+## 2026-11-19T13:51:32Z — soybeanmilk0514-jpg
+
+[2026-11-19 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER ROOT CAUSE
+상태: OBSERVED PP TRUNCATION / UNRESOLVED SOURCE CAUSE
+요약: 사용자 제공 read-only `pp6_des.cmd` 94-105 출력은 96 `PooleFrenkel)`, 97 빈 줄, 98 이후 없음; line98 od 무출력. 따라서 기존 SDevice parser line98 syntax error는 비정상 문자 확정보다 incomplete Trap block / premature EOF로 설명됨. 기존 GitHub full candidate는 22 trap blocks+Math/Solve. 실제 school source `sdevice_des.cmd` 자체 truncation 여부는 미확인.
+변경: CMP/ERROR_LOG.md 업데이트. 학교 파일 수정 안 함.
+다음: school SDevice source vs pp6 `wc -l`/`tail -n` 비교 후 원본이 잘렸으면 SDevice editor에 완성 코드 전체 교체. pp6 직접 편집 금지; 재전처리 후 로그 확인.
+
+---
