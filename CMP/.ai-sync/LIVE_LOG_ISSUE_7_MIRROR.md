@@ -14628,3 +14628,30 @@ AI: ChatGPT
 다음: school SDevice source vs pp6 `wc -l`/`tail -n` 비교 후 원본이 잘렸으면 SDevice editor에 완성 코드 전체 교체. pp6 직접 편집 금지; 재전처리 후 로그 확인.
 
 ---
+
+## 2026-11-20T05:23:05Z — soybeanmilk0514-jpg
+
+[2026-11-20 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / BLOCKER / HANDOFF
+상태: USER DECIDED D5; A/B PROPOSED / SCHOOL UNRUN
+
+요약:
+- 사용자가 신규 50nm Damaged Region 기반 Project A/B가 모두 오류라고 보고하고, 시간 문제로 5nm Baseline으로 복귀하기로 결정함.
+- 50nm가 물리적으로 불가능하다는 결론은 아님. 11/19 학교 A의 SDE 및 pp6 SDevice 파일 잘림은 실제 확인되었으나 이번 A/B 전체 마지막 로그는 미제공.
+- 다음 연구 구성은 신뢰성 우선 임시 제안: 이택규 A = 기존 Wu10um D5에서 NtSide 1e18(control)→3e17→1e17cm^-3, 주수빈 B = sigmaN=sigmaP 1e-15(control)→3e-16→1e-16cm² (NtSide1e18), 각각 한 번에 한 변수만. 기존 SDE/메쉬/22 Trap/EtEv+.75/물리/접촉/5V 유지. 이는 결함 민감도 분석/패시베이션 proxy로서 실제 표면처리 재현이나 효율 개선 확정 아님.
+
+근거:
+- 이번 사용자 결정과 기존 학교 D5 n21 OFF/n25 ON 5V 로그 기록
+- 2026-11-19 A pp6 EOF truncation / SDE incomplete copy
+
+변경:
+- JuSubin TIMELINE, TEAM_TIMELINE, ERROR_LOG, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json, RELAY.md 갱신. TCAD 소스/학교 파일은 변경하지 않음.
+
+다음:
+- 학교 성공 Wu D5 Baseline 최종 실제 소스/로그/SWB 매크로를 확인하여 별도 복제.
+- A NtSide 3e17 / B symmetric sigma 3e-16 각 1개만 5V smoke. 완료 로그 및 동일 전류 Radiative/Trap/전압 비교.
+- D50 및 기존 A/B 후보 보존, 지금 당장 재시도 중단.
+
+---
