@@ -1,3 +1,32 @@
+## 2026-11-21 JuSubin QB6.5nm n128 final log directly inspected (OBSERVED SCREENSHOT)
+- Source n128_des.log image: #iterations larger than 35, Newton didn't converge, tried smaller step, then Step-size less than MinStep (9.1004e-11). Writing n128_des.tdr done, but not end-to-end 5V finish. Exact last accepted anode bias not shown.
+- Root failure class: SDevice nonlinear Newton/convergence step floor; deeper trigger unverified. 6.5nm case may be omitted from deadline-critical QB6/7/8 study. No need to tweak solver without evidence; preserve existing runs.
+
+## 2026-11-21 JuSubin clarifies QB6.5nm (not QB6nm) SDevice run issue (OBSERVED SCREENSHOT)
+- Screenshot: tQB0.0065um NtSide1e18 SDevice node n128 RED, NtSide0 n122 YELLOW. User says only 0.0065 case did not run; earlier 0.006 and 0.007 are successful per user report.
+- Actual n128_des log/err/out and last 5V status absent; underlying cause UNRESOLVED. Avoid claiming intrinsic thickness-induced failure. Fast study still compares 0.006,0.007,0.008um; don't waste deadline on 0.0065 unless necessary.
+- No school source edit or simulation by ChatGPT; read n128 first if diagnosing.
+
+## 2026-11-21 JuSubin reports blank QB6 SVisual .err/.out viewer (USER-REPORTED, UNRESOLVED)
+- User says SVisual red node .err and .out views are blank. Actual filesystem existence/size not checked; do not infer proof of empty files or a parser-specific root cause.
+- First check n*_vis.* and pp*_vis.* presence/sizes/times in actual school project, and upstream n*_des.plt. If no actual logs check scheduler/preprocessing/job state; no SDevice rerun, no blind source rewrite.
+
+## 2026-11-21 JuSubin SVisual1 source inspected for QB6 failure (USER-SUPPLIED SOURCE / ROOT CAUSE UNRESOLVED)
+- User supplied full 10um WU2023PHY SVisual1 Tcl; it only reads @plot@ SDevice PLT and terminal InnerVoltage/TotalCurrent, builds IV/JV and CSV with Wmesa10. It has NO explicit QB thickness or QW coordinate selection, so earlier spatial-location hypothesis does not fit this SVisual1.
+- GitHub candidate SVisual1 matches presented content in behavior, but school preprocessed input and actual failing SVisual job outputs not seen. User reports QB7 SVisual succeeded; screenshot status alone was not sufficient. Suspect dataset/macro/path/variable/export only as hypotheses pending red QB6 SVisual first error.
+- No changes to school solver, SVisual or baseline by assistant; next read failing SVisual .err/.out, PP input path, existing SDevice PLT and endpoint 5V.
+
+## 2026-11-21 JuSubin Project B QB6 SVisual error reported (SCREENSHOT OBSERVED; CAUSE UNKNOWN)
+- School SWB parameter grid screenshot shows both tQB=0.006um NtSide0 and NtSide1e18 rows have red SVisual cells. tQB=0.007um NtSide1e18 SVisual is yellow; no verified normal completion from color alone. Existing user report 'QB6/7 succeeded' likely refers to upstream SDE/SDevice but 5V status still needs logs.
+- The screenshot shows Vstop5, TrapEt0.75, TrapSigmaN/P1e-15 and SWB rows only; do not assume row number equals node ID. Need open red SVisual node's Job Output .err/.out and first Tcl exception, then verify n*_des.tdr/.plt input path and relevant PP script. No source patch or simulation run yet.
+
+## 2026-11-21 JuSubin Project B D5 GaN-QB thickness comparison selected (USER-REPORTED SCHOOL RESULTS / LOG UNVERIFIED)
+- User reports Claude-built Project B with bilateral 5nm Damage was run; QB tQB=0.006um (6nm) and 0.007um (7nm) nodes succeeded. Exact node IDs, terminal output and source have NOT been supplied to GPT; record as USER-REPORTED, NOT assistant-verified.
+- User SELECTS Project B final three conditions: legacy working Wu D5 baseline QB0.008um (8nm) versus Claude D5 QB0.007 and 0.006um. Supersedes near-term B cross-section-only sensitivity proposal of 2026-11-20; preserves old B1/BNULL and D50 attempts.
+- Research goal: minimal verification, no further optimization first. Check B6/B7/B8 effective parameter mapping and 5V terminal Curve trace finished; compare actual SDE/PP/SDevice/macro mesh, ensure only QB changes and 5nm Damage, NtSide, Et, sigmas, solver, contacts, QWs held; five QB and four QWs expected from previous design must be verified in school source.
+- Next compare I-V curves and same-injected-current absolute integrated 4QW RadiativeRecombination and damaged-zone trap-related losses using moving region names (not fixed coordinates), check AreaFactor/normalization. Do not equate absolute Radiative changes or eGap-only with IQE.
+- No school files, raw logs or Claude full source supplied; no code edited or additional school simulation launched by ChatGPT.
+
 ## 2026-11-20 JuSubin returns to working Wu 10um D5; minimum-change A/B pilot proposed (USER DECISION / PROPOSED)
 - User reports all new 50nm damaged-region A/B runs failed and deadline is near. Explicit decision: stop D50 execution and return to Wu 10um damaged-region width **5nm** for near-term work. Do not imply all D50 failures are physical or convergence failures: existing observed A SDE and SDevice commands were truncated; full school statuses not newly supplied.
 - Prior 2026-11-19 D50/H-edge/QB6 candidates remain archived and unverified on school. Protect existing completed D5 n21 TrapOFF / n25 TrapON results and actual school source; do not overwrite in place. GH candidate != school final source.

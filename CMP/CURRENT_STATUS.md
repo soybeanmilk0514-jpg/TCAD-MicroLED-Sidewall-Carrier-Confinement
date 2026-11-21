@@ -1,3 +1,16 @@
+## 2026-11-21 JuSubin QB6.5nm n128 convergence failure confirmed from school log screenshot (OBSERVED)
+- SDevice n128 (tQB=0.0065um NtSide1e18) school log: 35 Newton iterations exceeded, cutback attempted, Step-size less than MinStep 9.1004e-11; final plot TDR written but 5V completion not shown. Last successful bias unknown from screenshot. No conclusion about intrinsic physical impossibility.
+- Three-condition B research priority still user-reported successful QB6/7 and historical QB8 with 5nm damage; validate their 5V termination and model comparability, then I-V / matched-current 4QW Radiative and sidewall trap metrics. No change to school source/solver.
+
+## 2026-11-21 JuSubin Project B QB6 postprocessing blocker (OBSERVED SCREENSHOT; UNRESOLVED)
+- SWB screenshot: QB .006um cases NtSide=0 and 1e18 BOTH red at SVisual; QB .007um NtSide=1e18 yellow at SVisual. This does NOT alone prove SDevice failed or Tcl root cause. Source/error output not supplied. Check exact SVisual job node .err/.out and PP input references, verify upstream completed 5V and files exist before any rerun. Three-condition QB6/7/8 study remains selected.
+
+## 2026-11-21 Project B PRIMARY JuSubin D5 QB thickness 6/7/8nm (USER DECISION / USER-REPORTED SUCCESSES)
+- User reports Claude-authored 5nm Damage Project B worked for tQB=.006 and .007um nodes. Exact node IDs, original source and final 5V Curve trace finished logs not supplied; do NOT claim assistant-verified 5V completion. Compare with historical Wu D5 .008um baseline; same-macro/physics/mesh/source equivalence to Claude runs UNRESOLVED.
+- User selects three-condition QB thickness comparison (6,7,8nm) as Project B and prioritizes immediate results. Replaces 2026-11-20 B trap cross-section-only proposal for active work (no evidence that proposal ran). Project A unchanged; preserve B1/BNULL, D50 and older analyses.
+- Critical fast gates: check 5V terminal + PP node tQB mapping and Trap ON/OFF for each; inspect actual 5 QB/4 QW layout and 5nm Dmg, identical doping/traps/contacts/physics and compatible mesh criteria/normalization; then I-V and at common current absolute QW-integrated radiative and damaged trap recombination. Moving QW boundaries selected by region labels. No causal efficiency enhancement claim without matched-current losses.
+- Current blockers: school Claude D5 effective source/PP and exact 6/7 successful logs not accessible; QB8 historical baseline compatibility unknown. No school code edited by this AI.
+
 ## 2026-11-20 TOP PRIORITY JuSubin D5 recovery instead of failed D50 A/B (USER DECISION / EXPERIMENTS UNRUN)
 - User reports all D50 50nm modified A/B attempts failed and requests fastest direction that produces interpretable results. For the immediate study **return to successful Wu-based 10um, bilateral Damage 5nm common Baseline**. Keep unchanged and backed up; no D50 code should be overwritten/erased.
 - Working D5 historical school data: n21 OFF and n25 ON each showed 5V anode rows and earlier trap spatial/integration analyses; actual final school source and completed exit must be verified before reusing/claiming new reproduction.

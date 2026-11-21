@@ -14655,3 +14655,142 @@ AI: ChatGPT
 - D50 및 기존 A/B 후보 보존, 지금 당장 재시도 중단.
 
 ---
+
+## 2026-11-21T14:01:51Z — soybeanmilk0514-jpg
+
+[2026-11-21 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / RESULT (USER-REPORTED) / HANDOFF
+상태: USER DECISION CONFIRMED; SIMULATION SUCCESS USER-REPORTED, RAW LOG UNVERIFIED
+
+요약:
+- 주수빈은 Claude가 구성한 Damaged Region 5nm Project B에서 GaN quantum barrier 0.006um(6nm) 및 0.007um(7nm) 노드가 성공했다고 보고. 학교 노드 번호/실제 최종 5V 로그/소스 원문은 아직 이 GPT에 제공되지 않음.
+- Project B 최종 비교는 기존 Wu D5 baseline GaN QB 0.008um(8nm) + 0.007um + 0.006um의 3조건으로 사용자 결정. 2026-11-20 제안(미실행)된 B TrapSigma-only sweep는 현재 Project B 우선순위에서 대체. Project A 변경 없음.
+- 이전 구조 기록 기준 5개 QB/3nm QW 4개가 예상되지만 실제 Claude school SDE/PP에서 검증해야 함.
+
+근거:
+- 2026-11-21 주수빈 현재 채팅의 Claude 시뮬레이션 성공 보고
+- 기존 GitHub Wu D5 baseline, 이전 Project B 두께 설계 기록
+- 학교 실제 source / output 확인 전이므로 OBSERVED 5V나 IQE 개선으로 격상하지 않음
+
+변경:
+- CMP/members/JuSubin/TIMELINE.md
+- CMP/TEAM_TIMELINE.md
+- CMP/CURRENT_STATUS.md
+- CMP/NEXT_ACTIONS.md
+- CMP/.ai-sync/LIVE_STATE.md 및 LIVE_STATE.json
+- CMP/.ai-sync/RELAY.md
+- 학교 소스/시뮬레이션은 ChatGPT가 변경하거나 실행하지 않음
+
+다음:
+1) 6/7/8nm 노드와 Trap ON 매핑 및 실제 5V Curve trace finished 검증
+2) 5nm Damage, 5QB/4QW, trap, Mg, physics, contacts, mesh 정책, AreaFactor 등 동일 조건 검증
+3) 기존 결과로 I–V와 동일 전류의 4QW Radiative 및 damaged trap recombination 적분 비교. QW 경계 이동 반영
+4) 추가 시뮬레이션/타 파라미터 sweep 보류
+
+---
+
+## 2026-11-21T14:07:20Z — soybeanmilk0514-jpg
+
+[2026-11-21 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER
+상태: OBSERVED SWB SCREENSHOT / ROOT CAUSE UNRESOLVED
+
+요약:
+- Claude D5 Project B SWB 화면에서 QB tQB=.006um의 NtSide=0 및 1e18 두 행 모두 SVisual 빨간색.
+- QB=.007um / NtSide=1e18 SVisual 노란색; 이것을 정상 완료로 판단하지 않음.
+- 화면에 Vstop5, TrapEt.75, TrapSigmaN/P1e-15 보임. SWB 행 번호=노드 ID 아님.
+- SVisual 빨간색은 SDevice 물리 계산 실패의 증거가 아님. 첫 SVisual Tcl 오류 문구가 아직 없음.
+
+근거:
+- 2026-11-21 주수빈 업로드 SWB 파라미터/노드 상태 스크린샷
+
+변경:
+- ERROR_LOG / JuSubin TIMELINE / CURRENT_STATUS / NEXT_ACTIONS 최신화; 학교 코드/시뮬레이션 변경 없음.
+
+다음:
+- QB6 NtSide1e18의 빨간 SVisual 노드를 선택하여 정확한 n*.err/.out와 Tcl 첫 에러/노드 ID 확인.
+- upstream SDevice n*.tdr/.plt와 5V Curve trace finished 확인 후 누락 경로, @previous@/@plot@, 이동된 QW 좌표 등을 원인별 진단; 불필요한 SDevice 재실행 금지.
+
+---
+
+## 2026-11-21T14:16:28Z — soybeanmilk0514-jpg
+
+[2026-11-21 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER DIAGNOSIS / SOURCE REVIEW
+상태: OBSERVED supplied SVisual1 source / ERROR CAUSE UNRESOLVED
+
+요약:
+- 사용자가 10um Wu2023PHY SVisual1 Tcl 전문 제공. 이 코드는 #setdep @previous@ / load_file "@plot@" / anode InnerVoltage 및 TotalCurrent / IV JV CSV 생성이며 tQB 값과 QW 좌표 하드코딩은 없음. 6nm QB의 QW 좌표가 이 SVisual1 오류를 직접 일으킨다는 기존 가설은 코드와 부합하지 않음.
+- 7nm SVisual 성공은 사용자 보고. 6nm는 NtSide0과1e18 모두 SWB 빨간 셀이었으나 원인 미상.
+- 수치 전류 단위 A/um 및 AreaFactor1은 여전히 코드의 미검증 가정.
+
+근거: 주수빈이 채팅에 붙인 전체 SVisual1 Tcl; GitHub CMP/tcad/candidates/CMP_BASELINE_3.2.0_WU2023PHY/svisual1_iv.tcl 참조.
+변경: ERROR_LOG, JuSubin TIMELINE 기재; 학교 파일 수정/실행 없음.
+다음: 빨간 6nm SVisual job의 첫 .err/.out 에러, PP에서 치환된 PLT 경로, SDevice PLT 존재와 5V 완료 확인 후 최소 수정.
+
+---
+
+## 2026-11-21T14:19:27Z — soybeanmilk0514-jpg
+
+[2026-11-21 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER
+상태: USER-REPORTED GUI BLANK / ROOT CAUSE UNRESOLVED
+
+요약: QB6 빨간 SVisual 노드의 .err와 .out을 열어도 빈칸이라고 사용자 보고. 실제 파일의 생성/크기/시간은 미확인. SVisual Tcl 실행 자체가 실패했다거나 실행되지 않았다고 단정하지 않음.
+근거: 사용자 SWB GUI 확인 보고, 앞서 제공된 SVisual1 코드 및 QB6 빨간 상태 스크린샷.
+변경: CMP/ERROR_LOG.md 및 JuSubin TIMELINE 기록. 학교 코드와 시뮬레이션 미수정.
+다음: 실제 school 프로젝트에서 n*_vis.* / pp*_vis.* 유무·크기·시간과 n*_des.plt 확인. 없으면 SWB scheduler/preprocess 단계 점검. SDevice 재실행/임의 코드수정 보류.
+
+---
+
+## 2026-11-21T14:27:07Z — soybeanmilk0514-jpg
+
+[2026-11-21 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER
+상태: OBSERVED SWB SCREENSHOT / ROOT CAUSE UNRESOLVED
+
+요약:
+- 사용자는 실패한 두께를 앞서 오해한 0.006um이 아닌 tQB 0.0065um(6.5nm)으로 정정함.
+- SWB 스크린샷: 0.0065 / NtSide=1e18 SDevice node n128 빨간색, 0.0065 / NtSide=0 n122 노란색. Vstop5, TrapEt0.75, sigmaN/P1e-15 표시. 아직 실제 n128_des.out/.err/.log 없음.
+- 0.006/0.007nm은 사용자가 성공 보고; 6.5nm 오류가 비선형 수렴인지 코드·전처리 오류인지 현재 판단 불가. 중간 두께가 안 되는 것이 소자 물리 불가능을 의미하지 않음.
+
+근거:
+- 2026-11-21 사용자 올린 SWB node ID 스크린샷과 "00065" 정정 메시지
+
+변경:
+- CMP/ERROR_LOG.md 및 CMP/members/JuSubin/TIMELINE.md 최신화. 학교 코드/실행 변경 없음.
+
+다음:
+- read-only n128_des.out/.err/.log 마지막 부분 및 마지막 anode 값 확인. 필요시 n122 상태 확인. 계획된 6/7/8nm 비교는 그대로 유지하고, 기한이 촉박하면 6.5nm 재실행 보류.
+
+---
+
+## 2026-11-21T14:28:17Z — soybeanmilk0514-jpg
+
+[2026-11-21 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER ROOT-FAILURE-CLASS / RESULT
+상태: OBSERVED school n128_des.log screenshot; underlying physical/numerical trigger UNRESOLVED
+
+요약:
+- QB 두께 0.0065um(6.5nm), NtSide=1e18 SDevice n128 실제 로그 확인.
+- "Finished, because... #iterations larger than 35." → "Newton didn't converge, trying again with smaller step..." → "Step-size less than MinStep (step-size = 9.1004e-11)."
+- n128_des.tdr 출력되었다고 5V 정상 완료는 아님. 마지막 성공 anode 전압은 이번 이미지에 보이지 않음.
+- 수치해석 Newton 비수렴/최소 timestep까지 cutback하여 종료한 것으로 직접 확인. 원인인 mesh/geometry/trap 상호작용은 별도 미검증. 6.5nm가 물리적으로 불가능하거나 6/7nm가 무효라는 결론 아님.
+
+근거: 사용자 n128_des.log 스크린샷 말미 약 5786–5810행.
+변경: CMP/ERROR_LOG.md, CMP/members/JuSubin/TIMELINE.md, CMP/CURRENT_STATUS.md 업데이트. 학교 코드/solver/run 미수정.
+다음: 기한 우선으로 6.5nm 재실행/수치 설정 변경 보류, QB6/7/8nm의 5V finished, PP 비교 조건 확인 및 I-V/재결합 분석. 필요할 때만 n128 마지막 anode 전압/pp128 MinStep/n122 OFF 확인.
+
+---

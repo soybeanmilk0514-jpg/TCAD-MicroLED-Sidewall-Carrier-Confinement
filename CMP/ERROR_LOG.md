@@ -1,3 +1,30 @@
+## 2026-11-21 JuSubin school QB 6.5nm SDevice n128 Newton/MinStep failure (OBSERVED USER SCREENSHOT)
+- User screenshot of actual school n128_des.log at ~lines 5786-5810 in project visible as ~/JSB/CMP_3V/CMP_B_5nm_3V (title path screenshot unclear; DO NOT infer fully qualified school path).
+- SWB tQB=0.0065um, NtSide=1e18, n128 SDevice RED. Log: Finished, because... #iterations larger than 35; 'Newton didn't converge, trying again with smaller step...'; Finished, because... 'Step-size less than MinStep (step-size = 9.1004e-11).' A final n128_des.tdr is written but DOES NOT prove full 5V curve finished. Screenshot shows 35 iterations (log row) and 0.136um x-position diagnostic but no last anode/bias row.
+- CONCLUSION OBSERVED: nonlinear solver did not converge on attempted step, cutback reached minimum step. Underlying mesh/physics/parameter trigger UNKNOWN; cannot infer device is physically impossible at 6.5nm. Not a Tcl SVisual syntax error. QB6, QB7, historical QB8 comparison unaffected except common model-equivalence/5V validation.
+- Next if needed: read last anode voltage of n128_des.log and pp128_des.cmd MinStep controls, compare n122 trap OFF; but user's deadline priority is to avoid rerunning 6.5nm and analyze completed 6/7/8nm cases. School source and solver unmodified by GPT.
+
+## 2026-11-21 JuSubin Project B 0.0065um SDevice red node n128 (SCREENSHOT OBSERVED / ROOT CAUSE UNRESOLVED)
+- User corrected earlier mention 0.006um to **0.0065um (6.5nm)**. SWB screenshot shows tQB=.0065, NtSide=0 associated SDevice node n122 YELLOW, NtSide=1e18 associated node n128 RED (under last parameter column TrapSigmaP). Vstop5, TrapEt=.75, TrapSigmaN/P1e-15 shown. Display colors do not establish Newton/MinStep vs preprocessing/run failure; actual n128_des.{out,err,log} not yet supplied.
+- User previously reports tQB=.006 and .007 cases successful and SVisual rerun success. Non-monotonic numerical convergence is a hypothesis, not root cause or intrinsic physical impossibility at 6.5nm.
+- Next FIRST: read-only inspect n128_des.out/err/log tail and last anode voltage, n122 if needed; do not change solver/mesh or rerun valid 6/7/8nm cases. Current three-condition Project B remains 6/7/8nm. No school files changed by GPT.
+
+## 2026-11-21 JuSubin QB6 SVisual .err/.out reported blank (USER-REPORTED GUI / FILE EXISTENCE UNVERIFIED)
+- User states SWB error and output views for red QB6 SVisual node display nothing (empty). This is NOT yet proof that actual files exist and are zero bytes, nor that Tcl never started.
+- Red SVisual status earlier seen for both QB=.006um NtSide=0/1e18, QB=.007um NtSide1e18 was yellow. SVisual1 code has no QW coordinates and reads PLT through @plot@.
+- Root cause remains UNRESOLVED. First read-only inspect actual school Project B directory for n*_vis.* / pp*_vis.* file existence, sizes, recent timestamps, and n*_des.plt; then inspect SWB scheduler/job/preprocessing if no files or empty files. Keep SDE/SDevice unchanged. No new school run or code edit.
+
+## 2026-11-21 JuSubin supplied actual SVisual1 Tcl text for QB6 red status (SOURCE OBSERVED / DIAGNOSIS UNRESOLVED)
+- User pasted SVisual1 script headed CMP_BASELINE_3.2.0_WU2023PHY (10um 2D); text is consistent with GitHub candidate CMP/tcad/candidates/CMP_BASELINE_3.2.0_WU2023PHY/svisual1_iv.tcl. Actual PP and target node's runtime Tcl are not yet checked.
+- Script does not contain tQB or any QW spatial coordinates. Therefore tQB-dependent hard-coded QW-coordinate failure is NOT supported for THIS SVisual1. Script uses #setdep @previous@, load_file "@plot@", get_variable_data "anode InnerVoltage" and "anode TotalCurrent", then J calculation and plots/CSV file exports.
+- Red QB6 SVisual could stem from macro resolution to absent/wrong SDevice PLT, unavailable/missing variable or incomplete dataset, CSV write/export error, or other Tcl runtime causes; neither source text nor QB7 user-reported success identifies root cause.
+- Next FIRST: obtain exact red QB6 node's SVisual first .err/.out exception and preprocessed Tcl/expanded plot path, confirm upstream SDevice PLT and successful 5V endpoint. No code/physics modified by assistant. J 2D A/um and AreaFactor=1 remain conditional assumptions, not established.
+
+## 2026-11-21 JuSubin Claude D5 Project B QB6 SVisual red cells (OBSERVED SCREENSHOT / ROOT CAUSE UNRESOLVED)
+- User SWB screenshot of parameter grid: tQB=0.006um (6nm), NtSide=0 row1 SVisual red; tQB=0.006um, NtSide=1e18 row2 SVisual red. Other rows include tQB=0.007um, NtSide=1e18 row14 SVisual yellow (not evidence of final success). Columns Vstop5, TrapEt0.75, TrapSigmaN/P1e-15 shown. SWB grid row indices are NOT tool node IDs.
+- This screenshot supports SVisual failure/status indication, NOT SDevice numerical failure or specific cause. Need actual corresponding n*_vis.err/.out/pp script or SVisual Job Output first error and upstream SDevice n*_des.tdr/.plt existence. Possible Tcl stale dataset path/node macros/changed QW coordinates are hypotheses only.
+- NO school code edited. Do not rerun SDE/SDevice before finding first SVisual error; first retrieve red SVisual node's log and effective Tcl.
+
 ## 2026-11-20 D50 revised A/B failed according to JuSubin; D5 rollback for deadlines (USER-REPORTED / ERROR DETAILS UNVERIFIED)
 - User reports all newly changed A/B cases with 50nm sidewall Damage failed. No new full n*.err/out/log or ending bias shown for each project in this turn. Do not claim D50 geometry is inherently non-convergent or 50nm structurally unphysical. Earlier observed errors include incomplete pasted SDE and pp6_des.cmd truncated at EOF, i.e. source/preprocess defects.
 - Decision: pause D50 runs; retain artifacts unchanged. Prior Wu10um 5nm TrapON/OFF school baseline had 5V results and will be near-term starting point. Proposed A/B minimal SWB-macro trap parameter sensitivity, not executed. Verify control completion again before comparisons.
