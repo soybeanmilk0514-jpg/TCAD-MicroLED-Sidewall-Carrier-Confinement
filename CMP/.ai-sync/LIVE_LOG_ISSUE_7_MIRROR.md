@@ -14794,3 +14794,393 @@ AI: ChatGPT
 다음: 기한 우선으로 6.5nm 재실행/수치 설정 변경 보류, QB6/7/8nm의 5V finished, PP 비교 조건 확인 및 I-V/재결합 분석. 필요할 때만 n128 마지막 anode 전압/pp128 MinStep/n122 OFF 확인.
 
 ---
+
+## 2026-11-22T10:46:11Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / RESULT STATUS
+상태: OBSERVED USER SCREENSHOT / NOT VERIFIED 5V FINISH
+
+요약:
+- 동일 Project B 내 추가한 QB 0.008um 모델에서 NtSide0 SDevice n136, NtSide1e18 n142 노드가 표시됨.
+- n136_des.out 화면에서 anode=3.200E+00V, 이어 t=.64→.644205 Bank/Rose Newton 단계 진행 텍스트 관찰. 이 화면은 5V 도달이나 정상 종료 확인이 아니라 중간 계산 기록임.
+- datexcodes.txt 재정의 경고가 보이나 단독으로 치명적 실패로 단정하지 않음. n142(Trap ON) 완료 결과는 아직 미제공.
+근거: 주수빈 업로드 SWB Project B/n136_des.out 스크린샷.
+변경: CMP/members/JuSubin/TIMELINE.md에 중간 진행 저장. 학교 SDE/SDevice/SVisual 원본 및 실행을 ChatGPT가 변경하지 않음.
+다음: n136/n142 n*_des.log 마지막 anode 전압과 .out 최종 Curve trace finished 여부를 read-only 확인, 특히 TrapON n142 5V 정상 완료 확인 후 QB 비교에 포함.
+
+---
+
+## 2026-11-22T10:49:18Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / BLOCKER
+상태: OBSERVED SCHOOL TERMINAL; n142 STATUS UNRESOLVED
+
+요약:
+- Project B /users/student/team3/JSB/CMP_3V/CMP_B_5nm_3V, 8nm QB baseline within same SWB project.
+- n136 (NtSide=0, Trap OFF): Curve trace finished; final anode=5.000E+00V, raw final conduction-current column 2.569E-03 (unit/normalization unverified); final wallclock1454.46s=0h24m14s.
+- n142 (NtSide=1e18, Trap ON): supplied output no Curve trace finished or wallclock; last anode0.000E+00V. No evidence to conclude still running, license waiting, or failed. Requires job process/status and tail out/err before action.
+- 8nm Trap ON 5V comparator not yet validated; prior QB6/QB7 success user-reported.
+
+근거: 사용자가 직접 실행해 제공한 n136/n142 des.log 및 des.out grep output.
+변경: JuSubin TIMELINE, CURRENT_STATUS, LIVE_STATE.md 업데이트. 학교 코드/재실행 없음.
+다음: n142_des.out/.err/.log tail, file timestamps and scheduler/process status read only.
+
+---
+
+## 2026-11-22T10:53:16Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / DECISION
+상태: USER-REPORTED RUNNING / EXTRACTION PLAN PROPOSED
+
+요약:
+- 사용자가 QB=0.008um NtSide=1e18 SDevice n142가 현재 계산되고 있다고 명확히 확인함. 이전 명령에서 보인 0V/종료메시지 없음은 중간 시점 결과이며, 아직 5V 완료는 검증되지 않음.
+- 시간 제약 때문에 최종 Project B 결과는 기존 QB6/7/8nm TrapON 세 조건(7.5nm는 이미 정상 완료된 경우에만 옵션)으로 최소화. QB6.5nm n128 MinStep 실패는 성능 비교에서 제외, 오류 기록 유지.
+- 반드시 추출할 세 지표: (1) I–V 및 5V anode TotalCurrent (2) 4QW RadiativeRecombination Field Integration 합계 (3) bilateral damaged-region eGapStatesRecombination Field Integration 합계. 적분은 실제 이동한 QW region으로 재선택, 2D/AreaFactor 및 균일 물리모델 확인. 5V 전류가 다르면 방사 재결합 증가가 곧 IQE 향상이 아님.
+
+근거: 주수빈 현재 채팅 후속 상태 및 발표 일정 우선순위 결정.
+변경: JuSubin/TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, LIVE_STATE.md 갱신. 학교 소스/시뮬레이션은 수정하지 않음.
+다음: 사용자 n142 정상 5V 종료 보고 후 세 지표 데이터 취합/변화율/3그림/1표 제작. 추가 계산/그래프는 후순위.
+
+---
+
+## 2026-11-22T13:19:53Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER / RESULT
+상태: OBSERVED SWB SCREENSHOT / ROOT CAUSE UNRESOLVED
+
+요약:
+- 학교 Project B QB8nm(0.008um) Trap ON NtSide1e18 SDevice n142가 빨간 실패 상태라고 사용자가 보고하고 SWB 화면에서 확인. 이전 '현재 계산 중' 상태보다 최신 정보임.
+- 현재 동일 Project B SWB Trap ON mapping: QB6nm n6, QB7nm n100, QB7.5nm n114, QB8nm n142; QB6.5nm n128는 이전 MinStep 실패 확인. 현재 화면의 노란 상태만으로 n6/n100/n114 전체 5V 완료를 확정하지 않음.
+- QB8 Trap OFF n136은 기존 school stdout Curve trace finished + 5V + 24m14s 확인. 하지만 Trap OFF n136을 다른 Trap ON 조건과 baseline으로 비교할 수 없음.
+- n142 실제 원인 (Newton/MinStep, license, preprocessor, etc)과 마지막 도달 전압은 아직 out/err/log가 없어 불명. 임의 모델/solver 수정 금지.
+
+근거: 주수빈의 2026-11-22 SWB Project B 화면과 이전 n136 실행 출력.
+변경: CMP/CURRENT_STATUS.md, ERROR_LOG.md, JuSubin/TIMELINE.md, NEXT_ACTIONS.md, LIVE_STATE.md 최신화. 실제 학교 파일/코드/실행 수정 없음.
+다음: n6/n100/n114/n142 최종 Curve trace와 5V 여부를 읽기 전용 확인, n142_des.out/err 및 마지막 anode 원인 확인. 복구가 쉽지 않으면 historical Wu QB8 TrapON은 학교 실제 코드/PP/메쉬/Trap/AreaFactor 동등성 검증 후 대조군으로 재사용 가능; 불가하면 6/7/7.5nm 간 TrapON 경향만 보고하거나 공통 Trap OFF 비교로 전환.
+
+---
+
+## 2026-11-22T13:21:33Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / HANDOFF
+상태: USER DECISION CONFIRMED / CROSS-PROJECT NUMERICAL EQUIVALENCE UNRESOLVED
+
+요약:
+- 시간이 부족하여 현 Project B의 QB8nm TrapON n142 실패를 더 이상 복구하지 않기로 결정. 기존 최종 Wu D5 QB8nm TrapON 데이터로 대조군 사용.
+- 실제 최종 비교는 Wu 역사적 baseline QB8nm와 Claude D5 Project B QB7.5(n114)/QB7(n100)/QB6(n6) TrapON을 대상으로 함. QB6.5(n128)는 MinStep 실패 제외, 당시 오류 로그는 보존.
+- 이전 baseline과 Claude 신규 Project B의 실제 solver/mesh/physics/contact/AreaFactor 등 완전 동일성은 확인되지 않았음. 따라서 발표에서 이 비교를 preliminary cross-project reference comparison이라 명시하고, QB 두께만의 인과 효과나 IQE 향상 검증으로 과장하지 않기로 함.
+- 기존 같은 프로젝트 QB8 TrapOFF n136은 TrapON 대조군으로 사용하지 않음.
+- 최소한 5V Curve trace finished, 모두 NtSide1e18, Damage5nm, TrapEt0.75, sigmaN/P1e-15, 전류 단위/정규화 확인은 유지.
+
+근거: 주수빈 본 채팅의 시간 우선 결정, earlier SWB n142 RED 및 QB6/7/7.5 매핑, 이전 Wu baseline 기록.
+변경: JuSubin/TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, TEAM_TIMELINE, LIVE_STATE.md 업데이트. 학교 TCAD 코드는 수정하지 않음.
+다음: 기존 baseline TrapON SVisual I-V와 QW1~QW4 RadiativeRecombination, 좌우 Damage eGapStatesRecombination 적분 결과를 QB6/7/7.5와 동일 정의로 비교하고 8nm 대비 수치 변화율 계산.
+
+---
+
+## 2026-11-22T13:34:41Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / DATA LOCATION
+상태: OBSERVED USER SCHOOL TERMINAL FILE LIST; NUMERIC CONTENT UNVERIFIED
+
+요약:
+- 학교 서버 Project B 5nm: NtSide1e18 I-V/J-V CSV들 Node16(QB6nm), Node101(QB7nm), Node115(QB7.5nm) 존재 확인.
+- 학교 서버 Baseline 5nm: NtSide1e18 IVJV Node16 존재 확인. Baseline과 Project B 양쪽 Node16은 파일 이름 동일하나 경로가 다른 서로 다른 파일이므로 ZIP에 바로 평탄하게 넣으면 충돌 우려.
+- 별도 명칭 QB6nm_TrapON.csv, QB7nm_TrapON.csv, QB7p5nm_TrapON.csv, QB8nm_Baseline_TrapON.csv로 패키징하는 읽기 전용 Python zip 코드를 사용자에게 제공. 실행과 ZIP 업로드 아직 미확인.
+- 수치 본문 및 5V 종료, normalization과 cross-project 코드/solver 동일성 미검증. 완전 동일한 전류 조건인 것처럼 단정 금지.
+
+근거: 주수빈의 2026-11-22 학교 서버 find 명령 출력.
+변경: CMP/members/JuSubin/TIMELINE.md 및 Issue #7. 학교 파일은 ChatGPT가 변경하지 않음.
+다음: 사용자가 ZIP을 첨부하면 CSV를 직접 분석해서 TrapON 4조건 실제 I-V 겹치기/5V 전류/변화율과 한계 제시.
+
+---
+
+## 2026-11-22T13:54:02Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / ANALYSIS
+상태: OBSERVED USER-UPLOADED SVISUAL1 CSV / UNVERIFIED CROSS-PROJECT CONTROL
+
+요약:
+- 실제 CSV 4개 분석 완료. 모두 5.000V point 포함. Project B QB6nm n16(109 rows), QB7nm n101(122), QB7.5nm n115(110), 기존 Wu QB8nm Baseline 별도 프로젝트 n16(172).
+- 5V raw anode TotalCurrent: 6nm=2.552630921170e-03, 7nm=2.486686590460e-03, 7.5nm=2.798941669710e-03, 8nm=2.566397093440e-03.
+- 8nm 대비: 6nm −0.5364%, 7nm −3.1059%, 7.5nm +9.0611%. 7.5nm에서 5V 원본 전류값이 가장 높음.
+- CSV 표기의 A/um 및 J(10um) 정규화는 명시적 가정일 뿐 독립 검증되지 않았음. 기존 8nm은 별도 프로젝트라 QB 두께 단독 인과효과 또는 IQE/광출력 개선 확정 금지.
+
+근거:
+- 사용자가 첨부한 4개 CSV 원본 (QB6nm_TrapON, QB7nm_TrapON, QB7p5nm_TrapON, QB8nm_Baseline_TrapON).
+변경:
+- CMP/members/JuSubin/TIMELINE.md, CURRENT_STATUS.md, TEAM_TIMELINE.md, LIVE_STATE.md에 결과 기재.
+- 이 대화에서 다운로드 가능한 CMP_ProjectB_IV_4conditions.png, CMP_ProjectB_IV_high_voltage_zoom.png, CMP_ProjectB_IV_Comparison.xlsx 생성; GitHub에는 파일 원본을 업로드하지 않음.
+다음:
+- 발표에는 예비 비교임을 명시. 추가 RadiativeRecombination 4QW integral 및 damage-related eGapStates integral 확인 후 광특성 논의.
+
+---
+
+## 2026-11-22T13:55:15Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / EXTRACTION PLAN
+상태: PROPOSED SCHOOL ROI / OBSERVED GITHUB REFERENCE MODEL
+
+요약:
+- ProjectB RadiativeRecombination for QB 6/7/7.5/8nm: integrate QW1–4 only, each full lateral y=0..10um including both 5nm Dmg regions plus Clean. Sum four wells at 5V, no barriers.
+- X (um) QB8: [.128,.131], [.139,.142], [.150,.153], [.161,.164]; QB7.5: [.1275,.1305], [.138,.141], [.1485,.1515], [.159,.162]; QB7: [.127,.130], [.137,.140], [.147,.150], [.157,.160]; QB6: [.126,.129], [.135,.138], [.144,.147], [.153,.156].
+- These numbers are arithmetic derived from GitHub REFERENCE SDE (pGaN120nm EBL0 QW3nm QB 5 barriers). Current Claude-written SCHOOL actual preprocessed SDE/mesh not independently inspected. Verify actual region boundaries before final integration, prefer named DmgL_QWk / Clean_QWk / DmgR_QWk selections; retain cross-project caveat.
+근거:
+- CMP/tcad/candidates/CMP_BASELINE_3.2.0_WU2023PHY/sde_dvs.cmd
+- CMP/tcad/candidates/CMP_PROJECTB_2.0.0_QB6/sde_dvs.cmd
+변경: CMP/members/JuSubin/TIMELINE.md (analysis note only). No TCAD code/run change.
+다음: validate actual school geometry then 4QW integrals, 5V per condition; aggregate 8nm-reference changes without IQE claim.
+
+---
+
+## 2026-11-22T14:00:08Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED USER-PASTED SVisual INTEGRATION / 5V TDR BIAS UNRESOLVED
+
+요약:
+- Project B QB0.006um Trap ON 사용자 보고 Dataset n6_des, RadiativeRecombination SVisual Field Integration 12 InGaN regions received (QW1-QW4 Clean+DmgL+DmgR).
+- Reported total: 9.770910e15 s^-1 um^-1; 2D total domain 0.1199999um² matches 4×0.003um QW ×10um width; region selection appears appropriate.
+- Reconstructed QW sums: QW1 8.711726910e11 (0.008916%); QW2 6.909082395e12 (0.070711%); QW3 3.781344620e14 (3.870002%); QW4 9.384995625e15 (96.050371%). Sum of rounded raw values 9.770910342086e15; display rounding explains residual.
+- n6_des printed data does NOT explicitly establish TDR bias is 5V. Do not claim fixed-5V result before verification. Neither absolute IQE nor isolated QB causality verified. Historical QB8 cross-project condition mismatch still outstanding.
+
+근거:
+- 사용자가 본 채팅에 직접 붙여넣은 SVisual Field Integration 12 Region raw data, total Integral/Domain.
+
+변경:
+- JuSubin/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md and .json; 학교 TCAD 코드/실행 변경 없음.
+
+다음:
+- n6 5V TDR bias check, QB7(n100)/QB7.5(n114)/historical QB8 TrapON 동일 12-region RadiativeRecombination 5V integration, 2D normalization verification and QB8-relative comparison; then eGapStatesRecombination bilateral damaged regions.
+
+---
+
+## 2026-11-22T14:07:40Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER / EXTRACTION CORRECTION
+상태: OBSERVED SVISUAL OUTPUT; RADIATIVE RE-EXTRACTION PENDING
+
+요약: n100_des QB7 TrapON의 12-region 적분 텍스트는 DopingConcentration Field이며 전체 0 um^-1. RadiativeRecombination 적분값이 0이라는 뜻이 아니며 QB7 radiative result 미확보. Total Domain 0.1199999um² 및 12개 QW regions 선택은 적절함.
+근거: 사용자 n100_des SVisual Field Integration 원문.
+변경: CMP/members/JuSubin/TIMELINE.md, CMP/ERROR_LOG.md. 학교 SDevice/SVisual 코드 및 시뮬레이션 변경 없음.
+다음: 동일 n100_des에서 Field RadiativeRecombination 선택, 동일 12개 QW region을 적분하여 [s^-1*um^-1] 데이터 확인, 5V TDR 여부 검증.
+
+---
+
+## 2026-11-22T14:09:13Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: BLOCKER / DATA EXTRACTION
+상태: OBSERVED
+
+요약: 사용자 제공 ProjectB QB7.5nm TrapON `n114_des` SVisual 적분의 Field가 RadiativeRecombination이 아니라 DopingConcentration임. QW1–4 × Clean/DmgL/DmgR 12개 Region, Total Domain 1.200002e-01 um²는 적절하지만 Total Integral 0 um^-1는 순 도핑 적분일 뿐 방사 재결합 데이터 아님. QB7 `n100_des`도 동일 오류로 재추출 대기. QB6 `n6_des`의 RadiativeRecombination은 9.770910e15 s^-1um^-1 확보. 5V TDR 여부 별도 확인.
+근거: 현재 채팅에 사용자 직접 제공한 SVisual Field Integration 원문.
+변경: JuSubin/TIMELINE.md, ERROR_LOG.md. 학교 소스/시뮬레이션 변경 없음.
+다음: n114/n100에서 Field RadiativeRecombination 선택, 동일 12개 QW 영역 적분 출력 재수집.
+
+---
+
+## 2026-11-22T14:12:08Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / DATA PROVENANCE BLOCKER
+상태: OBSERVED USER-PASTED SVISUAL / CROSS-PROJECT EQUIVALENCE UNRESOLVED
+
+요약:
+- 사용자가 **과거 Wu QB8nm Trap ON baseline**이라고 지정한 SVisual 적분 출력: Dataset n6_des, Field RadiativeRecombination, 12 QW Regions, Total Integral **9.869850e15 s^-1um^-1**, Total Domain **.1199999um²**. QW1 7.385600935e11, QW2 1.0669347027e12, QW3 8.765896290e14, QW4 8.991454347e15 (displayed precision).
+- 앞선 Project B QB6nm Trap ON 역시 basename n6_des 이지만 프로젝트가 다르다고 예상되는 경우로 취급; full path/5V TDR/동일 물리 조건 미검증이므로 동일 파일이라고 혼동하지 말 것.
+- 이전 QB6 total 9.770910e15 대비 임시 계산 변화율 -1.002446846%; cross-project 5V/AreaFactor/source 동등성 미확인, QB 두께 인과효과 또는 IQE 변화 주장 불가.
+- QB7 n100, QB7.5 n114 방사 재결합은 아직 미수집(사용자가 DopingConcentration을 잘못 적분한 상태).
+
+근거:
+- 2026-11-22 사용자 SVisual 12개 Region 및 총 적분값 원문.
+
+변경:
+- JuSubin/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md + LIVE_STATE.json; 학교 시뮬레이션/코드 불변.
+
+다음:
+- Baseline vs Project B 경로 및 5V TDR 확인, n100/n114 field 올바른 재추출, 4조건 비교표/그래프 및 Trap 손상 적분.
+
+---
+
+## 2026-11-22T14:12:57Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / SOURCE CONFIRMATION
+상태: USER-CONFIRMED IDENTIFICATION; 5V & CROSS-PROJECT EQUIVALENCE UNRESOLVED
+
+요약: 사용자가 최신 12-Region SVisual RadiativeRecombination Total Integral 9.869850e15 [s^-1 um^-1], Dataset n6_des는 **과거 8nm Baseline Trap ON**의 적분 결과라고 명시적으로 재확인함. 이름이 같은 Project B 6nm n6_des와 서로 구분하여 유지. 원본 전체 경로/실제 5V 저장 상태/수치모델 동등성은 이 확인만으로 검증되지 않음.
+변경: JuSubin/TIMELINE.md (출처 표기 확인). 학교 TCAD 코드나 실행 수정 없음.
+다음: QB7/n100 및 QB7.5/n114 정확한 RadiativeRecombination 12-region 적분 수집.
+
+---
+
+## 2026-11-22T14:20:33Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: OBSERVED USER SVisual INPUT / 5V TDR & CROSS-PROJECT EQUIVALENCE UNRESOLVED
+
+요약:
+- QB6/QB7/QB7.5/QB8(historical Wu separate project) TrapON QW1~4 RadiativeRecombination 12-Region integrals now all received, including corrected n100/n114 fields.
+- Total [s^-1 um^-1]: QB6 9.770910e15, QB7 9.830196e15, QB7.5 1.050204e16, historical QB8 9.869850e15. vs 8nm: -1.0024%, -0.4018%, +6.4053%, 0%. QW4 shares respectively 96.05/93.67/97.93/91.10%. Individual rounded row sums agree with SVisual printed total to display precision.
+- All four 12-region QW integration areas nominal ~0.120 um². Project B QB6 and historical QB8 both use basename n6_des but belong to different projects per user; never substitute one for the other.
+- This establishes directly observed user-supplied field integral differences only. 5V TDR point status NOT directly shown, 2D AreaFactor, matching solver/physics/mesh/traps/contacts across historical baseline and new Claude ProjectB NOT verified; no quantitative IQE or QB causal conclusion.
+근거:
+- 사용자 제공 n6/n100/n114/baseline n6 Field Integration 원문; four-case graph data at CMP/results/PROJECTB_QB_RADIATIVE_TRAPON_20261122.csv.
+변경:
+- New CSV and JuSubin/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md + LIVE_STATE.json updated. No school code or simulations changed.
+다음:
+- Verify each actual 5V TDR/normalization if possible, then eGapStatesRecombination eight damaged QW regions DmgL+R_QW1..4 × four conditions, compare appropriately with 5V current and radiative sums.
+
+---
+
+## 2026-11-22T14:32:08Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED USER-PASTED SVISUAL; BIAS=5V UNVERIFIED
+
+요약:
+- ProjectB QB6nm TrapON `n6_des`, Field `eGapStatesRecombination`, 8 Damaged QW (DmgL_QW1..4 + DmgR_QW1..4) Field Integration: Total Integral **3.685298e13 s^-1um^-1**, Total Domain **1.200013e-04 um²** (matches 2×5nm×4×3nm).
+- QW combined: QW1 2.180919e12 (5.9179%), QW2 1.0473137e12 (2.8419%), QW3 9.837791e12 (26.6947%), QW4 2.378695e13 (64.5455%). Left sum 1.84259644e13, right 1.84270093e13. Region selection correct for damaged-QW-only comparison.
+- eGapStatesRecombination trap-associated field is NOT full sidewall recombination or net nonradiative pair recombination, nor IQE; 5V TDR bias not shown by this output.
+근거:
+- 사용자가 직접 붙여넣은 8개 region SVisual 적분 원문.
+변경:
+- CMP/results/PROJECTB_QB6_EGAP_TRAPON_20261122.csv 신규 저장; JuSubin/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, LIVE_STATE.md + json. 학교 소스/시뮬레이션 불변.
+다음:
+- QB7 n100, QB7.5 n114, historical QB8 baseline n6 (other project) 8-region eGapStates integrals 확보, TDR 5V/비교 조건 검증 뒤 변화율 계산.
+
+---
+
+## 2026-11-22T14:34:37Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED USER SVisual; 5V TDR BIAS UNVERIFIED
+
+요약:
+- Project B QB7nm Trap ON `n100_des` `eGapStatesRecombination` 8 Damaged QW Region 적분 (DmgL_QW1..4 + DmgR_QW1..4): Total Integral 3.342200e13 s^-1um^-1, Total Domain 1.200013e-04 um². QW1 1.9861413e12 (5.9426%), QW2 7.732185e11 (2.3135%), QW3 7.548750e12 (22.5862%), QW4 2.311389e13 (69.1577%). 
+- 기존 QB6 동일 정의 3.685298e13 대비 QB7 -9.30991198% 감소. 단 적분 TDR의 5V 여부가 SVisual 텍스트만으로 확인되지 않았으며 eGap은 전체 비방사 손실/IQE가 아님.
+근거: 사용자가 제공한 SVisual 8 Region Integral+Domain 원문.
+변경: CMP/results/PROJECTB_QB7_EGAP_TRAPON_20261122.csv 생성, JuSubin/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md + json 업데이트. 학교 소스/실행 불변.
+다음: QB7.5 `n114_des`와 과거 Wu QB8 Baseline `n6_des` 별도 경로의 8 region eGapStatesRecombination 측정 및 5V/정규화 검증.
+
+---
+
+## 2026-11-22T14:37:15Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / PROGRESS
+상태: OBSERVED USER-SUPPLIED SVISUAL RAW, BIAS=5V UNVERIFIED
+
+요약:
+- ProjectB QB7.5nm Trap ON n114_des, eGapStatesRecombination 8 QW sidewall damage Region 합계: Total 3.769752e13 s^-1um^-1, Domain1.200016e-04um². QW1 4.526328e11 (1.2007%), QW2 5.002054e12 (13.2689%), QW3 8.300413e12 (22.0185%), QW4 2.394242e13 (63.5119%). 8개 raw region data all supplied; left/right sums 1.88485912e13/1.88489286e13.
+- Existing same-region QB6 3.685298e13, QB7 3.342200e13; QB7.5 is +2.291646% vs QB6, +12.792532% vs QB7. 8nm historical Wu baseline eGap data still missing.
+- TDR saved 5V bias not established by this output; eGap is only chosen damaged QW Trap-associated quantity, not net all-sidewall nonradiative pair loss/IQE.
+근거: 사용자 현 채팅의 Field Integration raw 8 regions n114_des.
+변경: CMP/results/PROJECTB_QB7p5_EGAP_TRAPON_20261122.csv, JuSubin/TIMELINE.md, TEAM_TIMELINE.md, CURRENT_STATUS.md, NEXT_ACTIONS.md, .ai-sync/LIVE_STATE.md + json. 학교 코드/실행 변경 없음.
+다음: 역사적 Wu QB8 TrapON (별도 프로젝트 n6_des)의 동일 8-region eGapStates 적분 수집, 5V TDR, AreaFactor, 유효 physics/mesh/solver 일치성 검토 후 최종 4조건 차이 그래프.
+
+---
+
+## 2026-11-22T14:40:04Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: USER SVisual FIELD INTEGRATION OBSERVED / TDR BIAS & CROSS-PROJECT EQUIVALENCE UNRESOLVED
+
+요약:
+- Historical Wu QB8nm Baseline TrapON eGapStatesRecombination QW sidewall 8 Region result received: Dataset n6_des (distinct separate project from QB6 n6_des), Total Integral 4.148388e13 s^-1um^-1, Total Domain 1.200013e-04um². QW1 1.3607449e12 (3.280%), QW2 1.3948305e12 (3.362%), QW3 1.1418713e13 (27.526%), QW4 2.7309600e13 (65.832%).
+- Four Trap ON damaged-QW eGapStates totals [s^-1um^-1]: QB6 3.685298e13 (-11.16313%), QB7 3.342200e13 (-19.43377%), QB7.5 3.769752e13 (-9.12730%), historical QB8 4.148388e13 (reference); QB7 smallest measured eGapStates field integral. Each nominal area 1.2e-4 um².
+- Existing all-QW radiative integrals: QB6 9.770910e15 (-1.00245%), QB7 9.830196e15 (-0.40177%), QB7.5 1.050204e16 (+6.40526%), historical QB8 9.869850e15 (reference). No IQE/causality established. eGapStates damaged-QW scope differs from full-QW Radiative scope.
+- User's SVisual text does NOT show TDR bias 5V; historical Wu baseline is separate project, cross-project physics/solver/mesh/contact/AreaFactor equivalence unverified. Presented changes are *numerical exploratory* only.
+근거:
+- User pasted SVisual full 8-region Integrals n6 historical QB8 and prior n6/n100/n114 ProjectB; original raw records preserved.
+변경:
+- CMP/results/PROJECTB_QB8_BASELINE_EGAP_TRAPON_20261122.csv and CMP/results/PROJECTB_QB_EGAP_TRAPON_4CASE_SUMMARY_20261122.csv created; JuSubin TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, NEXT_ACTIONS, LIVE_STATE.md/json updated; no school TCAD source/run modified.
+다음:
+- Confirm actual TDR voltage and historical/current source normalization if feasible; make three-figure I-V, 4QW Rad, 8-region damaged QW eGap comparison, transparent provenance caveats.
+
+---
+
+## 2026-11-22T14:44:59Z — soybeanmilk0514-jpg
+
+[2026-11-22 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / INTERPRETATION / HANDOFF
+상태: OBSERVED 원자료로부터 DERIVED 분석 / 인과·효율 UNRESOLVED
+
+요약:
+- Project B 3가지 수치 종합: Trap ON 5V IV 원시 전류(각각 QB6/7/7.5/8 역사적 Wu) = 2.552631e-3 / 2.486687e-3 / 2.798942e-3 / 2.566397e-3. QB8 대비 -0.5364/-3.1059/+9.0611/0%.
+- 4QW Clean+Damaged Radiative 적분 = 9.770910e15 / 9.830196e15 / 1.050204e16 / 9.869850e15 [s^-1 um^-1]. QB8 대비 -1.00245/-0.40177/+6.40526/0%.
+- 8 damaged-QW-only eGapStates 적분 = 3.685298e13 / 3.342200e13 / 3.769752e13 / 4.148388e13 [s^-1 um^-1]. QB8 대비 -11.16313/-19.43377/-9.12730/0%.
+- 같은 새 ProjectB 내 QB7 vs QB6: 전류 -2.58339%, Radiative +0.60676%, eGap -9.30991%. QB7 유망한 3지표 절충 후보, 효율 최적 확정 아님.
+- QB7.5 vs QB7: 전류 +12.55707%, Radiative +6.83449%, eGap +12.79253%; 방사 적분 절대값 최대는 QB7.5, 효율 우수 증명은 아님.
+- 조건부 참고지표 Radiative 적분/5V raw 전류 상대 지수 vs QB8: QB6 -0.46856%, QB7 +2.79084%, QB7.5 -2.43521%; IQE나 EQE 아님. QW4 방사 적분 점유 91~98%.
+
+근거:
+- GitHub CMP/results/PROJECTB_QB_RADIATIVE_TRAPON_20261122.csv
+- CMP/results/PROJECTB_QB_EGAP_TRAPON_4CASE_SUMMARY_20261122.csv
+- 사용자 2026-11-22 4개 IV CSV의 5V rows(개인 TIMELINE/CURRENT_STATUS에 기록)
+
+미검증:
+- 5V CSV 행은 있지만 SVisual 적분 TDR이 실제 동일 5V 상태인지 미확인.
+- QB8은 별도의 기존 Wu Baseline 프로젝트; Physics/mesh/solver/contact/trap/AreaFactor 동등성 및 2D 전류 단위 미확인.
+- eGapStates는 손상된 QW의 Trap 관련 전자 채널이며 전체 비방사 재결합/효율 아님. Rad는 전체 QW이므로 직접 Rad/(Rad+eGap) 계산 금지.
+
+변경:
+- 개인 TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, LIVE_STATE.md/json에 이번 파생분석 기록; 학교 코드 및 새 simulation 없음.
+
+다음:
+- 원래 TDR 전압/실행 모델 검증 → 같은 주입 전류에서 비교 가능한 재결합 값 확보 시 추가 해석 → 잠정 결론으로 발표.
+
+---

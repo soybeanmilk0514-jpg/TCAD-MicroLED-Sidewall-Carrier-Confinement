@@ -1,3 +1,64 @@
+## 2026-11-22 JuSubin all three Project B data categories available (QC / presentation next)
+1. All four QB TrapON damaged QW `eGapStatesRecombination` integrals complete [s^-1 um^-1]: QB6 3.685298e13; QB7 3.342200e13; QB7.5 3.769752e13; Wu historical QB8 4.148388e13. Relative to QB8: -11.16313%, -19.43377%, -9.12730%. Full 8-region totals in `CMP/results/PROJECTB_QB_EGAP_TRAPON_4CASE_SUMMARY_20261122.csv`.
+2. Existing four-condition IV 5V data and 4QW full-area RadiativeRecombination totals also stored; prepare comparison charts and presentation with precise labels, caveat that QB7 lowest eGapStates does NOT mean lowest net nonradiative/IQE, QB7.5 highest radiative at fixed bias does NOT mean best efficiency.
+3. Main unresolved gate: verify `n6_des`, `n100_des`, `n114_des` SVisual TDR snapshots actually 5V, historical Wu 8nm `n6_des` belongs separate project, and contacts/AreaFactor/physics/traps/mesh/solver normalization. 5V I-V CSV rows do not prove TDR snapshot voltage. No new school runs necessarily needed.
+4. If only exploratory presentation is possible, explicitly label cross-project historical baseline and unverified physics/normalization and do not infer causality/efficiency, avoid ratio eGap over Rad because spatial scopes differ.
+
+## 2026-11-22 JuSubin final step-3 eGapStates extraction: 8nm historical reference pending
+1. User SVisual outputs now have 8-region damaged-QW eGapStates TrapON totals: QB6 `n6_des` **3.685298e13**, QB7 `n100_des` **3.342200e13**, QB7.5 `n114_des` **3.769752e13** [s^-1um^-1]; 7.5 vs 6 +2.29165%, vs 7 +12.79253%. Full raw available `CMP/results/PROJECTB_QB{6,7,7p5}_EGAP_TRAPON_20261122.csv`.
+2. NEXT PRIORITY: historical Wu QB8nm TrapON baseline (separate SWB project, basename `n6_des`) collect 8 region `eGapStatesRecombination` 2D integrations DmgL_QW1..4 and DmgR_QW1..4 only, domain around 1.2e-4 um². Do NOT confuse same basename with QB6 ProjectB n6; verify source folder and saved TDR target 5V.
+3. Build 4-condition QW-by-QW eGap sum/change vs historical QB8 plus two main existing datasets (5V IV CSV, 4QW radiative); keep cross-project solver/mesh/trap/AreaFactor non-equivalence caveat. Do NOT claim net nonradiative/IQE or causation from eGap alone.
+
+## 2026-11-22 JuSubin damaged QW eGapStatesRecombination comparison underway (QB6 and QB7 observed)
+1. QB6 TrapON `n6_des`: 3.685298e13 s^-1um^-1; QB7 TrapON `n100_des`: 3.342200e13 s^-1um^-1, QB7 minus QB6 -9.30991198%. Each is 8 regions DmgL_QW1..4 + DmgR_QW1..4 and domain ~1.2e-4 um². Raw data now `CMP/results/PROJECTB_QB6_EGAP_TRAPON_20261122.csv`, `CMP/results/PROJECTB_QB7_EGAP_TRAPON_20261122.csv`.
+2. Next request QB7.5 `n114_des` Trap ON and historical Wu QB8 Trap ON `n6_des` (distinct separate project), using **Field eGapStatesRecombination** and **8 damaged QW regions only**; verify TDR 5V and consistent AreaFactor/trap/physics/mesh source before claiming fixed-bias comparisons.
+3. Aggregate QW-level and total sidewall-QW trap-field results, compare to historical QB8 with caveats. `eGapStatesRecombination` is NOT whole sidewall/net nonradiative/IQE. School TCAD code unchanged.
+
+## 2026-11-22 JuSubin step 3 damaged-QW eGapStatesRecombination ongoing
+1. QB6 TrapON `n6_des` 8-region damaged-QW eGapStates total **3.685298e13 s^-1 um^-1**, domain `1.200013e-04 um²` (user SVisual observed). Raw saved `CMP/results/PROJECTB_QB6_EGAP_TRAPON_20261122.csv`.
+2. Next send QB7 n100, QB7.5 n114, historical Wu QB8 baseline n6 (different project): `Field=eGapStatesRecombination`, region **DmgL_QW1..4 + DmgR_QW1..4 ONLY**, 8 regions, area ≈1.2e-4 um²; do not select `DopingConcentration` or Clean.
+3. Verify effective TDR bias 5V and identical AreaFactor/physics/trap conditions; historical QB8 is separate project. Sum both sides QW-wise and total, calculate QB8-relative changes; avoid interpreting eGapStates alone as actual net nonradiative recombination/IQE.
+4. Present alongside previously completed 4QW radiative and IV comparisons, with scientific limitations.
+
+## 2026-11-22 JuSubin third metric (eGapStatesRecombination) QB6 DONE, remaining conditions
+1. `QB6 TrapON n6_des` eight damaged-QW eGapStatesRecombination regions observed, Total **3.685298e13 s^-1um^-1**, Area **1.200013e-4um²**. Raw source `CMP/results/PROJECTB_QB6_TRAPON_EGAP_DMGQW_20261122.csv`.
+2. Extract **exact same 8 regions**, DmgL_QW1–4 and DmgR_QW1–4, for QB7 `n100_des`, QB7.5 `n114_des`, historical Wu QB8 TrapON `n6_des` in separate baseline project. Field must be `eGapStatesRecombination`, 2D area ~1.2e-4um², units s^-1um^-1. Do not include Clean QW or whole damage sidewall in this QW-only metric.
+3. Verify 5V actual saved TDR voltage and uniform physics/AreaFactor; report 8nm-relative totals as preliminary if historical reference mismatch unresolved. Do not equate eGap integral to net nonradiative or IQE.
+## 2026-11-22 JuSubin 4-condition RadiativeRecombination data now collected, sidewall trap channel NEXT
+1. Four QB TrapON `RadiativeRecombination` 12-QW-region integrals COMPLETE (user-provided data), CSV saved `CMP/results/PROJECTB_QB_RADIATIVE_TRAPON_20261122.csv`: 6nm9.770910e15, 7nm9.830196e15, 7.5nm1.050204e16, historical8nm9.869850e15 [s^-1um^-1]. Provisional 8nm-relative: -1.0024% / -0.4018% / +6.4053%.
+2. Verify each dataset's actual TDR saved bias=5V, matching NtSide TrapON and 2D AreaFactor; verify historical Wu baseline path/project vs current Claude ProjectB sources/mesh/solver. IV CSV 5V endpoints alone do not prove 5V TDR.
+3. Extract `eGapStatesRecombination` from **damaged QW regions only** DmgL_QW1–4 and DmgR_QW1–4, or predefine other damage regions only if explicitly explaining alternate scope, for all 4 conditions. Keep region definitions and normalization identical, report sum and historical reference change. Distinguish eGapStates trap-mediated term from net nonradiative recombination and IQE; no double counting.
+4. Add presentation-ready 5V current vs 4QW radiative data with cross-project caveat; do not claim QB7.5 produces higher IQE solely from fixed-bias integrals. No more TCAD runs proposed unless required for evidence.
+
+## 2026-11-22 JuSubin ProjectB radiative data triage — QB6 + historical QB8 RAW observed
+1. Received true RadiativeRecombination 12-region totals: ProjectB QB6 `n6_des` 9.770910e15; historical Wu QB8 baseline `n6_des` 9.869850e15 [s^-1 um^-1], both user-pasted. **Same filename but purportedly DISTINCT projects**; verify absolute source paths / file hashes, 5V TDR bias and effective trap and solver/mesh/normalization before treating as comparable.
+2. Preliminary QB6 vs historical QB8 at as-yet-unverified bias: -1.002446846% reported total integrated radiative signal; NOT proof of thickness-caused optical or IQE improvement/loss.
+3. Obtain QB7 `n100_des` and QB7.5 `n114_des` TRUE `RadiativeRecombination` values over all 12 Clean/DmgL/DmgR×QW1..4 regions (their previous submitted field was DopingConcentration=0).
+4. Four-condition integration summary, 5V and 2D AreaFactor checks, later bilateral eGapStatesRecombination. Preserve school code/runs.
+
+## 2026-11-22 JuSubin Project B 4QW radiative postprocessing follow-up (QB6 USER SVISUAL OUTPUT RECEIVED)
+1. QB6 TrapON `n6_des` has user-observed 12-region RadiativeRecombination integral total 9.770910e15 s^-1 um^-1, correct 4-QW .1199999um² selected area; QW4 share 96.050%.
+2. Verify that `n6_des` TDR corresponds to target **5V** (this is not explicit in Field Integration paste), then collect matching 5V TrapON 12-region Integrals for QB7 (n100), QB7.5 (n114), and historical Wu QB8 (actual baseline node). Keep full sidewall Clean + DmgL + DmgR on all four QWs.
+3. Make per-QW and four-QW total comparisons vs historical 8nm reference with strict cross-project caveat; check 2D units. Follow with separate eGapStatesRecombination damaged-region integrations. Avoid IQE and causal claims absent matched conditions.
+
+## 2026-11-22 JuSubin final Project B reference decision: historical Wu D5 QB8 TrapON instead of failed same-project n142 (USER DECISION / CROSS-PROJECT COMPARABILITY UNVERIFIED)
+- User explicitly chooses existing final Wu baseline QB8nm (0.008um) Trap ON results as reference due to deadline; will NOT rerun current Project B QB8 TrapON n142, which was screenshot-observed RED (root cause still unconfirmed). Do NOT replace reference with current Project B QB8 TrapOFF n136.
+- Final exploratory series: historical Wu baseline QB8nm (TrapON), Claude D5 Project B QB7.5nm (n114), QB7nm (n100), QB6nm (n6), all intended NtSide1e18, Vstop5V. New Project B nodes' final 5V Curve trace and source/physics equivalence require evidence, and historical Wu D5 QB8 source/effective pp/mesh/solver/contacts/AreaFactor equivalence with Claude cases remains UNRESOLVED. QB6.5nm n128 MinStep failure excluded but retained.
+- User accepts potentially mismatched numerics to finish on time; scientific report MUST disclose cross-project baseline provenance / unverified controls, call results preliminary reference comparison, NOT isolate QB thickness causal effect, and avoid quantified IQE claims from recombination alone.
+- Minimal gate: verify historical baseline Trap ON 5V endpoint, same 5nm Damage/NtSide1e18/Et0.75/sigmaN=P1e-15 and 2D current units; verify successful 5V for n6/n100/n114. Then extract exactly IV/5V terminal current, sum QW1–QW4 RadiativeRecombination integrals, bilateral damage eGapStatesRecombination integrals, selecting actual shifted regions and recording normalization. No additional school code or runs by ChatGPT.
+
+## 2026-11-22 JuSubin QB8 TrapON n142 RED / 8nm control still missing (USER SWB SCREENSHOT OBSERVED)
+- User says n142 (QB0.008um, NtSide1e18 Trap ON) ended in ERROR; SWB screenshot explicitly shows n142 RED. Earlier running state is superseded. Exact terminal n142_des.out/.err/.log cause and last accepted anode are not supplied yet. Do NOT assume MinStep, syntax, license, or intrinsic physical failure without log.
+- Same grid maps TrapON QB0.006 to n6, QB0.007 to n100, QB0.0075 to n114; 0.008 TrapOFF n136 already verified 5V in 1454.46s, n128 QB0.0065 TrapON previously had MinStep failure. The non-red indicators of n6/n100/n114 are NOT independent verification of 5V Curve trace finished.
+- Critical: cannot compare n136 Trap OFF to TrapON others as baseline. Fast decision tree: read-only verify n142 failure cause and 5V states of n6,n100,n114; if n142 not cheaply recoverable, first consider previously verified historical Wu QB8 TrapON only after effective SDE/SDevice/PP/mesh/trap/AreaFactor equivalence audit, else perform clearly labeled QB6/7/7.5 TrapON comparative trend with no 8nm baseline claim, or compare all four TrapOFF if finished. Preserve existing jobs and avoid unverified solver/model modification.
+- Next read-only terminal status scan of n6 n100 n114 n142 (5V and Curve trace) plus tail n142_des.out and n142_des.err, last anode; do not rerun whole QB sweep.
+
+## 2026-11-22 FIRST JuSubin Project B deliverable only (n142 QB8 TrapON USER-REPORTED RUNNING)
+1. Let QB8 NtSide1e18 n142 continue; do not rerun/edit solver or mistake earlier 0V snapshot for failure. On user completion verify final anode5.000V and Curve trace finished in n142_des.out/log.
+2. Reuse existing QB6/QB7 TrapON results, and QB7.5 only if already confirmed completed; for QB8 n142 verify matching same-school Wu5nm damage, 5 QB/4x3nm QW, NtSide1e18/Et.75/sigmas1e-15, contacts/physics/solver, current AreaFactor/2D geometry. Do NOT mix QB8 OFF n136 current with ON.
+3. Extract exactly three first-pass metrics: SVisual1 I-V and I at5V (anode TotalCurrent); 4QW total integrated RadiativeRecombination; left+right damaged region integrated eGapStatesRecombination. Use region labels/updated QW boundaries; consistent units and spatial selection, no double counting. Compare percent changes vs QB8.
+4. Produce one I–V overlay + two integration comparison plots + 5V summary table. If injected current differs at 5V, qualify any radiative changes as fixed-bias response and compare same-current when existing available bias-resolved maps permit. Do not call eGap-only total nonradiative or IQE; avoid new runs/extra figures under deadline.
+
 ## 2026-11-21 Immediate blocker triage: QB6 SVisual red (SCREENSHOT)
 1. In SWB select tQB=.006 NtSide=1e18 red SVisual cell, open job output/error for actual SVisual node; copy FIRST meaningful Tcl error and the node number. Also inspect QB=.006 NtSide=0 if needed.
 2. Confirm corresponding SDevice node successfully produced .tdr/.plt and finished at 5V (Curve trace finished); don't rerun physics because SVisual status red.

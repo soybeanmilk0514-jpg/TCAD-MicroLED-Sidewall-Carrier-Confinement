@@ -1,3 +1,25 @@
+## 2026-11-22 JuSubin Project B QB7.5 n114 wrong SVisual field: doping rather than radiative (OBSERVED)
+- User-pasted `n114_des` Field Integration uses `DopingConcentration`, **NOT** `RadiativeRecombination`.
+- All 12 QW regions Clean_QW1..4, DmgL_QW1..4, DmgR_QW1..4 selected; total domain `1.200002e-01 um^2` consistent with 4 × 3nm QWs × 10um lateral device. Total doping integral `0.000000e+00 um^-1`, NOT evidence of zero radiative recombination.
+- Status: QB7.5 radiative integral pending correct field choice. QB7 n100 previously has same field mistake, QB6 n6 radiative total 9.770910e15 s^-1 um^-1 observed, QB8 historical Wu baseline radiative pending. Target TDR 5V must be checked. No school code or run changed.
+- NEXT: Switch n114 (and n100) SVisual field to RadiativeRecombination, re-integrate same 12 regions and capture full 2D output [s^-1 um^-1].
+
+## 2026-11-22 JuSubin ProjectB QB7 n100 SVisual extraction field mismatch (OBSERVED, RE-EXTRACT REQUIRED)
+- User pasted actual SVisual output for dataset `n100_des` (user-labeled QB0.007um, Trap ON) but field is `DopingConcentration`, NOT requested `RadiativeRecombination`.
+- All 12 QW regions present: Clean_QW1..4, DmgL_QW1..4, DmgR_QW1..4. Printed total domain 0.1199999um² matches 4×3nm×10um. DopingConcentration total integral=0um^-1; **this is not radiative recombination zero**, and no QB7 optical/recombination number is available yet.
+- NEXT: user switches SVisual Field to RadiativeRecombination on same n100_des, keeps exact 12 selections, reruns Field Integration and sends integral values [s^-1*um^-1]. Verify 5V TDR bias; no code/simulation changes.
+
+## 2026-11-22 JuSubin CSV packaging command fails due to tcsh multiline single-quote input (OBSERVED USER TERMINAL)
+- User ran previously suggested multi-line python3 -c single-quoted script at school C-shell-like prompt. First line failed "Unmatched '."; subsequent Python lines were interpreted as shell commands, generating "Command not found", "Badly placed ()'s.", and "if: Expression Syntax."
+- This is SHELL QUOTING/PRESENTATION issue, not a Sentaurus or CSV content failure. Four CSVs previously verified by shell find: Project B QB6 Node16, QB7 Node101, QB7.5 Node115, historical 8nm baseline Node16; paths distinct despite repeated node index.
+- Revised plan delivered: one complete bash -lc line, cp original four distinct .csv into /users/student/team3/JSB/CMP_IV_4COND with unique names, python3 -m zipfile -c archive from that folder. Original CSV untouched. ZIP creation NOT yet observed; user to execute then upload.
+
+## 2026-11-22 JuSubin QB8 TrapON n142 RED / 8nm control still missing (USER SWB SCREENSHOT OBSERVED)
+- User says n142 (QB0.008um, NtSide1e18 Trap ON) ended in ERROR; SWB screenshot explicitly shows n142 RED. Earlier running state is superseded. Exact terminal n142_des.out/.err/.log cause and last accepted anode are not supplied yet. Do NOT assume MinStep, syntax, license, or intrinsic physical failure without log.
+- Same grid maps TrapON QB0.006 to n6, QB0.007 to n100, QB0.0075 to n114; 0.008 TrapOFF n136 already verified 5V in 1454.46s, n128 QB0.0065 TrapON previously had MinStep failure. The non-red indicators of n6/n100/n114 are NOT independent verification of 5V Curve trace finished.
+- Critical: cannot compare n136 Trap OFF to TrapON others as baseline. Fast decision tree: read-only verify n142 failure cause and 5V states of n6,n100,n114; if n142 not cheaply recoverable, first consider previously verified historical Wu QB8 TrapON only after effective SDE/SDevice/PP/mesh/trap/AreaFactor equivalence audit, else perform clearly labeled QB6/7/7.5 TrapON comparative trend with no 8nm baseline claim, or compare all four TrapOFF if finished. Preserve existing jobs and avoid unverified solver/model modification.
+- Next read-only terminal status scan of n6 n100 n114 n142 (5V and Curve trace) plus tail n142_des.out and n142_des.err, last anode; do not rerun whole QB sweep.
+
 ## 2026-11-21 JuSubin school QB 6.5nm SDevice n128 Newton/MinStep failure (OBSERVED USER SCREENSHOT)
 - User screenshot of actual school n128_des.log at ~lines 5786-5810 in project visible as ~/JSB/CMP_3V/CMP_B_5nm_3V (title path screenshot unclear; DO NOT infer fully qualified school path).
 - SWB tQB=0.0065um, NtSide=1e18, n128 SDevice RED. Log: Finished, because... #iterations larger than 35; 'Newton didn't converge, trying again with smaller step...'; Finished, because... 'Step-size less than MinStep (step-size = 9.1004e-11).' A final n128_des.tdr is written but DOES NOT prove full 5V curve finished. Screenshot shows 35 iterations (log row) and 0.136um x-position diagnostic but no last anode/bias row.
