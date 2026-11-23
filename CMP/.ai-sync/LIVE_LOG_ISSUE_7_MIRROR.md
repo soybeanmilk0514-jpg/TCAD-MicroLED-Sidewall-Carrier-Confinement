@@ -15184,3 +15184,249 @@ AI: ChatGPT
 - 원래 TDR 전압/실행 모델 검증 → 같은 주입 전류에서 비교 가능한 재결합 값 확보 시 추가 해석 → 잠정 결론으로 발표.
 
 ---
+
+## 2026-11-23T01:03:52Z — soybeanmilk0514-jpg
+
+[2026-11-23 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / HANDOFF
+상태: USER-UPLOADED PROJECT A PPT OBSERVED / PRESENTATION DERIVED / FINAL SOURCE VALIDATION UNRESOLVED
+
+요약:
+- 사용자 제공 Project A 8장 PPT의 same-mesh 핵심 수치: J1/10/100 A/cm²에서 C 없는 대조군 IQE .130/.352/.575, C 50/100nm IQE .138/.354/.574. Δ=.008/.002/-.001; C 확대(400/400nm) J1 IQE .053, C 자체 trap 손실 .413, 측벽 trap 손실 .266(원본 PPT 보고값).
+- 기존 Project B 5V 전류/4QW radiative/8 damaged QW eGap 데이터를 이어 프로젝트 전체 발표로 통합. QB7 vs 별도 역사적 QB8: 5V 전류 -3.11%, 전체 QW Rad -0.40%, 손상 QW eGap -19.43% (source/5V TDR 동등성 미확인).
+- 총 18장 PPTX 제작: 공통 Baseline 조건, Project A 실제 CEdge 이미지 및 결과, Project B 결과 그래프, A/B 종합 분석, 통합 최종 판정. 로컬 제공 파일 `CMP_AB_통합_최종발표_초안.pptx` (GitHub에는 업로드하지 않음). 슬라이드 렌더/패키지 재저장/overflow 검사 통과.
+- 중요 제한: 실제 Wu 공통 Baseline SDE 이미지가 제공되지 않아 3페이지 자리표시자; CEdge 그림을 Baseline으로 오표기하지 않음. B 0–5 V I–V 원본 CSV가 현재 소스에 없어 임의 곡선 생성을 피함. A IQE matched-J와 B fixed-5V integrals은 동일 효율이 아니며 A+B 동시 적용의 결과가 없음.
+
+변경:
+- 개인/공용 TIMELINE, LIVE_STATE.md, NEXT_ACTIONS.md 업데이트; 학교 시뮬레이션/코드 변경 없음.
+
+다음:
+- 사용자 실제 공통 Baseline SDE 캡처와 B 4가지 IV raw CSV 제공시 자리표시자/5V-only를 원본 그림으로 교체; B TDR bias & 모델 동등성, A same-mesh 검증을 별도 확인.
+
+
+---
+
+## 2026-11-23T01:25:17Z — soybeanmilk0514-jpg
+
+[2026-11-23 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / HANDOFF
+상태: USER-APPROVED / FILE FREEZE
+
+요약:
+- 사용자가 현재 작업 중인 PPT의 수정을 중단하고 가장 최근 14장짜리 `CMP_AB_통합_중간발표_가독성개선.pptx`를 이번 **중간발표의 최종 확정본**으로 지정함.
+- 구성: Project A → Project B; 공동 A+B 결과의 최종 통합 결론 슬라이드 제외.
+- 해당 PPTX의 로컬 SHA256: bb38e82e35b670dd89a8eda5f4d964d85efc4419f780ef9d45c2ff887f1de6cb.
+- GitHub에는 PPTX 파일 본체를 업로드하지 않았음. 새로운 채팅에서는 사용자가 실제 파일을 다시 제공해야 할 수 있음.
+
+변경:
+- JuSubin TIMELINE, TEAM_TIMELINE, LIVE_STATE.md/json에 파일 확정 상태만 기록. PPT 소스 자체는 수정하지 않음.
+
+다음:
+- 사용자가 새로 요청하기 전까지 PPT 수정 중단; 발표 콘텐츠의 개선 시안이나 최종 연구결과로 혼동하지 않음.
+
+---
+
+## 2026-11-23T01:28:10Z — soybeanmilk0514-jpg
+
+[2026-11-23 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: RESULT / INTERPRETATION
+상태: DERIVED from stored observations, physical mechanism UNRESOLVED
+
+요약:
+- QB7.5→7 nm: 5V 전류 −11.156%, 손상QW eGap −11.342%, 따라서 eGap/원시전류는 −0.209%로 거의 동일; 측벽 Trap 물리적 억제 증거로 단정 금지.
+- QB7→6 nm: 5V 전류 +2.652%, eGap +10.266%, eGap/전류 +7.417%; QW4 Radiative +1.922%이지만 QW3 −39.004%, 4QW 전체 Radiative −0.603%. 즉 전류와 eGap은 부분 반등하지만 방사 재결합 합계는 반등하지 않음.
+- Chang2020 (doi:10.1186/s11671-020-03372-3) 근거 물리 후보: 장벽 얇아짐에 따른 정공 수송/수직 저항/측벽으로의 횡방향 퍼짐 변화; 다른 경쟁요인 QW 캐리어 분포·포획·overflow·분극 및 수치 메쉬. 특정 7nm 최적 원인/터널링 공명 입증하지 않음.
+- QB8은 별도 역사적 Wu SWB, 모든 SVisual 적분의 실제 TDR 5V 및 같은 단위/solver/physics/mesh 불명. eGap은 전체 비방사/IQE 아님.
+
+근거:
+- CMP/results/PROJECTB_QB_RADIATIVE_TRAPON_20261122.csv
+- CMP/results/PROJECTB_QB_EGAP_TRAPON_4CASE_SUMMARY_20261122.csv
+- CMP/CURRENT_STATUS.md (원본 IV 5V행)
+
+변경:
+- 개인/공용 TIMELINE, LIVE_STATE.md/json 연구 해석 기록; 학교 시뮬레이션/코드/PPT 변경 없음.
+
+다음:
+- 모델/5V TDR 확인 후 동일 전류에서 QW1..4 e/hDensity, current vectors, Ec/Ev, quasi-Fermi, edge eGap/SRH 해석하여 실제 비단조성 근거 확보.
+
+---
+
+## 2026-11-23T01:51:51Z — soybeanmilk0514-jpg
+
+[2026-11-23 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / HANDOFF
+상태: OBSERVED (PPTX 생성 및 전체 렌더 확인) / PHYSICAL_CAUSALITY UNRESOLVED
+
+요약:
+- 사용자의 명시적 신규 요청으로, 기존 확정했던 14장짜리 `CMP_AB_통합_중간발표_가독성개선.pptx`를 보존한 채 두 장을 맨 뒤에 추가한 16장 PPTX 생성.
+- 파일: `CMP_AB_통합_중간발표_결과해석_추가연구_16장.pptx`; SHA256 556a878b5620818703ab26d6c5ecc24f89df92bb5c16124a3ee19bc126a42aff. 로컬 사용자 다운로드 파일이며 GitHub에는 바이너리 미업로드.
+- Slide15: 동일 새 ProjectB 내 QB6/7/7.5 세 조건의 전류/Radiative/eGapStates 변화를 7.5nm=100으로 정규화. 7.5→7: 전류−11.16%, eGap−11.34% (조건부 eGap/I−0.21%); 7→6: 전류+2.65%, eGap+10.27%, Radiative−0.60%. 단순 전류 영향과 실제 트랩 억제는 아직 구분 불가.
+- Slide16: TDR 전압/Physics/Mesh/AreaFactor 검증 → 동일 전류에서 재결합 및 Vf 비교 → QW별 carrier, current, band, quasi-Fermi 분석 계획.
+- 1~14 페이지의 렌더 이미지는 기존 파일과 모두 동등; 추가된 15/16 페이지 렌더·가독성 확인 완료.
+
+근거:
+- 사용자 확정 14장 PPTX 및 이 대화의 ProjectB 원자료·파생 해석.
+
+변경:
+- JuSubin TIMELINE, TEAM_TIMELINE, CURRENT_STATUS, LIVE_STATE.md/json 동기화. 학교 TCAD 코드/실행 수정 없음.
+
+다음:
+- PPT 추가 수정은 사용자 요청 있을 때만. 물리적 원인 입증은 다음 검증 작업에 남음.
+
+---
+
+## 2026-11-23T02:17:40Z — soybeanmilk0514-jpg
+
+[2026-11-23 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / HANDOFF
+상태: OBSERVED (18-slide PPTX created & rendering verified)
+
+요약:
+- 기존 17장 CMP 통합 진행발표 PPT의 Project B 섹션 맨 처음에 연구방향 변경 슬라이드 1장 삽입(9페이지), 총 18장.
+- 기존 Project B: 20nm Al0.15Ga0.85N MQW 내부 측벽 가드/B1-Bnull. 변경 Project B: GaN QB 5층 두께 6/7/7.5/8nm sweep, QW 4×3nm 유지, Dmg5nm TrapON 유지.
+- 이유: AlGaN 및 D50 시도에서 수렴·대조군 비교 한계, D5 Wu-inspired 작업 모델로 복귀하여 변수 단순화. 실제 모든 ProjectB 지표의 인과효과/최적두께는 미확정.
+- 사용자가 볼 수 있는 PPT 파일: `CMP_AB_통합_중간발표_ProjectB_방향변경추가_18장.pptx`, sha256 b2b78c02e383a015af34bf331facb4b182502525f872885af4fdac31e34f9f5f. PPT 바이너리는 GitHub 미업로드.
+
+근거:
+- CMP/PROJECT_AB_WU10_DESIGN_FREEZE_20261108.md
+- CMP/PROJECT_AB_REPLACEMENT_DESIGN_FREEZE_20261119.md
+- 사용자가 제공한 17장 PPTX(기본본)
+
+변경:
+- JuSubin TIMELINE, TEAM_TIMELINE, LIVE_STATE.md/json. 학교 TCAD 코드/시뮬레이션 결과는 변경 없음.
+
+다음:
+- PPT 수정은 새 요청이 있을 때만 수행.
+
+---
+
+## 2026-11-23T02:23:45Z — soybeanmilk0514-jpg
+
+[2026-11-23 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / NEXT_ACTION
+상태: OBSERVED (PPT edited/rasterized), STUDY PROPOSED
+
+요약:
+- 최신 CMP 통합 중간발표 18장 중 Project B 마지막 슬라이드(18페이지, Project B 9 다음 연구 계획)에 IQE 중심 성능 비교를 추가, 총 18장 유지.
+- (1) TDR/AreaFactor/Trap 순손실 및 IQE 정의 검증 (2) QB6/7/7.5/8 IQE–J 곡선, J=1/10/100 A/cm²에서 비교 (3) 동일 J의 Radiative/SRH/Auger/Trap/QW별 carrier 분석.
+- 원래 Radiative/eGap 두 적분만으로는 IQE 산출 불가하며 8nm는 다른 historical Wu SWB 기준이므로 조건 동등성 미확인.
+
+근거:
+- 사용자 요청, 기존 18장 PPTX의 마지막 슬라이드, 이전 Project B 재결합 데이터.
+
+변경:
+- 로컬 PPT 파일 `CMP_AB_통합_중간발표_ProjectB_IQE연구계획추가_18장.pptx`, SHA256 473dce3e1c1960525ce19f3e8faa0b322e21c5a706c3968c54539d2ec45db8cd. PPTX GitHub 미업로드.
+- JuSubin TIMELINE, TEAM_TIMELINE, NEXT_ACTIONS, LIVE_STATE.md/json 업데이트. 학교 소스/시뮬레이션 변경 없음.
+
+다음:
+- Project A IQE 공식과 B 저장 데이터 구조 조사, 동일 전류밀도 비교 가능성 확인.
+
+
+---
+
+## 2026-11-23T02:57:38Z — soybeanmilk0514-jpg
+
+[2026-11-23 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / HANDOFF
+상태: OBSERVED (PPTX layout-only revision verified)
+
+요약:
+- 사용자가 첨부한 5주차 최종 연구발표 25장 PPT의 **19페이지**(Project B 5 V Current vs Baseline) 어두운 전체 화면 그라데이션 배경 오류만 수정. 다른 결과 그래프·수치·설명은 그대로 보존.
+- 출력: `5주차_폭주수빈(이택규 주수빈)_MicroLED_Sidewall_TCAD_19페이지디자인수정.pptx` / SHA256 634925dd822a9e2c2125a54b5de513d68d2eee6fe1f3fd32d6d04b2bf8318c25.
+- 다른 24장 shape XML 동일함 확인. 수정 19장 PDF 렌더 확인. PPT 파일 본체는 GitHub 미업로드.
+
+변경: 로컬 PPTX 스타일만 변경, 연구 코드/결과 수정 없음.
+다음: 별도 사용자 요청 없으면 추가 PPT 변경 없음.
+
+---
+
+## 2026-11-23T03:01:31Z — soybeanmilk0514-jpg
+
+[2026-11-23 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / HANDOFF
+상태: OBSERVED (PPTX generated and slide19 rendered; scientific results unchanged)
+
+요약:
+- 사용자 5주차 발표 25장 최종본의 19페이지 오른쪽 영문 Key Points만 가독성 좋은 한국어로 변경.
+- 5 V 전류 변화 요약: QB7.5 +9.06%(전류 최대), QB7 −3.11%(전류 최소), QB6 −0.54%(8nm 기준과 유사); 전류 증가만으로 IQE 개선은 판단 불가.
+- 슬라이드 19만 바뀌었고, 나머지 24장 슬라이드 XML은 원본과 완전히 동일. 단위 미확인 및 QB8 historical 별도 프로젝트 주석 유지.
+- 출력: `5주차_폭주수빈(이택규 주수빈)_MicroLED_Sidewall_TCAD_19페이지요약가독성수정.pptx`, SHA256 e5d3cc9ef06b0c8e27bba985ded9485581342e1237dae773100bd7803694c204. GitHub에는 PPTX 바이너리를 업로드하지 않음.
+
+근거:
+- 사용자 업로드 5주차 PPT와 이번 슬라이드19 렌더 확인.
+
+변경:
+- PPT 디자인/한글 문구만 변경, 연구 결과 및 TCAD 코드 변경 없음.
+
+다음:
+- 사용자 추가 요청 전까지 PPT 미수정.
+
+---
+
+## 2026-11-23T03:12:04Z — soybeanmilk0514-jpg
+
+[2026-11-23 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: PROGRESS / HANDOFF
+상태: OBSERVED (PPTX edited, 20-page rendered output verified)
+
+요약:
+- 사용자 업로드 5주차 25장 최종 PPT를 15분(이택규 7분30초, 주수빈 7분30초)에 맞춰 20장으로 축약.
+- 원본 실제 페이지 6(A 섹션 표지), 7(A 진행현황 중복), 12(A 상세 수렴 실패 노드표, 기존 원본에 그대로 보존), 14(B 섹션 표지), 16(B QB 스윕 막대·조건 반복, 실제 소자 구조+스윕 슬라이드로 대체 가능)만 삭제.
+- 원본 1..5/8..11/13/15/17..25 슬라이드 유지. 원본/출력 보존 이미지의 바이너리 해시 일치 확인; 임의 데이터/성능 결과 변경 없음.
+- Project B 소제목 B1–B9, 페이지 하단 번호 1–20으로 재정리.
+- 새 파일 `CMP_5주차_15분발표_20장_축약본.pptx`, SHA256 51933d5387d14f1e9a77dadb18a19ebaa9d94325b15708de90dafc6310824d65. PPTX 바이너리 GitHub 미업로드.
+- 권장 시간 배분: 1–10장 공통 Baseline/Project A 7분30초, 11–19장 Project B 7분30초, 20장 Q&A(발표시간 외 표기용). 실제 리허설 확인 필요.
+
+근거:
+- 실제 사용자 업로드 PPTX, python-pptx 슬라이드/이미지 검증, LibreOffice PDF 20페이지 렌더.
+
+변경:
+- 개인·팀 TIMELINE, LIVE_STATE.md/json 발표 메타정보 기록. 학교 TCAD 코드·결과 변경 없음.
+
+다음:
+- 15분 제한 리허설에서 슬라이드별 실제 발표시간 확인, 수렴 오류 관련 질문 시 삭제 슬라이드는 원본 25장에서 참고.
+
+---
+
+## 2026-11-23T03:21:38Z — soybeanmilk0514-jpg
+
+[2026-11-23 KST]
+작업자: 주수빈
+AI: ChatGPT
+구분: DECISION / PROGRESS / HANDOFF
+상태: USER DECISION OBSERVED / PDF GENERATED, CAUSAL INTERPRETATIONS UNRESOLVED
+
+요약:
+- 20장 축약본은 사용하지 않고 사용자가 다시 업로드한 실제 25장 원본 PPT를 발표에 사용하기로 명시함.
+- 원본 25장과 순서가 일치하는 한국어 구어체 발표 대본 PDF 1개 생성. `CMP_5주차_25장_15분_최종발표대본_이택규_주수빈.pdf` (7페이지, SHA256 d2428e11d4f7ba943f362d9396bfb61d4d1c7803b0a13ca023694b6c8a71bb81; PDF 바이너리 GitHub 미업로드).
+- 시간 배분: 이택규 1-13페이지(공통 Baseline+A) 7분30초, 주수빈 14-24페이지(B) 7분30초, 페이지25 Q&A만 표시. 실제 발화 속도 실측 전의 **연습용 목표 시간**임.
+- Project A same-mesh IQE vs old Baseline 및 C trap 손실, Project B historical 8nm 모델 간 비교와 SVisual TDR 전압 미확인 및 IQE 미검증 한계를 대본에 명시함. 과학 결과·코드·슬라이드 수정 없음.
+
+근거:
+- 사용자 업로드 `5주차_폭주수빈(이택규 주수빈)_MicroLED_Sidewall_TCAD.pptx`, python-pptx 25장 원문 검토, 출력 PDF 7페이지 및 슬라이드 1-25 순서/렌더 확인.
+
+변경:
+- 개인/팀 타임라인 및 LIVE_STATE.md/json 발표 기록만 갱신.
+
+다음:
+- 원본 25장과 PDF를 보며 각자 7:30 리허설, Q&A 25장은 시간 외. 원본 20장 축약본 사용하지 않음.
+
+---

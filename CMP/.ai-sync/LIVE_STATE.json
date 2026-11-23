@@ -11443,5 +11443,175 @@
       "eGap electron trap-related field not net full nonradiative"
     ],
     "next": "Verify TDR bias and model equivalence; matched-current followup where available; transparent preliminary comparison"
+  },
+  "juSubinProgressPresentationFreeze20261123": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-23",
+    "state": "USER_APPROVED_FINAL_PRESENTATION_VERSION_EDITING_PAUSED",
+    "filename": "CMP_AB_통합_중간발표_가독성개선.pptx",
+    "slideCount": 14,
+    "sha256": "bb38e82e35b670dd89a8eda5f4d964d85efc4419f780ef9d45c2ff887f1de6cb",
+    "scope": "Project A and B midterm research-progress presentation, no integrated final A+B result",
+    "binaryInGitHub": false,
+    "resourceAvailability": "User must supply actual PPTX in a future different chat; sandbox file may not persist",
+    "futureRule": "Do not revise without an explicit new user request."
+  },
+  "juSubinQBNonmonotonicityAnalysis20261123": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-23",
+    "status": "DERIVED_OBSERVED_DATA_ROOT_CAUSE_UNRESOLVED",
+    "thickness_nm": [
+      6,
+      7,
+      7.5
+    ],
+    "currentRaw5V": [
+      0.00255263092117,
+      0.00248668659046,
+      0.00279894166971
+    ],
+    "full4QWRadiativeIntegral": [
+      9770910000000000,
+      9830196000000000,
+      10502040000000000
+    ],
+    "damaged8QWeGapIntegral": [
+      36852980000000,
+      33422000000000,
+      37697520000000
+    ],
+    "compare7vs7p5Pct": {
+      "current": -11.1561838758,
+      "eGap": -11.3416479386,
+      "eGapOverCurrent": -0.2087529227
+    },
+    "compare6vs7Pct": {
+      "current": 2.6518955369,
+      "eGap": 10.2656334151,
+      "eGapOverCurrent": 7.4170455775,
+      "radiative": -0.6031008944,
+      "qw3Radiative": -39.0041434724,
+      "qw4Radiative": 1.9220021928
+    },
+    "conclusion": "Current rebounds QB7->QB6 but all-QW radiative does not; QB7 raw eGap lowest partly tracks lower current. Mechanistic carrier redistribution plausible but not demonstrated.",
+    "hypotheses": [
+      "hole injection vertical resistance/current spreading",
+      "well capture versus overflow/carrier imbalance",
+      "polarization/band-profile response",
+      "mesh/solver/provenance artifacts"
+    ],
+    "caution": [
+      "Radiative SVisual 5V TDR unverified",
+      "normalized eGap/current is not IQE or defect loss probability",
+      "school quantum models unconfirmed",
+      "historical QB8 source equivalence unverified"
+    ],
+    "next": "verify PP/mesh and actual TDR 5V, compare QW-resolved e/h densities/bands/current vectors at matched current"
+  },
+  "juSubinProgressPresentationAddProjectBPhysicsSlides20261123": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-23",
+    "status": "USER_REQUEST_PPTX_CREATED_AND_RENDER_VERIFIED",
+    "priorApproved14Slide": "CMP_AB_통합_중간발표_가독성개선.pptx",
+    "newCurrentPPTX": "CMP_AB_통합_중간발표_결과해석_추가연구_16장.pptx",
+    "sha256": "556a878b5620818703ab26d6c5ecc24f89df92bb5c16124a3ee19bc126a42aff",
+    "slideCount": 16,
+    "appendedSlide15": "Project B QB6/7/7.5 nonmonotonic current/radiative/damaged QW eGap interpretation. eGap/current ratio is conditional—not IQE or net nonradiative loss.",
+    "appendedSlide16": "Verify TDR 5V/model/AreaFactor, compare at same injected current and analyze QW-resolved carrier densities, current vectors, bands, quasi-Fermi levels.",
+    "original14SlidesVisuallyUnchanged": true,
+    "binarySavedInGitHub": false,
+    "schoolTCADChanged": false,
+    "next": "No further PPT revisions unless user asks; scientific root cause remains unverified."
+  },
+  "juSubinProgressPresentationAddProjectBDirectionSlide20261123": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-23",
+    "status": "PRESENTATION_UPDATED_RENDER_VERIFIED",
+    "filename": "CMP_AB_통합_중간발표_ProjectB_방향변경추가_18장.pptx",
+    "sha256": "b2b78c02e383a015af34bf331facb4b182502525f872885af4fdac31e34f9f5f",
+    "slideCount": 18,
+    "insertedSlide": 9,
+    "title": "Project B 1) 연구 방향 변경",
+    "before": "20 nm Al0.15Ga0.85N internal MQW-sidewall guard (B1 vs Bnull)",
+    "after": "Five GaN QB thickness sweep: 6/7/7.5/8 nm; four 3nm QWs and D5 sidewall damage maintained",
+    "reason": "AlGaN and D50 attempted variants had convergence/control-comparability issues; switch to D5 with simpler single-variable thickness study",
+    "historicalQB8SeparateSource": true,
+    "binaryInGithub": false,
+    "tcadModified": false
+  },
+  "juSubinProjectBProgressDeckIQEPlan20261123": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-23",
+    "status": "PPTX_EDITED_RENDER_VERIFIED_NO_NEW_TCAD_RESULT",
+    "file": "CMP_AB_통합_중간발표_ProjectB_IQE연구계획추가_18장.pptx",
+    "sha256": "473dce3e1c1960525ce19f3e8faa0b322e21c5a706c3968c54539d2ec45db8cd",
+    "slideCount": 18,
+    "modifiedSlide": 18,
+    "plan": [
+      "validate same-bias TDR/AreaFactor/net trap-inclusive IQE terms",
+      "QB6/7/7.5/8 IQE vs Current Density, J=1/10/100 A/cm2 after verified current normalization",
+      "same-J Radiative/SRH/Auger/Trap and QW carrier transport to interpret IQE differences"
+    ],
+    "scientificLimitation": "existing Radiative and damaged-QW eGap alone not sufficient for IQE; historical QB8 unverified cross-project equivalence",
+    "next": "Inspect existing PLT/TDR and Project A IQE definition before any rerun",
+    "pptxBinaryInGitHub": false
+  },
+  "juSubinWeek5PresentationSlide19KoreanReadability20261123": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-23",
+    "status": "PPTX_SLIDE19_ONLY_EDIT_RENDER_VERIFIED",
+    "filename": "5주차_폭주수빈(이택규 주수빈)_MicroLED_Sidewall_TCAD_19페이지요약가독성수정.pptx",
+    "sha256": "e5d3cc9ef06b0c8e27bba985ded9485581342e1237dae773100bd7803694c204",
+    "slideCount": 25,
+    "changedSlide": 19,
+    "summary": "Translated slide19 right-side Key Points into visual Korean 3-card summary: QB7.5 +9.06%, QB7 -3.11%, QB6 -0.54% relative historical QB8 5V; no IQE inference.",
+    "othersSlideXmlUnchanged": true,
+    "schoolTCADChanged": false,
+    "pptxBinaryStoredInGitHub": false
+  },
+  "juSubinWeek5Presentation15MinuteTrim20261123": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-23",
+    "status": "OBSERVED_PPTX_CREATED_AND_PDF_RENDER_VERIFIED",
+    "originalUploadedFile": "5주차_폭주수빈(이택규 주수빈)_MicroLED_Sidewall_TCAD.pptx",
+    "resultingFile": "CMP_5주차_15분발표_20장_축약본.pptx",
+    "sha256": "51933d5387d14f1e9a77dadb18a19ebaa9d94325b15708de90dafc6310824d65",
+    "previousSlideCount": 25,
+    "newSlideCount": 20,
+    "removedOriginalPages": [
+      6,
+      7,
+      12,
+      14,
+      16
+    ],
+    "allRetainedPicturesSameHash": true,
+    "slideOrderPreserved": true,
+    "numberingFixed": true,
+    "allocatedPresentation": "slides 1–10 Project A + common baseline 7:30, slides 11–19 Project B 7:30, slide 20 Q&A after",
+    "why": "Cut redundant divider/process/conditions slides; retain all main experimental result charts, current B IQE plan and caveats",
+    "originalFileUnchanged": true,
+    "pptxBinaryInGithub": false,
+    "noSchoolTCADOrScientificResultChanges": true
+  },
+  "juSubinWeek5Full25SlidePresentationScript20261123": {
+    "worker": "주수빈",
+    "dateKST": "2026-11-23",
+    "status": "USER_APPROVED_25_SLIDE_SOURCE_SCRIPT_PDF_OBSERVED",
+    "selectedFullDeck": "5주차_폭주수빈(이택규 주수빈)_MicroLED_Sidewall_TCAD.pptx",
+    "previous20SlideCutDeclined": true,
+    "localPDF": "CMP_5주차_25장_15분_최종발표대본_이택규_주수빈.pdf",
+    "sha256": "d2428e11d4f7ba943f362d9396bfb61d4d1c7803b0a13ca023694b6c8a71bb81",
+    "pdfPageCount": 7,
+    "slidePagesCovered": [
+      1,
+      25
+    ],
+    "speaker1": "이택규 / original slide1-13 / allocated 7m30s",
+    "speaker2": "주수빈 / original slide14-24 / allocated 7m30s / slide25 Q&A only",
+    "timings": "planned rehearsal targets, not timed recording",
+    "actualPPTChanged": false,
+    "TCADCodeChanged": false,
+    "pdfBinaryStoredInGitHub": false
   }
 }
